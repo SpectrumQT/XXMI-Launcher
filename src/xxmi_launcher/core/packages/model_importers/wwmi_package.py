@@ -36,6 +36,7 @@ class WWMIConfig(ModelImporterConfig):
     ] = field(default_factory=lambda: {
         'core': {
             'Loader': {
+                'target': 'Client-Win64-Shipping.exe',
                 'loader': 'XXMI Launcher.exe',
             },
             'Rendering': {

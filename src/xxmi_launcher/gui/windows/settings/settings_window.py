@@ -20,7 +20,6 @@ class SettingsWindow(UIToplevel):
     def __init__(self, master):
         super().__init__(master, lock_master=True)
 
-        Config.Config.load()
         Vars.Settings.initialize_vars()
         Vars.Settings.load()
 

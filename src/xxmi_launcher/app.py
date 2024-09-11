@@ -231,6 +231,8 @@ class Application:
 
         self.check_threads()
 
+        logging.debug('Core ready!')
+
         self.gui.open()
 
         self.exit()
@@ -240,7 +242,7 @@ class Application:
         if not no_install and self.update_manager.update_available() and Config.Launcher.auto_update:
             self.update_manager.update_packages(force=False, no_install=False, silent=False)
 
-    def load_importer(self, importer_id):
+    def load_importer(self, importer_id, update=True):
         if hasattr(Config, 'Active'):
             self.update_manager.unload_package(Config.Launcher.active_importer)
         Config.Launcher.active_importer = importer_id
@@ -249,7 +251,8 @@ class Application:
         self.update_manager.notify_package_versions()
         Config.ConfigSecurity.validate_config()
         Events.Fire(Events.Application.ConfigUpdate())
-        self.run_as_thread(self.auto_update, no_install=True)
+        if update:
+            self.run_as_thread(self.auto_update, no_install=True)
 
     def update_scheduled(self) -> bool:
         if not self.update_manager.update_available():

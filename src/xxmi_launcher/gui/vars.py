@@ -103,7 +103,6 @@ class AppSettings(Config.AppConfig):
 
     def save(self):
         self.save_vars(self, self.cfg)
-        Config.Active = getattr(self.cfg.Importers, self.cfg.Launcher.active_importer)
         Config.ConfigSecurity.sign_settings(save_config=False)
         Events.Fire(Events.Application.ConfigUpdate())
 

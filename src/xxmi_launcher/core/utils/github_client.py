@@ -25,7 +25,6 @@ class GitHubClient:
         self.repo = repo
 
     def fetch_latest_release(self, asset_version_pattern, asset_name_format, signature_pattern=None):
-        # print('Querying GtHub...')
         try:
             response = requests.get(f'https://api.github.com/repos/{self.owner}/{self.repo}/releases/latest').json()
         except Exception as e:
