@@ -89,14 +89,17 @@ class ToolsBarButton(UIImageButton):
             button_x_offset=8,
             button_normal_opacity=0.8,
             button_hover_opacity=1,
+            button_disabled_opacity=0.35,
             bg_image_path='button-tool-background.png',
             bg_normal_opacity=0,
             bg_hover_opacity=0.15,
             bg_selected_opacity=0.25,
+            bg_disabled_opacity=0,
             text_x_offset=36,
             font=("Asap", 13),
             fill='#cccccc',
             activefill='#ffffff',
+            disabledfill='#888888',
         )
         super().__init__(**kwargs)
 
@@ -152,5 +155,12 @@ class OpenModsFolderButton(ToolsBarButton):
             text='Open Mods Folder',
             command=lambda: Events.Fire(Events.MigotoManager.OpenModsFolder()),
             master=master)
+        self.subscribe(Events.PackageManager.VersionNotification, self.handle_version_notification)
+
+    def handle_version_notification(self, event):
+        package_state = event.package_states.get(Config.Launcher.active_importer, None)
+        if package_state is None:
+            return
+        self.set_disabled(not package_state.installed_version)
 
 # endregion

@@ -24,9 +24,9 @@
 ## Supported Model Importers
 
 - [WWMI - Wuthering Waves Model Importer GitHub](https://github.com/SpectrumQT/WWMI)
-- (**SOON**) [GIMI - Genshin Impact Model Importer GitHub](https://github.com/SilentNightSound/GI-Model-Importer)
+- [ZZMI - Zenless Zone Zero Model Importer GitHub](https://github.com/leotorrez/ZZ-Model-Importer)
 - (**SOON**) [SRMI - Honkai: Star Rail Model Importer GitHub](https://github.com/SilentNightSound/SR-Model-Importer)
-- (**SOON**) [ZZMI - Zenless Zone Zero Model Importer GitHub](https://github.com/leotorrez/ZZ-Model-Importer)
+- (**SOON**) [GIMI - Genshin Impact Model Importer GitHub](https://github.com/SilentNightSound/GI-Model-Importer)
   
 ## License
 

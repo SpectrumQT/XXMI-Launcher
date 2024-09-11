@@ -122,7 +122,7 @@ class GameBananaButton(WebResourceButton):
         super().__init__(
             x=860,
             button_image_path='button-resource-gamebanana.png',
-            command=lambda: self.open_link(),
+            command=self.open_link,
             master=master)
         self.set_tooltip(self.get_tooltip, delay=0.01)
 
@@ -151,6 +151,7 @@ class GitHubButton(WebResourceButton):
         super().__init__(
             x=1000,
             button_image_path='button-resource-github.png',
+            command=lambda: webbrowser.open('https://github.com/SpectrumQT/XXMI-Launcher'),
             master=master)
         self.set_tooltip(f'XXMI Launcher GitHub', delay=0.01)
 

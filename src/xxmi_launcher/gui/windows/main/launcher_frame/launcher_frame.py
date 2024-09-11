@@ -67,13 +67,19 @@ class ImporterVersionText(UIText):
                          activefill='white',
                          anchor='nw',
                          master=master)
-        self.subscribe_set(
-            Events.PackageManager.VersionNotification,
-            lambda event: f'{Config.Launcher.active_importer} ' + (event.package_states[
-                Config.Launcher.active_importer].installed_version or 'Not Installed!'))
+        self.subscribe(Events.PackageManager.VersionNotification, self.handle_version_notification)
         # self.subscribe_show(
         #     Events.GUI.LauncherFrame.StageUpdate,
         #     lambda event: event.stage == Stage.Ready)
+
+    def handle_version_notification(self, event):
+        package_state = event.package_states.get(Config.Launcher.active_importer, None)
+        if package_state is None:
+            return
+        if package_state.installed_version:
+            self.set(f'{Config.Launcher.active_importer} {package_state.installed_version}')
+        else:
+            self.set(f'{Config.Launcher.active_importer}: Not Installed')
 
 
 class MainActionButton(UIImageButton):
@@ -156,7 +162,10 @@ class StartButton(MainActionButton):
             self.handle_version_notification)
 
     def handle_version_notification(self, event):
-        installed = event.package_states[Config.Launcher.active_importer].installed_version != ''
+        package_state = event.package_states.get(Config.Launcher.active_importer, None)
+        if package_state is None:
+            return
+        installed = package_state.installed_version != ''
         self.set_enabled(installed)
         self.show(self.stage == Stage.Ready)
 
@@ -206,7 +215,10 @@ class InstallButton(MainActionButton):
             self.handle_version_notification)
 
     def handle_version_notification(self, event):
-        not_installed = event.package_states[Config.Launcher.active_importer].installed_version == ''
+        package_state = event.package_states.get(Config.Launcher.active_importer, None)
+        if package_state is None:
+            return
+        not_installed = package_state.installed_version == ''
         self.set_enabled(not_installed)
         self.show(self.stage == Stage.Ready)
 
