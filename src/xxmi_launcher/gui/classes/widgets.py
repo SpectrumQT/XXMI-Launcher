@@ -45,6 +45,7 @@ class UIText(UIWidget, CTkBaseClass):
         UIWidget.__init__(self, master,  **kwargs)
         self.fill = fill
         self.activefill = activefill
+        self.disabledfill = disabledfill
         self._text_id = master.canvas.create_text(0, 0, fill=fill, activefill=activefill, disabledfill=disabledfill,
                                                      justify=justify, state=state, tags=tags, width=width, font=font, **kwargs)
         self.move(x, y)
@@ -67,7 +68,10 @@ class UIText(UIWidget, CTkBaseClass):
         self.master.canvas.itemconfigure(self._text_id, fill=self.fill)
 
     def force_active(self):
-        self.master.canvas.itemconfigure(self._text_id, fill=self.activefill)
+        self.master.canvas.itemconfigure(self._text_id, fill=self.activefill, activefill=self.activefill)
+
+    def force_disabled(self):
+        self.master.canvas.itemconfigure(self._text_id, fill=self.disabledfill, activefill=self.disabledfill)
 
     def bind(self, *args, **kwargs):
         self.master.canvas.tag_bind(self._text_id, *args, **kwargs)
@@ -180,6 +184,7 @@ class UIImageButton(UIWidget, CTkBaseClass):
                  height: int = 48,
                  anchor: str = 'center',
                  command: Callable = None,
+                 disabled: bool = False,
                  # Background Image
                  bg_image_path: Optional[Path] = None,
                  bg_width: int = 64,
@@ -187,9 +192,11 @@ class UIImageButton(UIWidget, CTkBaseClass):
                  bg_normal_opacity: float = 1,
                  bg_hover_opacity: float = 1,
                  bg_selected_opacity: float = 1,
+                 bg_disabled_opacity: float = 1,
                  bg_normal_brightness: float = 1,
                  bg_hover_brightness: float = 1,
                  bg_selected_brightness: float = 1,
+                 bg_disabled_brightness: float = 1,
                  # Button Image
                  button_image_path: Optional[Path] = None,
                  button_x_offset: int = 0,
@@ -197,9 +204,11 @@ class UIImageButton(UIWidget, CTkBaseClass):
                  button_normal_opacity: float = 1,
                  button_hover_opacity: float = 1,
                  button_selected_opacity: float = 1,
+                 button_disabled_opacity: float = 1,
                  button_normal_brightness: float = 1,
                  button_hover_brightness: float = 1,
                  button_selected_brightness: float = 1,
+                 button_disabled_brightness: float = 1,
                  # Text
                  text: str = None,
                  font: str = 'Roboto 14',
@@ -218,6 +227,7 @@ class UIImageButton(UIWidget, CTkBaseClass):
         self.master = master
         self.canvas = master.canvas
         self.command = command
+        self.disabled = disabled
 
         self._bg_image = None
         if bg_image_path is not None:
@@ -227,6 +237,7 @@ class UIImageButton(UIWidget, CTkBaseClass):
             self.bg_apply_normal = lambda: self._bg_image.configure(opacity=bg_normal_opacity, brightness=bg_normal_brightness)
             self.bg_apply_hover = lambda: self._bg_image.configure(opacity=bg_hover_opacity, brightness=bg_hover_brightness)
             self.bg_apply_select = lambda: self._bg_image.configure(opacity=bg_selected_opacity, brightness=bg_selected_brightness)
+            self.bg_apply_disable = lambda: self._bg_image.configure(opacity=bg_disabled_opacity, brightness=bg_disabled_brightness)
 
         self._button_image = None
         if button_image_path is not None:
@@ -236,6 +247,7 @@ class UIImageButton(UIWidget, CTkBaseClass):
             self.button_apply_normal = lambda: self._button_image.configure(opacity=button_normal_opacity, brightness=button_normal_brightness)
             self.button_apply_hover = lambda: self._button_image.configure(opacity=button_hover_opacity, brightness=button_hover_brightness)
             self.button_apply_select = lambda: self._button_image.configure(opacity=button_selected_opacity, brightness=button_selected_brightness)
+            self.button_apply_disable = lambda: self._button_image.configure(opacity=button_disabled_opacity, brightness=button_disabled_brightness)
 
         self._text_image = None
         if text is not None:
@@ -263,16 +275,23 @@ class UIImageButton(UIWidget, CTkBaseClass):
             element.unbind(*args, **kwargs)
 
     def _handle_button_press(self, event):
+        if self.disabled:
+            return
         self.set_selected(True)
 
     def _handle_button_release(self, event):
+        if self.disabled:
+            return
         self.set_selected(False)
         if self.hovered:
             self.command()
 
     def _handle_enter(self, event):
-        self.master.canvas.config(cursor="hand2")
         self.hovered = True
+        if self.disabled:
+            self.set_disabled(self.disabled)
+            return
+        self.master.canvas.config(cursor="hand2")
         if self.selected:
             self.set_selected(self.selected)
         else:
@@ -284,8 +303,11 @@ class UIImageButton(UIWidget, CTkBaseClass):
             self._text_image.force_active()
 
     def _handle_leave(self, event):
-        self.master.canvas.config(cursor="")
         self.hovered = False
+        if self.disabled:
+            self.set_disabled(self.disabled)
+            return
+        self.master.canvas.config(cursor="")
         if self.selected:
             self.set_selected(self.selected)
         else:
@@ -303,6 +325,21 @@ class UIImageButton(UIWidget, CTkBaseClass):
                 self.bg_apply_select()
             if self._button_image:
                 self.button_apply_select()
+        else:
+            if self.hovered:
+                self._handle_enter(None)
+            else:
+                self._handle_leave(None)
+
+    def set_disabled(self, disabled: bool = False):
+        self.disabled = disabled
+        if disabled:
+            if self._bg_image:
+                self.bg_apply_disable()
+            if self._button_image:
+                self.button_apply_disable()
+            if self._text_image:
+                self._text_image.force_disabled()
         else:
             if self.hovered:
                 self._handle_enter(None)
