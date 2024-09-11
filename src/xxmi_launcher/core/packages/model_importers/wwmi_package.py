@@ -168,6 +168,7 @@ class WWMIPackage(ModelImporterPackage):
         if not engine_ini_path.exists():
             raise ValueError('Failed to locate Engine.ini!')
 
+        Events.Fire(Events.Application.VerifyFileAccess(path=engine_ini_path, write=True))
         with open(engine_ini_path, 'r') as f:
             ini = IniHandler(IniHandlerSettings(option_value_spacing=False), f)
 
@@ -197,6 +198,7 @@ class WWMIPackage(ModelImporterPackage):
         for db_path in db_paths:
             # Connect to the database file
             log.debug(f'Connecting {db_path}...')
+            Events.Fire(Events.Application.VerifyFileAccess(path=db_path, write=True))
             connection = sqlite3.connect(db_path)
             cursor = connection.cursor()
             # Fetch existing FPS setting data
@@ -238,6 +240,7 @@ class WWMIPackage(ModelImporterPackage):
         if not wwmi_ini_path.exists():
             raise ValueError('Failed to locate WuWa-Model-Importer.ini!')
 
+        Events.Fire(Events.Application.VerifyFileAccess(path=wwmi_ini_path, write=True))
         with open(wwmi_ini_path, 'r') as f:
             ini = IniHandler(IniHandlerSettings(option_value_spacing=True, ignore_comments=False), f)
 

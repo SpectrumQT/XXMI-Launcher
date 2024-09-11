@@ -129,6 +129,7 @@ class ModelImporterPackage(Package):
 
         ini_path = Config.Active.Importer.importer_path / 'd3dx.ini'
 
+        Events.Fire(Events.Application.VerifyFileAccess(path=ini_path, write=True))
         with open(ini_path, 'r') as f:
             ini = IniHandler(IniHandlerSettings(ignore_comments=False), f)
 

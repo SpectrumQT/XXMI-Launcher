@@ -53,7 +53,10 @@ class InstallerPackage(Package):
         self.move(self.downloaded_asset_path, self.exe_path)
 
     def update_launcher(self):
-        self.validate_files([self.exe_path])
+        try:
+            self.validate_files([self.exe_path])
+        except Exception as e:
+            Events.Fire(Events.Application.Update(packages=['Installer'], force=True, reinstall=True, no_thread=True))
 
         subprocess.Popen([self.exe_path, '--mode', 'Updater', '--dist_dir', str(Paths.App.Root)])
 

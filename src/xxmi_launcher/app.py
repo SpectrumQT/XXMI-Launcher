@@ -144,6 +144,14 @@ class ApplicationEvents:
         confirm_text: str = 'Confirm'
         cancel_text: str = 'Cancel'
 
+    @dataclass
+    class VerifyFileAccess:
+        path: Path
+        abs_path: bool = True
+        read: bool = True
+        write: bool = False
+        exe: bool = False
+
 
 class Application:
     def __init__(self, app_gui: MainWindow):
@@ -214,6 +222,7 @@ class Application:
 
         Events.Fire(Events.Application.LoadImporter(importer_id=Config.Launcher.active_importer))
 
+        Events.Subscribe(Events.Application.VerifyFileAccess, self.handle_verify_file_access)
         Events.Subscribe(Events.Application.Update,
                          lambda event: self.run_as_thread(self.update_manager.update_packages, **event.__dict__))
         Events.Subscribe(Events.Application.CheckForUpdates,
@@ -238,7 +247,9 @@ class Application:
         self.exit()
 
     def auto_update(self, no_install=False):
-        self.update_manager.update_packages(force=self.args.update, no_install=True, silent=True)
+        self.update_manager.update_packages(force=self.args.update, no_install=True, silent=not self.args.update)
+        if self.args.update:
+            self.args.update = False
         if not no_install and self.update_manager.update_available() and Config.Launcher.auto_update:
             self.update_manager.update_packages(force=False, no_install=False, silent=False)
 
@@ -331,6 +342,30 @@ class Application:
             Events.Fire(Events.Application.Close(delay=1000))
         else:
             self.gui.after(1000, Events.Fire, Events.Application.Ready())
+
+    def handle_verify_file_access(self, event: ApplicationEvents.VerifyFileAccess):
+        if event.read:
+            Paths.assert_file_read(event.path, absolute=event.abs_path)
+        if event.write:
+            try:
+                Paths.assert_file_write(event.path)
+            except Paths.FileReadOnlyError:
+                user_requested_flag_remove = self.gui.show_messagebox(Events.Application.ShowDialogue(
+                    modal=True,
+                    screen_center=not self.gui.is_shown(),
+                    lock_master=self.gui.is_shown(),
+                    icon='error-icon.ico',
+                    title='File Read Only Error',
+                    message=f'Failed to write Read Only file {event.path}!\n\n'
+                            f'Press [Confirm] to remove this flag and continue.',
+                ))
+                if user_requested_flag_remove:
+                    Paths.remove_read_only(event.path)
+                    Paths.assert_file_write(event.path)
+                else:
+                    raise ValueError(f'Failed to write critical file: {event.path}!')
+        if event.exe:
+            Paths.assert_file_read(event.path)
 
     def wrap_errors(self, callback, *args, **kwargs):
         try:

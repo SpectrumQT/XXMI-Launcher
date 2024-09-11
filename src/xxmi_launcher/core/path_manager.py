@@ -1,7 +1,73 @@
 import os
+import stat
 
 from pathlib import Path
 from dataclasses import dataclass, fields
+
+
+class PathNotAbsoluteError(Exception):
+    pass
+
+
+class NoReadAccessError(Exception):
+    pass
+
+
+class NoWriteAccessError(Exception):
+    pass
+
+
+class NoExeAccessError(Exception):
+    pass
+
+
+class FileNotFileError(Exception):
+    pass
+
+
+class FileReadOnlyError(Exception):
+    pass
+
+
+class FileNotFound(Exception):
+    pass
+
+
+def is_read_only(file_path):
+    attrs = os.stat(file_path).st_file_attributes
+    return attrs & stat.FILE_ATTRIBUTE_READONLY != 0
+
+
+def remove_read_only(file_path: Path):
+    try:
+        os.chmod(file_path, stat.S_IWUSR | stat.S_IRUSR | stat.S_IRGRP | stat.S_IWGRP | stat.S_IROTH | stat.S_IWOTH)
+    except Exception as e:
+        raise NoWriteAccessError(f'Failed to remove Read Only flag from file {file_path}: {str(e)}!')
+
+
+def assert_file_read(file_path: Path, absolute=True):
+    if not file_path.exists():
+        raise FileNotFound(f"File '{file_path}' does not exist!")
+    if not file_path.is_file():
+        raise FileNotFileError(f"File '{file_path}' is not a file!")
+    if absolute and not file_path.is_absolute():
+        raise PathNotAbsoluteError(f"File path '{file_path}' is not absolute!")
+    if not os.access(file_path, os.R_OK):
+        raise NoReadAccessError(f"Failed to read '{file_path}' file!")
+
+
+def assert_file_write(file_path: Path, absolute=True):
+    assert_file_read(file_path, absolute=absolute)
+    if is_read_only(file_path):
+        raise FileReadOnlyError(f"Failed to write '{file_path}': file is Read Only!")
+    if not os.access(file_path, os.W_OK):
+        raise NoWriteAccessError(f"Failed to write '{file_path}': no write access!")
+
+
+def assert_file_run(file_path: Path, absolute=True):
+    assert_file_read(file_path, absolute=absolute)
+    if not os.access(file_path, os.X_OK):
+        raise NoExeAccessError(f"Failed run '{file_path}': no execute access!")
 
 
 def assert_path(directory_path: Path):
