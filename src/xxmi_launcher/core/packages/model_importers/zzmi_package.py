@@ -1,8 +1,7 @@
 import re
 import os
-import json
-import shutil
 import logging
+import ctypes
 
 from dataclasses import field
 from typing import Dict, Union
@@ -113,7 +112,7 @@ class ZZMIPackage(ModelImporterPackage):
         return game_exe_path
 
     def initialize_game_launch(self, game_path: Path):
-        pass
+        self.update_zzmi_ini()
 
     def get_game_data_path(self):
         player_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'miHoYo' / 'ZenlessZoneZero' / 'Player.log'
@@ -150,6 +149,25 @@ class ZZMIPackage(ModelImporterPackage):
                     data_path = Path(result[0])
                     if data_path.exists():
                         return data_path
+
+    def update_zzmi_ini(self):
+        Events.Fire(Events.Application.StatusUpdate(status='Updating ZZMI main.ini...'))
+
+        zzmi_ini_path = Config.Importers.ZZMI.Importer.importer_path / 'Core' / 'ZZMI' / 'main.ini'
+        if not zzmi_ini_path.exists():
+            raise ValueError('Failed to locate Core/ZZMI/main.ini!')
+
+        Events.Fire(Events.Application.VerifyFileAccess(path=zzmi_ini_path, write=True))
+        with open(zzmi_ini_path, 'r') as f:
+            ini = IniHandler(IniHandlerSettings(option_value_spacing=True, ignore_comments=False), f)
+
+        screen_width, screen_height = ctypes.windll.user32.GetSystemMetrics(0), ctypes.windll.user32.GetSystemMetrics(1)
+        ini.set_option('Constants', 'global $window_width', screen_width)
+        ini.set_option('Constants', 'global $window_height', screen_height)
+
+        if ini.is_modified():
+            with open(zzmi_ini_path, 'w') as f:
+                f.write(ini.to_string())
 
 
 class Version:

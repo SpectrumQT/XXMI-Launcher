@@ -238,7 +238,7 @@ class WWMIPackage(ModelImporterPackage):
 
         wwmi_ini_path = Config.Importers.WWMI.Importer.importer_path / 'Core' / 'WWMI' / 'WuWa-Model-Importer.ini'
         if not wwmi_ini_path.exists():
-            raise ValueError('Failed to locate WuWa-Model-Importer.ini!')
+            raise ValueError('Failed to locate Core/WWMI/WuWa-Model-Importer.ini!')
 
         Events.Fire(Events.Application.VerifyFileAccess(path=wwmi_ini_path, write=True))
         with open(wwmi_ini_path, 'r') as f:
