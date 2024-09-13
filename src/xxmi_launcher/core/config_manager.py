@@ -178,6 +178,10 @@ class AppConfigSecurity:
             if not self.security.verify(Config.Active.Importer.run_post_load_signature, Config.Active.Importer.run_post_load.encode()):
                 wrong_signatures['Run Post Load'] = Config.Active.Importer.run_post_load
 
+        if Config.Active.Importer.extra_libraries:
+            if not self.security.verify(Config.Active.Importer.extra_libraries_signature, Config.Active.Importer.extra_libraries.encode()):
+                wrong_signatures['Extra Libraries'] = Config.Active.Importer.extra_libraries
+
         if len(wrong_signatures) > 0:
             msg = '\n'.join([f'{k}: "{v}"' for k, v in wrong_signatures.items()])
             user_requested_reset = Events.Call(Events.Application.ShowError(
@@ -196,6 +200,8 @@ class AppConfigSecurity:
                     Config.Active.Importer.run_pre_launch = ''
                 if 'Run Post Load' in wrong_signatures:
                     Config.Active.Importer.run_post_load = ''
+                if 'Extra Libraries' in wrong_signatures:
+                    Config.Active.Importer.extra_libraries = ''
             else:
                 self.sign_settings()
 
@@ -210,6 +216,8 @@ class AppConfigSecurity:
             Active.Importer.run_pre_launch_signature = self.security.sign(Active.Importer.run_pre_launch.encode())
         if Active.Importer.run_post_load:
             Active.Importer.run_post_load_signature = self.security.sign(Active.Importer.run_post_load.encode())
+        if Active.Importer.extra_libraries:
+            Active.Importer.extra_libraries_signature = self.security.sign(Active.Importer.extra_libraries.encode())
         if save_config:
             Config.save()
 

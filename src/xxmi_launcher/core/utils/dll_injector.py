@@ -5,6 +5,7 @@ import subprocess
 import ctypes as ct
 import ctypes.wintypes as wt
 
+from typing import List
 from pathlib import Path
 from pyinjector import inject
 
@@ -77,7 +78,7 @@ class DllInjector:
         if not bool(self.hook):
             raise ValueError(f'Hook is NULL for {str(dll_path)}!')
 
-    def wait_for_injection(self, timeout: int = 10) -> bool:
+    def wait_for_injection(self, timeout: int = 15) -> bool:
         if self.dll_path is None:
             raise ValueError(f'Invalid injector usage: dll path is not defined!')
         if self.target_process is None:
@@ -104,7 +105,7 @@ class DllInjector:
         return True
 
 
-def direct_inject(dll_path: Path, process_name: str = None, pid: int = None, start_cmd: list = None, timeout: int = 10):
+def direct_inject(dll_paths: List[Path], process_name: str = None, pid: int = None, start_cmd: list = None, timeout: int = 15):
     if start_cmd:
         subprocess.Popen(start_cmd)
 
@@ -122,7 +123,11 @@ def direct_inject(dll_path: Path, process_name: str = None, pid: int = None, sta
             try:
                 if process.name() == process_name or process.pid == pid:
                     # Exit loop: process is found and waiting for window is not required
-                    inject(process.pid, str(dll_path))
+                    for dll_path in dll_paths:
+                        try:
+                            inject(process.pid, str(dll_path))
+                        except Exception as e:
+                            raise ValueError(f'Failed to inject extra library {dll_path}:\n{str(e)}!\nPlease check Advanced Settings -> Inject Libraries.') from e
                     return process.pid
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 pass

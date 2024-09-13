@@ -5,7 +5,7 @@ import pythoncom
 
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, Union, Dict
+from typing import Optional, Union, Dict, List
 from dataclasses import dataclass, field
 from enum import Enum
 
@@ -53,6 +53,8 @@ class ModelImporterConfig:
     run_post_load: str = ''
     run_post_load_signature: str = ''
     run_post_load_wait: bool = True
+    extra_libraries: str = ''
+    extra_libraries_signature: str = ''
     d3dx_ini: Dict[
         str, Dict[str, Dict[str, Union[str, int, float, Dict[str, Union[str, int, float]]]]]
     ] = field(default_factory=lambda: {})
@@ -68,6 +70,21 @@ class ModelImporterConfig:
     @property
     def theme_path(self) -> Path:
         return Paths.App.Themes / self.launcher_theme
+
+    @property
+    def extra_dll_paths(self) -> List[Path]:
+        dll_paths = []
+        for dll_path in self.extra_libraries.split():
+            dll_path = Path(dll_path.strip())
+            if len(str(dll_path)) == 0:
+                continue
+            if not dll_path.is_absolute():
+                dll_path = Paths.App.Root / dll_path
+            if dll_path.is_file():
+                dll_paths.append(dll_path)
+            else:
+                raise ValueError(f'Failed to inject extra library {dll_path}:\nFile not found!\nPlease check Advanced Settings -> Inject Libraries.')
+        return dll_paths
 
 
 class ModelImporterPackage(Package):

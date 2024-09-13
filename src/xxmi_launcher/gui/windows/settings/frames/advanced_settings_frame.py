@@ -2,8 +2,9 @@ import core.event_manager as Events
 import core.config_manager as Config
 import gui.vars as Vars
 
+from customtkinter import END
 from gui.classes.containers import UIFrame
-from gui.classes.widgets import UIButton, UILabel, UIEntry, UICheckbox
+from gui.classes.widgets import UITextbox, UILabel, UIEntry, UICheckbox
 
 
 class AdvancedSettingsFrame(UIFrame):
@@ -14,23 +15,27 @@ class AdvancedSettingsFrame(UIFrame):
         self.grid_columnconfigure(2, weight=100)
 
         # Update Policy
-        self.put(UpdatePolicyLabel(self)).grid(row=0, column=0, padx=20, pady=(20, 20), sticky='w')
-        self.put(AutoUpdateCheckbox(self)).grid(row=0, column=1, padx=20, pady=(20, 20), sticky='w')
-        self.put(OverwriteIniCheckbox(self)).grid(row=0, column=2, padx=20, pady=(20, 20), sticky='w', columnspan=2)
+        self.put(UpdatePolicyLabel(self)).grid(row=0, column=0, padx=20, pady=(10, 10), sticky='w')
+        self.put(AutoUpdateCheckbox(self)).grid(row=0, column=1, padx=20, pady=(10, 10), sticky='w')
+        self.put(OverwriteIniCheckbox(self)).grid(row=0, column=2, padx=20, pady=(10, 10), sticky='w', columnspan=2)
 
         # Security
-        self.put(SecurityLabel(self)).grid(row=2, column=0, padx=20, pady=(20, 20), sticky='w')
-        self.put(UnsafeModeCheckbox(self)).grid(row=2, column=1, padx=20, pady=(20, 20), sticky='w', columnspan=3)
+        self.put(SecurityLabel(self)).grid(row=2, column=0, padx=20, pady=(10, 10), sticky='w')
+        self.put(UnsafeModeCheckbox(self)).grid(row=2, column=1, padx=20, pady=(10, 10), sticky='w', columnspan=3)
 
         # Pre-Launch Command
-        self.put(RunPreLaunchLabel(self)).grid(row=3, column=0, padx=(20, 0), pady=(20, 20), sticky='w')
-        self.put(RunPreLaunchEntry(self)).grid(row=3, column=1, padx=20, pady=(20, 20), sticky='ew', columnspan=2)
-        self.put(RunPreLaunchWaitCheckbox(self)).grid(row=3, column=3, padx=20, pady=(20, 20), sticky='w')
+        self.put(RunPreLaunchLabel(self)).grid(row=3, column=0, padx=(20, 0), pady=(10, 10), sticky='w')
+        self.put(RunPreLaunchEntry(self)).grid(row=3, column=1, padx=20, pady=(10, 10), sticky='ew', columnspan=2)
+        self.put(RunPreLaunchWaitCheckbox(self)).grid(row=3, column=3, padx=20, pady=(10, 10), sticky='w')
 
         # Post-Load Command
-        self.put(RunPostLoadLabel(self)).grid(row=4, column=0, padx=(20, 0), pady=(20, 20), sticky='w')
-        self.put(RunPostLoadEntry(self)).grid(row=4, column=1, padx=20, pady=(20, 20), sticky='ew', columnspan=2)
-        self.put(RunPostLoadWaitCheckbox(self)).grid(row=4, column=3, padx=20, pady=(20, 20), sticky='w')
+        self.put(RunPostLoadLabel(self)).grid(row=4, column=0, padx=(20, 0), pady=(10, 10), sticky='w')
+        self.put(RunPostLoadEntry(self)).grid(row=4, column=1, padx=20, pady=(10, 10), sticky='ew', columnspan=2)
+        self.put(RunPostLoadWaitCheckbox(self)).grid(row=4, column=3, padx=20, pady=(10, 10), sticky='w')
+
+        # Extra Libraries Injection
+        self.put(InjectLibrariesLabel(self)).grid(row=5, column=0, padx=(20, 0), pady=(10, 10), sticky='w')
+        self.put(InjectLibrariesTextbox(self)).grid(row=5, column=1, padx=20, pady=(10, 10), sticky='ew', columnspan=2)
 
 
 class UpdatePolicyLabel(UILabel):
@@ -181,3 +186,24 @@ class RunPostLoadWaitCheckbox(UICheckbox):
     #         self.configure(state='normal')
     #     else:
     #         self.configure(state='disabled')
+
+
+class InjectLibrariesLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text='Inject Libraries:',
+            font=('Roboto', 16, 'bold'),
+            fg_color='transparent',
+            master=master)
+
+
+class InjectLibrariesTextbox(UITextbox):
+    def __init__(self, master):
+        super().__init__(
+            text_variable=Vars.Active.Importer.extra_libraries,
+            height=80,
+            undo=True,
+            master=master)
+        self.set_tooltip(
+            'List of additional DLL paths to inject into the game process. 1 path per line.')
+

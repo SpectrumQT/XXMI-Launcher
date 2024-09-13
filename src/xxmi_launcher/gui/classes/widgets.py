@@ -4,7 +4,7 @@ from typing import Union, Tuple, List, Dict, Optional, Callable
 from pathlib import Path
 
 from tkinter import Menu, INSERT
-from customtkinter import CTkBaseClass, CTkButton, CTkImage, CTkLabel, CTkProgressBar, CTkEntry, CTkCheckBox
+from customtkinter import CTkBaseClass, CTkButton, CTkImage, CTkLabel, CTkProgressBar, CTkEntry, CTkCheckBox, CTkTextbox
 from customtkinter import END, CURRENT
 from PIL import Image, ImageTk
 
@@ -513,3 +513,26 @@ class UICheckbox(CTkCheckBox, UIWidget):
             self.deselect()
         else:
             raise ValueError(f'Failed to set checkbox to unknown value {value}!')
+
+
+class UITextbox(CTkTextbox, UIWidget):
+    def __init__(self,
+                 master: Union[UIWindow, 'UIFrame'],
+                 text_variable,
+                 **kwargs):
+        UIWidget.__init__(self, master,  **kwargs)
+        CTkTextbox.__init__(self, master, **kwargs)
+        self.text_variable = text_variable
+        self.trace_write(text_variable, self.handle_extra_libraries_update)
+        self.bind('<KeyRelease>', self.handle_on_widget_change)
+
+    def set(self, value):
+        self.delete(1.0, END)
+        self.insert(END, value)
+
+    def handle_on_widget_change(self, event=None):
+        self.text_variable.set(self.get(0.0, END))
+
+    def handle_extra_libraries_update(self, var, val):
+        if val != self.get(0.0, END):
+            self.set(val)

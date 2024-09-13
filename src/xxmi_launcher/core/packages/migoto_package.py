@@ -106,11 +106,17 @@ class MigotoPackage(Package):
 
                 # Start game's exe
                 Events.Fire(Events.Application.StartGameExe(process_name=event.exe_path.name))
-                subprocess.Popen(launch_cmd)
+                dll_paths = Config.Active.Importer.extra_dll_paths
+                if len(dll_paths) == 0:
+                    subprocess.Popen(launch_cmd)
+                else:
+                    pid = direct_inject(dll_paths=dll_paths, process_name=event.exe_path.name, start_cmd=launch_cmd)
+                    if pid == -1:
+                        raise ValueError(f'Failed to inject {str(dll_paths)}!')
 
                 # Wait until 3dmigoto dll gets successfully injected into the game's exe
                 Events.Fire(Events.Application.VerifyHook(library_name=dll_path.name, process_name=event.exe_path.name))
-                injector.wait_for_injection(10)
+                injector.wait_for_injection(15)
 
             finally:
                 if event.use_hook:
@@ -121,12 +127,13 @@ class MigotoPackage(Package):
         else:
             # Use WriteProcessMemory injection method
             Events.Fire(Events.Application.Inject(library_name=dll_path.name, process_name=event.exe_path.name))
-            pid = direct_inject(dll_path=dll_path, process_name=event.exe_path.name, start_cmd=launch_cmd)
+            dll_paths = [dll_path] + Config.Active.Importer.extra_dll_paths
+            pid = direct_inject(dll_paths=dll_paths, process_name=event.exe_path.name, start_cmd=launch_cmd)
             if pid == -1:
                 raise ValueError(f'Failed to inject {dll_path.name}!')
 
         Events.Fire(Events.Application.WaitForProcess(process_name=event.exe_path.name))
-        result, pid = wait_for_process(event.exe_path.name, with_window=True, timeout=10)
+        result, pid = wait_for_process(event.exe_path.name, with_window=True, timeout=30)
         if result == WaitResult.Timeout:
             raise ValueError(f'Failed to start {event.exe_path.name}!')
 
