@@ -486,8 +486,9 @@ if __name__ == '__main__':
         log_name = root_path.name
 
     # import binascii
+    # arr = []
     # bytestring = binascii.unhexlify(''.join(arr))
-    # test = b.decode("ascii")
+    # test = bytestring.decode("ascii")
 
     Paths.initialize(root_path)
 

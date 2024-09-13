@@ -189,7 +189,7 @@ class GIMIPackage(ModelImporterPackage):
         # Read bytes till the first null byte as settings ascii string
         null_byte_pos = settings_bytes.find(b'\x00')
         if null_byte_pos == -1:
-            raise ValueError('Unknown Settings format: Binary data is not null-terminated!')
+            log.debug(f'Binary record GENERAL_DATA_h2389025596 is not null-terminated!')
         settings_str = settings_bytes[:null_byte_pos].decode('ascii')
 
         # Load settings string to dict
