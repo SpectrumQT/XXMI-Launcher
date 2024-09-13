@@ -55,8 +55,16 @@ class ApplicationEvents:
         pass
 
     @dataclass
+    class RunPreLaunch:
+        cmd: str = ''
+
+    @dataclass
     class Launch:
         pass
+
+    @dataclass
+    class RunPostLoad:
+        cmd: str = ''
 
     @dataclass
     class StatusUpdate:
@@ -331,6 +339,7 @@ class Application:
         try:
             # Execute specified shell command before game start
             if Config.Active.Importer.run_pre_launch != '':
+                Events.Fire(Events.Application.RunPreLaunch(cmd=Config.Active.Importer.run_pre_launch))
                 process = subprocess.Popen(Config.Active.Importer.run_pre_launch, shell=True)
                 if Config.Active.Importer.run_pre_launch_wait:
                     process.wait()
@@ -340,6 +349,7 @@ class Application:
 
             # Execute specified shell command after successful injection
             if Config.Active.Importer.run_post_load != '':
+                Events.Fire(Events.Application.RunPostLoad(cmd=Config.Active.Importer.run_post_load))
                 process = subprocess.Popen(Config.Active.Importer.run_post_load, shell=True)
                 if Config.Active.Importer.run_post_load_wait:
                     process.wait()

@@ -229,9 +229,8 @@ class WWMIPackage(ModelImporterPackage):
         Events.Fire(Events.Application.StatusUpdate(status='Disabling Streamline plugin...'))
 
         plugin_backups_path = Paths.App.Backups / 'Plugins'
-        plugin_backups_path.mkdir(parents=True, exist_ok=True)
 
-        shutil.move(streamline_path, plugin_backups_path)
+        self.move_contents(streamline_path, plugin_backups_path)
 
     def update_wwmi_ini(self):
         Events.Fire(Events.Application.StatusUpdate(status='Updating WuWa-Model-Importer.ini...'))

@@ -180,7 +180,7 @@ class Package:
         if not manifest_path.is_file():
             self.write_manifest(asset_path, self.cfg.latest_version, self.signature)
         else:
-            shutil.move(manifest_path, self.package_path / manifest_path.name)
+            self.move(manifest_path, self.package_path / manifest_path.name)
 
     def install_latest_version(self, clean):
         raise NotImplementedError(f'Method "install_latest_version" is not implemented for package {self.metadata.package_name}!')
@@ -245,6 +245,10 @@ class Package:
 
     def move(self, source_path: Path, destination_path: Path):
         Events.Fire(Events.PackageManager.StartFileMove(asset_name=source_path.name))
+        if destination_path.exists():
+            time.sleep(0.1)
+            destination_path.unlink()
+        time.sleep(0.1)
         shutil.move(source_path, destination_path)
 
     def move_contents(self, source_path: Path, destination_path: Path):
@@ -254,6 +258,7 @@ class Package:
                 self.move(src_path, destination_path / src_path.name)
             else:
                 self.move_contents(src_path, destination_path / src_path.name)
+        time.sleep(0.1)
         shutil.rmtree(source_path)
 
     def get_file_version(self, file_path, max_parts=4):
