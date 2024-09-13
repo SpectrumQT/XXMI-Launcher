@@ -107,10 +107,13 @@ class LeftStatusText(UIText):
             lambda event: f'Initializing game launch...')
         self.subscribe_set(
             Events.Application.SetupHook,
-            lambda event: f'Loading {event.library_name}...')
+            lambda event: f'Hooking {event.library_name} to {event.process_name}...')
         self.subscribe_set(
             Events.Application.VerifyHook,
             lambda event: f'Verifying {event.library_name} load into {event.process_name}...')
+        self.subscribe_set(
+            Events.Application.Inject,
+            lambda event: f'Injecting {event.library_name} to {event.process_name}...')
         self.subscribe_set(
             Events.Application.StartGameExe,
             lambda event: f'Launching game...')

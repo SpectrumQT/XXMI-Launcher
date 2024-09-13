@@ -22,6 +22,9 @@ from core.package_manager import PackageManager
 from core.packages.installer_package import InstallerPackage
 from core.packages.launcher_package import LauncherPackage
 from core.packages.migoto_package import MigotoPackage
+from core.packages.genshin_fps_unlock_package import GenshinFpsUnlockerPackage
+from core.packages.model_importers.gimi_package import GIMIPackage
+from core.packages.model_importers.srmi_package import SRMIPackage
 from core.packages.model_importers.wwmi_package import WWMIPackage
 from core.packages.model_importers.zzmi_package import ZZMIPackage
 
@@ -97,6 +100,12 @@ class ApplicationEvents:
     @dataclass
     class SetupHook:
         library_name: str
+        process_name: str
+
+    @dataclass
+    class Inject:
+        library_name: str
+        process_name: str
 
     @dataclass
     class WaitForProcess:
@@ -187,6 +196,9 @@ class Application:
             InstallerPackage(),
             LauncherPackage(),
             MigotoPackage(),
+            GenshinFpsUnlockerPackage(),
+            GIMIPackage(),
+            SRMIPackage(),
             WWMIPackage(),
             ZZMIPackage(),
         ]

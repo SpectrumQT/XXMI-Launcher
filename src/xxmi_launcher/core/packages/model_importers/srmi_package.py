@@ -2,6 +2,8 @@ import re
 import os
 import logging
 import ctypes
+import winreg
+import json
 
 from dataclasses import field
 from typing import Dict, Union
@@ -25,8 +27,8 @@ log = logging.getLogger(__name__)
 
 
 @dataclass
-class ZZMIConfig(ModelImporterConfig):
-    importer_folder: str = 'ZZMI/'
+class SRMIConfig(ModelImporterConfig):
+    importer_folder: str = 'SRMI/'
     launcher_theme: str = 'Default'
     launch_options: str = ''
     d3dx_ini: Dict[
@@ -34,7 +36,7 @@ class ZZMIConfig(ModelImporterConfig):
     ] = field(default_factory=lambda: {
         'core': {
             'Loader': {
-                'target': 'ZenlessZoneZero.exe',
+                'target': 'StarRail.exe',
                 'loader': 'XXMI Launcher.exe',
             },
             'Rendering': {
@@ -68,22 +70,23 @@ class ZZMIConfig(ModelImporterConfig):
             },
         },
     })
+    unlock_fps: bool = False
 
 
 @dataclass
-class ZZMIPackageConfig:
-    Importer: ZZMIConfig = field(
-        default_factory=lambda: ZZMIConfig()
+class SRMIPackageConfig:
+    Importer: SRMIConfig = field(
+        default_factory=lambda: SRMIConfig()
     )
     Migoto: MigotoManagerConfig = field(
         default_factory=lambda: MigotoManagerConfig()
     )
 
 
-class ZZMIPackage(ModelImporterPackage):
+class SRMIPackage(ModelImporterPackage):
     def __init__(self):
         super().__init__(PackageMetadata(
-            package_name='ZZMI',
+            package_name='SRMI',
             auto_load=False,
             github_repo_owner='leotorrez',
             github_repo_name='ZZMI-TEST',
@@ -92,12 +95,12 @@ class ZZMIPackage(ModelImporterPackage):
             signature_pattern=r'^## Signature[\r\n]+- ((?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{4}|[A-Za-z0-9+\/]{3}=|[A-Za-z0-9+\/]{2}={2})$)',
             signature_public_key='MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEb11GjbKQS6SmRe8TcIc5VMu5Ob3moo5v2YeD+s53xEe4bVPGcToUNLu3Jgqo0OwWZ4RsNy1nR0HId6pR09HedyEMifxebsyPT3T5PH82QozEXHQlTDySklWUfGItoOdf',
             exit_after_update=False,
-            installation_path='ZZMI/',
+            installation_path='SRMI/',
         ))
 
     def get_installed_version(self):
         try:
-            return str(Version(Config.Importers.ZZMI.Importer.importer_path / 'Core' / 'ZZMI' / 'main.ini'))
+            return str(Version(Config.Importers.SRMI.Importer.importer_path / 'Core' / 'ZZMI' / 'main.ini'))
         except Exception as e:
             return ''
 
@@ -106,28 +109,31 @@ class ZZMIPackage(ModelImporterPackage):
         return Path(str(data_path.parent).replace('\\', '/'))
 
     def validate_game_exe_path(self, game_path: Path) -> Path:
-        game_exe_path = game_path / 'ZenlessZoneZero.exe'
+        game_exe_path = game_path / 'StarRail.exe'
         if not game_exe_path.is_file():
             raise ValueError(f'Game executable {game_exe_path} does not exist!')
         return game_exe_path
 
     def initialize_game_launch(self, game_path: Path):
-        self.update_zzmi_ini()
+        self.update_srmi_ini()
+        if Config.Importers.SRMI.Importer.unlock_fps:
+            self.unlock_fps()
+        self.use_hook = False
 
     def get_game_data_path(self):
-        player_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'miHoYo' / 'ZenlessZoneZero' / 'Player.log'
+        player_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'Cognosphere' / 'Star Rail' / 'Player.log'
 
         # WwiseUnity: Setting Plugin DLL path to: C:/Games/ZenlessZoneZero Game/ZenlessZoneZero_Data\Plugins\x86_64
         # [Subsystems] Discovering subsystems at path C:/Games/ZenlessZoneZero Game/ZenlessZoneZero_Data/UnitySubsystems
-        subsystems_pattern = re.compile(r'([a-zA-Z]:[^:]*)(?:Plugins|UnitySubsystems)')
-        data_path = self.find_in_file(subsystems_pattern, player_log_path)
+        path_pattern = re.compile(r'([a-zA-Z]:[^:]*)(?:Plugins|UnitySubsystems)')
+        data_path = self.find_in_file(path_pattern, player_log_path)
         if data_path is not None:
             return data_path
 
-        output_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'miHoYo' / 'ZenlessZoneZero' / 'output_log.txt'
+        output_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'Cognosphere' / 'Star Rail' / 'output_log.txt'
 
         # [0704/170821.845:INFO:API.cpp(331)] zfb_init: Using --apm_config={"astrolabePath":"Astrolabe.dll","reportPath":"C:\\Games\\ZenlessZoneZero Game\\ZenlessZoneZero_Data\\SDKCaches\\webview","logLevel":2"}
-        report_path_pattern = re.compile(r'([a-zA-Z]:[^:]*)SDKCaches"')
+        report_path_pattern = re.compile(r'([a-zA-Z]:[^:]*)webCaches"')
         data_path = self.find_in_file(report_path_pattern, output_log_path)
         if data_path is not None:
             return data_path
@@ -145,15 +151,15 @@ class ZZMIPackage(ModelImporterPackage):
                     if data_path.exists():
                         return data_path
 
-    def update_zzmi_ini(self):
-        Events.Fire(Events.Application.StatusUpdate(status='Updating ZZMI main.ini...'))
+    def update_srmi_ini(self):
+        Events.Fire(Events.Application.StatusUpdate(status='Updating SRMI main.ini...'))
 
-        zzmi_ini_path = Config.Importers.ZZMI.Importer.importer_path / 'Core' / 'ZZMI' / 'main.ini'
-        if not zzmi_ini_path.exists():
+        srmi_ini_path = Config.Importers.SRMI.Importer.importer_path / 'Core' / 'ZZMI' / 'main.ini'
+        if not srmi_ini_path.exists():
             raise ValueError('Failed to locate Core/ZZMI/main.ini!')
 
-        Events.Fire(Events.Application.VerifyFileAccess(path=zzmi_ini_path, write=True))
-        with open(zzmi_ini_path, 'r') as f:
+        Events.Fire(Events.Application.VerifyFileAccess(path=srmi_ini_path, write=True))
+        with open(srmi_ini_path, 'r') as f:
             ini = IniHandler(IniHandlerSettings(option_value_spacing=True, ignore_comments=False), f)
 
         screen_width, screen_height = ctypes.windll.user32.GetSystemMetrics(0), ctypes.windll.user32.GetSystemMetrics(1)
@@ -161,18 +167,47 @@ class ZZMIPackage(ModelImporterPackage):
         ini.set_option('Constants', 'global $window_height', screen_height)
 
         if ini.is_modified():
-            with open(zzmi_ini_path, 'w') as f:
+            with open(srmi_ini_path, 'w') as f:
                 f.write(ini.to_string())
+
+    def unlock_fps(self):
+        # Open HSR registry key
+        settings_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, 'Software\\Cognosphere\\Star Rail', 0, winreg.KEY_ALL_ACCESS)
+        # Read binary Graphics Settings key
+        (settings_bytes, regtype) = winreg.QueryValueEx(settings_key, 'GraphicsSettings_Model_h2986158309')
+        if regtype != winreg.REG_BINARY:
+            raise ValueError(f'Unknown Graphics Settings format: Data type {regtype} is not {winreg.REG_BINARY} of REG_BINARY!')
+        # Read bytes till the first null byte as settings ascii string
+        null_byte_pos = settings_bytes.find(b'\x00')
+        if null_byte_pos == -1:
+            raise ValueError('Unknown Graphics Settings format: Binary data is not null-terminated!')
+        settings_str = settings_bytes[:null_byte_pos].decode('ascii')
+        # Load settings string to dict
+        settings_dict = json.loads(settings_str)
+        # Ensure settings dict has known keys
+        if 'FPS' not in settings_dict:
+            raise ValueError('Unknown Graphics Settings format: "FPS" key no found!')
+        # Exit early if FPS is already set to 120
+        if settings_dict['FPS'] == 120:
+            return
+        # Set new settings
+        settings_dict['FPS'] = 120
+        # Serialize settings dict back to string
+        settings_str = json.dumps(settings_dict, separators=(',', ':'))
+        # Encode settings string as ascii bytes and terminate it with null
+        settings_bytes = bytes(settings_str.encode('ascii')) + b'\x00'
+        # Write encoded settings back to registry
+        winreg.SetValueEx(settings_key, 'GraphicsSettings_Model_h2986158309', None, regtype, settings_bytes)
 
 
 class Version:
-    def __init__(self, zzmi_ini_path):
-        self.zzmi_ini_path = zzmi_ini_path
+    def __init__(self, srmi_ini_path):
+        self.srmi_ini_path = srmi_ini_path
         self.version = None
         self.parse_version()
 
     def parse_version(self):
-        with open(self.zzmi_ini_path, "r") as f:
+        with open(self.srmi_ini_path, "r") as f:
 
             version_pattern = re.compile(r'^global \$version = (\d+)\.*(\d)(\d*)')
 
@@ -189,13 +224,13 @@ class Version:
                     result.append(0)
 
                 if len(result) != 3:
-                    raise ValueError(f'Malformed ZZMI version!')
+                    raise ValueError(f'Malformed SRMI version!')
 
                 self.version = result
 
                 return
 
-        raise ValueError(f'Failed to locate ZZMI version!')
+        raise ValueError(f'Failed to locate SRMI version!')
 
     def __str__(self) -> str:
         return f'{self.version[0]}.{self.version[1]}.{self.version[2]}'

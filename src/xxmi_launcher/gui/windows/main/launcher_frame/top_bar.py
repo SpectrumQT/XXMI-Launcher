@@ -27,6 +27,8 @@ class TopBarFrame(UIFrame):
 
         self.put(LoadWWMIButton(self))
         self.put(LoadZZMIButton(self))
+        self.put(LoadSRMIButton(self))
+        self.put(LoadGIMIButton(self))
 
         self.put(GameBananaButton(self))
         self.put(DiscordButton(self))
@@ -74,6 +76,7 @@ class ImporterSelectButton(UIImageButton):
 class LoadWWMIButton(ImporterSelectButton):
     def __init__(self, master):
         super().__init__(
+            x=40,
             button_image_path='button-select-game-wwmi.png',
             command=lambda: Events.Fire(Events.Application.LoadImporter(importer_id='WWMI')),
             master=master)
@@ -93,6 +96,32 @@ class LoadZZMIButton(ImporterSelectButton):
         self.subscribe(Events.Application.LoadImporter,
                        lambda event: self.set_selected(event.importer_id == 'ZZMI'))
         self.set_tooltip(f'Zenless Zone Zero Model Importer', delay=0.5)
+
+
+class LoadSRMIButton(ImporterSelectButton):
+    def __init__(self, master):
+        super().__init__(
+            x=200,
+            button_image_path='button-select-game-srmi.png',
+            command=lambda: Events.Fire(Events.Application.LoadImporter(importer_id='SRMI')),
+            master=master)
+
+        self.subscribe(Events.Application.LoadImporter,
+                       lambda event: self.set_selected(event.importer_id == 'SRMI'))
+        self.set_tooltip(f'Honkai: Star Rail Model Importer', delay=0.5)
+
+
+class LoadGIMIButton(ImporterSelectButton):
+    def __init__(self, master):
+        super().__init__(
+            x=280,
+            button_image_path='button-select-game-gimi.png',
+            command=lambda: Events.Fire(Events.Application.LoadImporter(importer_id='GIMI')),
+            master=master)
+
+        self.subscribe(Events.Application.LoadImporter,
+                       lambda event: self.set_selected(event.importer_id == 'GIMI'))
+        self.set_tooltip(f'Genshin Impact Model Importer', delay=0.5)
 
 # endregion
 
@@ -134,6 +163,10 @@ class GameBananaButton(WebResourceButton):
             webbrowser.open('https://gamebanana.com/tools/17252'),
         elif Config.Launcher.active_importer == 'ZZMI':
             webbrowser.open('https://gamebanana.com/tools/17467'),
+        elif Config.Launcher.active_importer == 'SRMI':
+            webbrowser.open('https://gamebanana.com/tools/13050'),
+        elif Config.Launcher.active_importer == 'GIMI':
+            webbrowser.open('https://gamebanana.com/tools/10093'),
 
 
 class DiscordButton(WebResourceButton):

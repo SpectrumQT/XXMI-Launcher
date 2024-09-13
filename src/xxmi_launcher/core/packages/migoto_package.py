@@ -1,10 +1,8 @@
 import logging
-import re
 import shutil
 import subprocess
 import json
 
-from datetime import datetime
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -15,6 +13,7 @@ import core.config_manager as Config
 from core.package_manager import Package, PackageMetadata
 
 from core.utils.dll_injector import DllInjector
+from core.utils.process_tracker import wait_for_process, WaitResult
 
 log = logging.getLogger(__name__)
 
@@ -29,6 +28,8 @@ class MigotoManagerEvents:
     @dataclass
     class StartAndInject:
         exe_path: Path
+        start_cmd: str
+        use_hook: bool = True
 
 
 @dataclass
@@ -92,25 +93,42 @@ class MigotoPackage(Package):
 
         Events.Fire(Events.Application.Busy())
 
-        injector = DllInjector(self.package_path / '3dmloader.dll')
+        dll_path = Config.Active.Importer.importer_path / 'd3d11.dll'
+        launch_cmd = event.start_cmd.split() + Config.Active.Importer.launch_options.split()
 
-        try:
-            # Setup global windows hook for 3dmigoto dll
-            Events.Fire(Events.Application.SetupHook(library_name='d3d11.dll'))
-            injector.hook_library(Config.Active.Importer.importer_path / 'd3d11.dll', event.exe_path.name)
+        if event.use_hook:
+            # Use SetWindowsHookEx injection method
+            injector = DllInjector(self.package_path / '3dmloader.dll')
+            try:
+                # Setup global windows hook for 3dmigoto dll
+                Events.Fire(Events.Application.SetupHook(library_name=dll_path.name, process_name=event.exe_path.name))
+                injector.hook_library(dll_path, event.exe_path.name)
 
-            # Start game's exe
-            Events.Fire(Events.Application.StartGameExe(process_name=event.exe_path.name))
-            subprocess.Popen([event.exe_path] + Config.Active.Importer.launch_options.split())
+                # Start game's exe
+                Events.Fire(Events.Application.StartGameExe(process_name=event.exe_path.name))
+                subprocess.Popen(launch_cmd)
 
-            # Wait until 3dmigoto dll gets successfully injected into the game's exe
-            Events.Fire(Events.Application.VerifyHook(library_name='d3d11.dll', process_name=event.exe_path.name))
-            injector.wait_for_injection(10)
+                # Wait until 3dmigoto dll gets successfully injected into the game's exe
+                Events.Fire(Events.Application.VerifyHook(library_name=dll_path.name, process_name=event.exe_path.name))
+                injector.wait_for_injection(10)
 
-        finally:
-            # Remove global hook to free system resources
-            injector.unhook_library()
-            injector.unload()
+            finally:
+                if event.use_hook:
+                    # Remove global hook to free system resources
+                    injector.unhook_library()
+                injector.unload()
+
+        else:
+            # Use WriteProcessMemory injection method
+            Events.Fire(Events.Application.Inject(library_name=dll_path.name, process_name=event.exe_path.name))
+            result, pid = wait_for_process(event.exe_path.name, timeout=10, cmd=launch_cmd, inject_dll=dll_path)
+            if result == WaitResult.Timeout:
+                raise ValueError(f'Failed to inject {dll_path.name}!')
+
+        Events.Fire(Events.Application.WaitForProcess(process_name=event.exe_path.name))
+        result, pid = wait_for_process(event.exe_path.name, with_window=True, timeout=10)
+        if result == WaitResult.Timeout:
+            raise ValueError(f'Failed to start {event.exe_path.name}!')
 
     def restore_package_files(self, e: Exception, validate=False):
         user_requested_restore = Events.Call(Events.Application.ShowError(

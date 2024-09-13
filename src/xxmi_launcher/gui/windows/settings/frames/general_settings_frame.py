@@ -34,6 +34,8 @@ class GeneralSettingsFrame(UIFrame):
         if Vars.Launcher.active_importer.get() == 'WWMI':
             self.put(ApplyTweaksCheckbox(self)).grid(row=3, column=1, padx=20, pady=(10, 20), sticky='w', columnspan=2)
             self.put(OpenEngineIniButton(self)).grid(row=3, column=1, padx=(260, 0), pady=(10, 20), sticky='w', columnspan=2)
+
+        if Vars.Launcher.active_importer.get() in ['WWMI', 'SRMI', 'GIMI']:
             self.put(UnlockFPSCheckbox(self)).grid(row=4, column=1, padx=20, pady=(10, 20), sticky='w', columnspan=2)
 
 
@@ -72,17 +74,23 @@ class GameFolderEntry(UIEntry):
     def get_tooltip(self):
         msg = ''
         if Config.Launcher.active_importer == 'WWMI':
-            msg = 'Path to folder with "Client" and "Engine" subfolders and "ZenlessZoneZero.exe".\n'
+            msg = 'Path to folder with "Wuthering Waves.exe" and "Client" & "Engine" subfolders.\n'
             msg += 'Usually this folder is named "Wuthering Waves Game" and located inside WuWa installation folder.'
         if Config.Launcher.active_importer == 'ZZMI':
             msg = 'Path to folder with "ZenlessZoneZero.exe".'
+        if Config.Launcher.active_importer == 'SRMI':
+            msg = 'Path to folder with "StarRail.exe".'
+            msg += 'Usually this folder is named "Games" and located inside "DATA" folder of HSR installation folder.'
+        if Config.Launcher.active_importer == 'GIMI':
+            msg = 'Path to folder with "GenshinImpact.exe".'
+            msg += 'Usually this folder is named "Genshin Impact game" and located inside "DATA" folder of GI installation folder.'
         return msg.strip()
 
 
 class GameFolderErrorLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Folder must contain Client and Engine folders!',
+            text='Failed to detect Game Folder!',
             font=('Roboto', 16, 'bold'),
             text_color='red',
             fg_color='transparent',
@@ -204,7 +212,24 @@ class UnlockFPSCheckbox(UICheckbox):
             text='Force 120 FPS',
             variable=Vars.Active.Importer.unlock_fps,
             master=master)
-        self.set_tooltip(
-            'This option allows to set FPS limit to 120 even on not officially supported devices.\n'
-            'Enabled: Sets KeyCustomFrameRate to 120 in LocalStorage.db on game start.\n'
-            'Disabled: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.')
+        self.set_tooltip(self.get_tooltip)
+
+    def get_tooltip(self):
+        msg = ''
+        if Config.Launcher.active_importer == 'WWMI':
+            msg = 'This option allows to set FPS limit to 120 even on not officially supported devices.\n'
+            msg += '* Enabled: Sets KeyCustomFrameRate to 120 in LocalStorage.db on game start.\n'
+            msg += '* Disabled: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.'
+        if Config.Launcher.active_importer == 'SRMI':
+            msg = 'This option allows to set FPS limit to 120.\n'
+            msg += '* Enabled: Updates Graphics Settings Windows Registry key with 120 FPS value on game start.\n'
+            msg += '* Disabled: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.'
+            msg += 'Note: Edits "FPS" value in "HKEY_CURRENT_USER\SOFTWARE\Cognosphere\Star Rail\GraphicsSettings_Model_h2986158309".'
+        if Config.Launcher.active_importer == 'GIMI':
+            msg = 'This option allows to force 120 FPS mode.\n'
+            msg += '* Enabled: Launch game via "unlockfps_nc.exe" and let it run in background to continuously apply FPS limit tweak.\n'
+            msg += '* Disabled: Launch game via original "GenshinImpact.exe", has no effect on FPS.\n'
+            msg += 'Hint: If FPS Unlocker package is outdated, you can manually update "unlockfps_nc.exe" from original repository.\n'
+            msg += '* Local Path: Resources/Packages/GI-FPS-Unlocker/unlockfps_nc.exe\n'
+            msg += '* Original Repository: https://github.com/34736384/genshin-fps-unlock'
+        return msg.strip()

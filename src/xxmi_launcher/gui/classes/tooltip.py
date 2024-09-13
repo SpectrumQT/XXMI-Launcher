@@ -8,4 +8,4 @@ class UIToolTip(ToolTip):
                    'parent_kwargs': {"bg": "black", "padx": 1, "pady": 1}}
         default.update(kwargs)
         ToolTip.__init__(self, master, **default)
-
+        self.message_widget.config(font=('Asap', 12))

@@ -13,12 +13,16 @@ import core.event_manager as Events
 from core.utils.security import Security
 from core import package_manager
 from core.packages import launcher_package
+from core.packages.model_importers import gimi_package
+from core.packages.model_importers import srmi_package
 from core.packages.model_importers import wwmi_package
 from core.packages.model_importers import zzmi_package
 
 
 @dataclass
 class ImportersConfig:
+    GIMI: gimi_package.GIMIPackageConfig = field(default_factory=lambda: gimi_package.GIMIPackageConfig())
+    SRMI: srmi_package.SRMIPackageConfig = field(default_factory=lambda: srmi_package.SRMIPackageConfig())
     WWMI: wwmi_package.WWMIPackageConfig = field(default_factory=lambda: wwmi_package.WWMIPackageConfig())
     ZZMI: zzmi_package.ZZMIPackageConfig = field(default_factory=lambda: zzmi_package.ZZMIPackageConfig())
 
@@ -47,7 +51,8 @@ class AppConfig:
     # Active: Optional[WWMIConfig] = field(init=False, default=None)
 
     @property
-    def Active(self) -> Union[wwmi_package.WWMIPackageConfig, zzmi_package.ZZMIPackageConfig]:
+    def Active(self) -> Union[gimi_package.GIMIPackageConfig, srmi_package.SRMIPackageConfig,
+                              zzmi_package.ZZMIPackageConfig, wwmi_package.WWMIPackageConfig]:
         global Active
         return Active
 
@@ -216,7 +221,8 @@ ConfigSecurity: AppConfigSecurity = AppConfigSecurity()
 Launcher: launcher_package.LauncherManagerConfig
 Packages: package_manager.PackageManagerConfig
 Importers: ImportersConfig
-Active: Union[wwmi_package.WWMIPackageConfig, zzmi_package.ZZMIPackageConfig]
+Active: Union[gimi_package.GIMIPackageConfig, srmi_package.SRMIPackageConfig,
+              wwmi_package.WWMIPackageConfig, zzmi_package.ZZMIPackageConfig]
 
 
 def get_resource_path(element):

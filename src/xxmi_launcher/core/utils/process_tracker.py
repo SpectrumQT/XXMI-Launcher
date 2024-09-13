@@ -1,9 +1,11 @@
 import time
 import psutil
+import subprocess
 
 from typing import Tuple
 from enum import Enum
 from multiprocessing import Process, Value
+from pyinjector import inject
 
 import win32gui
 import win32process
@@ -39,8 +41,8 @@ class WaitResult(Enum):
     Terminated = -300
 
 
-def wait_for_process(process_name, timeout=10, with_window=False) -> Tuple[WaitResult, int]:
-    process = ProcessWaiter(process_name, timeout, with_window)
+def wait_for_process(process_name, timeout=10, with_window=False, cmd=None, inject_dll=None) -> Tuple[WaitResult, int]:
+    process = ProcessWaiter(process_name, timeout, with_window, cmd=cmd, inject_dll=inject_dll)
     process.start()
     process.join()
     result = int(process.data.value)
@@ -84,16 +86,21 @@ class ProcessWaiter(Process):
     -200: timeout reached
     -300: process terminated after kill_timeout
     """
-    def __init__(self, process_name, timeout=-1, with_window=False, wait_exit=False, kill_timeout=-1):
+    def __init__(self, process_name, timeout=-1, with_window=False, wait_exit=False, kill_timeout=-1, cmd=None, inject_dll=None):
         Process.__init__(self)
         self.process_name = process_name
         self.timeout = int(timeout)
         self.with_window = with_window
         self.wait_exit = wait_exit
         self.kill_timeout = kill_timeout
+        self.cmd = cmd
+        self.inject_dll = inject_dll
         self.data = Value('i', -100)
 
     def run(self):
+
+        if self.cmd:
+            subprocess.Popen(self.cmd)
 
         time_start = time.time()
 
@@ -114,9 +121,13 @@ class ProcessWaiter(Process):
                     # We're in wait-for-process-spawn mode
                     if not self.with_window:
                         # Exit loop: process is found and waiting for window is not required
+                        if self.inject_dll:
+                            inject(process.pid, str(self.inject_dll))
                         return
                     elif len(get_hwnds_for_pid(self.data.value)) != 0:
                         # Exit loop: process is found and window is also found
+                        if self.inject_dll:
+                            inject(process.pid, str(self.inject_dll))
                         return
 
                 # Start process termination attempts once kill_timeout is reached

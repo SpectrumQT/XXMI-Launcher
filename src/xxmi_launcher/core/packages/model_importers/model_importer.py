@@ -49,10 +49,10 @@ class ModelImporterConfig:
     overwrite_ini: bool = True
     run_pre_launch: str = ''
     run_pre_launch_signature: str = ''
-    run_pre_launch_wait: bool = False
+    run_pre_launch_wait: bool = True
     run_post_load: str = ''
     run_post_load_signature: str = ''
-    run_post_load_wait: bool = False
+    run_post_load_wait: bool = True
     d3dx_ini: Dict[
         str, Dict[str, Dict[str, Union[str, int, float, Dict[str, Union[str, int, float]]]]]
     ] = field(default_factory=lambda: {})
@@ -74,6 +74,7 @@ class ModelImporterPackage(Package):
     def __init__(self, metadata: PackageMetadata):
         super().__init__(metadata)
         self.backups_path = None
+        self.use_hook: bool = True
 
     def load(self):
         self.subscribe(Events.ModelImporter.StartGame, self.start_game)
@@ -172,6 +173,9 @@ class ModelImporterPackage(Package):
     def validate_game_exe_path(self, game_path: Path) -> Path:
         raise NotImplementedError
 
+    def get_start_cmd(self, game_path: Path) -> str:
+        return f'{self.validate_game_exe_path(game_path)}'
+
     def start_game(self, event):
         # Ensure package integrity
         self.validate_package_files()
@@ -194,7 +198,10 @@ class ModelImporterPackage(Package):
         # Execute initialization sequence of implemented importer
         self.initialize_game_launch(game_path)
 
-        Events.Fire(Events.MigotoManager.StartAndInject(exe_path=game_exe_path))
+        start_cmd = self.get_start_cmd(game_path)
+
+        Events.Fire(Events.MigotoManager.StartAndInject(exe_path=game_exe_path, start_cmd=start_cmd,
+                                                        use_hook=self.use_hook))
 
     def autodetect_game_folder(self) -> Path:
         raise NotImplementedError
