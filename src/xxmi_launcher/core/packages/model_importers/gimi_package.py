@@ -179,9 +179,12 @@ class GIMIPackage(ModelImporterPackage):
         settings_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, 'SOFTWARE\\miHoYo\\Genshin Impact', 0, winreg.KEY_ALL_ACCESS)
 
         # Read binary Graphics Settings key
-        (settings_bytes, regtype) = winreg.QueryValueEx(settings_key, 'GENERAL_DATA_h2389025596')
-        if regtype != winreg.REG_BINARY:
-            raise ValueError(f'Unknown Settings format: Data type {regtype} is not {winreg.REG_BINARY} of REG_BINARY!')
+        try:
+            (settings_bytes, regtype) = winreg.QueryValueEx(settings_key, 'GENERAL_DATA_h2389025596')
+            if regtype != winreg.REG_BINARY:
+                raise ValueError(f'Unknown Settings format: Data type {regtype} is not {winreg.REG_BINARY} of REG_BINARY!')
+        except FileNotFoundError:
+            raise ValueError('Graphics Settings are not found!\n\nPlease start the game once with official launcher!')
 
         # Read bytes till the first null byte as settings ascii string
         null_byte_pos = settings_bytes.find(b'\x00')
@@ -212,26 +215,23 @@ class GIMIPackage(ModelImporterPackage):
                     entry['value'] = 1
                     settings_updated = True
         if not found:
-            raise ValueError(f'Failed to locate DCR setting in graphicsData/customVolatileGrades!')
+            custom_volatile_grades.append({'key': 21, 'value': 1})
+            settings_updated = True
 
-        found = False
         global_perf_data = json.loads(settings_dict['globalPerfData'])
         save_items = global_perf_data['saveItems']
+
+        found = False
         for entry in save_items:
             if entry['entryType'] == 21:
                 found = True
                 if entry['index'] == 1:
                     entry['index'] = 0
-                    settings_updated = True
-                if entry['itemVersion'] == 'OSRELWin5.0.0':
-                    entry['itemVersion'] = 'OSRELWin4.4.0'
+                    entry['itemVersion'] = 'OSRELWin5.0.0'
                     settings_updated = True
         if not found:
-            raise ValueError(f'Failed to locate DCR setting in globalPerfData/saveItems!')
-
-        settings_dict['graphicsData'] = graphics_data
-        settings_dict['globalPerfData'] = global_perf_data
-        test = json.dumps(settings_dict, indent=4)
+            save_items.append({'entryType': 21, 'index': 0, 'itemVersion': 'OSRELWin5.0.0'})
+            settings_updated = True
 
         # Exit early if no settings were changed
         if not settings_updated:
