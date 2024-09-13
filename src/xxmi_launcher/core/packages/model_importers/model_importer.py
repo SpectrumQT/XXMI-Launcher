@@ -74,7 +74,7 @@ class ModelImporterConfig:
     @property
     def extra_dll_paths(self) -> List[Path]:
         dll_paths = []
-        for dll_path in self.extra_libraries.split():
+        for dll_path in self.extra_libraries.split('\n'):
             dll_path = Path(dll_path.strip())
             if len(str(dll_path)) == 0:
                 continue

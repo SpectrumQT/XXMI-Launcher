@@ -122,7 +122,6 @@ def direct_inject(dll_paths: List[Path], process_name: str = None, pid: int = No
         for process in psutil.process_iter():
             try:
                 if process.name() == process_name or process.pid == pid:
-                    # Exit loop: process is found and waiting for window is not required
                     for dll_path in dll_paths:
                         try:
                             inject(process.pid, str(dll_path))
