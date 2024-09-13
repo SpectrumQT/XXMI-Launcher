@@ -179,9 +179,11 @@ class SRMIPackage(ModelImporterPackage):
             raise ValueError(f'Unknown Graphics Settings format: Data type {regtype} is not {winreg.REG_BINARY} of REG_BINARY!')
         # Read bytes till the first null byte as settings ascii string
         null_byte_pos = settings_bytes.find(b'\x00')
-        if null_byte_pos == -1:
+        if null_byte_pos != -1:
+            settings_bytes = settings_bytes[:null_byte_pos]
+        else:
             log.debug(f'Binary record GraphicsSettings_Model_h2986158309 is not null-terminated!')
-        settings_str = settings_bytes[:null_byte_pos].decode('ascii')
+        settings_str = settings_bytes.decode('ascii')
         # Load settings string to dict
         settings_dict = json.loads(settings_str)
         # Ensure settings dict has known keys
