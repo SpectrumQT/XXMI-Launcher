@@ -89,8 +89,11 @@ class MainWindow(UIMainWindow):
         Events.Subscribe(Events.Application.Close, self.handle_close)
 
     def handle_close(self, event):
-        Events.Fire(Events.Application.Ready())
         self.after(event.delay, self.close)
+
+    def close(self):
+        Events.Fire(Events.Application.Ready())
+        super().close()
 
     def open_settings(self, wait_window=False):
         from gui.windows.settings.settings_window import SettingsWindow

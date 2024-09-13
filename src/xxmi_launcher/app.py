@@ -347,13 +347,12 @@ class Application:
         except Exception as e:
             raise Exception(f'{Config.Launcher.active_importer} Loading Failed:\n{str(e)}') from e
         finally:
-            self.gui.after(100, Events.Fire, Events.Application.Ready())
+            if not Config.Launcher.auto_close:
+                self.gui.after(100, Events.Fire, Events.Application.Ready())
 
         # Close the launcher or reset its UI state
         if Config.Launcher.auto_close:
             Events.Fire(Events.Application.Close(delay=1000))
-        else:
-            self.gui.after(1000, Events.Fire, Events.Application.Ready())
 
     def handle_verify_file_access(self, event: ApplicationEvents.VerifyFileAccess):
         if event.read:

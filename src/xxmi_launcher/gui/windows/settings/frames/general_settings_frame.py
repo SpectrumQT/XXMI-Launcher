@@ -77,12 +77,12 @@ class GameFolderEntry(UIEntry):
             msg = 'Path to folder with "Wuthering Waves.exe" and "Client" & "Engine" subfolders.\n'
             msg += 'Usually this folder is named "Wuthering Waves Game" and located inside WuWa installation folder.'
         if Config.Launcher.active_importer == 'ZZMI':
-            msg = 'Path to folder with "ZenlessZoneZero.exe".'
+            msg = 'Path to folder with "ZenlessZoneZero.exe".\n'
         if Config.Launcher.active_importer == 'SRMI':
-            msg = 'Path to folder with "StarRail.exe".'
+            msg = 'Path to folder with "StarRail.exe".\n'
             msg += 'Usually this folder is named "Games" and located inside "DATA" folder of HSR installation folder.'
         if Config.Launcher.active_importer == 'GIMI':
-            msg = 'Path to folder with "GenshinImpact.exe".'
+            msg = 'Path to folder with "GenshinImpact.exe".\n'
             msg += 'Usually this folder is named "Genshin Impact game" and located inside "DATA" folder of GI installation folder.'
         return msg.strip()
 
@@ -223,7 +223,7 @@ class UnlockFPSCheckbox(UICheckbox):
         if Config.Launcher.active_importer == 'SRMI':
             msg = 'This option allows to set FPS limit to 120.\n'
             msg += '* Enabled: Updates Graphics Settings Windows Registry key with 120 FPS value on game start.\n'
-            msg += '* Disabled: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.'
+            msg += '* Disabled: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.\n'
             msg += 'Note: Edits "FPS" value in "HKEY_CURRENT_USER\SOFTWARE\Cognosphere\Star Rail\GraphicsSettings_Model_h2986158309".'
         if Config.Launcher.active_importer == 'GIMI':
             msg = 'This option allows to force 120 FPS mode.\n'
