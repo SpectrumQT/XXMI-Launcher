@@ -1,7 +1,12 @@
+import time
+import psutil
+import subprocess
+
 import ctypes as ct
 import ctypes.wintypes as wt
 
 from pathlib import Path
+from pyinjector import inject
 
 
 class DllInjector:
@@ -97,3 +102,29 @@ class DllInjector:
         if result != 0:
             return False
         return True
+
+
+def direct_inject(dll_path: Path, process_name: str = None, pid: int = None, start_cmd: list = None, timeout: int = 10):
+    if start_cmd:
+        subprocess.Popen(start_cmd)
+
+    time_start = time.time()
+
+    while True:
+
+        current_time = time.time()
+
+        if timeout != -1 and current_time - time_start >= timeout:
+            # Timeout reached, lets signal it with -1 return pid
+            return -1
+
+        for process in psutil.process_iter():
+            try:
+                if process.name() == process_name or process.pid == pid:
+                    # Exit loop: process is found and waiting for window is not required
+                    inject(process.pid, str(dll_path))
+                    return process.pid
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                pass
+
+        time.sleep(0.1)

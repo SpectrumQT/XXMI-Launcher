@@ -12,7 +12,7 @@ import core.config_manager as Config
 
 from core.package_manager import Package, PackageMetadata
 
-from core.utils.dll_injector import DllInjector
+from core.utils.dll_injector import DllInjector, direct_inject
 from core.utils.process_tracker import wait_for_process, WaitResult
 
 log = logging.getLogger(__name__)
@@ -121,8 +121,8 @@ class MigotoPackage(Package):
         else:
             # Use WriteProcessMemory injection method
             Events.Fire(Events.Application.Inject(library_name=dll_path.name, process_name=event.exe_path.name))
-            result, pid = wait_for_process(event.exe_path.name, timeout=10, cmd=launch_cmd, inject_dll=dll_path)
-            if result == WaitResult.Timeout:
+            pid = direct_inject(dll_path=dll_path, process_name=event.exe_path.name, start_cmd=launch_cmd)
+            if pid == -1:
                 raise ValueError(f'Failed to inject {dll_path.name}!')
 
         Events.Fire(Events.Application.WaitForProcess(process_name=event.exe_path.name))
