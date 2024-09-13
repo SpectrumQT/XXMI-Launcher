@@ -75,9 +75,9 @@ class ModelImporterConfig:
     def extra_dll_paths(self) -> List[Path]:
         dll_paths = []
         for dll_path in self.extra_libraries.split('\n'):
-            dll_path = Path(dll_path.strip())
             if len(str(dll_path)) == 0:
                 continue
+            dll_path = Path(dll_path.strip())
             if not dll_path.is_absolute():
                 dll_path = Paths.App.Root / dll_path
             if dll_path.is_file():
