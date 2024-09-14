@@ -338,7 +338,7 @@ class Application:
 
         try:
             # Execute specified shell command before game start
-            if Config.Active.Importer.run_pre_launch != '':
+            if Config.Active.Importer.run_pre_launch_enabled and Config.Active.Importer.run_pre_launch != '':
                 Events.Fire(Events.Application.RunPreLaunch(cmd=Config.Active.Importer.run_pre_launch))
                 process = subprocess.Popen(Config.Active.Importer.run_pre_launch, shell=True)
                 if Config.Active.Importer.run_pre_launch_wait:
@@ -348,7 +348,7 @@ class Application:
             Events.Fire(Events.ModelImporter.StartGame())
 
             # Execute specified shell command after successful injection
-            if Config.Active.Importer.run_post_load != '':
+            if Config.Active.Importer.run_post_load_enabled and Config.Active.Importer.run_post_load != '':
                 Events.Fire(Events.Application.RunPostLoad(cmd=Config.Active.Importer.run_post_load))
                 process = subprocess.Popen(Config.Active.Importer.run_post_load, shell=True)
                 if Config.Active.Importer.run_post_load_wait:

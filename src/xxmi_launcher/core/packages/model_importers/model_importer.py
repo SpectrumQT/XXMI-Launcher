@@ -47,12 +47,15 @@ class ModelImporterConfig:
     game_folder: str = ''
     launcher_theme: str = 'Default'
     overwrite_ini: bool = True
+    run_pre_launch_enabled: bool = True
     run_pre_launch: str = ''
     run_pre_launch_signature: str = ''
     run_pre_launch_wait: bool = True
+    run_post_load_enabled: bool = True
     run_post_load: str = ''
     run_post_load_signature: str = ''
     run_post_load_wait: bool = True
+    extra_libraries_enabled: bool = True
     extra_libraries: str = ''
     extra_libraries_signature: str = ''
     d3dx_ini: Dict[

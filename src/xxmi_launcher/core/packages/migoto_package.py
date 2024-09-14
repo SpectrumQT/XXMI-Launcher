@@ -96,6 +96,10 @@ class MigotoPackage(Package):
         dll_path = Config.Active.Importer.importer_path / 'd3d11.dll'
         launch_cmd = event.start_cmd.split() + Config.Active.Importer.launch_options.split()
 
+        extra_dll_paths = []
+        if Config.Active.Importer.extra_libraries_enabled:
+            extra_dll_paths += Config.Active.Importer.extra_dll_paths
+
         if event.use_hook:
             # Use SetWindowsHookEx injection method
             injector = DllInjector(self.package_path / '3dmloader.dll')
@@ -106,13 +110,12 @@ class MigotoPackage(Package):
 
                 # Start game's exe
                 Events.Fire(Events.Application.StartGameExe(process_name=event.exe_path.name))
-                dll_paths = Config.Active.Importer.extra_dll_paths
-                if len(dll_paths) == 0:
+                if len(extra_dll_paths) == 0:
                     subprocess.Popen(launch_cmd)
                 else:
-                    pid = direct_inject(dll_paths=dll_paths, process_name=event.exe_path.name, start_cmd=launch_cmd)
+                    pid = direct_inject(dll_paths=extra_dll_paths, process_name=event.exe_path.name, start_cmd=launch_cmd)
                     if pid == -1:
-                        raise ValueError(f'Failed to inject {str(dll_paths)}!')
+                        raise ValueError(f'Failed to inject {str(extra_dll_paths)}!')
 
                 # Wait until 3dmigoto dll gets successfully injected into the game's exe
                 Events.Fire(Events.Application.VerifyHook(library_name=dll_path.name, process_name=event.exe_path.name))
@@ -127,7 +130,7 @@ class MigotoPackage(Package):
         else:
             # Use WriteProcessMemory injection method
             Events.Fire(Events.Application.Inject(library_name=dll_path.name, process_name=event.exe_path.name))
-            dll_paths = [dll_path] + Config.Active.Importer.extra_dll_paths
+            dll_paths = [dll_path] + extra_dll_paths
             pid = direct_inject(dll_paths=dll_paths, process_name=event.exe_path.name, start_cmd=launch_cmd)
             if pid == -1:
                 raise ValueError(f'Failed to inject {dll_path.name}!')
