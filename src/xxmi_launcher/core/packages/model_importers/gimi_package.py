@@ -102,7 +102,7 @@ class GIMIPackage(ModelImporterPackage):
 
     def get_installed_version(self):
         try:
-            return str(Version(Config.Importers.GIMI.Importer.importer_path / 'Core' / 'ZZMI' / 'main.ini'))
+            return str(Version(Config.Importers.GIMI.Importer.importer_path / 'Core' / 'GIMI' / 'main.ini'))
         except Exception as e:
             return ''
 
@@ -158,9 +158,9 @@ class GIMIPackage(ModelImporterPackage):
     def update_gimi_ini(self):
         Events.Fire(Events.Application.StatusUpdate(status='Updating GIMI main.ini...'))
 
-        gimi_ini_path = Config.Importers.GIMI.Importer.importer_path / 'Core' / 'ZZMI' / 'main.ini'
+        gimi_ini_path = Config.Importers.GIMI.Importer.importer_path / 'Core' / 'GIMI' / 'main.ini'
         if not gimi_ini_path.exists():
-            raise ValueError('Failed to locate Core/ZZMI/main.ini!')
+            raise ValueError('Failed to locate Core/GIMI/main.ini!')
 
         Events.Fire(Events.Application.VerifyFileAccess(path=gimi_ini_path, write=True))
         with open(gimi_ini_path, 'r') as f:

@@ -100,7 +100,7 @@ class SRMIPackage(ModelImporterPackage):
 
     def get_installed_version(self):
         try:
-            return str(Version(Config.Importers.SRMI.Importer.importer_path / 'Core' / 'ZZMI' / 'main.ini'))
+            return str(Version(Config.Importers.SRMI.Importer.importer_path / 'Core' / 'SRMI' / 'main.ini'))
         except Exception as e:
             return ''
 
@@ -154,9 +154,9 @@ class SRMIPackage(ModelImporterPackage):
     def update_srmi_ini(self):
         Events.Fire(Events.Application.StatusUpdate(status='Updating SRMI main.ini...'))
 
-        srmi_ini_path = Config.Importers.SRMI.Importer.importer_path / 'Core' / 'ZZMI' / 'main.ini'
+        srmi_ini_path = Config.Importers.SRMI.Importer.importer_path / 'Core' / 'SRMI' / 'main.ini'
         if not srmi_ini_path.exists():
-            raise ValueError('Failed to locate Core/ZZMI/main.ini!')
+            raise ValueError('Failed to locate Core/SRMI/main.ini!')
 
         Events.Fire(Events.Application.VerifyFileAccess(path=srmi_ini_path, write=True))
         with open(srmi_ini_path, 'r') as f:
