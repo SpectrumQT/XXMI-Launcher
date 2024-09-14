@@ -117,14 +117,27 @@ class MigotoPackage(Package):
                     if pid == -1:
                         raise ValueError(f'Failed to inject {str(extra_dll_paths)}!')
 
-                # Wait until 3dmigoto dll gets successfully injected into the game's exe
-                Events.Fire(Events.Application.VerifyHook(library_name=dll_path.name, process_name=event.exe_path.name))
-                injector.wait_for_injection(15)
+                # Early DLL injection verification
+                hooked = injector.wait_for_injection(5)
+                if hooked:
+                    log.info(f'Successfully passed early {dll_path.name} -> {event.exe_path.name} hook check!')
 
+                # Wait until game window appears
+                Events.Fire(Events.Application.WaitForProcess(process_name=event.exe_path.name))
+                result, pid = wait_for_process(event.exe_path.name, with_window=True, timeout=30)
+                if result == WaitResult.Timeout:
+                    raise ValueError(f'Failed to start {event.exe_path.name}!')
+
+                # Late DLL injection verification
+                Events.Fire(Events.Application.VerifyHook(library_name=dll_path.name, process_name=event.exe_path.name))
+                if injector.wait_for_injection(5):
+                    log.info(f'Successfully passed late {dll_path.name} -> {event.exe_path.name} hook check!')
+                elif not hooked:
+                    log.error(f'Failed to verify {dll_path.name} -> {event.exe_path.name} hook!')
+                    
             finally:
-                if event.use_hook:
-                    # Remove global hook to free system resources
-                    injector.unhook_library()
+                # Remove global hook to free system resources
+                injector.unhook_library()
                 injector.unload()
 
         else:
@@ -135,10 +148,10 @@ class MigotoPackage(Package):
             if pid == -1:
                 raise ValueError(f'Failed to inject {dll_path.name}!')
 
-        Events.Fire(Events.Application.WaitForProcess(process_name=event.exe_path.name))
-        result, pid = wait_for_process(event.exe_path.name, with_window=True, timeout=30)
-        if result == WaitResult.Timeout:
-            raise ValueError(f'Failed to start {event.exe_path.name}!')
+            Events.Fire(Events.Application.WaitForProcess(process_name=event.exe_path.name))
+            result, pid = wait_for_process(event.exe_path.name, with_window=True, timeout=30)
+            if result == WaitResult.Timeout:
+                raise ValueError(f'Failed to start {event.exe_path.name}!')
 
     def restore_package_files(self, e: Exception, validate=False):
         user_requested_restore = Events.Call(Events.Application.ShowError(
