@@ -103,6 +103,10 @@ class RunPreLaunchCheckbox(UICheckbox):
             text='Run Pre-Launch:',
             font=('Roboto', 16, 'bold'),
             master=master)
+        self.set_tooltip(
+                         'Enabled: Option will have stated effect.\n'
+                         'Disabled: Option will have no effect.',
+                         delay=0.5,)
 
 
 class RunPreLaunchEntry(UIEntry):
@@ -150,6 +154,10 @@ class RunPostLoadCheckbox(UICheckbox):
             text='Run Post-Load:',
             font=('Roboto', 16, 'bold'),
             master=master)
+        self.set_tooltip(
+                         'Enabled: Option will have stated effect.\n'
+                         'Disabled: Option will have no effect.',
+                         delay=0.5,)
 
 
 class RunPostLoadEntry(UIEntry):
@@ -197,6 +205,10 @@ class InjectLibrariesCheckbox(UICheckbox):
             text='Inject Libraries:',
             font=('Roboto', 16, 'bold'),
             master=master)
+        self.set_tooltip(
+                         'Enabled: Option will have stated effect.\n'
+                         'Disabled: Option will have no effect.',
+                         delay=0.5,)
 
 
 class InjectLibrariesTextbox(UITextbox):
