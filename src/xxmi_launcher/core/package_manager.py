@@ -248,9 +248,9 @@ class Package:
     def move(self, source_path: Path, destination_path: Path):
         Events.Fire(Events.PackageManager.StartFileMove(asset_name=source_path.name))
         if destination_path.exists():
-            time.sleep(0.1)
+            time.sleep(0.01)
             destination_path.unlink()
-        time.sleep(0.1)
+        time.sleep(0.01)
         shutil.move(source_path, destination_path)
 
     def move_contents(self, source_path: Path, destination_path: Path):
@@ -260,7 +260,7 @@ class Package:
                 self.move(src_path, destination_path / src_path.name)
             else:
                 self.move_contents(src_path, destination_path / src_path.name)
-        time.sleep(0.1)
+        time.sleep(0.01)
         shutil.rmtree(source_path)
 
     def get_file_version(self, file_path, max_parts=4):
