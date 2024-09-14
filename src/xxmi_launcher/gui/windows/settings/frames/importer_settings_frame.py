@@ -16,18 +16,18 @@ class ModelImporterSettingsFrame(UIFrame):
         self.grid_columnconfigure(3, weight=100)
 
         # Shader Hunting
-        self.put(ShaderHuntingLabel(self)).grid(row=0, column=0, padx=20, pady=(20, 20), sticky='w')
-        self.put(EnableHuntingCheckbox(self)).grid(row=0, column=1, padx=20, pady=(20, 20), sticky='w')
-        self.put(DumpShadersCheckbox(self)).grid(row=0, column=3, padx=20, pady=(20, 20), sticky='w')
+        self.put(ShaderHuntingLabel(self)).grid(row=0, column=0, padx=(20, 10), pady=(20, 20), sticky='w')
+        self.put(EnableHuntingCheckbox(self)).grid(row=0, column=1, padx=10, pady=(20, 20), sticky='w')
+        self.put(DumpShadersCheckbox(self)).grid(row=0, column=3, padx=10, pady=(20, 20), sticky='w')
 
         # Error Handling
-        self.put(ErrorHandlingLabel(self)).grid(row=1, column=0, padx=20, pady=(20, 20), sticky='w')
-        self.put(MuteWarningsCheckbox(self)).grid(row=1, column=1, padx=20, pady=(20, 20), sticky='w')
-        self.put(DebugLoggingCheckbox(self)).grid(row=1, column=3, padx=20, pady=(20, 20), sticky='w')
+        self.put(ErrorHandlingLabel(self)).grid(row=1, column=0, padx=(20, 10), pady=(20, 20), sticky='w')
+        self.put(MuteWarningsCheckbox(self)).grid(row=1, column=1, padx=10, pady=(20, 20), sticky='w')
+        self.put(DebugLoggingCheckbox(self)).grid(row=1, column=3, padx=10, pady=(20, 20), sticky='w')
 
         # Importer Folder
         self.put(ImporterFolderLabel(self)).grid(row=2, column=0, padx=(20, 0), pady=(20, 20), sticky='w')
-        self.put(ImporterFolderEntry(self)).grid(row=2, column=1, padx=20, pady=(20, 20), columnspan=3, sticky='ew')
+        self.put(ImporterFolderEntry(self)).grid(row=2, column=1, padx=10, pady=(20, 20), columnspan=3, sticky='ew')
         self.put(ChangeImporterFolderButton(self)).grid(row=2, column=4, padx=(0, 20), pady=(20, 20), sticky='e')
 
 
@@ -109,7 +109,7 @@ class ImporterFolderLabel(UILabel):
         self.trace_save(Vars.Settings.Launcher.active_importer, self.handle_active_importer_update)
 
     def handle_active_importer_update(self, var, val, old_val):
-        self.configure(text=f'{val} Folder')
+        self.configure(text=f'{val} Folder:')
 
 
 class ImporterFolderEntry(UIEntry):

@@ -26,17 +26,17 @@ class GeneralSettingsFrame(UIFrame):
         self.put(ChangeGameFolderButton(self)).grid(row=0, column=2, padx=(0, 20), pady=(20, 20), sticky='n')
 
         # Launch Options
-        self.put(LaunchOptionsLabel(self)).grid(row=1, column=0, padx=20, pady=(20, 20), sticky='w')
+        self.put(LaunchOptionsLabel(self)).grid(row=1, column=0, padx=(20, 10), pady=(20, 20), sticky='w')
         self.put(LaunchOptionsEntry(self)).grid(row=1, column=1, padx=20, pady=(20, 20), sticky='ew', columnspan=2)
 
         #  Extra
-        self.put(AutoCloseCheckbox(self)).grid(row=2, column=1, padx=20, pady=(10, 20), sticky='w', columnspan=2)
+        self.put(AutoCloseCheckbox(self)).grid(row=2, column=1, padx=(20, 10), pady=(10, 20), sticky='w', columnspan=2)
         if Vars.Launcher.active_importer.get() == 'WWMI':
-            self.put(ApplyTweaksCheckbox(self)).grid(row=3, column=1, padx=20, pady=(10, 20), sticky='w', columnspan=2)
+            self.put(ApplyTweaksCheckbox(self)).grid(row=3, column=1, padx=(20, 10), pady=(10, 20), sticky='w', columnspan=2)
             self.put(OpenEngineIniButton(self)).grid(row=3, column=1, padx=(260, 0), pady=(10, 20), sticky='w', columnspan=2)
 
         if Vars.Launcher.active_importer.get() in ['WWMI', 'SRMI', 'GIMI']:
-            self.put(UnlockFPSCheckbox(self)).grid(row=4, column=1, padx=20, pady=(10, 20), sticky='w', columnspan=2)
+            self.put(UnlockFPSCheckbox(self)).grid(row=4, column=1, padx=(20, 10), pady=(10, 20), sticky='w', columnspan=2)
 
 
 class GameFolderLabel(UILabel):

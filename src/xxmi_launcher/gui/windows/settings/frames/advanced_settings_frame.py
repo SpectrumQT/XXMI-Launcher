@@ -11,31 +11,31 @@ class AdvancedSettingsFrame(UIFrame):
     def __init__(self, master):
         super().__init__(master)
 
-        self.grid_columnconfigure((0, 1, 3), weight=1)
+        self.grid_columnconfigure((0, 1, 3, 4), weight=1)
         self.grid_columnconfigure(2, weight=100)
 
         # Update Policy
-        self.put(UpdatePolicyLabel(self)).grid(row=0, column=0, padx=10, pady=(10, 10), sticky='w')
+        self.put(UpdatePolicyLabel(self)).grid(row=0, column=0, padx=20, pady=(10, 10), sticky='w')
         self.put(AutoUpdateCheckbox(self)).grid(row=0, column=1, padx=10, pady=(10, 10), sticky='w')
         self.put(OverwriteIniCheckbox(self)).grid(row=0, column=2, padx=10, pady=(10, 10), sticky='w')
 
         # Security
-        self.put(SecurityLabel(self)).grid(row=0, column=3, padx=10, pady=(10, 10), sticky='w')
-        self.put(UnsafeModeCheckbox(self)).grid(row=0, column=4, padx=10, pady=(10, 10), sticky='w')
+        self.put(SecurityLabel(self)).grid(row=0, column=2, padx=(220, 10), pady=(10, 10), sticky='w', columnspan=3)
+        self.put(UnsafeModeCheckbox(self)).grid(row=0, column=2, padx=(310, 10), pady=(10, 10), sticky='w', columnspan=3)
 
         # Pre-Launch Command
-        self.put(RunPreLaunchCheckbox(self)).grid(row=3, column=0, padx=(10, 0), pady=(10, 10), sticky='w')
-        self.put(RunPreLaunchEntry(self)).grid(row=3, column=1, padx=10, pady=(10, 10), sticky='ew', columnspan=3)
-        self.put(RunPreLaunchWaitCheckbox(self)).grid(row=3, column=4, padx=10, pady=(10, 10), sticky='w')
+        self.put(RunPreLaunchCheckbox(self)).grid(row=3, column=0, padx=(20, 0), pady=(10, 10), sticky='w')
+        self.put(RunPreLaunchEntry(self)).grid(row=3, column=1, padx=(10, 100), pady=(10, 10), sticky='ew', columnspan=4)
+        self.put(RunPreLaunchWaitCheckbox(self)).grid(row=3, column=4, padx=(10, 20), pady=(10, 10), sticky='w')
 
         # Post-Load Command
-        self.put(RunPostLoadCheckbox(self)).grid(row=4, column=0, padx=(10, 0), pady=(10, 10), sticky='w')
-        self.put(RunPostLoadEntry(self)).grid(row=4, column=1, padx=10, pady=(10, 10), sticky='ew', columnspan=3)
-        self.put(RunPostLoadWaitCheckbox(self)).grid(row=4, column=4, padx=10, pady=(10, 10), sticky='w')
+        self.put(RunPostLoadCheckbox(self)).grid(row=4, column=0, padx=(20, 0), pady=(10, 10), sticky='w')
+        self.put(RunPostLoadEntry(self)).grid(row=4, column=1, padx=(10, 100), pady=(10, 10), sticky='ew', columnspan=4)
+        self.put(RunPostLoadWaitCheckbox(self)).grid(row=4, column=4, padx=(10, 20), pady=(10, 10), sticky='w')
 
         # Extra Libraries Injection
-        self.put(InjectLibrariesCheckbox(self)).grid(row=5, column=0, padx=(10, 0), pady=(10, 10), sticky='w')
-        self.put(InjectLibrariesTextbox(self)).grid(row=5, column=1, padx=10, pady=(10, 10), sticky='ew', columnspan=4)
+        self.put(InjectLibrariesCheckbox(self)).grid(row=5, column=0, padx=(20, 0), pady=(10, 10), sticky='w')
+        self.put(InjectLibrariesTextbox(self)).grid(row=5, column=1, padx=(10, 20), pady=(10, 10), sticky='ew', columnspan=4)
 
 
 class UpdatePolicyLabel(UILabel):
@@ -128,8 +128,9 @@ class RunPreLaunchEntry(UIEntry):
 class RunPreLaunchWaitCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Wait For Finish',
+            text='Wait',
             variable=Vars.Active.Importer.run_pre_launch_wait,
+            width=10,
             master=master)
         # self.trace_write(Vars.Active.Migoto.unsafe_mode, self.handle_unsafe_mode_update)
         self.set_tooltip(
@@ -155,7 +156,7 @@ class RunPostLoadEntry(UIEntry):
     def __init__(self, master):
         super().__init__(
             textvariable=Vars.Active.Importer.run_post_load,
-            width=100,
+            width=120,
             height=36,
             font=('Arial', 14),
             master=master)
@@ -174,8 +175,9 @@ class RunPostLoadEntry(UIEntry):
 class RunPostLoadWaitCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Wait For Finish',
+            text='Wait',
             variable=Vars.Active.Importer.run_post_load_wait,
+            width=10,
             master=master)
         # self.trace_write(Vars.Active.Migoto.unsafe_mode, self.handle_unsafe_mode_update)
         self.set_tooltip(
