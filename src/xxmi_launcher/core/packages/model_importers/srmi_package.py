@@ -88,12 +88,12 @@ class SRMIPackage(ModelImporterPackage):
         super().__init__(PackageMetadata(
             package_name='SRMI',
             auto_load=False,
-            github_repo_owner='leotorrez',
-            github_repo_name='ZZMI-TEST',
+            github_repo_owner='SpectrumQT',
+            github_repo_name='SRMI-TEST',
             asset_version_pattern=r'.*(\d\.\d\.\d).*',
-            asset_name_format='ZZMI-PACKAGE-v%s.zip',
+            asset_name_format='SRMI-TEST-PACKAGE-v%s.zip',
             signature_pattern=r'^## Signature[\r\n]+- ((?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{4}|[A-Za-z0-9+\/]{3}=|[A-Za-z0-9+\/]{2}={2})$)',
-            signature_public_key='MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEb11GjbKQS6SmRe8TcIc5VMu5Ob3moo5v2YeD+s53xEe4bVPGcToUNLu3Jgqo0OwWZ4RsNy1nR0HId6pR09HedyEMifxebsyPT3T5PH82QozEXHQlTDySklWUfGItoOdf',
+            signature_public_key='MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEYac352uRGKZh6LOwK0fVDW/TpyECEfnRtUp+bP2PJPP63SWOkJ3a/d9pAnPfYezRVJ1hWjZtpRTT8HEAN/b4mWpJvqO43SAEV/1Q6vz9Rk/VvRV3jZ6B/tmqVnIeHKEb',
             exit_after_update=False,
             installation_path='SRMI/',
         ))
