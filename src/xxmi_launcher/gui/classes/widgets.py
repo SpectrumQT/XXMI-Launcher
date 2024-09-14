@@ -364,6 +364,9 @@ class UILabel(UIWidget, CTkLabel):
             self.image = CTkImage(Image.open(str(Config.get_resource_path(self) / image_path)))
         CTkLabel.__init__(self, master, image=self.image, **kwargs)
 
+    def set(self, value):
+        self.configure(text=value)
+
 
 class UIButton(UIWidget, CTkButton):
     def __init__(self,

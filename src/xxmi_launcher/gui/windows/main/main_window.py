@@ -81,6 +81,7 @@ class MainWindow(UIMainWindow):
 
         self.show()
         # self.redirect_target_window.show()
+        # self.open_settings()
 
         Events.Subscribe(Events.Application.OpenSettings,
                          lambda event: self.open_settings(wait_window=event.wait_window))

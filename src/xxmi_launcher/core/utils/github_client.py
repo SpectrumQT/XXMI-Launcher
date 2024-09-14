@@ -30,6 +30,9 @@ class GitHubClient:
         except Exception as e:
             raise ValueError(f'Failed to connect to GitHub!') from e
 
+        if 'message' in response and 'API rate limit exceeded' in response['message']:
+            raise ConnectionRefusedError('GitHub API rate limit exceeded!')
+
         try:
             response = from_dict(data_class=ResponseRelease, data=response)
         except Exception as e:

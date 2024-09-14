@@ -111,6 +111,8 @@ class Package:
     def detect_latest_version(self):
         try:
             self.cfg.latest_version, self.download_url, self.signature = self.get_latest_version()
+        except ConnectionRefusedError as e:
+            raise e
         except Exception as e:
             self.cfg.latest_version, self.download_url, self.signature = '', '', ''
             raise ValueError(f'Failed to detect latest {self.metadata.package_name} version:\n\n{e}') from e
@@ -357,6 +359,8 @@ class PackageManager:
             for package in packages:
                 self.register_package(package)
         self.update_running = False
+        self.api_connection_refused = False
+        self.api_connection_refused_notified = False
 
     def register_package(self, package: Package):
         self.packages[package.metadata.package_name] = package
@@ -414,6 +418,7 @@ class PackageManager:
         if self.update_running:
             return
         self.update_running = True
+        self.api_connection_refused = False
 
         # no_install = True
         if not silent:
@@ -455,6 +460,10 @@ class PackageManager:
         if not silent:
             Events.Fire(Events.Application.Ready())
 
+        if self.api_connection_refused and not self.api_connection_refused_notified:
+            self.api_connection_refused_notified = True
+            raise ConnectionRefusedError(f'GitHub update requests limit reached!\n\nAttempts will be ignored for an hour.')
+
     def update_package(self, package: Package, no_install=False, force=False, reinstall=False):
         # Check if installation is pending, as we'll need download url from update check
         install = not no_install and (package.update_available() or reinstall) and (Config.Launcher.auto_update or force)
@@ -469,7 +478,15 @@ class PackageManager:
         # We're going to throttle query to 1 per hour by default, else user can be temporary banned by GitHub
         if force_check or package.cfg.update_check_time + 3600 < current_time:
             package.cfg.update_check_time = current_time
-            package.detect_latest_version()
+            if self.api_connection_refused:
+                return
+            try:
+                package.detect_latest_version()
+            except ConnectionRefusedError as e:
+                self.api_connection_refused = True
+                log.error(e)
+                return False
+            self.api_connection_refused_notified = False
 
         # Check if installation is pending again, as update check may find new version
         install = not no_install and (package.update_available() or reinstall) and (Config.Launcher.auto_update or force)

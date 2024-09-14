@@ -106,6 +106,10 @@ class ImporterFolderLabel(UILabel):
             font=('Roboto', 16, 'bold'),
             fg_color='transparent',
             master=master)
+        self.trace_save(Vars.Settings.Launcher.active_importer, self.handle_active_importer_update)
+
+    def handle_active_importer_update(self, var, val, old_val):
+        self.configure(text=f'{val} Folder')
 
 
 class ImporterFolderEntry(UIEntry):
@@ -143,4 +147,3 @@ class ChangeImporterFolderButton(UIButton):
         if importer_folder == '':
             return
         Vars.Active.Importer.importer_folder.set(importer_folder)
-
