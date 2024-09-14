@@ -9,6 +9,10 @@
   <a href="#license">License</a>
 </p>
 
+## DISCLAIMER
+
+- **XXMI Launcher** and all of its per-game packages are in active developement stage.
+
 ## Features  
 
 - **One Ring** — Allows to launch and manage all supported Model Importers in unified and convenient way
@@ -25,8 +29,8 @@
 
 - [WWMI - Wuthering Waves Model Importer GitHub](https://github.com/SpectrumQT/WWMI)
 - [ZZMI - Zenless Zone Zero Model Importer GitHub](https://github.com/leotorrez/ZZ-Model-Importer)
-- (**SOON**) [SRMI - Honkai: Star Rail Model Importer GitHub](https://github.com/SilentNightSound/SR-Model-Importer)
-- (**SOON**) [GIMI - Genshin Impact Model Importer GitHub](https://github.com/SilentNightSound/GI-Model-Importer)
+- [SRMI - Honkai: Star Rail Model Importer GitHub](https://github.com/SilentNightSound/SR-Model-Importer)
+- [GIMI - Genshin Impact Model Importer GitHub](https://github.com/SilentNightSound/GI-Model-Importer)
   
 ## License
 
