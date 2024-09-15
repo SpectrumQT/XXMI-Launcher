@@ -96,6 +96,20 @@ class MigotoPackage(Package):
         dll_path = Config.Active.Importer.importer_path / 'd3d11.dll'
         launch_cmd = event.start_cmd.split() + Config.Active.Importer.launch_options.split()
 
+        creationflags = None
+        if Config.Active.Importer.run_process_priority == 'Low'
+            creationflags = subprocess.IDLE_PRIORITY_CLASS
+        elif Config.Active.Importer.run_process_priority == 'Below Normal'
+            creationflags = subprocess.BELOW_NORMAL_PRIORITY_CLASS
+        elif Config.Active.Importer.run_process_priority == 'Normal'
+            creationflags = subprocess.NORMAL_PRIORITY_CLASS
+        elif Config.Active.Importer.run_process_priority == 'Above Normal'
+            creationflags = subprocess.ABOVE_NORMAL_PRIORITY_CLASS
+        elif Config.Active.Importer.run_process_priority == 'High'
+            creationflags = subprocess.HIGH_PRIORITY_CLASS
+        elif Config.Active.Importer.run_process_priority == 'Realtime'
+            creationflags = subprocess.REALTIME_PRIORITY_CLASS
+
         extra_dll_paths = []
         if Config.Active.Importer.extra_libraries_enabled:
             extra_dll_paths += Config.Active.Importer.extra_dll_paths
@@ -111,9 +125,9 @@ class MigotoPackage(Package):
                 # Start game's exe
                 Events.Fire(Events.Application.StartGameExe(process_name=event.exe_path.name))
                 if len(extra_dll_paths) == 0:
-                    subprocess.Popen(launch_cmd)
+                    subprocess.Popen(launch_cmd, creationflags=creationflags)
                 else:
-                    pid = direct_inject(dll_paths=extra_dll_paths, process_name=event.exe_path.name, start_cmd=launch_cmd)
+                    pid = direct_inject(dll_paths=extra_dll_paths, process_name=event.exe_path.name, start_cmd=launch_cmd, creationflags=creationflags)
                     if pid == -1:
                         raise ValueError(f'Failed to inject {str(extra_dll_paths)}!')
 
@@ -144,7 +158,7 @@ class MigotoPackage(Package):
             # Use WriteProcessMemory injection method
             Events.Fire(Events.Application.Inject(library_name=dll_path.name, process_name=event.exe_path.name))
             dll_paths = [dll_path] + extra_dll_paths
-            pid = direct_inject(dll_paths=dll_paths, process_name=event.exe_path.name, start_cmd=launch_cmd)
+            pid = direct_inject(dll_paths=dll_paths, process_name=event.exe_path.name, start_cmd=launch_cmd, creationflags=creationflags)
             if pid == -1:
                 raise ValueError(f'Failed to inject {dll_path.name}!')
 

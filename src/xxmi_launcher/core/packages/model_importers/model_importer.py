@@ -47,6 +47,7 @@ class ModelImporterConfig:
     game_folder: str = ''
     launcher_theme: str = 'Default'
     overwrite_ini: bool = True
+    run_process_priority: str = 'Default'
     run_pre_launch_enabled: bool = True
     run_pre_launch: str = ''
     run_pre_launch_signature: str = ''

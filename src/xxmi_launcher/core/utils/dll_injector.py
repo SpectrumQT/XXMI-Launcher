@@ -105,9 +105,9 @@ class DllInjector:
         return True
 
 
-def direct_inject(dll_paths: List[Path], process_name: str = None, pid: int = None, start_cmd: list = None, timeout: int = 15):
+def direct_inject(dll_paths: List[Path], process_name: str = None, pid: int = None, start_cmd: list = None, timeout: int = 15, creationflags: int = None):
     if start_cmd:
-        subprocess.Popen(start_cmd)
+        subprocess.Popen(start_cmd, creationflags=creationflags)
 
     time_start = time.time()
 
