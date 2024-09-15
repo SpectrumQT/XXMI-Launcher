@@ -47,7 +47,7 @@ class ModelImporterConfig:
     game_folder: str = ''
     launcher_theme: str = 'Default'
     overwrite_ini: bool = True
-    run_process_priority: str = 'Default'
+    process_priority: str = 'Above Normal'
     run_pre_launch_enabled: bool = True
     run_pre_launch: str = ''
     run_pre_launch_signature: str = ''
@@ -214,7 +214,7 @@ class ModelImporterPackage(Package):
                 Config.Active.Importer.game_folder = str(game_folder)
             except Exception as e:
                 Events.Fire(Events.Application.OpenSettings())
-                return
+                raise ValueError(f'Failed to detect Game Folder!\n\nRefer to tooltip of Settings > Game Folder for details.')
 
         # Execute initialization sequence of implemented importer
         self.initialize_game_launch(game_path)
