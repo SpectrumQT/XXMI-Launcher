@@ -518,6 +518,14 @@ class UICheckbox(CTkCheckBox, UIWidget):
             raise ValueError(f'Failed to set checkbox to unknown value {value}!')
 
 
+class UIOptionMenu(CTkOptionMenu, UIWidget):
+    def __init__(self,
+                 master: Union[UIWindow, 'UIFrame'],
+                 **kwargs):
+        UIWidget.__init__(self, master,  **kwargs)
+        CTkOptionMenu.__init__(self, master, **kwargs)
+
+
 class UITextbox(CTkTextbox, UIWidget):
     def __init__(self,
                  master: Union[UIWindow, 'UIFrame'],

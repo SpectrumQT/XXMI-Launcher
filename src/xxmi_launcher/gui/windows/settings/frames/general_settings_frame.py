@@ -16,8 +16,8 @@ class GeneralSettingsFrame(UIFrame):
 
         self.grid_columnconfigure((0, 2), weight=1)
         self.grid_columnconfigure(1, weight=100)
-        self.grid_rowconfigure((0, 1, 2), weight=1)
-        self.grid_rowconfigure(5, weight=100)
+        self.grid_rowconfigure((0, 1, 2, 3), weight=1)
+        self.grid_rowconfigure(6, weight=100)
 
         # Game Folder
         self.put(GameFolderLabel(self)).grid(row=0, column=0, padx=(20, 0), pady=(20, 20), sticky='wn')
@@ -25,18 +25,22 @@ class GeneralSettingsFrame(UIFrame):
         self.put(GameFolderEntry(self, game_folder_error)).grid(row=0, column=1, padx=20, pady=(20, 20), sticky='ewn')
         self.put(ChangeGameFolderButton(self)).grid(row=0, column=2, padx=(0, 20), pady=(20, 20), sticky='n')
 
+        # Process Priority
+        self.put(ProcessPriorityLabel(self)).grid(row=1, column=0, padx=(20, 10), pady=(20, 20), sticky='w')
+        self.put(ProcessPriorityOptionMenu(self)).grid(row=1, column=1, padx=20, pady=(20, 20), sticky='ew', columnspan=2)
+
         # Launch Options
-        self.put(LaunchOptionsLabel(self)).grid(row=1, column=0, padx=(20, 10), pady=(20, 20), sticky='w')
-        self.put(LaunchOptionsEntry(self)).grid(row=1, column=1, padx=20, pady=(20, 20), sticky='ew', columnspan=2)
+        self.put(LaunchOptionsLabel(self)).grid(row=2, column=0, padx=(20, 10), pady=(20, 20), sticky='w')
+        self.put(LaunchOptionsEntry(self)).grid(row=2, column=1, padx=20, pady=(20, 20), sticky='ew', columnspan=2)
 
         #  Extra
-        self.put(AutoCloseCheckbox(self)).grid(row=2, column=1, padx=(20, 10), pady=(10, 20), sticky='w', columnspan=2)
+        self.put(AutoCloseCheckbox(self)).grid(row=3, column=1, padx=(20, 10), pady=(10, 20), sticky='w', columnspan=2)
         if Vars.Launcher.active_importer.get() == 'WWMI':
-            self.put(ApplyTweaksCheckbox(self)).grid(row=3, column=1, padx=(20, 10), pady=(10, 20), sticky='w', columnspan=2)
-            self.put(OpenEngineIniButton(self)).grid(row=3, column=1, padx=(260, 0), pady=(10, 20), sticky='w', columnspan=2)
+            self.put(ApplyTweaksCheckbox(self)).grid(row=4, column=1, padx=(20, 10), pady=(10, 20), sticky='w', columnspan=2)
+            self.put(OpenEngineIniButton(self)).grid(row=4, column=1, padx=(260, 0), pady=(10, 20), sticky='w', columnspan=2)
 
         if Vars.Launcher.active_importer.get() in ['WWMI', 'SRMI', 'GIMI']:
-            self.put(UnlockFPSCheckbox(self)).grid(row=4, column=1, padx=(20, 10), pady=(10, 20), sticky='w', columnspan=2)
+            self.put(UnlockFPSCheckbox(self)).grid(row=5, column=1, padx=(20, 10), pady=(10, 20), sticky='w', columnspan=2)
 
 
 class GameFolderLabel(UILabel):
@@ -116,6 +120,30 @@ class ChangeGameFolderButton(UIButton):
         if game_folder == '':
             return
         Vars.Active.Importer.game_folder.set(game_folder)
+
+
+class ProcessPriorityLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text='Process Priority:',
+            font=('Roboto', 16, 'bold'),
+            fg_color='transparent',
+            master=master)
+
+
+class ProcessPriorityOptionMenu(UIOptionMenu):
+    def __init__(self, master):
+        super().__init__(
+            values=['Default', 'Low', 'Below Normal', 'Normal', 'Above Normal', 'High', 'Realtime'],
+            variable=Vars.Active.Importer.run_process_priority,
+            width=200,
+            height=36,
+            font=('Arial', 14),
+            dropdown_font=('Arial', 14),
+            master=master)
+        # self.trace_write(Vars.Active.Migoto.unsafe_mode, self.handle_unsafe_mode_update)
+        self.set_tooltip(
+            'Set Windows process scheduler CPU priority for the game exe.')
 
 
 class LaunchOptionsLabel(UILabel):
