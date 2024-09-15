@@ -11,6 +11,18 @@ import win32gui
 import win32process
 
 
+class ProcessPriority(Enum):
+    IDLE_PRIORITY_CLASS = 'Low'
+    BELOW_NORMAL_PRIORITY_CLASS = 'Below Normal'
+    NORMAL_PRIORITY_CLASS = 'Normal'
+    ABOVE_NORMAL_PRIORITY_CLASS = 'Above Normal'
+    HIGH_PRIORITY_CLASS = 'High'
+    REALTIME_PRIORITY_CLASS = 'Realtime'
+
+    def get_process_flags(self):
+        return getattr(subprocess, self.name)
+
+
 def get_hwnds_for_pid(pid):
     def callback(hwnd, hwnds):
         #if win32gui.IsWindowVisible(hwnd) and win32gui.IsWindowEnabled(hwnd):

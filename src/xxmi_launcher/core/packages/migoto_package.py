@@ -3,6 +3,7 @@ import shutil
 import subprocess
 import json
 
+from enum import Enum
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -13,7 +14,7 @@ import core.config_manager as Config
 from core.package_manager import Package, PackageMetadata
 
 from core.utils.dll_injector import DllInjector, direct_inject
-from core.utils.process_tracker import wait_for_process, WaitResult
+from core.utils.process_tracker import wait_for_process, WaitResult, ProcessPriority
 
 log = logging.getLogger(__name__)
 
@@ -95,20 +96,7 @@ class MigotoPackage(Package):
 
         dll_path = Config.Active.Importer.importer_path / 'd3d11.dll'
         launch_cmd = event.start_cmd.split() + Config.Active.Importer.launch_options.split()
-
-        creationflags = None
-        if Config.Active.Importer.run_process_priority == 'Low'
-            creationflags = subprocess.IDLE_PRIORITY_CLASS
-        elif Config.Active.Importer.run_process_priority == 'Below Normal'
-            creationflags = subprocess.BELOW_NORMAL_PRIORITY_CLASS
-        elif Config.Active.Importer.run_process_priority == 'Normal'
-            creationflags = subprocess.NORMAL_PRIORITY_CLASS
-        elif Config.Active.Importer.run_process_priority == 'Above Normal'
-            creationflags = subprocess.ABOVE_NORMAL_PRIORITY_CLASS
-        elif Config.Active.Importer.run_process_priority == 'High'
-            creationflags = subprocess.HIGH_PRIORITY_CLASS
-        elif Config.Active.Importer.run_process_priority == 'Realtime'
-            creationflags = subprocess.REALTIME_PRIORITY_CLASS
+        process_flags = ProcessPriority(Config.Active.Importer.process_priority).get_process_flags()
 
         extra_dll_paths = []
         if Config.Active.Importer.extra_libraries_enabled:
@@ -125,9 +113,9 @@ class MigotoPackage(Package):
                 # Start game's exe
                 Events.Fire(Events.Application.StartGameExe(process_name=event.exe_path.name))
                 if len(extra_dll_paths) == 0:
-                    subprocess.Popen(launch_cmd, creationflags=creationflags)
+                    subprocess.Popen(launch_cmd, creationflags=process_flags)
                 else:
-                    pid = direct_inject(dll_paths=extra_dll_paths, process_name=event.exe_path.name, start_cmd=launch_cmd, creationflags=creationflags)
+                    pid = direct_inject(dll_paths=extra_dll_paths, process_name=event.exe_path.name, start_cmd=launch_cmd, creationflags=process_flags)
                     if pid == -1:
                         raise ValueError(f'Failed to inject {str(extra_dll_paths)}!')
 
@@ -148,6 +136,9 @@ class MigotoPackage(Package):
                     log.info(f'Successfully passed late {dll_path.name} -> {event.exe_path.name} hook check!')
                 elif not hooked:
                     log.error(f'Failed to verify {dll_path.name} -> {event.exe_path.name} hook!')
+
+            except Exception as e:
+                raise e
                     
             finally:
                 # Remove global hook to free system resources
@@ -158,7 +149,7 @@ class MigotoPackage(Package):
             # Use WriteProcessMemory injection method
             Events.Fire(Events.Application.Inject(library_name=dll_path.name, process_name=event.exe_path.name))
             dll_paths = [dll_path] + extra_dll_paths
-            pid = direct_inject(dll_paths=dll_paths, process_name=event.exe_path.name, start_cmd=launch_cmd, creationflags=creationflags)
+            pid = direct_inject(dll_paths=dll_paths, process_name=event.exe_path.name, start_cmd=launch_cmd, creationflags=process_flags)
             if pid == -1:
                 raise ValueError(f'Failed to inject {dll_path.name}!')
 

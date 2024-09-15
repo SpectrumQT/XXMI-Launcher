@@ -21,6 +21,7 @@ import core.config_manager as Config
 from core.package_manager import PackageMetadata
 
 from core.utils.ini_handler import IniHandler, IniHandlerSettings
+from core.utils.process_tracker import wait_for_process_exit, WaitResult, ProcessPriority
 from core.packages.model_importers.model_importer import ModelImporterPackage, ModelImporterConfig
 from core.packages.migoto_package import MigotoManagerConfig
 
@@ -251,7 +252,16 @@ class GIMIPackage(ModelImporterPackage):
         winreg.SetValueEx(settings_key, 'GENERAL_DATA_h2389025596', None, regtype, settings_bytes)
 
     def configure_fps_unlocker(self):
-        Events.Fire(Events.Application.StatusUpdate(status='Updating fps_config.json...'))
+        Events.Fire(Events.Application.StatusUpdate(status='Configuring FPS Unlocker...'))
+
+        result, pid = wait_for_process_exit('unlockfps_nc.exe', timeout=10, kill_timeout=5)
+        if result == WaitResult.Timeout:
+            Events.Fire(Events.Application.ShowError(
+                modal=True,
+                message='Failed to terminate FPS Unlocker!\n\n'
+                        'Please close it manually and press [OK] to continue.',
+            ))
+
         fps_config_path = Paths.App.Root / 'fps_config.json'
         if not fps_config_path.is_file():
             fps_config_template_path = Paths.App.Resources / 'Packages' / 'GI-FPS-Unlocker' / 'fps_config_template.json'
@@ -259,9 +269,29 @@ class GIMIPackage(ModelImporterPackage):
         with open(fps_config_path, 'r') as f:
             fps_config = json.load(f)
         game_exe_path = Path(Config.Importers.GIMI.Importer.game_folder) / 'GenshinImpact.exe'
-        if fps_config['GamePath'] == str(game_exe_path):
+        modified = False
+
+        if fps_config['GamePath'] != str(game_exe_path):
+            fps_config['GamePath'] = str(game_exe_path)
+            modified = True
+
+        process_priorities = {
+            ProcessPriority.IDLE_PRIORITY_CLASS: 5,
+            ProcessPriority.BELOW_NORMAL_PRIORITY_CLASS: 4,
+            ProcessPriority.NORMAL_PRIORITY_CLASS: 3,
+            ProcessPriority.ABOVE_NORMAL_PRIORITY_CLASS: 2,
+            ProcessPriority.HIGH_PRIORITY_CLASS: 1,
+            ProcessPriority.REALTIME_PRIORITY_CLASS: 0,
+        }
+        process_priority = process_priorities[ProcessPriority(Config.Active.Importer.process_priority)]
+
+        if fps_config['Priority'] != process_priority:
+            fps_config['Priority'] = process_priority
+            modified = True
+
+        if not modified:
             return
-        fps_config['GamePath'] = str(game_exe_path)
+
         with open(fps_config_path, 'w') as f:
             f.write(json.dumps(fps_config, indent=4))
 

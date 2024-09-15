@@ -7,40 +7,45 @@ import core.config_manager as Config
 import gui.vars as Vars
 
 from gui.classes.containers import UIFrame
-from gui.classes.widgets import UILabel, UIButton, UIEntry, UICheckbox
+from gui.classes.widgets import UILabel, UIButton, UIEntry, UICheckbox,  UIOptionMenu
 
 
 class GeneralSettingsFrame(UIFrame):
     def __init__(self, master):
         super().__init__(master)
 
-        self.grid_columnconfigure((0, 2), weight=1)
+        self.grid_columnconfigure((0, 2, 3), weight=1)
         self.grid_columnconfigure(1, weight=100)
         self.grid_rowconfigure((0, 1, 2, 3), weight=1)
         self.grid_rowconfigure(6, weight=100)
 
         # Game Folder
-        self.put(GameFolderLabel(self)).grid(row=0, column=0, padx=(20, 0), pady=(20, 20), sticky='wn')
+        self.put(GameFolderLabel(self)).grid(row=0, column=0, padx=(20, 0), pady=(10, 10), sticky='wn')
         game_folder_error = self.put(GameFolderErrorLabel(self))
-        self.put(GameFolderEntry(self, game_folder_error)).grid(row=0, column=1, padx=20, pady=(20, 20), sticky='ewn')
-        self.put(ChangeGameFolderButton(self)).grid(row=0, column=2, padx=(0, 20), pady=(20, 20), sticky='n')
-
-        # Process Priority
-        self.put(ProcessPriorityLabel(self)).grid(row=1, column=0, padx=(20, 10), pady=(20, 20), sticky='w')
-        self.put(ProcessPriorityOptionMenu(self)).grid(row=1, column=1, padx=20, pady=(20, 20), sticky='ew', columnspan=2)
+        self.put(GameFolderEntry(self, game_folder_error)).grid(row=0, column=1, padx=(10, 100), pady=(10, 10), sticky='ewn', columnspan=3)
+        self.put(ChangeGameFolderButton(self)).grid(row=0, column=3, padx=(0, 20), pady=(10, 10), sticky='en')
 
         # Launch Options
-        self.put(LaunchOptionsLabel(self)).grid(row=2, column=0, padx=(20, 10), pady=(20, 20), sticky='w')
-        self.put(LaunchOptionsEntry(self)).grid(row=2, column=1, padx=20, pady=(20, 20), sticky='ew', columnspan=2)
+        self.put(LaunchOptionsLabel(self)).grid(row=1, column=0, padx=(20, 10), pady=(10, 10), sticky='w')
+        self.put(LaunchOptionsEntry(self)).grid(row=1, column=1, padx=(10, 20), pady=(10, 10), sticky='ew', columnspan=3)
 
-        #  Extra
-        self.put(AutoCloseCheckbox(self)).grid(row=3, column=1, padx=(20, 10), pady=(10, 20), sticky='w', columnspan=2)
-        if Vars.Launcher.active_importer.get() == 'WWMI':
-            self.put(ApplyTweaksCheckbox(self)).grid(row=4, column=1, padx=(20, 10), pady=(10, 20), sticky='w', columnspan=2)
-            self.put(OpenEngineIniButton(self)).grid(row=4, column=1, padx=(260, 0), pady=(10, 20), sticky='w', columnspan=2)
+        # Process Priority
+        self.put(ProcessPriorityLabel(self)).grid(row=2, column=0, padx=20, pady=(10, 10), sticky='ew')
+        self.put(ProcessPriorityOptionMenu(self)).grid(row=2, column=1, padx=(10, 10), pady=(10, 10), sticky='w')
 
+        # Force 120 FPS
         if Vars.Launcher.active_importer.get() in ['WWMI', 'SRMI', 'GIMI']:
-            self.put(UnlockFPSCheckbox(self)).grid(row=5, column=1, padx=(20, 10), pady=(10, 20), sticky='w', columnspan=2)
+            self.put(TweaksLabel(self)).grid(row=3, column=0, padx=(20, 10), pady=(10, 10), sticky='w')
+            self.put(UnlockFPSCheckbox(self)).grid(row=3, column=1, padx=(10, 10), pady=(10, 10), sticky='w')
+
+            #  Performance Tweaks
+            if Vars.Launcher.active_importer.get() == 'WWMI':
+                self.put(ApplyTweaksCheckbox(self)).grid(row=3, column=2, padx=(20, 10), pady=(10, 10), sticky='w')
+                self.put(OpenEngineIniButton(self)).grid(row=3, column=3, padx=(10, 20), pady=(10, 10), sticky='w')
+
+        # Auto close
+        self.put(LauncherLabel(self)).grid(row=4, column=0, padx=(20, 10), pady=(10, 10), sticky='w')
+        self.put(AutoCloseCheckbox(self)).grid(row=4, column=1, padx=(10, 10), pady=(10, 10), sticky='w', columnspan=3)
 
 
 class GameFolderLabel(UILabel):
@@ -70,7 +75,7 @@ class GameFolderEntry(UIEntry):
             game_path = Events.Call(Events.ModelImporter.ValidateGameFolder(game_folder=game_folder))
         except Exception as e:
             self.error_label.configure(text=str(e))
-            self.error_label.grid(row=0, column=1, padx=20, pady=(62, 0), sticky='ews')
+            self.error_label.grid(row=0, column=1, padx=20, pady=(52, 0), sticky='ews', columnspan=2)
             return True
         self.error_label.grid_forget()
         return True
@@ -134,16 +139,14 @@ class ProcessPriorityLabel(UILabel):
 class ProcessPriorityOptionMenu(UIOptionMenu):
     def __init__(self, master):
         super().__init__(
-            values=['Default', 'Low', 'Below Normal', 'Normal', 'Above Normal', 'High', 'Realtime'],
-            variable=Vars.Active.Importer.run_process_priority,
-            width=200,
+            values=['Low', 'Below Normal', 'Normal', 'Above Normal', 'High', 'Realtime'],
+            variable=Vars.Active.Importer.process_priority,
+            width=140,
             height=36,
             font=('Arial', 14),
             dropdown_font=('Arial', 14),
             master=master)
-        # self.trace_write(Vars.Active.Migoto.unsafe_mode, self.handle_unsafe_mode_update)
-        self.set_tooltip(
-            'Set Windows process scheduler CPU priority for the game exe.')
+        self.set_tooltip('Set process priority for the game exe.')
 
 
 class LaunchOptionsLabel(UILabel):
@@ -170,40 +173,6 @@ class LaunchOptionsEntry(UIEntry):
         if Config.Launcher.active_importer == 'WWMI':
             msg += '* Disable intro: -SkipSplash'
         return msg.strip()
-
-
-class AutoCloseCheckbox(UICheckbox):
-    def __init__(self, master):
-        super().__init__(
-            text='Close Launcher When Game Starts',
-            variable=Vars.Launcher.auto_close,
-            master=master)
-        self.set_tooltip(
-            'Enabled: Launcher will close itself once the game has started and 3dmigoto injection has been confirmed.\n'
-            'Disabled: Launcher will keep itself running.')
-
-
-class ApplyTweaksCheckbox(UICheckbox):
-    def __init__(self, master):
-        super().__init__(
-            text='Apply Performance Tweaks',
-            variable=Vars.Active.Importer.apply_perf_tweaks,
-            master=master)
-        self.set_tooltip(
-            'Enabled: Set of performance-tweaking settings will be added to [SystemSettings] section of Engine.ini on game start.\n'
-            "Disabled: Settings will no longer be set on game start, but existing ones won't be removed from Engine.ini.\n\n"
-            'List of tweeaks:\n'
-            '* r.Streaming.HLODStrategy = 2\n'
-            '* r.Streaming.LimitPoolSizeToVRAM = 1\n'
-            '* r.Streaming.PoolSizeForMeshes = -1\n'
-            '* r.XGEShaderCompile = 0\n'
-            '* FX.BatchAsync = 1\n'
-            '* FX.EarlyScheduleAsync = 1\n'
-            '* fx.Niagara.ForceAutoPooling = 1\n'
-            '* wp.Runtime.KuroRuntimeStreamingRangeOverallScale = 0.5\n'
-            '* tick.AllowAsyncTickCleanup = 1\n'
-            '* tick.AllowAsyncTickDispatch = 1'
-        )
 
 
 class OpenEngineIniButton(UIButton):
@@ -234,6 +203,15 @@ class OpenEngineIniButton(UIButton):
             raise ValueError(f'File does not exist: "{engine_ini}"!')
 
 
+class TweaksLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text='Tweaks:',
+            font=('Roboto', 16, 'bold'),
+            fg_color='transparent',
+            master=master)
+
+
 class UnlockFPSCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
@@ -261,3 +239,46 @@ class UnlockFPSCheckbox(UICheckbox):
             msg += '* Local Path: Resources/Packages/GI-FPS-Unlocker/unlockfps_nc.exe\n'
             msg += '* Original Repository: https://github.com/34736384/genshin-fps-unlock'
         return msg.strip()
+
+
+class ApplyTweaksCheckbox(UICheckbox):
+    def __init__(self, master):
+        super().__init__(
+            text='Apply Performance Tweaks',
+            variable=Vars.Active.Importer.apply_perf_tweaks,
+            master=master)
+        self.set_tooltip(
+            'Enabled: Set of performance-tweaking settings will be added to [SystemSettings] section of Engine.ini on game start.\n'
+            "Disabled: Settings will no longer be set on game start, but existing ones won't be removed from Engine.ini.\n\n"
+            'List of tweeaks:\n'
+            '* r.Streaming.HLODStrategy = 2\n'
+            '* r.Streaming.LimitPoolSizeToVRAM = 1\n'
+            '* r.Streaming.PoolSizeForMeshes = -1\n'
+            '* r.XGEShaderCompile = 0\n'
+            '* FX.BatchAsync = 1\n'
+            '* FX.EarlyScheduleAsync = 1\n'
+            '* fx.Niagara.ForceAutoPooling = 1\n'
+            '* wp.Runtime.KuroRuntimeStreamingRangeOverallScale = 0.5\n'
+            '* tick.AllowAsyncTickCleanup = 1\n'
+            '* tick.AllowAsyncTickDispatch = 1'
+        )
+
+
+class LauncherLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text='Launcher:',
+            font=('Roboto', 16, 'bold'),
+            fg_color='transparent',
+            master=master)
+
+
+class AutoCloseCheckbox(UICheckbox):
+    def __init__(self, master):
+        super().__init__(
+            text='Close After Game Start',
+            variable=Vars.Launcher.auto_close,
+            master=master)
+        self.set_tooltip(
+            'Enabled: Launcher will close itself once the game has started and 3dmigoto injection has been confirmed.\n'
+            'Disabled: Launcher will keep itself running.')

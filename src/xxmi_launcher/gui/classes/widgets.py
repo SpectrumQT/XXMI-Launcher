@@ -1,10 +1,11 @@
 import logging
+import tkinter
 
 from typing import Union, Tuple, List, Dict, Optional, Callable
 from pathlib import Path
 
 from tkinter import Menu, INSERT
-from customtkinter import CTkBaseClass, CTkButton, CTkImage, CTkLabel, CTkProgressBar, CTkEntry, CTkCheckBox, CTkTextbox
+from customtkinter import CTkBaseClass, CTkButton, CTkImage, CTkLabel, CTkProgressBar, CTkEntry, CTkCheckBox, CTkTextbox, CTkOptionMenu
 from customtkinter import END, CURRENT
 from PIL import Image, ImageTk
 
@@ -524,6 +525,59 @@ class UIOptionMenu(CTkOptionMenu, UIWidget):
                  **kwargs):
         UIWidget.__init__(self, master,  **kwargs)
         CTkOptionMenu.__init__(self, master, **kwargs)
+
+    def _draw(self, no_color_updates=False):
+        CTkBaseClass._draw(self, no_color_updates)
+
+        left_section_width = self._current_width - self._current_height
+        requires_recoloring = self._draw_engine.draw_rounded_rect_with_border_vertical_split(self._apply_widget_scaling(self._current_width),
+                                                                                             self._apply_widget_scaling(self._current_height),
+                                                                                             self._apply_widget_scaling(self._corner_radius),
+                                                                                             0,
+                                                                                             self._apply_widget_scaling(left_section_width))
+
+        # Drawing Y with CustomTkinter_shapes_font bugs out for some reason, lets hardcode ▼ for now
+        requires_recoloring_2 = False
+
+        x_position = self._apply_widget_scaling(self._current_width - (self._current_height / 2))
+        y_position = self._apply_widget_scaling(self._current_height / 2)
+        size = self._apply_widget_scaling(self._current_height / 3)
+
+        x_position, y_position, size = round(x_position), round(y_position), round(size)
+
+        if not self._canvas.find_withtag("dropdown_arrow"):
+            self._canvas.create_text(0, 0, text="▼", font=("Arial", -size), tags="dropdown_arrow",
+                                     anchor=tkinter.CENTER)
+            self._canvas.tag_raise("dropdown_arrow")
+            requires_recoloring = True
+
+        self._canvas.itemconfigure("dropdown_arrow", font=("Arial", -size))
+        self._canvas.coords("dropdown_arrow", x_position, y_position)
+
+        if no_color_updates is False or requires_recoloring or requires_recoloring_2:
+            self._canvas.configure(bg=self._apply_appearance_mode(self._bg_color))
+
+            self._canvas.itemconfig("inner_parts_left",
+                                    outline=self._apply_appearance_mode(self._fg_color),
+                                    fill=self._apply_appearance_mode(self._fg_color))
+            self._canvas.itemconfig("inner_parts_right",
+                                    outline=self._apply_appearance_mode(self._button_color),
+                                    fill=self._apply_appearance_mode(self._button_color))
+
+            self._text_label.configure(fg=self._apply_appearance_mode(self._text_color))
+
+            if self._state == tkinter.DISABLED:
+                self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color)))
+                self._canvas.itemconfig("dropdown_arrow",
+                                        fill=self._apply_appearance_mode(self._fg_color))
+            else:
+                self._text_label.configure(fg=self._apply_appearance_mode(self._text_color))
+                self._canvas.itemconfig("dropdown_arrow",
+                                        fill=self._apply_appearance_mode(self._fg_color))
+
+            self._text_label.configure(bg=self._apply_appearance_mode(self._fg_color))
+
+        self._canvas.update_idletasks()
 
 
 class UITextbox(CTkTextbox, UIWidget):
