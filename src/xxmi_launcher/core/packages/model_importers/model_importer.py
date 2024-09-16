@@ -2,6 +2,7 @@ import sys
 import shutil
 import winshell
 import pythoncom
+import re
 
 from datetime import datetime
 from pathlib import Path
@@ -48,6 +49,7 @@ class ModelImporterConfig:
     launcher_theme: str = 'Default'
     overwrite_ini: bool = True
     process_priority: str = 'Above Normal'
+    window_mode: str = 'Borderless'
     run_pre_launch_enabled: bool = True
     run_pre_launch: str = ''
     run_pre_launch_signature: str = ''
@@ -267,3 +269,56 @@ class ModelImporterPackage(Package):
             link.working_directory = str(Paths.App.Root)
             link.arguments = f'--nogui --xxmi {Config.Launcher.active_importer}'
             link.icon_location = (str(Config.Active.Importer.theme_path / 'Shortcuts' / f'{Config.Launcher.active_importer}.ico'), 0)
+
+    def disable_duplicate_libraries(self, libs_path: Path):
+        mods_path = Config.Active.Importer.importer_path / 'Mods'
+        packaged_namespaces = self.index_namespaces(libs_path)
+        mods_namespaces = self.index_namespaces(mods_path)
+
+        duplicate_ini_paths = []
+        for mods_namespace, ini_paths in mods_namespaces.items():
+            if mods_namespace in packaged_namespaces.keys():
+                for ini_path in ini_paths:
+                    duplicate_ini_paths.append(ini_path)
+
+        if len(duplicate_ini_paths) == 0:
+            return
+
+        user_requested_disable = Events.Call(Events.Application.ShowError(
+            modal=True,
+            confirm_text='Disable',
+            cancel_text='Ignore',
+            message=f'Some libraries in Mods folder are already included in {Config.Launcher.active_importer}!\n'
+                    f'Would you like to disable following duplicates automatically (recommended)?'
+                    f'\n' + '\n'.join([f'Mods\{x.relative_to(mods_path)}' for x in duplicate_ini_paths])
+        ))
+
+        if not user_requested_disable:
+            return
+
+        for ini_path in duplicate_ini_paths:
+            ini_path.rename(ini_path.parent / f'DISABLED{ini_path.name}')
+
+    def index_namespaces(self, folder_path: Path):
+        namespace_pattern = re.compile(r'namespace\s*=\s*(.*)')
+        namespaces = {}
+        for file_path in folder_path.glob('**/*.ini'):
+            if file_path.name.upper().startswith('DISABLED'):
+                continue
+            with open(file_path, 'r') as f:
+                for line_id, line in enumerate(f.readlines()):
+                    stripped_line = line.strip().lower()
+                    if not stripped_line:
+                        continue
+                    if stripped_line[0] == ';':
+                        continue
+                    result = namespace_pattern.findall(stripped_line)
+                    if len(result) == 1:
+                        namespace = result[0]
+                        known_namespace = namespaces.get(namespace, None)
+                        if known_namespace:
+                            known_namespace.append(file_path)
+                        else:
+                            namespaces[namespace] = [file_path]
+                    break
+        return namespaces
