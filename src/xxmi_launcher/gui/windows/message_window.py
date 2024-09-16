@@ -27,8 +27,8 @@ class MessageWindow(UIToplevel):
         else:
             self.cfg.icon_path = Paths.App.Themes / 'Default' / 'MessageWindow' / icon
 
-        self.cfg.width = 480
-        self.cfg.height = 165
+        self.cfg.width = 640
+        self.cfg.height = 225
 
         # self.transient(master)
 
@@ -39,8 +39,8 @@ class MessageWindow(UIToplevel):
         class MessageScrollableFrame(UIScrollableFrame):
             def __init__(self, master):
                 super().__init__(
-                    width=440,
-                    height=84,
+                    width=600,
+                    height=138,
                     corner_radius=0,
                     fg_color="transparent",
                     hide_scrollbar=True,
@@ -53,10 +53,10 @@ class MessageWindow(UIToplevel):
         self.put(MessageScrollableFrame(self)).pack(pady=(20, 20))
 
         if confirm_text:
-            self.put(ConfirmButton(self, confirm_text, confirm_command)).pack(padx=(50, 50), pady=(0, 15), side='right' if cancel_text else 'bottom')
+            self.put(ConfirmButton(self, confirm_text, confirm_command)).pack(padx=(20, 60), pady=(0, 15), side='right' if cancel_text else 'bottom')
 
         if cancel_text:
-            self.put(CancelButton(self, cancel_text, cancel_command)).pack(padx=(50, 50), pady=(0, 15), side='left')
+            self.put(CancelButton(self, cancel_text, cancel_command)).pack(padx=(60, 20), pady=(0, 15), side='left')
 
         self.update()
 
@@ -71,10 +71,11 @@ class MessageTextLabel(UILabel):
     def __init__(self, master, message):
         super().__init__(
             text=message,
-            wraplength=440,
+            wraplength=600,
             height=84,
             justify='center',
             anchor='center',
+            font=('Asap', 16),
             master=master)
 
 
@@ -86,6 +87,8 @@ class ConfirmButton(UIButton):
             fg_color='#666666',
             text_color='#ffffff',
             hover_color='#888888',
+            width=180,
+            height=30,
             master=master)
 
     def confirm(self, confirm_command):
@@ -102,6 +105,8 @@ class CancelButton(UIButton):
             command=lambda: self.cancel(cancel_command),
             fg_color='#e5e5e5',
             border_width=1,
+            width=180,
+            height=30,
             master=master)
 
     def cancel(self, cancel_command):
