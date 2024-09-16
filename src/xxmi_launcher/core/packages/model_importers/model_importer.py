@@ -305,20 +305,23 @@ class ModelImporterPackage(Package):
         for file_path in folder_path.glob('**/*.ini'):
             if file_path.name.upper().startswith('DISABLED'):
                 continue
-            with open(file_path, 'r') as f:
-                for line_id, line in enumerate(f.readlines()):
-                    stripped_line = line.strip().lower()
-                    if not stripped_line:
-                        continue
-                    if stripped_line[0] == ';':
-                        continue
-                    result = namespace_pattern.findall(stripped_line)
-                    if len(result) == 1:
-                        namespace = result[0]
-                        known_namespace = namespaces.get(namespace, None)
-                        if known_namespace:
-                            known_namespace.append(file_path)
-                        else:
-                            namespaces[namespace] = [file_path]
-                    break
+            try:
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    for line_id, line in enumerate(f.readlines()):
+                        stripped_line = line.strip().lower()
+                        if not stripped_line:
+                            continue
+                        if stripped_line[0] == ';':
+                            continue
+                        result = namespace_pattern.findall(stripped_line)
+                        if len(result) == 1:
+                            namespace = result[0]
+                            known_namespace = namespaces.get(namespace, None)
+                            if known_namespace:
+                                known_namespace.append(file_path)
+                            else:
+                                namespaces[namespace] = [file_path]
+                        break
+            except Exception as e:
+                continue
         return namespaces
