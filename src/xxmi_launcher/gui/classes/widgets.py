@@ -7,6 +7,7 @@ from pathlib import Path
 from tkinter import Menu, INSERT
 from customtkinter import CTkBaseClass, CTkButton, CTkImage, CTkLabel, CTkProgressBar, CTkEntry, CTkCheckBox, CTkTextbox, CTkOptionMenu
 from customtkinter import END, CURRENT
+from customtkinter import ThemeManager
 from PIL import Image, ImageTk
 
 import core.config_manager as Config
@@ -525,6 +526,7 @@ class UIOptionMenu(CTkOptionMenu, UIWidget):
                  **kwargs):
         UIWidget.__init__(self, master,  **kwargs)
         CTkOptionMenu.__init__(self, master, **kwargs)
+        self._button_color_disabled = ThemeManager.theme["CTkOptionMenu"]["button_color_disabled"]
 
     def _draw(self, no_color_updates=False):
         CTkBaseClass._draw(self, no_color_updates)
@@ -560,17 +562,20 @@ class UIOptionMenu(CTkOptionMenu, UIWidget):
             self._canvas.itemconfig("inner_parts_left",
                                     outline=self._apply_appearance_mode(self._fg_color),
                                     fill=self._apply_appearance_mode(self._fg_color))
-            self._canvas.itemconfig("inner_parts_right",
-                                    outline=self._apply_appearance_mode(self._button_color),
-                                    fill=self._apply_appearance_mode(self._button_color))
 
             self._text_label.configure(fg=self._apply_appearance_mode(self._text_color))
 
             if self._state == tkinter.DISABLED:
-                self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color)))
+                self._canvas.itemconfig("inner_parts_right",
+                                        outline=self._apply_appearance_mode(self._button_color_disabled),
+                                        fill=self._apply_appearance_mode(self._button_color_disabled))
+                self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color_disabled)))
                 self._canvas.itemconfig("dropdown_arrow",
                                         fill=self._apply_appearance_mode(self._fg_color))
             else:
+                self._canvas.itemconfig("inner_parts_right",
+                                        outline=self._apply_appearance_mode(self._button_color),
+                                        fill=self._apply_appearance_mode(self._button_color))
                 self._text_label.configure(fg=self._apply_appearance_mode(self._text_color))
                 self._canvas.itemconfig("dropdown_arrow",
                                         fill=self._apply_appearance_mode(self._fg_color))
@@ -578,6 +583,17 @@ class UIOptionMenu(CTkOptionMenu, UIWidget):
             self._text_label.configure(bg=self._apply_appearance_mode(self._fg_color))
 
         self._canvas.update_idletasks()
+
+    def _on_leave(self, event=0):
+        # set color of inner button parts
+        if self._state == tkinter.DISABLED:
+            self._canvas.itemconfig("inner_parts_right",
+                                    outline=self._apply_appearance_mode(self._button_color_disabled),
+                                    fill=self._apply_appearance_mode(self._button_color_disabled))
+        else:
+            self._canvas.itemconfig("inner_parts_right",
+                                    outline=self._apply_appearance_mode(self._button_color),
+                                    fill=self._apply_appearance_mode(self._button_color))
 
 
 class UITextbox(CTkTextbox, UIWidget):
