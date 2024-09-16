@@ -7,6 +7,7 @@ import winreg
 import json
 
 from dataclasses import field
+from enum import Enum
 from typing import Dict, Union
 
 
@@ -85,6 +86,13 @@ class GIMIPackageConfig:
     )
 
 
+class WindowMode(Enum):
+    Windowed = 'Windowed'
+    Borderless = 'Borderless'
+    Fullscreen = 'Fullscreen'
+    ExclusiveFullscreen = 'Exclusive Fullscreen'
+
+
 class GIMIPackage(ModelImporterPackage):
     def __init__(self):
         super().__init__(PackageMetadata(
@@ -125,6 +133,7 @@ class GIMIPackage(ModelImporterPackage):
         return f'{game_exe_path}'
 
     def initialize_game_launch(self, game_path: Path):
+        self.disable_duplicate_libraries(Config.Active.Importer.importer_path / 'Core' / 'GIMI' / 'Libraries')
         self.update_gimi_ini()
         if Config.Importers.GIMI.Importer.unlock_fps:
             self.configure_fps_unlocker()
@@ -283,11 +292,47 @@ class GIMIPackage(ModelImporterPackage):
             ProcessPriority.HIGH_PRIORITY_CLASS: 1,
             ProcessPriority.REALTIME_PRIORITY_CLASS: 0,
         }
-        process_priority = process_priorities[ProcessPriority(Config.Active.Importer.process_priority)]
+        try:
+            process_priority = ProcessPriority(Config.Active.Importer.process_priority)
+        except Exception as e:
+            process_priority = ProcessPriority.ABOVE_NORMAL_PRIORITY_CLASS
+        process_priority = process_priorities[process_priority]
 
         if fps_config['Priority'] != process_priority:
             fps_config['Priority'] = process_priority
             modified = True
+
+        window_modes = {
+            WindowMode.Windowed: {
+                'PopupWindow': False,
+                'Fullscreen': False,
+                'IsExclusiveFullscreen': False,
+            },
+            WindowMode.Borderless: {
+                'PopupWindow': True,
+                'Fullscreen': False,
+                'IsExclusiveFullscreen': False,
+            },
+            WindowMode.Fullscreen: {
+                'PopupWindow': False,
+                'Fullscreen': True,
+                'IsExclusiveFullscreen': False,
+            },
+            WindowMode.ExclusiveFullscreen: {
+                'PopupWindow': False,
+                'Fullscreen': True,
+                'IsExclusiveFullscreen': True,
+            },
+        }
+        try:
+            window_mode = WindowMode(Config.Active.Importer.window_mode)
+        except Exception as e:
+            window_mode = WindowMode.Borderless
+
+        for setting, value in window_modes[window_mode].items():
+            if fps_config[setting] != value:
+                fps_config[setting] = value
+                modified = True
 
         if not modified:
             return

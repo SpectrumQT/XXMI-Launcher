@@ -37,7 +37,9 @@ class GeneralSettingsFrame(UIFrame):
         if Vars.Launcher.active_importer.get() in ['WWMI', 'SRMI', 'GIMI']:
             self.put(TweaksLabel(self)).grid(row=3, column=0, padx=(20, 10), pady=(10, 10), sticky='w')
             self.put(UnlockFPSCheckbox(self)).grid(row=3, column=1, padx=(10, 10), pady=(10, 10), sticky='w')
-
+            # Window mode for GI FPS Unlocker
+            if Vars.Launcher.active_importer.get() == 'GIMI':
+                self.put(UnlockFPSWindowOptionMenu(self)).grid(row=3, column=1, padx=(180, 10), pady=(10, 10), sticky='w')
             #  Performance Tweaks
             if Vars.Launcher.active_importer.get() == 'WWMI':
                 self.put(ApplyTweaksCheckbox(self)).grid(row=3, column=2, padx=(20, 10), pady=(10, 10), sticky='w')
@@ -239,6 +241,26 @@ class UnlockFPSCheckbox(UICheckbox):
             msg += '* Local Path: Resources/Packages/GI-FPS-Unlocker/unlockfps_nc.exe\n'
             msg += '* Original Repository: https://github.com/34736384/genshin-fps-unlock'
         return msg.strip()
+
+
+class UnlockFPSWindowOptionMenu(UIOptionMenu):
+    def __init__(self, master):
+        super().__init__(
+            values=['Windowed', 'Borderless', 'Fullscreen', 'Exclusive Fullscreen'],
+            variable=Vars.Active.Importer.window_mode,
+            width=140,
+            height=36,
+            font=('Arial', 14),
+            dropdown_font=('Arial', 14),
+            master=master)
+        self.set_tooltip('Game window mode when started with FPS Unlocker.')
+        self.trace_write(Vars.Active.Importer.unlock_fps, self.handle_write_unlock_fps)
+
+    def handle_write_unlock_fps(self, var, val):
+        if val:
+            self.configure(state='normal')
+        else:
+            self.configure(state='disabled')
 
 
 class ApplyTweaksCheckbox(UICheckbox):
