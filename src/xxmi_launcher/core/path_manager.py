@@ -103,7 +103,6 @@ class Paths:
     Root: Path = Path('')
     Resources: Path = Path('Resources')
     Themes: Path = Path('Themes')
-    Downloads: Path = Path('Downloads')
     Backups: Path = Path('Backups')
 
     def set_root_path(self, root_path: Path):

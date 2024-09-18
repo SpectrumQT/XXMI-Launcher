@@ -123,8 +123,8 @@ class SRMIPackage(ModelImporterPackage):
     def get_game_data_path(self):
         player_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'Cognosphere' / 'Star Rail' / 'Player.log'
 
-        # WwiseUnity: Setting Plugin DLL path to: C:/Games/ZenlessZoneZero Game/ZenlessZoneZero_Data\Plugins\x86_64
-        # [Subsystems] Discovering subsystems at path C:/Games/ZenlessZoneZero Game/ZenlessZoneZero_Data/UnitySubsystems
+        # WwiseUnity: Setting Plugin DLL path to: C:/Games/HonkaiStarRail/DATA/Games/StarRail_Data\Plugins\x86_64
+        # [Subsystems] Discovering subsystems at path C:/Games/HonkaiStarRail/DATA/Games/StarRail_Data/UnitySubsystems
         path_pattern = re.compile(r'([a-zA-Z]:[^:]*)(?:Plugins|UnitySubsystems)')
         data_path = self.find_in_file(path_pattern, player_log_path)
         if data_path is not None:
@@ -132,7 +132,7 @@ class SRMIPackage(ModelImporterPackage):
 
         output_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'Cognosphere' / 'Star Rail' / 'output_log.txt'
 
-        # [0704/170821.845:INFO:API.cpp(331)] zfb_init: Using --apm_config={"astrolabePath":"Astrolabe.dll","reportPath":"C:\\Games\\ZenlessZoneZero Game\\ZenlessZoneZero_Data\\SDKCaches\\webview","logLevel":2"}
+        # [0314/092021.404:ERROR:cache_util.cc(146)] Unable to move cache folder C:\Games\HonkaiStarRail\DATA\Games\StarRail_Data\webCaches\2.20.0.0\GPUCache to C:\Games\HonkaiStarRail\DATA\Games\StarRail_Data\webCaches\2.20.0.0\old_GPUCache_000
         report_path_pattern = re.compile(r'([a-zA-Z]:[^:]*)webCaches"')
         data_path = self.find_in_file(report_path_pattern, output_log_path)
         if data_path is not None:

@@ -71,11 +71,6 @@ class ApplicationEvents:
         status: str
 
     @dataclass
-    class SettingsUpdate:
-        name: str
-        value: str
-
-    @dataclass
     class MoveWindow:
         offset_x: int
         offset_y: int
@@ -211,7 +206,7 @@ class Application:
             ZZMIPackage(),
         ]
 
-        self.update_manager = PackageManager(self.packages)
+        self.package_manager = PackageManager(self.packages)
 
         if self.args.xxmi is not None:
             Config.Launcher.active_importer = self.args.xxmi
@@ -223,7 +218,7 @@ class Application:
         if self.args.nogui:
             # Async run update_packages in check-for-updates mode to save available updates versions to config
             # It allows to go straight to game launch at the cost of update notification being delayed by 1 restart
-            self.run_as_thread(self.update_manager.update_packages, no_install=True)
+            self.run_as_thread(self.package_manager.update_packages, no_install=True)
             # If there are any updates, ask user whether they want to install or skip them and just launch the game
             if self.update_scheduled():
                 # Force update_packages call below to install the latest updates
@@ -244,7 +239,7 @@ class Application:
 
         Events.Subscribe(Events.Application.VerifyFileAccess, self.handle_verify_file_access)
         Events.Subscribe(Events.Application.Update,
-                         lambda event: self.run_as_thread(self.update_manager.update_packages, **event.__dict__))
+                         lambda event: self.run_as_thread(self.package_manager.update_packages, **event.__dict__))
         Events.Subscribe(Events.Application.CheckForUpdates,
                          lambda event: self.run_as_thread(self.check_for_updates))
         Events.Subscribe(Events.Application.LoadImporter,
@@ -254,7 +249,7 @@ class Application:
 
         Events.Fire(Events.Application.ConfigUpdate())
 
-        self.update_manager.notify_package_versions()
+        self.package_manager.notify_package_versions()
 
         self.gui.after(100, self.run_as_thread, self.auto_update)
 
@@ -267,31 +262,33 @@ class Application:
         self.exit()
 
     def auto_update(self, no_install=False):
-        self.update_manager.update_packages(force=self.args.update, no_install=True, silent=not self.args.update)
+        self.package_manager.update_packages(force=self.args.update, no_install=True, silent=not self.args.update)
         if self.args.update:
             self.args.update = False
-        if not no_install and self.update_manager.update_available() and Config.Launcher.auto_update:
-            self.update_manager.update_packages(force=False, no_install=False, silent=False)
+        if not no_install and self.package_manager.update_available() and Config.Launcher.auto_update:
+            self.package_manager.update_packages(force=False, no_install=False, silent=False)
 
     def load_importer(self, importer_id, update=True):
         if hasattr(Config, 'Active'):
-            self.update_manager.unload_package(Config.Launcher.active_importer)
+            if importer_id == Config.Launcher.active_importer:
+                return
+            self.package_manager.unload_package(Config.Launcher.active_importer)
         Config.Launcher.active_importer = importer_id
         Config.Active = getattr(Config.Importers, importer_id)
-        self.update_manager.load_package(importer_id)
-        self.update_manager.notify_package_versions()
+        self.package_manager.load_package(importer_id)
+        self.package_manager.notify_package_versions()
         Config.ConfigSecurity.validate_config()
         Events.Fire(Events.Application.ConfigUpdate())
         if update:
             self.run_as_thread(self.auto_update, no_install=True)
 
     def update_scheduled(self) -> bool:
-        if not self.update_manager.update_available():
+        if not self.package_manager.update_available():
             return False
 
         pending_update_message = []
 
-        for package_name, package in self.update_manager.get_version_notification().package_states.items():
+        for package_name, package in self.package_manager.get_version_notification().package_states.items():
             # Exclude skipped package updates from the list
             if package.latest_version == package.skipped_version:
                 continue
@@ -318,15 +315,15 @@ class Application:
 
         # Mark updates as skipped if user pressed Skip button, but only if it's not None from Close button
         if not user_requested_update and user_requested_update is not None:
-            self.update_manager.skip_latest_updates()
+            self.package_manager.skip_latest_updates()
 
         return bool(user_requested_update)
 
     def check_for_updates(self, force: bool = True):
-        self.update_manager.update_packages(no_install=True, force=force)
-        if self.update_manager.update_available():
+        self.package_manager.update_packages(no_install=True, force=force)
+        if self.package_manager.update_available():
             if self.update_scheduled():
-                self.update_manager.update_packages(force=force)
+                self.package_manager.update_packages(force=force)
         else:
             Events.Fire(Events.Application.ShowInfo(
                 modal=True,

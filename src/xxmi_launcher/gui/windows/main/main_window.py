@@ -72,15 +72,12 @@ class MainWindow(UIMainWindow):
 
         Events.Subscribe(Events.Application.MoveWindow, lambda event: self.move(event.offset_x, event.offset_y))
 
-        # self.redirect_target_window = self.put(MainWindow(self))
-        # UIMainWindowOverrideRedirect.initialize(self)
-
         Events.Fire(Events.Application.Ready())
         # Events.Fire(Events.Application.Busy())
         # Events.Fire(Events.PackageManager.InitializeInstallation())
 
         self.show()
-        # self.redirect_target_window.show()
+
         # self.open_settings()
 
         Events.Subscribe(Events.Application.OpenSettings,
