@@ -148,9 +148,9 @@ class UIMainWindow(UIWindow, CTk):
 
 
 class UIToplevel(UIWindow, CTkToplevel):
-    def __init__(self, master: Union[UIWindow, 'UIToplevel'], lock_master=True):
+    def __init__(self, master: Union[UIWindow, 'UIToplevel'], lock_master=True, **kwargs):
         UIWindow.__init__(self, cfg=UIWindowConfig())
-        CTkToplevel.__init__(self, master=master)
+        CTkToplevel.__init__(self, master=master, **kwargs)
         self.master: Union[UIWindow, 'UIToplevel'] = master
         self.protocol('WM_DELETE_WINDOW', self.close)
         self.lock_master = lock_master
@@ -170,7 +170,7 @@ class UIToplevel(UIWindow, CTkToplevel):
             window = self
         if anchor_to_master:
             x = int(self.master.winfo_rootx() + self.master.winfo_width() / 2 - self._apply_window_scaling(self.cfg.width) / 2)
-            y = int(self.master.winfo_rooty() + self.master.winfo_height() / 2 - self._apply_window_scaling(self.cfg.height) / 2 - 16*2)
+            y = int(self.master.winfo_rooty() + self.master.winfo_height() / 2 - self._apply_window_scaling(self.cfg.height) / 2 - 16)
         else:
             x = int(window.winfo_screenwidth() / 2 - self._apply_window_scaling(self.cfg.width) / 2)
             y = int(window.winfo_screenheight() / 2 - self._apply_window_scaling(self.cfg.height) / 2 - 16)

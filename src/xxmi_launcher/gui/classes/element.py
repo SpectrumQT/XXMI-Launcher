@@ -81,9 +81,10 @@ class UIElement:
     def hide(self, hide=True):
         if hide or not self.enabled:
             self.is_hidden = True
-            self._hide()
+
             for element in self.elements.values():
                 element.hide()
+            self._hide()
         else:
             self.show()
 
@@ -93,16 +94,19 @@ class UIElement:
     def show(self, show=True):
         if show and self.enabled:
             self.is_hidden = False
-            self._show()
+
             for element in self.elements.values():
                 element.show()
+            self._show()
         else:
             self.hide()
 
-    # def destroy(self):
-        # if self.tooltip is not None:
-        #     self.tooltip.destroy()
-        # super().destroy()
+    def destroy(self):
+        try:
+            self.tooltip.destroy()
+        except:
+            pass
+        super().destroy()
 
     def _show(self):
         raise NotImplementedError
@@ -121,14 +125,24 @@ class UIElementBase(UIElement):
     def __init__(self, **kwargs):
         UIElement.__init__(self, **kwargs)
         self.manager = None
+        self.last_place = None
+        self.last_pack = None
 
     def _hide(self):
         if self.get_manager(last_used=True) == 'grid':
             self.grid_remove()
+        elif self.get_manager(last_used=True) == 'place':
+            self.place_forget()
+        elif self.get_manager(last_used=True) == 'pack':
+            self.pack_forget()
 
     def _show(self):
         if self.get_manager(last_used=True) == 'grid':
             self.grid()
+        elif self.get_manager(last_used=True) == 'place':
+            self.place()
+        elif self.get_manager(last_used=True) == 'pack':
+            self.pack()
 
     def get_manager(self, last_used=False):
         if last_used:
@@ -142,8 +156,16 @@ class UIElementBase(UIElement):
 
     def place(self, **kwargs):
         self.manager = 'place'
-        super().place(**kwargs)
+        if self.last_place:
+            super().place(**self.last_place)
+        else:
+            self.last_place = kwargs
+            super().place(**kwargs)
 
     def pack(self, **kwargs):
         self.manager = 'pack'
-        super().pack(**kwargs)
+        if self.last_pack:
+            super().pack(**self.last_pack)
+        else:
+            self.last_pack = kwargs
+            super().pack(**kwargs)

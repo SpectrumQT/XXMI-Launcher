@@ -72,7 +72,7 @@ class MessageTextLabel(UILabel):
         super().__init__(
             text=message,
             wraplength=600,
-            height=84,
+            height=138,
             justify='center',
             anchor='center',
             font=('Asap', 16),

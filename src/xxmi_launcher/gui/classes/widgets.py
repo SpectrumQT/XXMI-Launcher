@@ -1,3 +1,4 @@
+import sys
 import logging
 import tkinter
 
@@ -39,52 +40,62 @@ class UIText(UIWidget, CTkBaseClass):
                  width: int = 0,
                  x: int = 0,
                  y: int = 0,
+                 canvas=None,
                  **kwargs):
         if 'Asap' in font:
             y -= 1
         self.master = master
+        self.canvas = canvas or master.canvas
         CTkBaseClass.__init__(self, master=master)
         UIWidget.__init__(self, master,  **kwargs)
         self.fill = fill
         self.activefill = activefill
         self.disabledfill = disabledfill
-        self._text_id = master.canvas.create_text(0, 0, fill=fill, activefill=activefill, disabledfill=disabledfill,
+        self._text_id = self.canvas.create_text(0, 0, fill=fill, activefill=activefill, disabledfill=disabledfill,
                                                      justify=justify, state=state, tags=tags, width=width, font=font, **kwargs)
         self.move(x, y)
 
     def move(self, x, y):
         x = int(self._apply_widget_scaling(x))
         y = int(self._apply_widget_scaling(y))
-        self.master.canvas.coords(self._text_id, x, y)
+        self.canvas.coords(self._text_id, x, y)
 
     def set(self, text: str):
-        self.master.canvas.itemconfigure(self._text_id, text=text)
+        self.canvas.itemconfigure(self._text_id, text=text)
 
     def _show(self):
-        self.master.canvas.itemconfigure(self._text_id, state='normal')
+        self.canvas.itemconfigure(self._text_id, state='normal')
 
     def _hide(self):
-        self.master.canvas.itemconfigure(self._text_id, state='hidden')
+        self.canvas.itemconfigure(self._text_id, state='hidden')
 
     def force_normal(self):
-        self.master.canvas.itemconfigure(self._text_id, fill=self.fill)
+        self.canvas.itemconfigure(self._text_id, fill=self.fill)
 
     def force_active(self):
-        self.master.canvas.itemconfigure(self._text_id, fill=self.activefill, activefill=self.activefill)
+        self.canvas.itemconfigure(self._text_id, fill=self.activefill, activefill=self.activefill)
 
     def force_disabled(self):
-        self.master.canvas.itemconfigure(self._text_id, fill=self.disabledfill, activefill=self.disabledfill)
+        self.canvas.itemconfigure(self._text_id, fill=self.disabledfill, activefill=self.disabledfill)
 
     def bind(self, *args, **kwargs):
-        self.master.canvas.tag_bind(self._text_id, *args, **kwargs)
+        self.canvas.tag_bind(self._text_id, *args, **kwargs)
 
     def unbind(self, *args, **kwargs):
-        self.master.canvas.tag_unbind(self._text_id, *args, **kwargs)
+        self.canvas.tag_unbind(self._text_id, *args, **kwargs)
+
+    def destroy(self):
+        try:
+            self.canvas.delete(self._text_id)
+        except:
+            pass
+        super().destroy()
 
 
 class UIImage(UIWidget, CTkBaseClass):
     def __init__(self,
                  master: Union[UIWindow, 'UIFrame'],
+                 canvas=None,
                  image_path: Optional[Path] = None,
                  x: int = 0,
                  y: int = 0,
@@ -95,6 +106,7 @@ class UIImage(UIWidget, CTkBaseClass):
                  brightness: float = 1,
                  **kwargs):
         self.master = master
+        self.canvas = canvas or master.canvas
         CTkBaseClass.__init__(self, master=master)
         UIWidget.__init__(self, master,  **kwargs)
 
@@ -122,14 +134,14 @@ class UIImage(UIWidget, CTkBaseClass):
             self.image = self.create_image(self._original_image, self.width, self.height, self.opacity, self.brightness)
             if self.image_tag is None:
                 self._update_attrs(['x', 'y', 'anchor'], kwargs)
-                self.image_tag = self.master.canvas.create_image(self.x, self.y, image=self.image, anchor=self.anchor, **kwargs)
+                self.image_tag = self.canvas.create_image(self.x, self.y, image=self.image, anchor=self.anchor, **kwargs)
             self.set_image(self.image)
 
         if self._update_attrs(['x', 'y'], kwargs):
             self.move(self.x, self.y)
 
         if self._update_attrs(['anchor'], kwargs):
-            self.master.canvas.itemconfigure(self.image_tag, anchor=self.anchor)
+            self.canvas.itemconfigure(self.image_tag, anchor=self.anchor)
 
     def _update_attrs(self, attrs, kwargs):
         attrs_updated = False
@@ -143,7 +155,7 @@ class UIImage(UIWidget, CTkBaseClass):
         return attrs_updated
 
     def set_image(self, image):
-        self.master.canvas.itemconfig(self.image_tag, image=image)
+        self.canvas.itemconfig(self.image_tag, image=image)
 
     def create_image(self, image: Image, width, height, opacity: float, brightness: float):
         width = int(self._apply_widget_scaling(width))
@@ -162,19 +174,27 @@ class UIImage(UIWidget, CTkBaseClass):
         return ImageTk.PhotoImage(image)
 
     def move(self, x, y):
-        self.master.canvas.coords(self.image_tag, x, y)
+        self.canvas.coords(self.image_tag, x, y)
 
     def _show(self):
-        self.master.canvas.itemconfigure(self.image_tag, state='normal')
+        self.canvas.itemconfigure(self.image_tag, state='normal')
 
     def _hide(self):
-        self.master.canvas.itemconfigure(self.image_tag, state='hidden')
+        self.canvas.itemconfigure(self.image_tag, state='hidden')
 
     def bind(self, *args, **kwargs):
-        self.master.canvas.tag_bind(self.image_tag, *args, **kwargs)
+        self.canvas.tag_bind(self.image_tag, *args, **kwargs)
 
     def unbind(self, *args, **kwargs):
-        self.master.canvas.tag_unbind(self.image_tag, *args, **kwargs)
+        self.canvas.tag_unbind(self.image_tag, *args, **kwargs)
+
+    def destroy(self):
+        try:
+            self.canvas.delete(self.image_tag)
+        except:
+            pass
+        self.image = None
+        super().destroy()
 
 
 class UIImageButton(UIWidget, CTkBaseClass):
@@ -221,13 +241,14 @@ class UIImageButton(UIWidget, CTkBaseClass):
                  fill: str = 'black',
                  activefill: str = 'black',
                  disabledfill: str = 'black',
+                 canvas=None,
                  **kwargs):
 
         CTkBaseClass.__init__(self, master=master)
         UIWidget.__init__(self, master,  **kwargs)
 
         self.master = master
-        self.canvas = master.canvas
+        self.canvas = canvas or master.canvas
         self.command = command
         self.disabled = disabled
 
@@ -253,7 +274,7 @@ class UIImageButton(UIWidget, CTkBaseClass):
 
         self._text_image = None
         if text is not None:
-            self._text_image = self.put(UIText(master=master, text=text, font=font, width=0, justify=justify,
+            self._text_image = self.put(UIText(master=master, canvas=self.canvas, text=text, font=font, width=0, justify=justify,
                                         x=text_x_offset+x, y=text_y_offset+y, anchor=text_anchor or anchor,
                                         fill=fill, activefill=activefill, disabledfill=disabledfill))
 
@@ -293,7 +314,7 @@ class UIImageButton(UIWidget, CTkBaseClass):
         if self.disabled:
             self.set_disabled(self.disabled)
             return
-        self.master.canvas.config(cursor="hand2")
+        self.canvas.config(cursor="hand2")
         if self.selected:
             self.set_selected(self.selected)
         else:
@@ -309,7 +330,7 @@ class UIImageButton(UIWidget, CTkBaseClass):
         if self.disabled:
             self.set_disabled(self.disabled)
             return
-        self.master.canvas.config(cursor="")
+        self.canvas.config(cursor="")
         if self.selected:
             self.set_selected(self.selected)
         else:
@@ -323,6 +344,7 @@ class UIImageButton(UIWidget, CTkBaseClass):
     def set_selected(self, selected: bool = False):
         self.selected = selected
         if selected:
+            self.disabled = False
             if self._bg_image:
                 self.bg_apply_select()
             if self._button_image:
@@ -375,11 +397,68 @@ class UIButton(UIWidget, CTkButton):
                  master: Union[UIWindow, 'UIFrame'],
                  image_path: Optional[Path] = None,
                  **kwargs):
+
         UIWidget.__init__(self, master,  **kwargs)
+
         self.image: Optional[CTkImage] = None
         if image_path is not None:
             self.image = CTkImage(Image.open(str(Config.get_resource_path(self) / image_path)))
+
+        self.is_hovered = False
+
+        self._text_color_hovered =None
+        if 'text_color_hovered' in kwargs:
+            self._text_color_hovered = kwargs.pop('text_color_hovered')
+
         CTkButton.__init__(self, master, image=self.image, **kwargs)
+
+        if not self._text_color_hovered:
+            self._text_color_hovered = self._text_color
+
+        self.unbind('<Button-1>')
+
+    def configure(self, require_redraw=False, **kwargs):
+        if 'text_color_hovered' in kwargs:
+            self._text_color_hovered = self._check_color_type(kwargs.pop('text_color_hovered'))
+            require_redraw = True
+        super().configure(require_redraw, **kwargs)
+
+    def _on_enter(self, event=None):
+        self.is_hovered = True
+        super()._on_enter(event)
+        self._set_cursor()
+        self._text_label.configure(fg=self._apply_appearance_mode(self._text_color_hovered))
+
+    def _on_leave(self, event=None):
+        self.is_hovered = False
+        super()._on_leave(event)
+        self._set_cursor()
+        self._text_label.configure(fg=self._apply_appearance_mode(self._text_color))
+
+    def _clicked(self, event=None):
+        if not self.is_hovered:
+            return
+        super()._clicked(event)
+
+    def _create_bindings(self, sequence: Optional[str] = None):
+        if sequence == "<Button-1>":
+            self.bind('<ButtonRelease-1>', self._clicked)
+            return
+        super()._create_bindings(sequence)
+
+    def _set_cursor(self):
+        if self._cursor_manipulation_enabled:
+            if self._state == tkinter.DISABLED or not self.is_hovered:
+                if sys.platform == "darwin" and self._command is not None:
+                    self.configure(cursor="arrow")
+                elif sys.platform.startswith("win") and self._command is not None:
+                    self.configure(cursor="arrow")
+
+            elif self._state == tkinter.NORMAL:
+                if sys.platform == "darwin" and self._command is not None:
+                    self.configure(cursor="pointinghand")
+                elif sys.platform.startswith("win") and self._command is not None:
+                    self.configure(cursor="hand2")
 
 
 class UIProgressBar(UIWidget, CTkProgressBar):
@@ -509,7 +588,19 @@ class UICheckbox(CTkCheckBox, UIWidget):
                  master: Union[UIWindow, 'UIFrame'],
                  **kwargs):
         UIWidget.__init__(self, master,  **kwargs)
+
+        self.is_hovered = False
+
+        self._text_color_hovered = None
+        if 'text_color_hovered' in kwargs:
+            self._text_color_hovered = kwargs.pop('text_color_hovered')
+
         CTkCheckBox.__init__(self, master, **kwargs)
+
+        if not self._text_color_hovered:
+            self._text_color_hovered = self._text_color
+
+        self.unbind('<Button-1>')
 
     def set(self, value):
         if value == self._onvalue:
@@ -518,6 +609,59 @@ class UICheckbox(CTkCheckBox, UIWidget):
             self.deselect()
         else:
             raise ValueError(f'Failed to set checkbox to unknown value {value}!')
+
+        self.unbind('<Button-1>')
+
+    def configure(self, require_redraw=False, **kwargs):
+        if 'text_color_hovered' in kwargs:
+            self._text_color_hovered = self._check_color_type(kwargs.pop('text_color_hovered'))
+            require_redraw = True
+        super().configure(require_redraw, **kwargs)
+
+    def _on_enter(self, event=None):
+        self.is_hovered = True
+        super()._on_enter(event)
+        self._set_cursor()
+        self._text_label.configure(fg=self._apply_appearance_mode(self._text_color_hovered))
+
+    def _on_leave(self, event=None):
+        self.is_hovered = False
+        super()._on_leave(event)
+        self._set_cursor()
+        self._text_label.configure(fg=self._apply_appearance_mode(self._text_color))
+
+    def toggle(self, event=0):
+        if not self.is_hovered:
+            return
+        super().toggle(event)
+
+    def _create_bindings(self, sequence: Optional[str] = None):
+        if sequence == "<Button-1>":
+            self.bind('<ButtonRelease-1>', self.toggle)
+            return
+        super()._create_bindings(sequence)
+
+    def _set_cursor(self):
+        if self._cursor_manipulation_enabled:
+            if self._state == tkinter.DISABLED or not self.is_hovered:
+                if sys.platform == "darwin":
+                    self._canvas.configure(cursor="arrow")
+                    if self._text_label is not None:
+                        self._text_label.configure(cursor="arrow")
+                elif sys.platform.startswith("win"):
+                    self._canvas.configure(cursor="arrow")
+                    if self._text_label is not None:
+                        self._text_label.configure(cursor="arrow")
+
+            elif self._state == tkinter.NORMAL:
+                if sys.platform == "darwin":
+                    self._canvas.configure(cursor="pointinghand")
+                    if self._text_label is not None:
+                        self._text_label.configure(cursor="pointinghand")
+                elif sys.platform.startswith("win"):
+                    self._canvas.configure(cursor="hand2")
+                    if self._text_label is not None:
+                        self._text_label.configure(cursor="hand2")
 
 
 class UIOptionMenu(CTkOptionMenu, UIWidget):
