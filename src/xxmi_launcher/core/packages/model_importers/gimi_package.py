@@ -296,6 +296,7 @@ class GIMIPackage(ModelImporterPackage):
             process_priority = ProcessPriority(Config.Active.Importer.process_priority)
         except Exception as e:
             process_priority = ProcessPriority.ABOVE_NORMAL_PRIORITY_CLASS
+            Config.Active.Importer.process_priority = process_priority.value
         process_priority = process_priorities[process_priority]
 
         if fps_config['Priority'] != process_priority:
@@ -328,6 +329,7 @@ class GIMIPackage(ModelImporterPackage):
             window_mode = WindowMode(Config.Active.Importer.window_mode)
         except Exception as e:
             window_mode = WindowMode.Borderless
+            Config.Active.Importer.window_mode = window_mode.value
 
         for setting, value in window_modes[window_mode].items():
             if fps_config[setting] != value:
