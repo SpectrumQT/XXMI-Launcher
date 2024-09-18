@@ -59,18 +59,29 @@ class ImporterSelectButton(UIImageButton):
             button_normal_opacity=0.8,
             button_hover_opacity=1,
             button_selected_opacity=1,
+            button_disabled_opacity=0.5,
             bg_image_path='button-select-game-background.png',
             bg_normal_opacity=0,
             bg_hover_opacity=0.5,
             bg_selected_opacity=1,
+            bg_disabled_opacity=0,
         )
         super().__init__(**kwargs)
+        self.subscribe(Events.GUI.LauncherFrame.StageUpdate, self.handle_stage_update)
 
     def _handle_button_press(self, event):
+        if self.disabled:
+            return
         self.command()
 
     def _handle_button_release(self, event):
         pass
+
+    def handle_stage_update(self, event):
+        if event.stage == Stage.Ready:
+            self.set_disabled(False)
+        elif not self.selected:
+            self.set_disabled(True)
 
 
 class LoadWWMIButton(ImporterSelectButton):
@@ -217,10 +228,19 @@ class SettingsButton(ControlButton):
             x=1120,
             width=36,
             height=36,
+            button_disabled_opacity=0.5,
+            bg_disabled_opacity=0,
             button_image_path='button-system-settings.png',
             command=lambda: Events.Fire((Events.Application.OpenSettings())),
             master=master)
         self.set_tooltip(f'Open Settings', delay=0.1)
+        self.subscribe(Events.GUI.LauncherFrame.StageUpdate, self.handle_stage_update)
+
+    def handle_stage_update(self, event):
+        if event.stage == Stage.Ready:
+            self.set_disabled(False)
+        elif not self.selected:
+            self.set_disabled(True)
 
 
 class MinimizeButton(ControlButton):

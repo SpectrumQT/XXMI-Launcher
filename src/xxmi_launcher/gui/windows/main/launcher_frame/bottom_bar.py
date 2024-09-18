@@ -81,9 +81,6 @@ class InstallationProgressBar(UIProgressBar):
             Events.Application.Busy,
             lambda event: self.start())
 
-    def start_game(self):
-        Events.Fire(Events.Application.Launch())
-
 
 class LeftStatusText(UIText):
     def __init__(self, master):
