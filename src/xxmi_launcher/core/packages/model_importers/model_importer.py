@@ -6,7 +6,7 @@ import re
 
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, Union, Dict, List
+from typing import Optional, Union, Dict, List, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
 
@@ -98,6 +98,7 @@ class ModelImporterPackage(Package):
         super().__init__(metadata)
         self.backups_path = None
         self.use_hook: bool = True
+        self.ini = None
 
     def load(self):
         self.subscribe(Events.ModelImporter.StartGame, self.start_game)
@@ -167,6 +168,8 @@ class ModelImporterPackage(Package):
             with open(ini_path, 'w') as f:
                 f.write(ini.to_string())
 
+        self.ini = ini
+
     def set_default_ini_values(self, ini: IniHandler, setting_name: str, setting_type: SettingType, setting_value=None):
         settings = Config.Active.Importer.d3dx_ini.get(setting_name, None)
         if settings is None:
@@ -196,8 +199,8 @@ class ModelImporterPackage(Package):
     def validate_game_exe_path(self, game_path: Path) -> Path:
         raise NotImplementedError
 
-    def get_start_cmd(self, game_path: Path) -> str:
-        return f'{self.validate_game_exe_path(game_path)}'
+    def get_start_cmd(self, game_path: Path) -> Tuple[str, Optional[str]]:
+        return f'{self.validate_game_exe_path(game_path)}', None
 
     def start_game(self, event):
         # Ensure package integrity
@@ -221,10 +224,10 @@ class ModelImporterPackage(Package):
         # Execute initialization sequence of implemented importer
         self.initialize_game_launch(game_path)
 
-        start_cmd = self.get_start_cmd(game_path)
+        start_cmd, work_dir = self.get_start_cmd(game_path)
 
         Events.Fire(Events.MigotoManager.StartAndInject(exe_path=game_exe_path, start_cmd=start_cmd,
-                                                        use_hook=self.use_hook))
+                                                        work_dir=work_dir, use_hook=self.use_hook))
 
     def autodetect_game_folder(self) -> Path:
         raise NotImplementedError
@@ -272,8 +275,15 @@ class ModelImporterPackage(Package):
 
     def disable_duplicate_libraries(self, libs_path: Path):
         mods_path = Config.Active.Importer.importer_path / 'Mods'
-        packaged_namespaces = self.index_namespaces(libs_path)
-        mods_namespaces = self.index_namespaces(mods_path)
+
+        exclude_patterns = []
+        include_options = self.ini.get_section('Include').options
+        for option_name, option_value, _, _ in include_options:
+            if option_name.lower() == 'exclude_recursive':
+                exclude_patterns.append(option_value)
+
+        mods_namespaces = self.index_namespaces(mods_path, exclude_patterns)
+        packaged_namespaces = self.index_namespaces(libs_path, [])
 
         duplicate_ini_paths = []
         for mods_namespace, ini_paths in mods_namespaces.items():
@@ -299,11 +309,19 @@ class ModelImporterPackage(Package):
         for ini_path in duplicate_ini_paths:
             ini_path.rename(ini_path.parent / f'DISABLED{ini_path.name}')
 
-    def index_namespaces(self, folder_path: Path):
+    def index_namespaces(self, folder_path: Path, exclude_patterns):
         namespace_pattern = re.compile(r'namespace\s*=\s*(.*)')
         namespaces = {}
+
+        excluded_paths = []
+        for exclude_pattern in exclude_patterns:
+            paths = folder_path.glob('**/'+exclude_pattern)
+            for path in paths:
+                if path not in excluded_paths:
+                    excluded_paths.append(path)
+
         for file_path in folder_path.glob('**/*.ini'):
-            if file_path.name.upper().startswith('DISABLED'):
+            if self.path_excluded(file_path, excluded_paths):
                 continue
             try:
                 with open(file_path, 'r', encoding='utf-8') as f:
@@ -324,4 +342,13 @@ class ModelImporterPackage(Package):
                         break
             except Exception as e:
                 continue
+
         return namespaces
+
+    def path_excluded(self, file_path: Path, excluded_paths):
+        for exclude_path in excluded_paths:
+            if exclude_path == file_path:
+                return True
+            if exclude_path in file_path.parents:
+                return True
+        return False

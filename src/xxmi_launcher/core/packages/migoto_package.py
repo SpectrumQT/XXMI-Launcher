@@ -30,6 +30,7 @@ class MigotoManagerEvents:
     class StartAndInject:
         exe_path: Path
         start_cmd: str
+        work_dir: str = None
         use_hook: bool = True
 
 
@@ -113,9 +114,9 @@ class MigotoPackage(Package):
                 # Start game's exe
                 Events.Fire(Events.Application.StartGameExe(process_name=event.exe_path.name))
                 if len(extra_dll_paths) == 0:
-                    subprocess.Popen(launch_cmd, creationflags=process_flags)
+                    subprocess.Popen(launch_cmd, creationflags=process_flags, cwd=event.work_dir)
                 else:
-                    pid = direct_inject(dll_paths=extra_dll_paths, process_name=event.exe_path.name, start_cmd=launch_cmd, creationflags=process_flags)
+                    pid = direct_inject(dll_paths=extra_dll_paths, process_name=event.exe_path.name, start_cmd=launch_cmd, work_dir=event.work_dir, creationflags=process_flags)
                     if pid == -1:
                         raise ValueError(f'Failed to inject {str(extra_dll_paths)}!')
 
@@ -149,7 +150,7 @@ class MigotoPackage(Package):
             # Use WriteProcessMemory injection method
             Events.Fire(Events.Application.Inject(library_name=dll_path.name, process_name=event.exe_path.name))
             dll_paths = [dll_path] + extra_dll_paths
-            pid = direct_inject(dll_paths=dll_paths, process_name=event.exe_path.name, start_cmd=launch_cmd, creationflags=process_flags)
+            pid = direct_inject(dll_paths=dll_paths, process_name=event.exe_path.name, start_cmd=launch_cmd, work_dir=event.work_dir, creationflags=process_flags)
             if pid == -1:
                 raise ValueError(f'Failed to inject {dll_path.name}!')
 

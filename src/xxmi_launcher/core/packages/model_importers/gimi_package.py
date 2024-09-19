@@ -8,8 +8,7 @@ import json
 
 from dataclasses import field
 from enum import Enum
-from typing import Dict, Union
-
+from typing import Dict, Union, Tuple, Optional
 
 from datetime import datetime
 from dataclasses import dataclass
@@ -125,12 +124,14 @@ class GIMIPackage(ModelImporterPackage):
             raise ValueError(f'Game executable {game_exe_path} does not exist!')
         return game_exe_path
 
-    def get_start_cmd(self, game_path: Path) -> str:
+    def get_start_cmd(self, game_path: Path) -> Tuple[str, Optional[str]]:
         if Config.Importers.GIMI.Importer.unlock_fps:
             game_exe_path = Paths.App.Resources / 'Packages' / 'GI-FPS-Unlocker' / 'unlockfps_nc.exe'
+            work_dir_path = str(game_exe_path.parent)
         else:
             game_exe_path = self.validate_game_exe_path(game_path)
-        return f'{game_exe_path}'
+            work_dir_path = None
+        return str(game_exe_path), work_dir_path
 
     def initialize_game_launch(self, game_path: Path):
         self.disable_duplicate_libraries(Config.Active.Importer.importer_path / 'Core' / 'GIMI' / 'Libraries')
@@ -271,9 +272,10 @@ class GIMIPackage(ModelImporterPackage):
                         'Please close it manually and press [OK] to continue.',
             ))
 
-        fps_config_path = Paths.App.Root / 'fps_config.json'
+        fps_config_template_path = Paths.App.Resources / 'Packages' / 'GI-FPS-Unlocker' / 'fps_config_template.json'
+        fps_config_path = fps_config_template_path.parent / 'fps_config.json'
+
         if not fps_config_path.is_file():
-            fps_config_template_path = Paths.App.Resources / 'Packages' / 'GI-FPS-Unlocker' / 'fps_config_template.json'
             shutil.copy2(fps_config_template_path, fps_config_path)
         with open(fps_config_path, 'r') as f:
             fps_config = json.load(f)
