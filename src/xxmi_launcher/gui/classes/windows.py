@@ -53,7 +53,7 @@ def limit_scaling(fit_width, fit_height):
     max_height = ctypes.windll.user32.GetSystemMetrics(1) * 0.8
 
     width_factor = 1
-    if scaled_width > max_height:
+    if scaled_width > max_width:
         width_factor = round(max_width / scaled_width, 1)
 
     height_factor = 1

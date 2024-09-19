@@ -1,7 +1,10 @@
 import re
+import logging
+
 from dataclasses import dataclass, field
 from typing import Dict, Union
 
+log = logging.getLogger(__name__)
 
 @dataclass
 class IniHandlerSettings:
@@ -79,6 +82,7 @@ class IniHandler:
         self.from_file(f)
 
     def from_file(self, f):
+        log.debug(f'Parsing ini...')
         section_pattern = re.compile(r'^\[(.+)\]')
         option_pattern = re.compile(r'^([\w\.\s$]*)\s*=(?!=)\s*(.+)')
 

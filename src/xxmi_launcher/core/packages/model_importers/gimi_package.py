@@ -167,6 +167,7 @@ class GIMIPackage(ModelImporterPackage):
                         return data_path
 
     def update_gimi_ini(self):
+
         Events.Fire(Events.Application.StatusUpdate(status='Updating GIMI main.ini...'))
 
         gimi_ini_path = Config.Importers.GIMI.Importer.importer_path / 'Core' / 'GIMI' / 'main.ini'
@@ -174,18 +175,24 @@ class GIMIPackage(ModelImporterPackage):
             raise ValueError('Failed to locate Core/GIMI/main.ini!')
 
         Events.Fire(Events.Application.VerifyFileAccess(path=gimi_ini_path, write=True))
+
+        log.debug(f'Reading main.ini...')
         with open(gimi_ini_path, 'r') as f:
             ini = IniHandler(IniHandlerSettings(option_value_spacing=True, ignore_comments=False), f)
 
+        log.debug(f'Reading monitor resolution...')
         screen_width, screen_height = ctypes.windll.user32.GetSystemMetrics(0), ctypes.windll.user32.GetSystemMetrics(1)
         ini.set_option('Constants', 'global $window_width', screen_width)
         ini.set_option('Constants', 'global $window_height', screen_height)
 
         if ini.is_modified():
+            log.debug(f'Writing main.ini...')
             with open(gimi_ini_path, 'w') as f:
                 f.write(ini.to_string())
 
     def disable_dcr(self):
+
+        log.debug(f'Checking DCR...')
         # Open HSR registry key
         settings_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, 'SOFTWARE\\miHoYo\\Genshin Impact', 0, winreg.KEY_ALL_ACCESS)
 
@@ -249,6 +256,8 @@ class GIMIPackage(ModelImporterPackage):
         # Exit early if no settings were changed
         if not settings_updated:
             return
+
+        log.debug(f'Disabling DCR...')
 
         # Serialize settings dict back to string
         settings_dict['graphicsData'] = json.dumps(graphics_data, separators=(',', ':'))

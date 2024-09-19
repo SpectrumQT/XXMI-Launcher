@@ -1,3 +1,4 @@
+import logging
 import sys
 import shutil
 import winshell
@@ -17,6 +18,8 @@ import core.config_manager as Config
 from core.package_manager import Package, PackageMetadata
 
 from core.utils.ini_handler import IniHandler, IniHandlerSettings
+
+log = logging.getLogger(__name__)
 
 
 class SettingType(Enum):
@@ -155,6 +158,8 @@ class ModelImporterPackage(Package):
         ini_path = Config.Active.Importer.importer_path / 'd3dx.ini'
 
         Events.Fire(Events.Application.VerifyFileAccess(path=ini_path, write=True))
+
+        log.debug(f'Reading d3dx.ini...')
         with open(ini_path, 'r') as f:
             ini = IniHandler(IniHandlerSettings(ignore_comments=False), f)
 
@@ -165,6 +170,7 @@ class ModelImporterPackage(Package):
         self.set_default_ini_values(ini, 'dump_shaders', SettingType.Bool, Config.Active.Migoto.dump_shaders)
 
         if ini.is_modified():
+            log.debug(f'Writing d3dx.ini...')
             with open(ini_path, 'w') as f:
                 f.write(ini.to_string())
 
@@ -274,17 +280,25 @@ class ModelImporterPackage(Package):
             link.icon_location = (str(Config.Active.Importer.theme_path / 'Shortcuts' / f'{Config.Launcher.active_importer}.ico'), 0)
 
     def disable_duplicate_libraries(self, libs_path: Path):
+        log.debug(f'Searching for duplicate libs...')
         mods_path = Config.Active.Importer.importer_path / 'Mods'
 
         exclude_patterns = []
         include_options = self.ini.get_section('Include').options
-        for option_name, option_value, _, _ in include_options:
+        for option_name, exclude_pattern, _, _ in include_options:
+            exclude_pattern = exclude_pattern.lower()
             if option_name.lower() == 'exclude_recursive':
-                exclude_patterns.append(option_value)
+                if exclude_pattern[-1] == '*':
+                    exclude_patterns.append((exclude_pattern[:-1], lambda x, y: x.startswith(y)))
+                elif exclude_pattern[0] == '*':
+                    exclude_patterns.append((exclude_pattern[1:], lambda x, y: x.endswith(y)))
+                else:
+                    exclude_patterns.append((exclude_pattern, lambda x, y: x == y))
 
         mods_namespaces = self.index_namespaces(mods_path, exclude_patterns)
         packaged_namespaces = self.index_namespaces(libs_path, [])
 
+        log.debug(f'Deducing duplicate libs...')
         duplicate_ini_paths = []
         for mods_namespace, ini_paths in mods_namespaces.items():
             if mods_namespace in packaged_namespaces.keys():
@@ -310,21 +324,27 @@ class ModelImporterPackage(Package):
             ini_path.rename(ini_path.parent / f'DISABLED{ini_path.name}')
 
     def index_namespaces(self, folder_path: Path, exclude_patterns):
+        log.debug(f'Indexing namespaces for {folder_path}...')
         namespace_pattern = re.compile(r'namespace\s*=\s*(.*)')
         namespaces = {}
+        self.index_namespaces_recursive(folder_path, namespace_pattern, exclude_patterns, namespaces)
+        return namespaces
 
-        excluded_paths = []
-        for exclude_pattern in exclude_patterns:
-            paths = folder_path.glob('**/'+exclude_pattern)
-            for path in paths:
-                if path not in excluded_paths:
-                    excluded_paths.append(path)
-
-        for file_path in folder_path.glob('**/*.ini'):
-            if self.path_excluded(file_path, excluded_paths):
-                continue
+    def index_namespaces_recursive(self, path: Path, namespace_pattern, exclude_patterns, namespaces):
+        if path.is_dir():
+            for exclude_str, exclude_func in exclude_patterns:
+                if exclude_func(path.name.lower(), exclude_str):
+                    return
+            for sub_path in path.iterdir():
+                self.index_namespaces_recursive(sub_path, namespace_pattern, exclude_patterns, namespaces)
+        else:
+            if not path.suffix == '.ini':
+                return
+            for exclude_str, exclude_func in exclude_patterns:
+                if exclude_func(path.name.lower(), exclude_str):
+                    return
             try:
-                with open(file_path, 'r', encoding='utf-8') as f:
+                with open(path, 'r', encoding='utf-8') as f:
                     for line_id, line in enumerate(f.readlines()):
                         stripped_line = line.strip().lower()
                         if not stripped_line:
@@ -336,14 +356,11 @@ class ModelImporterPackage(Package):
                             namespace = result[0]
                             known_namespace = namespaces.get(namespace, None)
                             if known_namespace:
-                                known_namespace.append(file_path)
+                                known_namespace.append(path)
                             else:
-                                namespaces[namespace] = [file_path]
-                        break
+                                namespaces[namespace] = [path]
             except Exception as e:
-                continue
-
-        return namespaces
+                pass
 
     def path_excluded(self, file_path: Path, excluded_paths):
         for exclude_path in excluded_paths:
