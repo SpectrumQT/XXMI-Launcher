@@ -91,7 +91,7 @@ class UIScrollableFrame(CTkScrollableFrame, UIElementBase):
         # Automatically hide scrollbar if content fits the height
         if self.hide_scrollbar:
             total_content_height = sum(widget.winfo_height() for widget in self.winfo_children())
-            if total_content_height <= self.height:
+            if total_content_height <= round(self._apply_widget_scaling(self.height)):
                 self._scrollbar.grid_forget()
             else:
                 self._scrollbar.grid()

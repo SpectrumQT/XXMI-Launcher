@@ -499,7 +499,6 @@ if __name__ == '__main__':
     gui = MainWindow()
 
     try:
-        # raise ValueError('1')
         # raise ValueError('1\n2\n3')
         Application(gui)
     except Exception as e:

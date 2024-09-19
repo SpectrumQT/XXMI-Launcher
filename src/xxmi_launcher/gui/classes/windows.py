@@ -50,7 +50,7 @@ def limit_scaling(fit_width, fit_height):
     scaled_height = fit_height * scaling_factor
 
     max_width = ctypes.windll.user32.GetSystemMetrics(0)
-    max_height = ctypes.windll.user32.GetSystemMetrics(1) * 0.95
+    max_height = ctypes.windll.user32.GetSystemMetrics(1) * 0.8
 
     width_factor = 1
     if scaled_width > max_height:
@@ -140,8 +140,10 @@ class UIMainWindow(UIWindow, CTk):
     def center_window(self, window: Optional[CTk] = None):
         if window is None:
             window = self
-        x = int(window.winfo_screenwidth() / 2 - self._apply_window_scaling(self.cfg.width) / 2)
-        y = int(window.winfo_screenheight() / 2 - self._apply_window_scaling(self.cfg.height / 2 - 16))
+        screen_width = ctypes.windll.user32.GetSystemMetrics(0)
+        screen_height = ctypes.windll.user32.GetSystemMetrics(1)
+        x = int(screen_width / 2 - self._apply_window_scaling(self.cfg.width) / 2)
+        y = int(screen_height / 2 - self._apply_window_scaling(self.cfg.height) / 2 - 16)
         # y -= y + self._apply_window_scaling(self.cfg.height)
         window.geometry(f'{self.cfg.width}x{self.cfg.height}+{x}+{y}')
         window.update()
@@ -204,8 +206,10 @@ class UIToplevel(UIWindow, CTkToplevel):
             x = int(self.master.winfo_rootx() + self.master.winfo_width() / 2 - self._apply_window_scaling(self.cfg.width) / 2)
             y = int(self.master.winfo_rooty() + self.master.winfo_height() / 2 - self._apply_window_scaling(self.cfg.height) / 2 - 16)
         else:
-            x = int(window.winfo_screenwidth() / 2 - self._apply_window_scaling(self.cfg.width) / 2)
-            y = int(window.winfo_screenheight() / 2 - self._apply_window_scaling(self.cfg.height) / 2 - 16)
+            screen_width = ctypes.windll.user32.GetSystemMetrics(0)
+            screen_height = ctypes.windll.user32.GetSystemMetrics(1)
+            x = int(screen_width / 2 - self._apply_window_scaling(self.cfg.width) / 2)
+            y = int(screen_height / 2 - self._apply_window_scaling(self.cfg.height) / 2 - 16)
             # y -= y + self._apply_window_scaling(self.cfg.height)
         window.geometry(f'{self.cfg.width}x{self.cfg.height}+{x}+{y}')
 

@@ -52,11 +52,13 @@ class MessageWindow(UIToplevel):
 
         self.put(MessageScrollableFrame(self)).pack(pady=(20, 20))
 
-        if confirm_text:
-            self.put(ConfirmButton(self, confirm_text, confirm_command)).pack(padx=(20, 60), pady=(0, 15), side='right' if cancel_text else 'bottom')
-
-        if cancel_text:
+        if confirm_text and cancel_text:
             self.put(CancelButton(self, cancel_text, cancel_command)).pack(padx=(60, 20), pady=(0, 15), side='left')
+            self.put(ConfirmButton(self, confirm_text, confirm_command)).pack(padx=(20, 60), pady=(0, 15), side='right')
+        elif cancel_text:
+            self.put(CancelButton(self, cancel_text, cancel_command)).pack(padx=(20, 20), pady=(0, 15), side='bottom')
+        elif confirm_text:
+            self.put(ConfirmButton(self, confirm_text, confirm_command)).pack(padx=(20, 20), pady=(0, 15), side='bottom')
 
         self.update()
 
