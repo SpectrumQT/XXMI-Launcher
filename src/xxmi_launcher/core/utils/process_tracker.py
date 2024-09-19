@@ -1,6 +1,7 @@
 import time
 import psutil
 import subprocess
+import ctypes
 
 from typing import Tuple
 from enum import Enum
@@ -25,12 +26,11 @@ class ProcessPriority(Enum):
 
 def get_hwnds_for_pid(pid):
     def callback(hwnd, hwnds):
-        #if win32gui.IsWindowVisible(hwnd) and win32gui.IsWindowEnabled(hwnd):
-        _, found_pid = win32process.GetWindowThreadProcessId(hwnd)
-
-        if found_pid == pid:
-            hwnds.append(hwnd)
-        return True
+            _, found_pid = win32process.GetWindowThreadProcessId(hwnd)
+            if found_pid == pid:
+                if win32gui.IsWindowVisible(hwnd) and not win32gui.IsIconic(hwnd):
+                    hwnds.append(hwnd)
+            return True
     hwnds = []
     win32gui.EnumWindows(callback, hwnds)
     return hwnds

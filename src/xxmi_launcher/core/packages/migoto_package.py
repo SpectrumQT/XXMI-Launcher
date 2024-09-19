@@ -2,6 +2,7 @@ import logging
 import shutil
 import subprocess
 import json
+import time
 
 from enum import Enum
 from dataclasses import dataclass
@@ -158,6 +159,9 @@ class MigotoPackage(Package):
             result, pid = wait_for_process(event.exe_path.name, with_window=True, timeout=30)
             if result == WaitResult.Timeout:
                 raise ValueError(f'Failed to start {event.exe_path.name}!')
+
+        # Wait a bit more for window to maximize
+        time.sleep(1)
 
     def restore_package_files(self, e: Exception, validate=False):
         user_requested_restore = Events.Call(Events.Application.ShowError(
