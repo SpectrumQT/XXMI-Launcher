@@ -62,7 +62,7 @@ class ImporterVersionText(UIText):
         super().__init__(x=20,
                          y=95,
                          text='',
-                         font='Roboto 14',
+                         font=('Roboto', 19),
                          fill='#cccccc',
                          activefill='white',
                          anchor='nw',
@@ -151,7 +151,7 @@ class StartButton(MainActionButton):
             text='Start',
             text_x_offset=36,
             text_y_offset=-1,
-            font=('Microsoft YaHei', 17, 'bold'),
+            font=('Microsoft YaHei', 23, 'bold'),
             command=lambda: Events.Fire(Events.Application.Launch()),
             master=master)
         self.tools_button = tools_button
@@ -205,7 +205,7 @@ class InstallButton(MainActionButton):
             text='Install',
             text_x_offset=18,
             text_y_offset=-1,
-            font=('Microsoft YaHei', 17, 'bold'),
+            font=('Microsoft YaHei', 23, 'bold'),
             command=lambda: Events.Fire(Events.Application.Update(packages=[Config.Launcher.active_importer], force=True, reinstall=True)),
             master=master)
         self.tools_button = tools_button
@@ -270,7 +270,7 @@ class LauncherVersionText(UIText):
         super().__init__(x=20,
                          y=680,
                          text='',
-                         font=('Roboto', 14),
+                         font=('Roboto', 19),
                          fill='#bbbbbb',
                          activefill='#cccccc',
                          anchor='nw',

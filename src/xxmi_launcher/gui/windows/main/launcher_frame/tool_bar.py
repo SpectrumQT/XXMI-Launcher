@@ -96,7 +96,7 @@ class ToolsBarButton(UIImageButton):
             bg_selected_opacity=0.25,
             bg_disabled_opacity=0,
             text_x_offset=36,
-            font=("Asap", 13),
+            font=("Asap", 17),
             fill='#cccccc',
             activefill='#ffffff',
             disabledfill='#888888',
