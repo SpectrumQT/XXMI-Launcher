@@ -178,6 +178,7 @@ class Application:
         parser.add_argument('-x', '--xxmi', type=str,
                             help="Set provided XXMI edition as default")
         self.args = parser.parse_args()
+        logging.debug(f'Arguments: {self.args}')
 
         try:
             Config.Config.load()
@@ -218,7 +219,7 @@ class Application:
         if self.args.nogui:
             # Async run update_packages in check-for-updates mode to save available updates versions to config
             # It allows to go straight to game launch at the cost of update notification being delayed by 1 restart
-            self.run_as_thread(self.package_manager.update_packages, no_install=True)
+            self.run_as_thread(self.package_manager.update_packages, no_install=True, silent=True)
             # If there are any updates, ask user whether they want to install or skip them and just launch the game
             if self.update_scheduled():
                 # Force update_packages call below to install the latest updates
@@ -249,7 +250,7 @@ class Application:
 
         Events.Fire(Events.Application.ConfigUpdate())
 
-        self.package_manager.notify_package_versions()
+        self.package_manager.notify_package_versions(detect_installed=True)
 
         self.gui.after(100, self.run_as_thread, self.auto_update)
 
@@ -262,11 +263,8 @@ class Application:
         self.exit()
 
     def auto_update(self, no_install=False):
-        self.package_manager.update_packages(force=self.args.update, no_install=True, silent=not self.args.update)
-        if not no_install and self.package_manager.update_available() and (Config.Launcher.auto_update or self.args.update):
-            self.package_manager.update_packages(force=False, no_install=False, silent=False)
-        if self.args.update:
-            self.args.update = False
+        self.package_manager.update_packages(force=self.args.update, no_install=no_install, silent=not self.args.update)
+        self.args.update = False
 
     def load_importer(self, importer_id, update=True):
         if hasattr(Config, 'Active'):
@@ -280,7 +278,7 @@ class Application:
         Config.ConfigSecurity.validate_config()
         Events.Fire(Events.Application.ConfigUpdate())
         if update:
-            self.run_as_thread(self.auto_update, no_install=True)
+            self.run_as_thread(self.package_manager.update_packages, no_install=True, silent=True)
 
     def update_scheduled(self) -> bool:
         if not self.package_manager.update_available():

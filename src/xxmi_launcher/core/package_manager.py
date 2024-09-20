@@ -411,7 +411,14 @@ class PackageManager:
             },
         )
 
-    def notify_package_versions(self):
+    def detect_package_versions(self):
+        for package_name, package in self.packages.items():
+            if package.active:
+                package.detect_installed_version()
+
+    def notify_package_versions(self, detect_installed: bool = False):
+        if detect_installed:
+            self.detect_package_versions()
         Events.Fire(self.get_version_notification())
 
     def update_available(self):
@@ -420,7 +427,9 @@ class PackageManager:
                 return True
 
     def update_packages(self, no_install=False, force=False, reinstall=False, packages=None, silent=False):
+        log.debug(f'Initializing packages update (no_install={no_install}, force={force}, reinstall={reinstall}, silent={silent}, packages={packages})...')
         if self.update_running:
+            log.debug(f'Packages update canceled: update is already in process!')
             return
         self.update_running = True
         self.api_connection_refused = False
@@ -444,12 +453,6 @@ class PackageManager:
 
             # Download and install the latest package version, it can take a while
             updated = self.update_package(package, no_install=no_install, force=force, reinstall=reinstall)
-
-            # Download and install the latest versions of package dependencies
-            for required_package in package.metadata.dependencies:
-                required_package = self.get_package(required_package)
-                required_package.metadata.installation_path = package.metadata.installation_path
-                self.update_package(required_package, no_install=no_install, force=force, reinstall=reinstall)
 
             if no_install:
                 continue

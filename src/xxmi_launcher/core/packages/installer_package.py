@@ -1,6 +1,6 @@
 import logging
 import subprocess
-import shutil
+import time
 
 from dataclasses import dataclass
 from pathlib import Path
@@ -66,3 +66,5 @@ class InstallerPackage(Package):
         if result == WaitResult.Timeout:
             raise ValueError('Failed to start XXMI-Installer.exe in update mode!\n\n'
                              'Was it blocked by Antivirus software or security settings?')
+
+        time.sleep(1)
