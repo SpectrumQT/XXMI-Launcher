@@ -190,10 +190,26 @@ class MigotoPackage(Package):
     def deploy_client_files(self):
         for client_file in ['d3d11.dll', 'd3dcompiler_47.dll', 'nvapi64.dll']:
             client_file_path = Config.Active.Importer.importer_path / client_file
-            if not client_file_path.exists():
+
+            deploy_pending = False
+            if not client_file_path.exists() or not Config.Active.Importer.deployed_migoto_signature:
+                log.debug(f'Deploying new {client_file_path}...')
+                deploy_pending = True
+            else:
+                if Config.Active.Importer.deployed_migoto_signature != self.get_signature(client_file_path):
+                    with open(client_file_path, 'rb') as f:
+                        if self.security.verify(Config.Active.Importer.deployed_migoto_signature, f.read()):
+                            log.debug(f'Deploying updated {client_file_path}...')
+                            deploy_pending = True
+                        else:
+                            log.debug(f'Skipped auto-deploy for {client_file_path} (signature mismatch)!')
+
+            if deploy_pending:
                 package_file_path = self.package_path / client_file
                 if package_file_path.exists():
                     shutil.copy2(package_file_path, client_file_path)
+                    if deploy_pending:
+                        Config.Active.Importer.deployed_migoto_signature = self.get_signature(client_file_path)
                 else:
                     raise ValueError(f'XXMI package is missing critical file: {client_file_path.name}!\n')
 

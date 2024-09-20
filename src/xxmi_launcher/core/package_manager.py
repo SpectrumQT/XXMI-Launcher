@@ -211,14 +211,19 @@ class Package:
             self.load_manifest()
         if not file_path.exists():
             raise ValueError(f'{self.metadata.package_name} package is missing critical file: {file_path.name}!\n')
-        signature = self.manifest.signatures.get(file_path.name, None)
-        if signature is None:
-            raise ValueError(f'{self.metadata.package_name} manifest file is missing signature for {file_path.name}!\n')
         with open(file_path, 'rb') as f:
-            if self.security.verify(signature, f.read()):
+            if self.security.verify(self.get_signature(file_path), f.read()):
                 return True
             else:
                 raise ValueError(f'File {file_path.name} signature is invalid!')
+
+    def get_signature(self, file_path: Path):
+        if self.manifest is None:
+            self.load_manifest()
+        signature = self.manifest.signatures.get(file_path.name, None)
+        if signature is None:
+            raise ValueError(f'{self.metadata.package_name} manifest file is missing signature for {file_path.name}!\n')
+        return signature
 
     def validate_files(self, file_paths: List[Path]):
         for file_path in file_paths:

@@ -64,6 +64,7 @@ class ModelImporterConfig:
     extra_libraries_enabled: bool = True
     extra_libraries: str = ''
     extra_libraries_signature: str = ''
+    deployed_migoto_signature: str = ''
     d3dx_ini: Dict[
         str, Dict[str, Dict[str, Union[str, int, float, Dict[str, Union[str, int, float]]]]]
     ] = field(default_factory=lambda: {})
@@ -362,10 +363,3 @@ class ModelImporterPackage(Package):
             except Exception as e:
                 pass
 
-    def path_excluded(self, file_path: Path, excluded_paths):
-        for exclude_path in excluded_paths:
-            if exclude_path == file_path:
-                return True
-            if exclude_path in file_path.parents:
-                return True
-        return False
