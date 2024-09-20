@@ -263,10 +263,10 @@ class Application:
 
     def auto_update(self, no_install=False):
         self.package_manager.update_packages(force=self.args.update, no_install=True, silent=not self.args.update)
+        if not no_install and self.package_manager.update_available() and (Config.Launcher.auto_update or self.args.update):
+            self.package_manager.update_packages(force=False, no_install=False, silent=False)
         if self.args.update:
             self.args.update = False
-        if not no_install and self.package_manager.update_available() and Config.Launcher.auto_update:
-            self.package_manager.update_packages(force=False, no_install=False, silent=False)
 
     def load_importer(self, importer_id, update=True):
         if hasattr(Config, 'Active'):
