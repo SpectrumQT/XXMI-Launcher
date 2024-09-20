@@ -282,6 +282,7 @@ class Package:
     def update(self, clean=False):
         self.download_latest_version()
         self.install_latest_version(clean=clean)
+        self.load_manifest()
         self.detect_installed_version()
 
     def subscribe(self, event, callback):
