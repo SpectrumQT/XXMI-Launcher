@@ -4,8 +4,8 @@ import subprocess
 import json
 import time
 
-from enum import Enum
-from dataclasses import dataclass
+from typing import List
+from dataclasses import dataclass, field
 from pathlib import Path
 
 import core.path_manager as Paths
@@ -29,8 +29,9 @@ class MigotoManagerEvents:
 
     @dataclass
     class StartAndInject:
-        exe_path: Path
-        start_cmd: str
+        game_exe_path: Path
+        start_exe_path: Path
+        start_args: List[str] = field(default_factory=lambda: [])
         work_dir: str = None
         use_hook: bool = True
 
@@ -97,8 +98,10 @@ class MigotoPackage(Package):
         Events.Fire(Events.Application.Busy())
 
         dll_path = Config.Active.Importer.importer_path / 'd3d11.dll'
-        launch_cmd = event.start_cmd.split() + Config.Active.Importer.launch_options.split()
-        process_flags = ProcessPriority(Config.Active.Importer.process_priority).get_process_flags()
+        process_name = event.game_exe_path.name
+        launch_cmd = [str(event.start_exe_path)] + event.start_args + Config.Active.Importer.launch_options.split()
+        launch_work_dir = event.work_dir
+        launch_flags = ProcessPriority(Config.Active.Importer.process_priority).get_process_flags()
 
         extra_dll_paths = []
         if Config.Active.Importer.extra_libraries_enabled:
@@ -109,35 +112,36 @@ class MigotoPackage(Package):
             injector = DllInjector(self.package_path / '3dmloader.dll')
             try:
                 # Setup global windows hook for 3dmigoto dll
-                Events.Fire(Events.Application.SetupHook(library_name=dll_path.name, process_name=event.exe_path.name))
-                injector.hook_library(dll_path, event.exe_path.name)
+                Events.Fire(Events.Application.SetupHook(library_name=dll_path.name, process_name=process_name))
+                injector.hook_library(dll_path, process_name)
 
                 # Start game's exe
-                Events.Fire(Events.Application.StartGameExe(process_name=event.exe_path.name))
+                Events.Fire(Events.Application.StartGameExe(process_name=process_name))
                 if len(extra_dll_paths) == 0:
-                    subprocess.Popen(launch_cmd, creationflags=process_flags, cwd=event.work_dir)
+                    subprocess.Popen(launch_cmd, creationflags=launch_flags, cwd=launch_work_dir)
                 else:
-                    pid = direct_inject(dll_paths=extra_dll_paths, process_name=event.exe_path.name, start_cmd=launch_cmd, work_dir=event.work_dir, creationflags=process_flags)
+                    pid = direct_inject(dll_paths=extra_dll_paths, process_name=process_name,
+                                        start_cmd=launch_cmd, work_dir=launch_work_dir, creationflags=launch_flags)
                     if pid == -1:
                         raise ValueError(f'Failed to inject {str(extra_dll_paths)}!')
 
                 # Early DLL injection verification
                 hooked = injector.wait_for_injection(5)
                 if hooked:
-                    log.info(f'Successfully passed early {dll_path.name} -> {event.exe_path.name} hook check!')
+                    log.info(f'Successfully passed early {dll_path.name} -> {process_name} hook check!')
 
                 # Wait until game window appears
-                Events.Fire(Events.Application.WaitForProcess(process_name=event.exe_path.name))
-                result, pid = wait_for_process(event.exe_path.name, with_window=True, timeout=30, check_visibility=True)
+                Events.Fire(Events.Application.WaitForProcess(process_name=process_name))
+                result, pid = wait_for_process(process_name, with_window=True, timeout=30, check_visibility=True)
                 if result == WaitResult.Timeout:
-                    raise ValueError(f'Failed to start {event.exe_path.name}!')
+                    raise ValueError(f'Failed to start {process_name}!')
 
                 # Late DLL injection verification
-                Events.Fire(Events.Application.VerifyHook(library_name=dll_path.name, process_name=event.exe_path.name))
+                Events.Fire(Events.Application.VerifyHook(library_name=dll_path.name, process_name=process_name))
                 if injector.wait_for_injection(5):
-                    log.info(f'Successfully passed late {dll_path.name} -> {event.exe_path.name} hook check!')
+                    log.info(f'Successfully passed late {dll_path.name} -> {process_name} hook check!')
                 elif not hooked:
-                    log.error(f'Failed to verify {dll_path.name} -> {event.exe_path.name} hook!')
+                    log.error(f'Failed to verify {dll_path.name} -> {process_name} hook!')
 
             except Exception as e:
                 raise e
@@ -149,16 +153,17 @@ class MigotoPackage(Package):
 
         else:
             # Use WriteProcessMemory injection method
-            Events.Fire(Events.Application.Inject(library_name=dll_path.name, process_name=event.exe_path.name))
+            Events.Fire(Events.Application.Inject(library_name=dll_path.name, process_name=process_name))
             dll_paths = [dll_path] + extra_dll_paths
-            pid = direct_inject(dll_paths=dll_paths, process_name=event.exe_path.name, start_cmd=launch_cmd, work_dir=event.work_dir, creationflags=process_flags)
+            pid = direct_inject(dll_paths=dll_paths, process_name=process_name, start_cmd=launch_cmd,
+                                work_dir=launch_work_dir, creationflags=launch_flags)
             if pid == -1:
                 raise ValueError(f'Failed to inject {dll_path.name}!')
 
-            Events.Fire(Events.Application.WaitForProcess(process_name=event.exe_path.name))
-            result, pid = wait_for_process(event.exe_path.name, with_window=True, timeout=30, check_visibility=True)
+            Events.Fire(Events.Application.WaitForProcess(process_name=process_name))
+            result, pid = wait_for_process(process_name, with_window=True, timeout=30, check_visibility=True)
             if result == WaitResult.Timeout:
-                raise ValueError(f'Failed to start {event.exe_path.name}!')
+                raise ValueError(f'Failed to start {process_name}!')
 
         # Wait a bit more for window to maximize
         time.sleep(1)

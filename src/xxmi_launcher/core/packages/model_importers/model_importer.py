@@ -206,8 +206,8 @@ class ModelImporterPackage(Package):
     def validate_game_exe_path(self, game_path: Path) -> Path:
         raise NotImplementedError
 
-    def get_start_cmd(self, game_path: Path) -> Tuple[str, Optional[str]]:
-        return f'{self.validate_game_exe_path(game_path)}', None
+    def get_start_cmd(self, game_path: Path) -> Tuple[Path, List[str], Optional[str]]:
+        return self.validate_game_exe_path(game_path), [], None
 
     def start_game(self, event):
         # Ensure package integrity
@@ -231,10 +231,10 @@ class ModelImporterPackage(Package):
         # Execute initialization sequence of implemented importer
         self.initialize_game_launch(game_path)
 
-        start_cmd, work_dir = self.get_start_cmd(game_path)
+        start_exe_path, start_args, work_dir = self.get_start_cmd(game_path)
 
-        Events.Fire(Events.MigotoManager.StartAndInject(exe_path=game_exe_path, start_cmd=start_cmd,
-                                                        work_dir=work_dir, use_hook=self.use_hook))
+        Events.Fire(Events.MigotoManager.StartAndInject(game_exe_path=game_exe_path, start_exe_path=start_exe_path,
+                                                        start_args=start_args, work_dir=work_dir, use_hook=self.use_hook))
 
     def autodetect_game_folder(self) -> Path:
         raise NotImplementedError

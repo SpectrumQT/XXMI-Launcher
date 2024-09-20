@@ -7,7 +7,7 @@ import logging
 import ctypes
 
 from dataclasses import field
-from typing import Dict, Union
+from typing import Dict, Union, Optional, Tuple, List
 
 from datetime import datetime
 from dataclasses import dataclass
@@ -154,9 +154,12 @@ class WWMIPackage(ModelImporterPackage):
             raise ValueError(f'Game executable {game_exe_path} does not exist!')
         return game_exe_path
 
+    def get_start_cmd(self, game_path: Path) -> Tuple[Path, List[str], Optional[str]]:
+        return self.validate_game_exe_path(game_path), ['Client', '-DisableModule=streamline'], None
+
     def initialize_game_launch(self, game_path: Path):
         self.update_wwmi_ini()
-        self.remove_streamline(game_path)
+        self.restore_streamline(game_path)
         self.update_engine_ini(game_path)
         if Config.Importers.WWMI.Importer.unlock_fps:
             self.update_local_storage_db(game_path)
@@ -231,6 +234,14 @@ class WWMIPackage(ModelImporterPackage):
         plugin_backups_path = Paths.App.Backups / 'Plugins'
 
         self.move_contents(streamline_path, plugin_backups_path)
+
+    def restore_streamline(self, game_path: Path):
+        plugin_backups_path = Paths.App.Backups / 'Plugins'
+        if not plugin_backups_path.is_dir():
+            return
+        Events.Fire(Events.Application.StatusUpdate(status='Restoring Streamline plugin...'))
+        streamline_path = game_path / 'Engine' / 'Plugins' / 'Runtime' / 'Nvidia'
+        self.move_contents(plugin_backups_path, streamline_path)
 
     def update_wwmi_ini(self):
         Events.Fire(Events.Application.StatusUpdate(status='Updating WuWa-Model-Importer.ini...'))

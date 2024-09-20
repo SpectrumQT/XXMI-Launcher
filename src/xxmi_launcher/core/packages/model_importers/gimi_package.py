@@ -8,7 +8,7 @@ import json
 
 from dataclasses import field
 from enum import Enum
-from typing import Dict, Union, Tuple, Optional
+from typing import Dict, Union, Tuple, Optional, List
 
 from datetime import datetime
 from dataclasses import dataclass
@@ -124,14 +124,14 @@ class GIMIPackage(ModelImporterPackage):
             raise ValueError(f'Game executable {game_exe_path} does not exist!')
         return game_exe_path
 
-    def get_start_cmd(self, game_path: Path) -> Tuple[str, Optional[str]]:
+    def get_start_cmd(self, game_path: Path) -> Tuple[Path, List[str], Optional[str]]:
         if Config.Importers.GIMI.Importer.unlock_fps:
             game_exe_path = Paths.App.Resources / 'Packages' / 'GI-FPS-Unlocker' / 'unlockfps_nc.exe'
             work_dir_path = str(game_exe_path.parent)
         else:
             game_exe_path = self.validate_game_exe_path(game_path)
             work_dir_path = None
-        return str(game_exe_path), work_dir_path
+        return game_exe_path, [], work_dir_path
 
     def initialize_game_launch(self, game_path: Path):
         self.disable_duplicate_libraries(Config.Active.Importer.importer_path / 'Core' / 'GIMI' / 'Libraries')
