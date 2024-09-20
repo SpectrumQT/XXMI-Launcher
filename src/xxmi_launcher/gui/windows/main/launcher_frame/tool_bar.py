@@ -32,6 +32,7 @@ class ToolBarFrame(UIFrame):
         self.put(OpenModsFolderButton(self))
 
         self.subscribe(Events.GUI.LauncherFrame.ToggleToolbox, self.handle_toggle_toolbox)
+        self.subscribe(Events.Application.Busy, lambda event: self.hide())
 
         self.hide()
 
