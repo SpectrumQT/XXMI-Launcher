@@ -1,6 +1,8 @@
 import logging
 import pyglet
 
+from pathlib import Path
+
 import core.path_manager as Paths
 import core.event_manager as Events
 import core.config_manager as Config
@@ -34,17 +36,7 @@ class MainWindow(UIMainWindow):
         # Fix pyglet font load
         pyglet.options['win32_gdi_font'] = True
 
-        # Load custom tkinter theme
-        try:
-            set_default_color_theme(str(Paths.App.Themes / 'Default' / 'custom-tkinter-theme.json'))
-        except Exception as e:
-            log.exception(e)
-
-        # Load custom fonts
-        try:
-            pyglet.font.add_file(str(Config.Active.Importer.theme_path / 'Fonts' / 'Asap.ttf'))
-        except Exception as e:
-            log.exception(e)
+        self.load_theme(Paths.App.Themes / 'Default')
 
         Events.Subscribe(Events.Application.ShowMessage,
                          lambda event: self.show_messagebox(event))
@@ -54,6 +46,22 @@ class MainWindow(UIMainWindow):
                          lambda event: self.show_messagebox(event))
         Events.Subscribe(Events.Application.ShowInfo,
                          lambda event: self.show_messagebox(event))
+
+    def load_theme(self, theme_path: Path):
+        # Load custom tkinter theme
+        try:
+            set_default_color_theme(str(theme_path / 'custom-tkinter-theme.json'))
+        except Exception as e:
+            log.exception(e)
+        # Load custom fonts
+        fonts_path = theme_path / 'Fonts'
+        for font_path in fonts_path.iterdir():
+            if font_path.suffix != '.ttf':
+                continue
+            try:
+                pyglet.font.add_file(str(font_path))
+            except Exception as e:
+                log.exception(e)
 
     def initialize(self):
         import gui.vars as Vars
@@ -67,7 +75,7 @@ class MainWindow(UIMainWindow):
         # Vars.Settings.Launcher.log_level.set('TEST')
         # Vars.Settings.save()
 
-        set_default_color_theme(str(Config.Active.Importer.theme_path / 'custom-tkinter-theme.json'))
+        self.load_theme(Config.Active.Importer.theme_path)
 
         self.cfg.title = 'XXMI Launcher'
         self.cfg.icon_path = Config.Active.Importer.theme_path / 'window-icon.ico'
