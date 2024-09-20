@@ -128,7 +128,7 @@ class MigotoPackage(Package):
 
                 # Wait until game window appears
                 Events.Fire(Events.Application.WaitForProcess(process_name=event.exe_path.name))
-                result, pid = wait_for_process(event.exe_path.name, with_window=True, timeout=30)
+                result, pid = wait_for_process(event.exe_path.name, with_window=True, timeout=30, check_visibility=True)
                 if result == WaitResult.Timeout:
                     raise ValueError(f'Failed to start {event.exe_path.name}!')
 
@@ -156,7 +156,7 @@ class MigotoPackage(Package):
                 raise ValueError(f'Failed to inject {dll_path.name}!')
 
             Events.Fire(Events.Application.WaitForProcess(process_name=event.exe_path.name))
-            result, pid = wait_for_process(event.exe_path.name, with_window=True, timeout=30)
+            result, pid = wait_for_process(event.exe_path.name, with_window=True, timeout=30, check_visibility=True)
             if result == WaitResult.Timeout:
                 raise ValueError(f'Failed to start {event.exe_path.name}!')
 
@@ -190,15 +190,16 @@ class MigotoPackage(Package):
     def deploy_client_files(self):
         for client_file in ['d3d11.dll', 'd3dcompiler_47.dll', 'nvapi64.dll']:
             client_file_path = Config.Active.Importer.importer_path / client_file
+            client_file_signature = Config.Active.Importer.deployed_migoto_signatures.get(client_file, '')
 
             deploy_pending = False
-            if not client_file_path.exists() or not Config.Active.Importer.deployed_migoto_signature:
+            if not client_file_path.exists() or not client_file_signature:
                 log.debug(f'Deploying new {client_file_path}...')
                 deploy_pending = True
             else:
-                if Config.Active.Importer.deployed_migoto_signature != self.get_signature(client_file_path):
+                if client_file_signature != self.get_signature(client_file_path):
                     with open(client_file_path, 'rb') as f:
-                        if self.security.verify(Config.Active.Importer.deployed_migoto_signature, f.read()):
+                        if self.security.verify(client_file_signature, f.read()):
                             log.debug(f'Deploying updated {client_file_path}...')
                             deploy_pending = True
                         else:
@@ -209,7 +210,7 @@ class MigotoPackage(Package):
                 if package_file_path.exists():
                     shutil.copy2(package_file_path, client_file_path)
                     if deploy_pending:
-                        Config.Active.Importer.deployed_migoto_signature = self.get_signature(client_file_path)
+                        Config.Active.Importer.deployed_migoto_signatures[client_file] = self.get_signature(client_file_path)
                 else:
                     raise ValueError(f'XXMI package is missing critical file: {client_file_path.name}!\n')
 

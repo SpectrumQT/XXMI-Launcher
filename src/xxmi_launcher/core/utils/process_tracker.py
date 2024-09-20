@@ -24,13 +24,14 @@ class ProcessPriority(Enum):
         return getattr(subprocess, self.name)
 
 
-def get_hwnds_for_pid(pid):
+def get_hwnds_for_pid(pid, check_visibility: bool = False):
     def callback(hwnd, hwnds):
-            _, found_pid = win32process.GetWindowThreadProcessId(hwnd)
-            if found_pid == pid:
-                if win32gui.IsWindowVisible(hwnd) and not win32gui.IsIconic(hwnd):
-                    hwnds.append(hwnd)
-            return True
+        _, found_pid = win32process.GetWindowThreadProcessId(hwnd)
+        if found_pid == pid:
+            if check_visibility and (not win32gui.IsWindowVisible(hwnd) or win32gui.IsIconic(hwnd)):
+                return True
+            hwnds.append(hwnd)
+        return True
     hwnds = []
     win32gui.EnumWindows(callback, hwnds)
     return hwnds
@@ -53,8 +54,8 @@ class WaitResult(Enum):
     Terminated = -300
 
 
-def wait_for_process(process_name, timeout=10, with_window=False, cmd=None, inject_dll=None) -> Tuple[WaitResult, int]:
-    process = ProcessWaiter(process_name, timeout, with_window, cmd=cmd, inject_dll=inject_dll)
+def wait_for_process(process_name, timeout=10, with_window=False, cmd=None, inject_dll=None, check_visibility: bool = False) -> Tuple[WaitResult, int]:
+    process = ProcessWaiter(process_name, timeout, with_window, cmd=cmd, inject_dll=inject_dll, check_visibility=check_visibility)
     process.start()
     process.join()
     result = int(process.data.value)
@@ -98,11 +99,12 @@ class ProcessWaiter(Process):
     -200: timeout reached
     -300: process terminated after kill_timeout
     """
-    def __init__(self, process_name, timeout=-1, with_window=False, wait_exit=False, kill_timeout=-1, cmd=None, inject_dll=None):
+    def __init__(self, process_name, timeout=-1, with_window=False, wait_exit=False, kill_timeout=-1, cmd=None, inject_dll=None, check_visibility: bool = False):
         Process.__init__(self)
         self.process_name = process_name
         self.timeout = int(timeout)
         self.with_window = with_window
+        self.check_visibility = check_visibility
         self.wait_exit = wait_exit
         self.kill_timeout = kill_timeout
         self.cmd = cmd
@@ -136,7 +138,7 @@ class ProcessWaiter(Process):
                         if self.inject_dll:
                             inject(process.pid, str(self.inject_dll))
                         return
-                    elif len(get_hwnds_for_pid(self.data.value)) != 0:
+                    elif len(get_hwnds_for_pid(pid=self.data.value, check_visibility=self.check_visibility)) != 0:
                         # Exit loop: process is found and window is also found
                         if self.inject_dll:
                             inject(process.pid, str(self.inject_dll))

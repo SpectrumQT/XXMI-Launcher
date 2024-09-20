@@ -64,7 +64,7 @@ class ModelImporterConfig:
     extra_libraries_enabled: bool = True
     extra_libraries: str = ''
     extra_libraries_signature: str = ''
-    deployed_migoto_signature: str = ''
+    deployed_migoto_signatures: Dict[str, str] = field(default_factory=lambda: {})
     d3dx_ini: Dict[
         str, Dict[str, Dict[str, Union[str, int, float, Dict[str, Union[str, int, float]]]]]
     ] = field(default_factory=lambda: {})
