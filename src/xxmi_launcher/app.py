@@ -169,6 +169,7 @@ class Application:
     def __init__(self, app_gui: MainWindow):
         self.is_alive = True
         self.gui = app_gui
+        self.launching_game = False
 
         parser = argparse.ArgumentParser(description='Launches and updates XXMI')
         parser.add_argument('-n', '--nogui', action='store_true',
@@ -262,8 +263,21 @@ class Application:
 
         self.exit()
 
-    def auto_update(self, no_install=False):
-        self.package_manager.update_packages(force=self.args.update, no_install=no_install, silent=not self.args.update)
+    def auto_update(self):
+        # Query GitHub for updates and skip installation, force query and lock GUI if --update argument is supplied
+        self.package_manager.update_packages(force=self.args.update, no_install=True, silent=not self.args.update)
+        # Exit early if there are no updates available
+        if not self.package_manager.update_available():
+            return
+        # Exit early if automatic update installation is not expected
+        if not (Config.Launcher.auto_update or self.args.update):
+            return
+        # If user is in rush and managed to start the game, lets rather not bother them with update
+        if self.launching_game:
+            return
+        # Install any updates we've managed to find during previous update_packages call
+        self.package_manager.update_packages(force=False, no_install=False, silent=False)
+        # This flag is supposed to affect only the first auto-update after launcher start, so lets remove it here
         self.args.update = False
 
     def load_importer(self, importer_id, update=True):
@@ -329,6 +343,10 @@ class Application:
             ))
 
     def launch(self):
+        if self.launching_game:
+            return
+        self.launching_game = True
+
         Events.Fire(Events.Application.Busy())
 
         try:
@@ -353,6 +371,7 @@ class Application:
             raise Exception(f'{Config.Launcher.active_importer} Loading Failed:\n{str(e)}') from e
         finally:
             if not Config.Launcher.auto_close:
+                self.launching_game = False
                 self.gui.after(100, Events.Fire, Events.Application.Ready())
 
         # Close the launcher or reset its UI state
