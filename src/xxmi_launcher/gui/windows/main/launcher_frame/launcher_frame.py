@@ -68,6 +68,7 @@ class ImporterVersionText(UIText):
                          anchor='nw',
                          master=master)
         self.subscribe(Events.PackageManager.VersionNotification, self.handle_version_notification)
+        self.set_tooltip(self.get_tooltip)
         # self.subscribe_show(
         #     Events.GUI.LauncherFrame.StageUpdate,
         #     lambda event: event.stage == Stage.Ready)
@@ -76,10 +77,25 @@ class ImporterVersionText(UIText):
         package_state = event.package_states.get(Config.Launcher.active_importer, None)
         if package_state is None:
             return
+        package_name = Config.Launcher.active_importer
+        if Config.Launcher.active_importer not in ['WWMI', 'ZZMI']:
+            package_name += ' TEST'
         if package_state.installed_version:
-            self.set(f'{Config.Launcher.active_importer} {package_state.installed_version}')
+            self.set(f'{package_name} {package_state.installed_version}')
         else:
-            self.set(f'{Config.Launcher.active_importer}: Not Installed')
+            self.set(f'{package_name}: Not Installed')
+
+    def get_tooltip(self):
+        msg = ''
+        if Config.Launcher.active_importer == 'WWMI':
+            msg = 'Stable release build.\n'
+        if Config.Launcher.active_importer == 'ZZMI':
+            msg = 'Stable release build.\n'
+        if Config.Launcher.active_importer == 'SRMI':
+            msg = 'Experimental alpha version build.\n'
+        if Config.Launcher.active_importer == 'GIMI':
+            msg = 'Experimental alpha version build.\n'
+        return msg.strip()
 
 
 class MainActionButton(UIImageButton):

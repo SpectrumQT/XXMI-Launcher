@@ -12,23 +12,23 @@ class ModelImporterSettingsFrame(UIFrame):
     def __init__(self, master):
         super().__init__(master)
 
-        self.grid_columnconfigure((0, 1, 2, 4), weight=1)
-        self.grid_columnconfigure(3, weight=100)
+        self.grid_columnconfigure((0, 1, 2, 3, 5), weight=1)
+        self.grid_columnconfigure(4, weight=100)
 
-        # Shader Hunting
-        self.put(ShaderHuntingLabel(self)).grid(row=0, column=0, padx=(20, 10), pady=(20, 20), sticky='w')
-        self.put(EnableHuntingCheckbox(self)).grid(row=0, column=1, padx=10, pady=(20, 20), sticky='w')
-        self.put(DumpShadersCheckbox(self)).grid(row=0, column=3, padx=10, pady=(20, 20), sticky='w')
+        # Importer Folder
+        self.put(ImporterFolderLabel(self)).grid(row=0, column=0, padx=(20, 0), pady=(20, 20), sticky='w')
+        self.put(ImporterFolderEntry(self)).grid(row=0, column=1, padx=10, pady=(20, 20), columnspan=4, sticky='ew')
+        self.put(ChangeImporterFolderButton(self)).grid(row=0, column=5, padx=(0, 20), pady=(20, 20), sticky='e')
 
         # Error Handling
         self.put(ErrorHandlingLabel(self)).grid(row=1, column=0, padx=(20, 10), pady=(20, 20), sticky='w')
         self.put(MuteWarningsCheckbox(self)).grid(row=1, column=1, padx=10, pady=(20, 20), sticky='w')
         self.put(DebugLoggingCheckbox(self)).grid(row=1, column=3, padx=10, pady=(20, 20), sticky='w')
 
-        # Importer Folder
-        self.put(ImporterFolderLabel(self)).grid(row=2, column=0, padx=(20, 0), pady=(20, 20), sticky='w')
-        self.put(ImporterFolderEntry(self)).grid(row=2, column=1, padx=10, pady=(20, 20), columnspan=3, sticky='ew')
-        self.put(ChangeImporterFolderButton(self)).grid(row=2, column=4, padx=(0, 20), pady=(20, 20), sticky='e')
+        # Shader Hunting
+        self.put(ShaderHuntingLabel(self)).grid(row=2, column=0, padx=(20, 10), pady=(20, 20), sticky='w')
+        self.put(EnableHuntingCheckbox(self)).grid(row=2, column=1, padx=10, pady=(20, 20), sticky='w')
+        self.put(DumpShadersCheckbox(self)).grid(row=2, column=3, padx=10, pady=(20, 20), sticky='w')
 
 
 class ShaderHuntingLabel(UILabel):

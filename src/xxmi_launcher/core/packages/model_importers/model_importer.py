@@ -313,8 +313,8 @@ class ModelImporterPackage(Package):
             modal=True,
             confirm_text='Disable',
             cancel_text='Ignore',
-            message=f'Some libraries in Mods folder are already included in {Config.Launcher.active_importer}!\n'
-                    f'Would you like to disable following duplicates automatically (recommended)?'
+            message=f'Your {Config.Launcher.active_importer} installation already includes some libraries present in the Mods folder!\n\n'
+                    f'Would you like to disable following duplicates automatically (recommended)?\n'
                     f'\n' + '\n'.join([f'Mods\{x.relative_to(mods_path)}' for x in duplicate_ini_paths])
         ))
 
