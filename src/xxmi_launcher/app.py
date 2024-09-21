@@ -276,7 +276,7 @@ class Application:
         if self.launching_game:
             return
         # Install any updates we've managed to find during previous update_packages call
-        self.package_manager.update_packages(force=False, no_install=False, silent=False)
+        self.package_manager.update_packages(force=self.args.update, no_check=True, silent=False)
         # This flag is supposed to affect only the first auto-update after launcher start, so lets remove it here
         self.args.update = False
 

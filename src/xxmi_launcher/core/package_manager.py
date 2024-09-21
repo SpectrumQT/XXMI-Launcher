@@ -427,8 +427,8 @@ class PackageManager:
             if package.update_available():
                 return True
 
-    def update_packages(self, no_install=False, force=False, reinstall=False, packages=None, silent=False):
-        log.debug(f'Initializing packages update (no_install={no_install}, force={force}, reinstall={reinstall}, silent={silent}, packages={packages})...')
+    def update_packages(self, no_install=False, no_check=False, force=False, reinstall=False, packages=None, silent=False):
+        log.debug(f'Initializing packages update (no_install={no_install}, no_check={no_check}, force={force}, reinstall={reinstall}, silent={silent}, packages={packages})...')
         if self.update_running:
             log.debug(f'Packages update canceled: update is already in process!')
             return
@@ -453,7 +453,7 @@ class PackageManager:
                 continue
 
             # Download and install the latest package version, it can take a while
-            updated = self.update_package(package, no_install=no_install, force=force, reinstall=reinstall)
+            updated = self.update_package(package, no_install=no_install, no_check=no_check, force=force, reinstall=reinstall)
 
             if no_install:
                 continue
@@ -473,7 +473,7 @@ class PackageManager:
             self.api_connection_refused_notified = True
             raise ConnectionRefusedError(f'GitHub update requests limit reached!\n\nAttempts will be ignored for an hour.')
 
-    def update_package(self, package: Package, no_install=False, force=False, reinstall=False):
+    def update_package(self, package: Package, no_install=False, no_check=False, force=False, reinstall=False):
         # Check if installation is pending, as we'll need download url from update check
         install = not no_install and (package.update_available() or reinstall) and (Config.Launcher.auto_update or force)
 
@@ -483,7 +483,7 @@ class PackageManager:
         # Query GitHub for the latest available package version
         current_time = int(time.time())
         # Force update check if installation is pending or the last check time is somewhere in the future
-        force_check = force or install or package.cfg.update_check_time > current_time
+        force_check = not no_check and (force or install or package.cfg.update_check_time > current_time)
         # We're going to throttle query to 1 per hour by default, else user can be temporary banned by GitHub
         if force_check or package.cfg.update_check_time + 3600 < current_time:
             package.cfg.update_check_time = current_time
