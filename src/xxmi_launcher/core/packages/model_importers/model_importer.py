@@ -286,7 +286,7 @@ class ModelImporterPackage(Package):
 
         exclude_patterns = []
         include_options = self.ini.get_section('Include').options
-        for option_name, exclude_pattern, _, _ in include_options:
+        for option_name, exclude_pattern, _, _, _ in include_options:
             exclude_pattern = exclude_pattern.lower()
             if option_name.lower() == 'exclude_recursive':
                 if exclude_pattern[-1] == '*':
