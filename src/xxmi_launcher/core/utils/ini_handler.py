@@ -3,13 +3,17 @@ import logging
 
 from dataclasses import dataclass, field
 from typing import Dict, Union
+from pathlib import Path
 
 log = logging.getLogger(__name__)
+
 
 @dataclass
 class IniHandlerSettings:
     ignore_comments: bool = True
     option_value_spacing: bool = True
+    inline_comments: bool = False
+    add_section_spacing: bool = False
 
 
 class IniHandlerSection:
@@ -20,7 +24,7 @@ class IniHandlerSection:
         self.modified = False
 
     def get_option(self, name, cast_type=str):
-        for (option_name, option_value, modified, comments) in self.options:
+        for (option_name, option_value, modified, comments, inline_comment) in self.options:
             if option_name.lower() == name.lower():
                 if cast_type == str:
                     return str(option_value)
@@ -30,25 +34,27 @@ class IniHandlerSection:
                     return float(option_value)
         return None
 
-    def set_option(self, name, value, flag_modified=True, overwrite=True, comments=None):
+    def set_option(self, name, value, flag_modified=True, overwrite=True, comments=None, inline_comment=None):
         if overwrite:
-            for i, (option_name, option_value, modified, default_comments) in enumerate(self.options):
+            for i, (option_name, option_value, modified, default_comments, default_inline_comment) in enumerate(self.options):
                 if option_name.lower() == name.lower():
                     if str(value) == option_value:
                         return
                     if comments is not None:
                         default_comments = comments
+                    if inline_comment:
+                        default_inline_comment = inline_comment
                     if flag_modified and not modified:
                         modified = True
-                    self.options[i] = (name, str(value), modified, default_comments)
+                    self.options[i] = (name, str(value), modified, default_comments, default_inline_comment)
                     if modified:
                         self.modified = True
                     return
-            self.options.append((name, str(value), flag_modified, comments))
+            self.options.append((name, str(value), flag_modified, comments, inline_comment))
             if flag_modified:
                 self.modified = True
         else:
-            self.options.append((name, str(value), flag_modified, comments))
+            self.options.append((name, str(value), flag_modified, comments, inline_comment))
             if flag_modified:
                 self.modified = True
 
@@ -60,10 +66,12 @@ class IniHandlerSection:
             for comment in self.comments:
                 result += comment
         result += f'[{self.name}]' + '\n'
-        for (option_name, option_value, modified, comments) in self.options:
+        for (option_name, option_value, modified, comments, inline_comment) in self.options:
             if comments is not None:
                 for comment in comments:
                     result += comment
+            if inline_comment:
+                option_value += f' ; {inline_comment}'
             if cfg.option_value_spacing:
                 result += f'{option_name} = {option_value}' + '\n'
             else:
@@ -105,7 +113,17 @@ class IniHandler:
             if len(result) == 1 and current_section is not None:
                 result = result[0]
                 if len(result) == 2:
-                    current_section.set_option(result[0].rstrip(), result[1].strip(), flag_modified=False, overwrite=False, comments=current_comments)
+                    option = result[0].rstrip()
+                    value = result[1].strip()
+                    inline_comment = None
+                    if self.cfg.inline_comments:
+                        split_pos = value.find(';')
+                        if split_pos != -1:
+                            inline_comment = value[split_pos+1:].strip()
+                            value = value[:split_pos].rstrip()
+                    current_section.set_option(option, value, flag_modified=False, overwrite=False,
+                                               comments=current_comments, inline_comment=inline_comment)
+
                     current_comments = []
                 continue
 
@@ -133,6 +151,8 @@ class IniHandler:
         result = ''
         for section in self.sections.values():
             result += section.to_string(self.cfg)
+            if self.cfg.add_section_spacing:
+                result += '\n'
         for comment in self.footer_comments:
             result += comment
         return result
