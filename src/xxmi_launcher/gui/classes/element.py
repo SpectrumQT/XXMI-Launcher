@@ -48,7 +48,7 @@ class UIElement:
         if self.var is not None and self.var != var:
             raise ValueError(f'Cannot trace multiple vars at the same time!')
         self.var = var
-        if callback == self.set or callback == self.show or callback == self.set_tooltip or callback == self.set_enabled:
+        if (hasattr(self, 'set') and callback == self.set) or callback == self.show or callback == self.set_tooltip or callback == self.set_enabled:
             callback(var.get())
             Vars.Settings.subscribe_on_save(var, lambda traced_var, value, _: callback(value), caller_id=self)
         else:

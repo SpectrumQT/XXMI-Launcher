@@ -46,7 +46,14 @@ class SettingsWindow(UIToplevel):
         self.subscribe(Events.Application.CheckForUpdates, self.save_and_close)
         self.subscribe(Events.Application.Update, self.save_and_close)
 
+        self.trace_save(Vars.Active.Importer.importer_folder, self.handle_importer_folder_update)
+
         self.after(50, self.open)
+
+    def handle_importer_folder_update(self, var, val, old_val):
+        if old_val is None or val == old_val:
+            return
+        Events.Fire(Events.Application.LoadImporter(importer_id=Config.Launcher.active_importer, reload=True))
 
     def close(self):
         super().close()

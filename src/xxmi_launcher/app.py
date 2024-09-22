@@ -45,6 +45,7 @@ class ApplicationEvents:
     @dataclass
     class LoadImporter:
         importer_id: str
+        reload: bool = False
 
     @dataclass
     class Ready:
@@ -245,7 +246,7 @@ class Application:
         Events.Subscribe(Events.Application.CheckForUpdates,
                          lambda event: self.run_as_thread(self.check_for_updates))
         Events.Subscribe(Events.Application.LoadImporter,
-                         lambda event: self.run_as_thread(self.load_importer, importer_id=event.importer_id))
+                         lambda event: self.run_as_thread(self.load_importer, importer_id=event.importer_id, reload=event.reload))
         Events.Subscribe(Events.Application.Launch,
                          lambda event: self.run_as_thread(self.launch))
 
@@ -280,9 +281,9 @@ class Application:
         # This flag is supposed to affect only the first auto-update after launcher start, so lets remove it here
         self.args.update = False
 
-    def load_importer(self, importer_id, update=True):
+    def load_importer(self, importer_id, update=True, reload=False):
         if hasattr(Config, 'Active'):
-            if importer_id == Config.Launcher.active_importer:
+            if importer_id == Config.Launcher.active_importer and not reload:
                 return
             self.package_manager.unload_package(Config.Launcher.active_importer)
         Config.Launcher.active_importer = importer_id
