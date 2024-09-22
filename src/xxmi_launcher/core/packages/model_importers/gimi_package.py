@@ -158,7 +158,7 @@ class GIMIPackage(ModelImporterPackage):
     def find_in_file(self, pattern, file_path: Path):
         if not file_path.exists():
             raise ValueError(f'File {file_path} does not exist!')
-        with open(file_path, 'r') as f:
+        with open(file_path, 'r', encoding='utf-8') as f:
             for line in f.readlines():
                 result = pattern.findall(line)
                 if len(result) == 1:
@@ -177,7 +177,7 @@ class GIMIPackage(ModelImporterPackage):
         Events.Fire(Events.Application.VerifyFileAccess(path=gimi_ini_path, write=True))
 
         log.debug(f'Reading main.ini...')
-        with open(gimi_ini_path, 'r') as f:
+        with open(gimi_ini_path, 'r', encoding='utf-8') as f:
             ini = IniHandler(IniHandlerSettings(option_value_spacing=True, ignore_comments=False), f)
 
         log.debug(f'Reading monitor resolution...')
@@ -187,7 +187,7 @@ class GIMIPackage(ModelImporterPackage):
 
         if ini.is_modified():
             log.debug(f'Writing main.ini...')
-            with open(gimi_ini_path, 'w') as f:
+            with open(gimi_ini_path, 'w', encoding='utf-8') as f:
                 f.write(ini.to_string())
 
     def disable_dcr(self):
@@ -286,7 +286,7 @@ class GIMIPackage(ModelImporterPackage):
 
         if not fps_config_path.is_file():
             shutil.copy2(fps_config_template_path, fps_config_path)
-        with open(fps_config_path, 'r') as f:
+        with open(fps_config_path, 'r', encoding='utf-8') as f:
             fps_config = json.load(f)
         game_exe_path = Path(Config.Importers.GIMI.Importer.game_folder) / 'GenshinImpact.exe'
         modified = False
@@ -350,7 +350,7 @@ class GIMIPackage(ModelImporterPackage):
         if not modified:
             return
 
-        with open(fps_config_path, 'w') as f:
+        with open(fps_config_path, 'w', encoding='utf-8') as f:
             f.write(json.dumps(fps_config, indent=4))
 
 
@@ -361,7 +361,7 @@ class Version:
         self.parse_version()
 
     def parse_version(self):
-        with open(self.gimi_ini_path, "r") as f:
+        with open(self.gimi_ini_path, 'r', encoding='utf-8') as f:
 
             version_pattern = re.compile(r'^global \$version = (\d+)\.*(\d)(\d*)')
 

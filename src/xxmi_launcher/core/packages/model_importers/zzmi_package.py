@@ -137,7 +137,7 @@ class ZZMIPackage(ModelImporterPackage):
     def find_in_file(self, pattern, file_path: Path):
         if not file_path.exists():
             raise ValueError(f'File {file_path} does not exist!')
-        with open(file_path, 'r') as f:
+        with open(file_path, 'r', encoding='utf-8') as f:
             for line in f.readlines():
                 result = pattern.findall(line)
                 if len(result) == 1:
@@ -153,7 +153,7 @@ class ZZMIPackage(ModelImporterPackage):
             raise ValueError('Failed to locate Core/ZZMI/main.ini!')
 
         Events.Fire(Events.Application.VerifyFileAccess(path=zzmi_ini_path, write=True))
-        with open(zzmi_ini_path, 'r') as f:
+        with open(zzmi_ini_path, 'r', encoding='utf-8') as f:
             ini = IniHandler(IniHandlerSettings(option_value_spacing=True, ignore_comments=False), f)
 
         screen_width, screen_height = ctypes.windll.user32.GetSystemMetrics(0), ctypes.windll.user32.GetSystemMetrics(1)
@@ -161,7 +161,7 @@ class ZZMIPackage(ModelImporterPackage):
         ini.set_option('Constants', 'global $window_height', screen_height)
 
         if ini.is_modified():
-            with open(zzmi_ini_path, 'w') as f:
+            with open(zzmi_ini_path, 'w', encoding='utf-8') as f:
                 f.write(ini.to_string())
 
 
@@ -172,7 +172,7 @@ class Version:
         self.parse_version()
 
     def parse_version(self):
-        with open(self.zzmi_ini_path, "r") as f:
+        with open(self.zzmi_ini_path, 'r', encoding='utf-8') as f:
 
             version_pattern = re.compile(r'^global \$version = (\d+)\.*(\d)(\d*)')
 

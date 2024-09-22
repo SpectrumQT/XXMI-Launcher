@@ -54,7 +54,7 @@ class Manifest:
         return json.dumps(asdict(self), indent=4)
 
     def from_json(self, file_path: Path):
-        with open(file_path, 'r') as f:
+        with open(file_path, 'r', encoding='utf-8') as f:
             for key, value in from_dict(data_class=Manifest, data=json.load(f)).__dict__.items():
                 if hasattr(self, key):
                     setattr(self, key, value)
@@ -192,7 +192,7 @@ class Package:
             version=str(version),
             signatures={asset_path.name: signature},
         )
-        with open(self.package_path / f'Manifest.json', 'w') as f:
+        with open(self.package_path / f'Manifest.json', 'w', encoding='utf-8') as f:
             f.write(manifest.as_json())
 
     def load_manifest(self):

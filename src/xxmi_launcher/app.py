@@ -370,8 +370,8 @@ class Application:
         except Exception as e:
             raise Exception(f'{Config.Launcher.active_importer} Loading Failed:\n{str(e)}') from e
         finally:
+            self.launching_game = False
             if not Config.Launcher.auto_close:
-                self.launching_game = False
                 self.gui.after(100, Events.Fire, Events.Application.Ready())
 
         # Close the launcher or reset its UI state

@@ -99,7 +99,7 @@ class AppConfig:
     def from_json(self, config_path: Path):
         cfg = self.as_dict(self)
         if config_path.is_file():
-            with open(config_path, 'r') as f:
+            with open(config_path, 'r', encoding='utf-8') as f:
                 cfg.update(json.load(f))
         for key, value in from_dict(data_class=AppConfig, data=cfg).__dict__.items():
             if hasattr(self, key):
@@ -121,7 +121,7 @@ class AppConfig:
 
     def save(self):
         cfg = Config.as_json()
-        with open(Paths.App.Root / self.Launcher.config_path, 'w') as f:
+        with open(Paths.App.Root / self.Launcher.config_path, 'w', encoding='utf-8') as f:
             return f.write(cfg)
 
 

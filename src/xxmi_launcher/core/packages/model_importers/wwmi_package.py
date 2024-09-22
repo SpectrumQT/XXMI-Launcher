@@ -110,7 +110,7 @@ class WWMIPackage(ModelImporterPackage):
             package_name='WWMI',
             auto_load=False,
             github_repo_owner='SpectrumQT',
-            github_repo_name='WWMI-TEST',
+            github_repo_name='WWMI',
             asset_version_pattern=r'.*(\d\.\d\.\d).*',
             asset_name_format='WWMI-PACKAGE-v%s.zip',
             signature_pattern=r'^## Signature[\r\n]+- ((?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{4}|[A-Za-z0-9+\/]{3}=|[A-Za-z0-9+\/]{2}={2})$)',
@@ -130,7 +130,7 @@ class WWMIPackage(ModelImporterPackage):
         kuro_config_path = Path(os.getenv('APPDATA')) / 'KRLauncher' / 'G153' / 'C50003' / 'kr_starter_game.json'
         if not kuro_config_path.is_file():
             raise ValueError(f'Launch config {kuro_config_path} does not exist!')
-        with open(kuro_config_path, 'r') as f:
+        with open(kuro_config_path, 'r', encoding='utf-8') as f:
             launch_path = json.load(f).get('path', None)
             if launch_path is None:
                 raise ValueError(f'Failed to locate game path in launch config')
@@ -172,8 +172,8 @@ class WWMIPackage(ModelImporterPackage):
             raise ValueError('Failed to locate Engine.ini!')
 
         Events.Fire(Events.Application.VerifyFileAccess(path=engine_ini_path, write=True))
-        with open(engine_ini_path, 'r') as f:
-            ini = IniHandler(IniHandlerSettings(option_value_spacing=False), f)
+        with open(engine_ini_path, 'r', encoding='utf-8') as f:
+            ini = IniHandler(IniHandlerSettings(option_value_spacing=False, inline_comments=True, add_section_spacing=True), f)
 
         for section_name, section_data in Config.Importers.WWMI.Importer.engine_ini.items():
             for option_name, option_value in section_data.items():
@@ -185,7 +185,7 @@ class WWMIPackage(ModelImporterPackage):
                     ini.set_option(section_name, option_name, option_value)
 
         if ini.is_modified():
-            with open(engine_ini_path, 'w') as f:
+            with open(engine_ini_path, 'w', encoding='utf-8') as f:
                 f.write(ini.to_string())
 
     def update_local_storage_db(self, game_path: Path):
@@ -251,7 +251,7 @@ class WWMIPackage(ModelImporterPackage):
             raise ValueError('Failed to locate Core/WWMI/WuWa-Model-Importer.ini!')
 
         Events.Fire(Events.Application.VerifyFileAccess(path=wwmi_ini_path, write=True))
-        with open(wwmi_ini_path, 'r') as f:
+        with open(wwmi_ini_path, 'r', encoding='utf-8') as f:
             ini = IniHandler(IniHandlerSettings(option_value_spacing=True, ignore_comments=False), f)
 
         screen_width, screen_height = ctypes.windll.user32.GetSystemMetrics(0), ctypes.windll.user32.GetSystemMetrics(1)
@@ -259,7 +259,7 @@ class WWMIPackage(ModelImporterPackage):
         ini.set_option('Constants', 'global $window_height', screen_height)
 
         if ini.is_modified():
-            with open(wwmi_ini_path, 'w') as f:
+            with open(wwmi_ini_path, 'w', encoding='utf-8') as f:
                 f.write(ini.to_string())
 
 
@@ -270,7 +270,7 @@ class Version:
         self.parse_version()
 
     def parse_version(self):
-        with open(self.wwmi_ini_path, "r") as f:
+        with open(self.wwmi_ini_path, 'r', encoding='utf-8') as f:
 
             version_pattern = re.compile(r'^global \$wwmi_version = (\d+)\.*(\d)(\d*)')
 

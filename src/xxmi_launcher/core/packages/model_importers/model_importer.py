@@ -161,7 +161,7 @@ class ModelImporterPackage(Package):
         Events.Fire(Events.Application.VerifyFileAccess(path=ini_path, write=True))
 
         log.debug(f'Reading d3dx.ini...')
-        with open(ini_path, 'r') as f:
+        with open(ini_path, 'r', encoding='utf-8') as f:
             ini = IniHandler(IniHandlerSettings(ignore_comments=False), f)
 
         self.set_default_ini_values(ini, 'core', SettingType.Constant)
@@ -172,7 +172,7 @@ class ModelImporterPackage(Package):
 
         if ini.is_modified():
             log.debug(f'Writing d3dx.ini...')
-            with open(ini_path, 'w') as f:
+            with open(ini_path, 'w', encoding='utf-8') as f:
                 f.write(ini.to_string())
 
         self.ini = ini
