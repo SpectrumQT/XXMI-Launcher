@@ -34,7 +34,6 @@ class ZZMIConfig(ModelImporterConfig):
     ] = field(default_factory=lambda: {
         'core': {
             'Loader': {
-                'target': 'ZenlessZoneZero.exe',
                 'loader': 'XXMI Launcher.exe',
             },
             'Rendering': {
@@ -46,10 +45,6 @@ class ZZMIConfig(ModelImporterConfig):
             'Logging': {
                 'calls': {'on': 1, 'off': 0},
                 'debug': {'on': 1, 'off': 0},
-                'unbuffered': {'on': 1, 'off': 0},
-                'force_cpu_affinity': {'on': 1, 'off': 0},
-                'debug_locks': {'on': 1, 'off': 0},
-                'crash': {'on': 1, 'off': 0},
             },
         },
         'mute_warnings': {

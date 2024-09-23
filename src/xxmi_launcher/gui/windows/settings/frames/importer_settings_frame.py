@@ -95,8 +95,12 @@ class DebugLoggingCheckbox(UICheckbox):
             variable=Vars.Active.Migoto.debug_logging,
             master=master)
         self.set_tooltip(
-            'Enabled: Extensive verbose logging for crash debugging. Causes massive slow down.\n'
-            'Disabled: No logging whatsoever. Maximum performance.')
+            'Enabled: Verbose logging of 3dmigoto actions and API calls.\n'
+            '* [d3dx.ini]: calls = 1\n'
+            '* [d3dx.ini]: debug = 1\n'
+            'Disabled: No logging whatsoever. Maximum performance.\n'
+            '* [d3dx.ini]: calls = 0\n'
+            '* [d3dx.ini]: debug = 0')
 
 
 class ImporterFolderLabel(UILabel):

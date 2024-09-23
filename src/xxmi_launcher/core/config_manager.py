@@ -1,4 +1,5 @@
 import os
+import logging
 import json
 
 from pathlib import Path
@@ -17,6 +18,8 @@ from core.packages.model_importers import gimi_package
 from core.packages.model_importers import srmi_package
 from core.packages.model_importers import wwmi_package
 from core.packages.model_importers import zzmi_package
+
+log = logging.getLogger(__name__)
 
 
 @dataclass
@@ -123,6 +126,43 @@ class AppConfig:
         cfg = Config.as_json()
         with open(Paths.App.Root / self.Launcher.config_path, 'w', encoding='utf-8') as f:
             return f.write(cfg)
+
+    def upgrade(self, version):
+        # Apply 0.9.3 config patch
+        if self.Launcher.config_version < '0.9.3':
+            log.debug(f'Upgrading launcher config to 0.9.3...')
+            for package_name, importer in self.Importers.__dict__.items():
+                # Disable unused advanced commands
+                if not importer.Importer.run_pre_launch:
+                    importer.Importer.run_pre_launch_enabled = False
+                if not importer.Importer.run_post_load:
+                    importer.Importer.run_post_load_enabled = False
+                if not importer.Importer.extra_libraries:
+                    importer.Importer.extra_libraries_enabled = False
+                # Modify changed d3dx.ini settings stacks
+                ini_overrides = importer.Importer.d3dx_ini
+                try:
+                    del ini_overrides['core']['Loader']['target']
+                except:
+                    pass
+                try:
+                    del ini_overrides['debug_logging']['Logging']['unbuffered']
+                except:
+                    pass
+                try:
+                    del ini_overrides['debug_logging']['Logging']['force_cpu_affinity']
+                except:
+                    pass
+                try:
+                    del ini_overrides['debug_logging']['Logging']['debug_locks']
+                except:
+                    pass
+                try:
+                    del ini_overrides['debug_logging']['Logging']['crash']
+                except:
+                    pass
+
+        self.Launcher.config_version = version
 
 
 class AppConfigSecurity:

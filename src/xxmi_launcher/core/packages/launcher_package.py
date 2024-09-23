@@ -20,6 +20,7 @@ class LauncherManagerConfig:
     active_importer: str = 'WWMI'
     config_path: str = 'XXMI Launcher Config.json'
     log_level: str = 'DEBUG'
+    config_version: str = ''
 
 
 @dataclass
@@ -43,6 +44,9 @@ class LauncherPackage(Package):
             signature_public_key='MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEYac352uRGKZh6LOwK0fVDW/TpyECEfnRtUp+bP2PJPP63SWOkJ3a/d9pAnPfYezRVJ1hWjZtpRTT8HEAN/b4mWpJvqO43SAEV/1Q6vz9Rk/VvRV3jZ6B/tmqVnIeHKEb',
             exit_after_update=True,
         ))
+        installed_version = self.get_installed_version()
+        if Config.Launcher.config_version < installed_version:
+            Config.Config.upgrade(installed_version)
 
     def get_installed_version(self):
         if getattr(sys, 'frozen', False):
@@ -57,4 +61,3 @@ class LauncherPackage(Package):
     def install_latest_version(self, clean):
         Events.Fire(Events.PackageManager.InitializeInstallation())
         Events.Fire(Events.InstallerManager.UpdateLauncher())
-
