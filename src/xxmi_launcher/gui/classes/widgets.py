@@ -567,10 +567,10 @@ class UIEntry(CTkEntry, UIWidget):
         self.initialize_state_log()
         try:
             event.widget.delete('sel.first', 'sel.last')
+            event.widget.insert('insert', event.widget.clipboard_get())
+            self.add_state()
         except:
             pass
-        event.widget.insert('insert', event.widget.clipboard_get())
-        self.add_state()
         return 'break'
 
     def undo(self, event=None):

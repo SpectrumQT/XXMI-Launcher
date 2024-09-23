@@ -125,7 +125,7 @@ class RunPreLaunchEntry(UIEntry):
         # self.trace_write(Vars.Active.Migoto.unsafe_mode, self.handle_unsafe_mode_update)
         self.set_tooltip(
             'Windows console command to be executed before game exe launch.\n'
-            'FYI: If something needs to be done before the game start, do it here.')
+            'Note: If something needs to be done before the game start, do it here.')
 
     # def handle_unsafe_mode_update(self, var, val):
     #     if val:
@@ -163,7 +163,7 @@ class CustomLaunchEntry(UIEntry):
         message += 'Warning! This command also overrides `Launch Options` from General Settings.\n'
         if Config.Launcher.active_importer == 'WWMI':
             message += 'Warning! Make sure to pass `Client -DisableModule=streamline` arguments to Client-Win64-Shipping.exe to force DX11 mode!\n'
-        message += 'FYI: If you want to start game exe with another custom exe, do it here.\n'
+        message += 'Note: If you want to start game exe with another custom exe, do it here.\n'
         message += 'Example (equivalent for command internally used by launcher to start GI via FPS unlocker):\n'
         message += r'`start /d "C:\Games\XXMI Launcher\Resources\Packages\GI-FPS-Unlocker" unlockfps_nc.exe`'
         return message
@@ -226,7 +226,7 @@ class RunPostLoadEntry(UIEntry):
         # self.trace_write(Vars.Active.Migoto.unsafe_mode, self.handle_unsafe_mode_update)
         self.set_tooltip(
             'Windows console command to be executed after hooking d3d11.dll to launched game exe.\n'
-            'FYI: If something needs to be done after 3dmigoto injection, do it here.')
+            'Note: If something needs to be done after 3dmigoto injection, do it here.')
 
     # def handle_unsafe_mode_update(self, var, val):
     #     if val:
