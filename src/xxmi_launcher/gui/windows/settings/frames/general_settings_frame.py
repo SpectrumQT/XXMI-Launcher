@@ -93,8 +93,8 @@ class GameFolderEntry(UIEntry):
             msg = 'Path to folder with "StarRail.exe".\n'
             msg += 'Usually this folder is named "Games" and located inside "DATA" folder of HSR installation folder.'
         if Config.Launcher.active_importer == 'GIMI':
-            msg = 'Path to folder with "GenshinImpact.exe".\n'
-            msg += 'Usually this folder is named "Genshin Impact game" and located inside "DATA" folder of GI installation folder.'
+            msg = 'Path to folder with "GenshinImpact.exe" or "YuanShen.exe" (CN).\n'
+            msg += 'Usually this folder is named "Genshin Impact Game" and located inside "DATA" folder of GI installation folder.'
         return msg.strip()
 
 
@@ -236,7 +236,7 @@ class UnlockFPSCheckbox(UICheckbox):
         if Config.Launcher.active_importer == 'GIMI':
             msg = 'This option allows to force 120 FPS mode.\n'
             msg += '* Enabled: Launch game via "unlockfps_nc.exe" and let it run in background to continuously apply FPS limit tweak.\n'
-            msg += '* Disabled: Launch game via original "GenshinImpact.exe", has no effect on FPS.\n'
+            msg += '* Disabled: Launch game via original "GenshinImpact.exe" or "YuanShen.exe" (CN), has no effect on FPS.\n'
             msg += 'Hint: If FPS Unlocker package is outdated, you can manually update "unlockfps_nc.exe" from original repository.\n'
             msg += '* Local Path: Resources/Packages/GI-FPS-Unlocker/unlockfps_nc.exe\n'
             msg += '* Original Repository: https://github.com/34736384/genshin-fps-unlock'

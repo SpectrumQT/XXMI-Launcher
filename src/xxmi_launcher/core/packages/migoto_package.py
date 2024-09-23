@@ -102,12 +102,22 @@ class MigotoPackage(Package):
         launch_cmd = [str(event.start_exe_path)] + event.start_args + Config.Active.Importer.launch_options.split()
         launch_work_dir = event.work_dir
         launch_flags = ProcessPriority(Config.Active.Importer.process_priority).get_process_flags()
+        use_hook = event.use_hook
+        use_shell = False
+
+        if Config.Active.Importer.custom_launch_enabled:
+            custom_launch_cmd = Config.Active.Importer.custom_launch.strip()
+            if custom_launch_cmd:
+                launch_cmd = custom_launch_cmd
+                launch_work_dir = None
+                use_hook = Config.Active.Importer.custom_launch_inject_mode == 'Hook'
+                use_shell = True
 
         extra_dll_paths = []
         if Config.Active.Importer.extra_libraries_enabled:
             extra_dll_paths += Config.Active.Importer.extra_dll_paths
 
-        if event.use_hook:
+        if use_hook:
             # Use SetWindowsHookEx injection method
             injector = DllInjector(self.package_path / '3dmloader.dll')
             try:
@@ -118,10 +128,10 @@ class MigotoPackage(Package):
                 # Start game's exe
                 Events.Fire(Events.Application.StartGameExe(process_name=process_name))
                 if len(extra_dll_paths) == 0:
-                    subprocess.Popen(launch_cmd, creationflags=launch_flags, cwd=launch_work_dir)
+                    subprocess.Popen(launch_cmd, creationflags=launch_flags, cwd=launch_work_dir, shell=use_shell)
                 else:
-                    pid = direct_inject(dll_paths=extra_dll_paths, process_name=process_name,
-                                        start_cmd=launch_cmd, work_dir=launch_work_dir, creationflags=launch_flags)
+                    pid = direct_inject(dll_paths=extra_dll_paths, process_name=process_name, start_cmd=launch_cmd,
+                                        work_dir=launch_work_dir, creationflags=launch_flags, use_shell=use_shell)
                     if pid == -1:
                         raise ValueError(f'Failed to inject {str(extra_dll_paths)}!')
 
@@ -156,7 +166,7 @@ class MigotoPackage(Package):
             Events.Fire(Events.Application.Inject(library_name=dll_path.name, process_name=process_name))
             dll_paths = [dll_path] + extra_dll_paths
             pid = direct_inject(dll_paths=dll_paths, process_name=process_name, start_cmd=launch_cmd,
-                                work_dir=launch_work_dir, creationflags=launch_flags)
+                                work_dir=launch_work_dir, creationflags=launch_flags, use_shell=use_shell)
             if pid == -1:
                 raise ValueError(f'Failed to inject {dll_path.name}!')
 
@@ -175,7 +185,6 @@ class MigotoPackage(Package):
             cancel_text='Cancel',
             message=f'XXMI installation is damaged!\n'
                     f'Details: {str(e).strip()}\n'
-                    f'Hint: Enable Unsafe Mode to allow 3rd-party DLLs.\n'
                     f'Would you like to restore XXMI automatically?',
         ))
 

@@ -4,7 +4,7 @@ import gui.vars as Vars
 
 from customtkinter import END
 from gui.classes.containers import UIFrame
-from gui.classes.widgets import UITextbox, UILabel, UIEntry, UICheckbox
+from gui.classes.widgets import UITextbox, UILabel, UIEntry, UICheckbox, UIOptionMenu
 
 
 class AdvancedSettingsFrame(UIFrame):
@@ -25,17 +25,22 @@ class AdvancedSettingsFrame(UIFrame):
 
         # Pre-Launch Command
         self.put(RunPreLaunchCheckbox(self)).grid(row=3, column=0, padx=(20, 0), pady=(10, 10), sticky='w')
-        self.put(RunPreLaunchEntry(self)).grid(row=3, column=1, padx=(10, 100), pady=(10, 10), sticky='ew', columnspan=4)
+        self.put(RunPreLaunchEntry(self)).grid(row=3, column=1, padx=(10, 125), pady=(10, 10), sticky='ew', columnspan=4)
         self.put(RunPreLaunchWaitCheckbox(self)).grid(row=3, column=4, padx=(10, 20), pady=(10, 10), sticky='w')
 
+        # Custom Launch Command
+        self.put(CustomLaunchCheckbox(self)).grid(row=4, column=0, padx=(20, 0), pady=(10, 10), sticky='w')
+        self.put(CustomLaunchEntry(self)).grid(row=4, column=1, padx=(10, 125), pady=(10, 10), sticky='ew', columnspan=4)
+        self.put(CustomLaunchInjectModeOptionMenu(self)).grid(row=4, column=4, padx=(10, 20), pady=(10, 10), sticky='w')
+
         # Post-Load Command
-        self.put(RunPostLoadCheckbox(self)).grid(row=4, column=0, padx=(20, 0), pady=(10, 10), sticky='w')
-        self.put(RunPostLoadEntry(self)).grid(row=4, column=1, padx=(10, 100), pady=(10, 10), sticky='ew', columnspan=4)
-        self.put(RunPostLoadWaitCheckbox(self)).grid(row=4, column=4, padx=(10, 20), pady=(10, 10), sticky='w')
+        self.put(RunPostLoadCheckbox(self)).grid(row=5, column=0, padx=(20, 0), pady=(10, 10), sticky='w')
+        self.put(RunPostLoadEntry(self)).grid(row=5, column=1, padx=(10, 125), pady=(10, 10), sticky='ew', columnspan=4)
+        self.put(RunPostLoadWaitCheckbox(self)).grid(row=5, column=4, padx=(10, 20), pady=(10, 10), sticky='w')
 
         # Extra Libraries Injection
-        self.put(InjectLibrariesCheckbox(self)).grid(row=5, column=0, padx=(20, 0), pady=(10, 10), sticky='w')
-        self.put(InjectLibrariesTextbox(self)).grid(row=5, column=1, padx=(10, 20), pady=(10, 10), sticky='ew', columnspan=4)
+        self.put(InjectLibrariesCheckbox(self)).grid(row=6, column=0, padx=(20, 0), pady=(10, 10), sticky='w')
+        self.put(InjectLibrariesTextbox(self)).grid(row=6, column=1, padx=(10, 20), pady=(10, 10), sticky='ew', columnspan=4)
 
 
 class UpdatePolicyLabel(UILabel):
@@ -129,6 +134,56 @@ class RunPreLaunchEntry(UIEntry):
     #         self.configure(state='disabled', fg_color='#c0c0c0')
 
 
+class CustomLaunchCheckbox(UICheckbox):
+    def __init__(self, master):
+        super().__init__(
+            variable=Vars.Active.Importer.custom_launch_enabled,
+            text='Custom Launch:',
+            font=('Roboto', 16, 'bold'),
+            master=master)
+        self.set_tooltip(
+                         'Enabled: Option will have stated effect.\n'
+                         'Disabled: Option will have no effect.',
+                         delay=0.5,)
+
+
+class CustomLaunchEntry(UIEntry):
+    def __init__(self, master):
+        super().__init__(
+            textvariable=Vars.Active.Importer.custom_launch,
+            width=200,
+            height=36,
+            font=('Arial', 14),
+            master=master)
+        self.set_tooltip(self.get_tooltip)
+
+    def get_tooltip(self):
+        message = ''
+        message += 'Windows console command to run when Start button is pressed instead of default game exe launch.\n'
+        message += 'Warning! This command also overrides `Launch Options` from General Settings.\n'
+        if Config.Launcher.active_importer == 'WWMI':
+            message += 'Warning! Make sure to pass `Client -DisableModule=streamline` arguments to Client-Win64-Shipping.exe to force DX11 mode!\n'
+        message += 'FYI: If you want to start game exe with another custom exe, do it here.\n'
+        message += 'Example (equivalent for command internally used by launcher to start GI via FPS unlocker):\n'
+        message += r'`start /d "C:\Games\XXMI Launcher\Resources\Packages\GI-FPS-Unlocker" unlockfps_nc.exe`'
+        return message
+
+
+class CustomLaunchInjectModeOptionMenu(UIOptionMenu):
+    def __init__(self, master):
+        super().__init__(
+            values=['Inject', 'Hook'],
+            variable=Vars.Active.Importer.custom_launch_inject_mode,
+            width=90,
+            height=36,
+            font=('Arial', 14),
+            dropdown_font=('Arial', 14),
+            master=master)
+        self.set_tooltip('Defines the way of d3d11.dll injection into the game process started via Custom Launch.\n'
+                         '* Inject: Use WriteProcessMemory, more reliable but requires direct memory access.\n'
+                         '* Hook: Use SetWindowsHookEx, less reliable, but potentially less prominent for anti-cheats.')
+
+
 class RunPreLaunchWaitCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
@@ -215,11 +270,14 @@ class InjectLibrariesTextbox(UITextbox):
     def __init__(self, master):
         super().__init__(
             text_variable=Vars.Active.Importer.extra_libraries,
-            height=140,
+            height=90,
             undo=True,
             master=master)
         self.set_tooltip(
-            'List of additional DLL paths to inject into the game process. 1 path per line.')
+            'List of additional DLL paths to inject into the game process. 1 path per line.\n'
+            'injection will be made via WriteProcessMemory method.\n'
+            'Example (inject ReShade dll):\n'
+            '`C:\Games\ReShade\ReShade64.dll`')
 
     def get(self, index1, index2=None):
         return super().get(index1, index2).strip()

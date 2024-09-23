@@ -53,15 +53,19 @@ class ModelImporterConfig:
     overwrite_ini: bool = True
     process_priority: str = 'Above Normal'
     window_mode: str = 'Borderless'
-    run_pre_launch_enabled: bool = True
+    run_pre_launch_enabled: bool = False
     run_pre_launch: str = ''
     run_pre_launch_signature: str = ''
     run_pre_launch_wait: bool = True
-    run_post_load_enabled: bool = True
+    custom_launch_enabled: bool = False
+    custom_launch: str = ''
+    custom_launch_signature: str = ''
+    custom_launch_inject_mode: str = 'Inject'
+    run_post_load_enabled: bool = False
     run_post_load: str = ''
     run_post_load_signature: str = ''
     run_post_load_wait: bool = True
-    extra_libraries_enabled: bool = True
+    extra_libraries_enabled: bool = False
     extra_libraries: str = ''
     extra_libraries_signature: str = ''
     deployed_migoto_signatures: Dict[str, str] = field(default_factory=lambda: {})
@@ -153,7 +157,7 @@ class ModelImporterPackage(Package):
             raise ValueError(f'Game folder is not a directory!')
         return game_path
 
-    def update_d3dx_ini(self):
+    def update_d3dx_ini(self, game_exe_path: Path):
         Events.Fire(Events.Application.StatusUpdate(status='Updating d3dx.ini...'))
 
         ini_path = Config.Active.Importer.importer_path / 'd3dx.ini'
@@ -163,6 +167,11 @@ class ModelImporterPackage(Package):
         log.debug(f'Reading d3dx.ini...')
         with open(ini_path, 'r', encoding='utf-8') as f:
             ini = IniHandler(IniHandlerSettings(ignore_comments=False), f)
+
+        # Set default game exe as target, can be overridden via XXMI Launcher Config.json:
+        # 1. Locate "Importers" > "GIMI" > "Importer" > "d3dx_ini"> "core" > "Loader"
+        # 2. Add `"target": "GenshinImpact.exe",` line before `"loader": "XXMI Launcher.exe"`
+        ini.set_option('Loader', 'target', game_exe_path.name)
 
         self.set_default_ini_values(ini, 'core', SettingType.Constant)
         self.set_default_ini_values(ini, 'debug_logging', SettingType.Bool, Config.Active.Migoto.debug_logging)
@@ -212,8 +221,7 @@ class ModelImporterPackage(Package):
     def start_game(self, event):
         # Ensure package integrity
         self.validate_package_files()
-        # Write configured settings to main 3dmigoto ini file
-        self.update_d3dx_ini()
+
         # Check if game location is properly configured
         try:
             game_path = self.validate_game_path(Config.Active.Importer.game_folder)
@@ -227,6 +235,9 @@ class ModelImporterPackage(Package):
             except Exception as e:
                 Events.Fire(Events.Application.OpenSettings())
                 raise ValueError(f'Failed to detect Game Folder!\n\nRefer to tooltip of Settings > Game Folder for details.')
+
+        # Write configured settings to main 3dmigoto ini file
+        self.update_d3dx_ini(game_exe_path=game_exe_path)
 
         # Execute initialization sequence of implemented importer
         self.initialize_game_launch(game_path)

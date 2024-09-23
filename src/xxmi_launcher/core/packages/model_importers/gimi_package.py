@@ -38,7 +38,6 @@ class GIMIConfig(ModelImporterConfig):
     ] = field(default_factory=lambda: {
         'core': {
             'Loader': {
-                'target': 'GenshinImpact.exe',
                 'loader': 'XXMI Launcher.exe',
             },
             'Rendering': {
@@ -50,10 +49,6 @@ class GIMIConfig(ModelImporterConfig):
             'Logging': {
                 'calls': {'on': 1, 'off': 0},
                 'debug': {'on': 1, 'off': 0},
-                'unbuffered': {'on': 1, 'off': 0},
-                'force_cpu_affinity': {'on': 1, 'off': 0},
-                'debug_locks': {'on': 1, 'off': 0},
-                'crash': {'on': 1, 'off': 0},
             },
         },
         'mute_warnings': {
@@ -121,7 +116,10 @@ class GIMIPackage(ModelImporterPackage):
     def validate_game_exe_path(self, game_path: Path) -> Path:
         game_exe_path = game_path / 'GenshinImpact.exe'
         if not game_exe_path.is_file():
-            raise ValueError(f'Game executable {game_exe_path} does not exist!')
+            game_exe_cn_path = game_path / 'YuanShen.exe'
+            if not game_exe_cn_path.is_file():
+                raise ValueError(f'Game executable {game_exe_path} or {game_exe_cn_path} does not exist!')
+            game_exe_path = game_exe_cn_path
         return game_exe_path
 
     def get_start_cmd(self, game_path: Path) -> Tuple[Path, List[str], Optional[str]]:
@@ -288,7 +286,10 @@ class GIMIPackage(ModelImporterPackage):
             shutil.copy2(fps_config_template_path, fps_config_path)
         with open(fps_config_path, 'r', encoding='utf-8') as f:
             fps_config = json.load(f)
-        game_exe_path = Path(Config.Importers.GIMI.Importer.game_folder) / 'GenshinImpact.exe'
+
+        game_path = self.validate_game_path(Config.Active.Importer.game_folder)
+        game_exe_path = self.validate_game_exe_path(game_path)
+
         modified = False
 
         if fps_config['GamePath'] != str(game_exe_path):

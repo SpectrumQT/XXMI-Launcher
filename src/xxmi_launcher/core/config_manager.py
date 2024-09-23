@@ -155,7 +155,9 @@ class AppConfigSecurity:
         unsecure_settings = [
             Config.Active.Migoto.unsafe_mode,
             Config.Active.Importer.run_pre_launch,
+            Config.Active.Importer.custom_launch,
             Config.Active.Importer.run_post_load,
+            Config.Active.Importer.extra_libraries,
         ]
 
         if not any(unsecure_settings):
@@ -173,6 +175,10 @@ class AppConfigSecurity:
         if Config.Active.Importer.run_pre_launch:
             if not self.security.verify(Config.Active.Importer.run_pre_launch_signature, Config.Active.Importer.run_pre_launch.encode()):
                 wrong_signatures['Run Pre Launch'] = Config.Active.Importer.run_pre_launch
+
+        if Config.Active.Importer.custom_launch:
+            if not self.security.verify(Config.Active.Importer.custom_launch_signature, Config.Active.Importer.custom_launch.encode()):
+                wrong_signatures['Custom Launch'] = Config.Active.Importer.custom_launch
 
         if Config.Active.Importer.run_post_load:
             if not self.security.verify(Config.Active.Importer.run_post_load_signature, Config.Active.Importer.run_post_load.encode()):
@@ -198,6 +204,8 @@ class AppConfigSecurity:
                     Config.Active.Migoto.unsafe_mode = False
                 if 'Run Pre Launch' in wrong_signatures:
                     Config.Active.Importer.run_pre_launch = ''
+                if 'Custom Launch' in wrong_signatures:
+                    Config.Active.Importer.custom_launch = ''
                 if 'Run Post Load' in wrong_signatures:
                     Config.Active.Importer.run_post_load = ''
                 if 'Extra Libraries' in wrong_signatures:
@@ -214,6 +222,8 @@ class AppConfigSecurity:
             Active.Migoto.unsafe_mode_signature = self.security.sign(os.getlogin().encode())
         if Active.Importer.run_pre_launch:
             Active.Importer.run_pre_launch_signature = self.security.sign(Active.Importer.run_pre_launch.encode())
+        if Active.Importer.custom_launch:
+            Active.Importer.custom_launch_signature = self.security.sign(Active.Importer.custom_launch.encode())
         if Active.Importer.run_post_load:
             Active.Importer.run_post_load_signature = self.security.sign(Active.Importer.run_post_load.encode())
         if Active.Importer.extra_libraries:
