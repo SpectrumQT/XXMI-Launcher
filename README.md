@@ -9,7 +9,7 @@
   <a href="#license">License</a>
 </p>
 
-## DISCLAIMER
+## Disclaimer
 
 - **GIMI** and **SRMI** packages are **in-dev** versions, feel free to test but please be aware!
 
@@ -17,8 +17,11 @@
 
 - **One Ring** — Allows to launch and manage all supported Model Importers in unified and convenient way
 - **Plug-and-Play** — Configures any supported game and installs its XXMI instance automatically
+- **Custom Launch** — Can be configured to start game in almost every possible way via Advanced Settings
 - **Automatic Updates** — Always keeps XXMI instances and itself up-to date
 - **Safe to Use** — Verifies authenticity of XXMI libraries and own downloads
+
+![xxmi-launcher](https://github.com/SpectrumQT/XXMI-Launcher/blob/main/public-media/XXMI%20Launcher.jpg)
 
 ## Installation
 
