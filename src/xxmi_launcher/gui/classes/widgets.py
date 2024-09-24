@@ -495,10 +495,9 @@ class UIEntry(CTkEntry, UIWidget):
         self.state_id = -1
 
         self.bind("<Key>", self.initialize_state_log)
+        self.bind("<Control-KeyPress>", self.handle_key_press)
         self.bind("<KeyRelease>", self.add_state)
         self.bind("<<Cut>>", lambda event: self.after(200, self.add_state))
-        self.bind("<Control-z>", self.undo)
-        self.bind("<Control-y>", self.redo)
         self.bind("<Button-3>", self.handle_button3)
         self.bind("<<Paste>>", self.paste_to_selection)
 
@@ -509,6 +508,22 @@ class UIEntry(CTkEntry, UIWidget):
 
     def event_generate(self, *args, **kwargs):
         self._entry.event_generate(*args, **kwargs)
+
+    def handle_key_press(self, event):
+        if event.keycode == 65:
+            event.widget.event_generate("<<SelectAll>>")
+        elif event.keycode == 67:
+            event.widget.event_generate("<<Copy>>")
+        elif event.keycode == 86:
+            event.widget.event_generate("<<Paste>>")
+        elif event.keycode == 88:
+            event.widget.event_generate("<<Cut>>")
+        elif event.keycode == 89:
+            self.redo()
+        elif event.keycode == 90:
+            self.undo()
+        elif event.keycode == 65535:
+            event.widget.event_generate("<<Clear>>")
 
     def destroy(self):
         # Remove default write-trace callback for textvariable if exists
@@ -564,13 +579,20 @@ class UIEntry(CTkEntry, UIWidget):
         # print(f'ADD State {self.state_id} ({self.get_state()}) STATES: {self.state_log}')
 
     def paste_to_selection(self, event):
+        clipboard = ''
+        try:
+            clipboard = event.widget.clipboard_get()
+        except:
+            pass
+        if not clipboard:
+            return 'break'
         self.initialize_state_log()
         try:
             event.widget.delete('sel.first', 'sel.last')
-            event.widget.insert('insert', event.widget.clipboard_get())
-            self.add_state()
         except:
             pass
+        event.widget.insert('insert', clipboard)
+        self.add_state()
         return 'break'
 
     def undo(self, event=None):
@@ -763,7 +785,8 @@ class UITextbox(CTkTextbox, UIWidget):
         UIWidget.__init__(self, master,  **kwargs)
         CTkTextbox.__init__(self, master, **kwargs)
         self.text_variable = text_variable
-        self.trace_write(text_variable, self.handle_extra_libraries_update)
+        self.trace_write(text_variable, self.handle_text_variable_update)
+        self.bind("<Control-KeyPress>", self.handle_key_press)
         self.bind('<KeyRelease>', self.handle_on_widget_change)
 
     def set(self, value):
@@ -773,6 +796,22 @@ class UITextbox(CTkTextbox, UIWidget):
     def handle_on_widget_change(self, event=None):
         self.text_variable.set(self.get(0.0, END))
 
-    def handle_extra_libraries_update(self, var, val):
+    def handle_text_variable_update(self, var, val):
         if val != self.get(0.0, END):
             self.set(val)
+
+    def handle_key_press(self, event):
+        if event.keycode == 65:
+            event.widget.event_generate("<<SelectAll>>")
+        elif event.keycode == 67:
+            event.widget.event_generate("<<Copy>>")
+        elif event.keycode == 86:
+            event.widget.event_generate("<<Paste>>")
+        elif event.keycode == 88:
+            event.widget.event_generate("<<Cut>>")
+        elif event.keycode == 89:
+            event.widget.event_generate("<<Redo>>")
+        elif event.keycode == 90:
+            event.widget.event_generate("<<Undo>>")
+        elif event.keycode == 65535:
+            event.widget.event_generate("<<Clear>>")
