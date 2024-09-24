@@ -11,7 +11,7 @@
 
 ## DISCLAIMER
 
-- **XXMI Launcher** and all of its per-game packages are in active developement stage.
+- **GIMI** and **SRMI** packages are **in-dev** versions, feel free to test but please be aware!
 
 ## Features  
 
@@ -22,8 +22,9 @@
 
 ## Installation
 
-1. Use [XXMI Installer](https://github.com/SpectrumQT/XXMI-Installer) to download and install **XXMI Launcher**.
-2. Once installation is complete, **XXMI Launcher** window will open and install **XXMI** instance automatically.
+1. Install [the latest Microsoft Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170) ([direct download](https://aka.ms/vs/17/release/vc_redist.x64.exe))
+2. Use [XXMI Installer](https://github.com/SpectrumQT/XXMI-Installer) to download and install **XXMI Launcher**.
+3. Once installation is complete, **XXMI Launcher** window will open and install **XXMI** instance automatically.
 
 ## Supported Model Importers
 
