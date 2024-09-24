@@ -134,8 +134,8 @@ class ApplicationEvents:
         confirm_command: Union[Callable, None] = None
         cancel_text: str = ''
         cancel_command: Union[Callable, None] = None
-        lock_master: bool = True
-        screen_center: bool = False
+        lock_master: bool = None
+        screen_center: bool = None
 
     @dataclass
     class ShowError(ShowMessage):
