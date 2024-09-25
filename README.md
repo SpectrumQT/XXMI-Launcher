@@ -9,9 +9,11 @@
   <a href="#license">License</a>
 </p>
 
-## Disclaimer
+## Disclaimers
 
-- **GIMI** and **SRMI** packages are **in-dev** versions, feel free to test but please be aware!
+- **In-Dev Warning** — **GIMI** and **SRMI** packages are **in-dev** versions, feel free to test but please be aware!
+
+- **Paranoia Warning** — Some picky AVs may be triggered by XXMI .exe or .dll files. Installer and Launcher are unsigned python apps compiled with Pyinstaller, that is [known to have false positives](https://discuss.python.org/t/pyinstaller-false-positive/43171). DLLs are unsigned binaries intended to inject or be injected into the game process, and it doesn't help either. We can't do anything about it, so it's up to you to use them as is, build yourself or go by.
 
 ## Features  
 
