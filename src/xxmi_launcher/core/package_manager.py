@@ -280,6 +280,8 @@ class Package:
         return '.'.join(version[:max_parts])
 
     def update(self, clean=False):
+        if not self.download_url:
+            self.detect_latest_version()
         self.download_latest_version()
         self.install_latest_version(clean=clean)
         self.load_manifest()
