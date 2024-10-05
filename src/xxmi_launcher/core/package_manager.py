@@ -42,6 +42,7 @@ class PackageMetadata:
 class PackageConfig:
     latest_version: str = ''
     skipped_version: str = ''
+    deployed_version: str = ''
     update_check_time: int = 0
 
 
@@ -85,12 +86,24 @@ class Package:
         raise NotImplementedError(f'Method "get_installed_version" is not implemented for package {self.metadata.package_name}!')
 
     def get_last_installed_version(self):
+        installed_version = self.get_installed_version()
         try:
+            # If detected version is different from the last deployed one, use it as result
+            # It allows to reinstall update when user either:
+            # * Replaced already deployed folder with one containing older package version
+            # * Changed location of already deployed package to folder with older package version
+            if installed_version != self.cfg.deployed_version:
+                return installed_version
+            # If installed and deployed version matches, we'll use one from... the manifest of last downloaded version
+            # It allows us to mitigate major potential distribution error of version mismatch between:
+            # * Package version parsed from update filename
+            # * Package version detected with self.get_installed_version() from update contents
+            # (otherwise automatic update will try to "update" package with such mismatch on every startup)
             self.load_manifest()
             return self.manifest.version
         except Exception as e:
             try:
-                return self.get_installed_version()
+                return installed_version
             except Exception as e:
                 pass
         return ''
@@ -163,9 +176,10 @@ class Package:
         Events.Fire(Events.Application.Busy())
 
         tmp_path = self.package_path / 'TMP'
+        shutil.rmtree(tmp_path, ignore_errors=True)
         Paths.verify_path(tmp_path)
 
-        if asset_file_name.endswith('.zip'):
+        if asset_file_name.endswith('.zip') or asset_file_name.endswith('.msi'):
             asset_path = tmp_path / asset_file_name
         elif asset_file_name.endswith('.exe'):
             asset_path = tmp_path / self.metadata.deploy_name
@@ -175,7 +189,7 @@ class Package:
         if asset_path.suffix == '.zip':
             self.unpack(asset_path, tmp_path / self.metadata.deploy_name)
             self.downloaded_asset_path = tmp_path
-        elif asset_path.suffix == '.exe':
+        elif asset_path.suffix == '.exe' or asset_path.suffix == '.msi':
             self.downloaded_asset_path = asset_path
 
         manifest_path = tmp_path / f'Manifest.json'
@@ -286,6 +300,7 @@ class Package:
         self.install_latest_version(clean=clean)
         self.load_manifest()
         self.detect_installed_version()
+        self.cfg.deployed_version = self.installed_version
 
     def subscribe(self, event, callback):
         Events.Subscribe(event, callback, caller_id=self)
@@ -389,6 +404,9 @@ class PackageManager:
         package.load()
         # Detect installed version to do a basic integrity check
         package.detect_installed_version()
+        # Mark installed version as deployed on empty deployed version record
+        if not package.cfg.deployed_version:
+            package.cfg.deployed_version = package.installed_version
 
     def unload_package(self, package: Union[Package, str]):
         package = self.get_package(package)
@@ -426,54 +444,61 @@ class PackageManager:
 
     def update_available(self):
         for package in self.packages.values():
+            if not package.active:
+                continue
             if package.update_available():
+                log.debug(f'Package {package.metadata.package_name} update available {package.installed_version} -> {package.cfg.latest_version}')
                 return True
 
     def update_packages(self, no_install=False, no_check=False, force=False, reinstall=False, packages=None, silent=False):
         log.debug(f'Initializing packages update (no_install={no_install}, no_check={no_check}, force={force}, reinstall={reinstall}, silent={silent}, packages={packages})...')
+
         if self.update_running:
             log.debug(f'Packages update canceled: update is already in process!')
             return
         self.update_running = True
         self.api_connection_refused = False
 
-        # no_install = True
         if not silent:
             Events.Fire(Events.Application.Busy())
             Events.Fire(Events.PackageManager.StartCheckUpdate())
 
-        # time.sleep(1)
+        try:
+            for package_name, package in self.packages.items():
 
-        for package_name, package in self.packages.items():
+                # Skip package processing if it's not active, intended for multiple model importers support
+                if not package.active:
+                    continue
 
-            # Skip package processing if it's not active, intended for multiple model importers support
-            if not package.active:
-                continue
+                # Skip package processing if it's name isn't listed in provided package list
+                if packages is not None and package_name not in packages:
+                    continue
 
-            # Skip package processing if it's name isn't listed in provided package list
-            if packages is not None and package_name not in packages:
-                continue
+                # Download and install the latest package version, it can take a while
+                updated = self.update_package(package, no_install=no_install, no_check=no_check, force=force, reinstall=reinstall)
 
-            # Download and install the latest package version, it can take a while
-            updated = self.update_package(package, no_install=no_install, no_check=no_check, force=force, reinstall=reinstall)
+                if no_install:
+                    continue
 
-            if no_install:
-                continue
+                if package.metadata.exit_after_update and updated:
+                    Events.Fire(Events.Application.Close(delay=500))
+                    return
 
-            if package.metadata.exit_after_update and updated:
-                Events.Fire(Events.Application.Close(delay=500))
-                return
+            if self.api_connection_refused and not self.api_connection_refused_notified:
+                self.api_connection_refused_notified = True
+                raise ConnectionRefusedError(f'GitHub update requests limit reached!\n\nAttempts will be ignored for an hour.')
 
-        self.notify_package_versions()
+        except Exception as e:
+            if silent:
+                log.exception(e)
+            else:
+                raise e
 
-        self.update_running = False
-
-        if not silent:
-            Events.Fire(Events.Application.Ready())
-
-        if self.api_connection_refused and not self.api_connection_refused_notified:
-            self.api_connection_refused_notified = True
-            raise ConnectionRefusedError(f'GitHub update requests limit reached!\n\nAttempts will be ignored for an hour.')
+        finally:
+            self.update_running = False
+            self.notify_package_versions()
+            if not silent:
+                Events.Fire(Events.Application.Ready())
 
     def update_package(self, package: Package, no_install=False, no_check=False, force=False, reinstall=False):
         # Check if installation is pending, as we'll need download url from update check
