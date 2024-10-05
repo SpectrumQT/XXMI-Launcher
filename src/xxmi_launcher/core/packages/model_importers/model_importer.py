@@ -69,6 +69,7 @@ class ModelImporterConfig:
     extra_libraries: str = ''
     extra_libraries_signature: str = ''
     deployed_migoto_signatures: Dict[str, str] = field(default_factory=lambda: {})
+    shortcut_deployed: bool = False
     d3dx_ini: Dict[
         str, Dict[str, Dict[str, Union[str, int, float, Dict[str, Union[str, int, float]]]]]
     ] = field(default_factory=lambda: {})
@@ -124,6 +125,8 @@ class ModelImporterPackage(Package):
                 Config.Active.Importer.game_folder = str(game_folder)
             except Exception as e:
                 pass
+        if self.get_installed_version() != '' and not Config.Active.Importer.shortcut_deployed:
+            self.create_shortcut()
 
     def unload(self):
         self.unsubscribe()
@@ -140,6 +143,9 @@ class ModelImporterPackage(Package):
 
         if not Config.Active.Importer.overwrite_ini:
             self.restore(d3dx_ini_path)
+
+        if not Config.Active.Importer.shortcut_deployed:
+            self.create_shortcut()
 
     def get_game_exe_path(self, game_path: Path) -> Path:
         raise NotImplementedError
@@ -290,6 +296,7 @@ class ModelImporterPackage(Package):
             link.working_directory = str(Paths.App.Root)
             link.arguments = f'--nogui --xxmi {Config.Launcher.active_importer}'
             link.icon_location = (str(Config.Active.Importer.theme_path / 'Shortcuts' / f'{Config.Launcher.active_importer}.ico'), 0)
+        Config.Active.Importer.shortcut_deployed = True
 
     def disable_duplicate_libraries(self, libs_path: Path):
         log.debug(f'Searching for duplicate libs...')
