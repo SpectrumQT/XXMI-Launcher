@@ -150,7 +150,8 @@ class WWMIPackage(ModelImporterPackage):
         return game_exe_path
 
     def get_start_cmd(self, game_path: Path) -> Tuple[Path, List[str], Optional[str]]:
-        return self.validate_game_exe_path(game_path), ['Client', '-DisableModule=streamline'], None
+        game_exe_path = self.validate_game_exe_path(game_path)
+        return game_exe_path, ['Client', '-DisableModule=streamline'], str(game_exe_path.parent)
 
     def initialize_game_launch(self, game_path: Path):
         self.update_wwmi_ini()

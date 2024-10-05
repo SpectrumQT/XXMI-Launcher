@@ -222,7 +222,8 @@ class ModelImporterPackage(Package):
         raise NotImplementedError
 
     def get_start_cmd(self, game_path: Path) -> Tuple[Path, List[str], Optional[str]]:
-        return self.validate_game_exe_path(game_path), [], None
+        game_exe_path = self.validate_game_exe_path(game_path)
+        return game_exe_path, [], str(game_exe_path.parent)
 
     def start_game(self, event):
         # Ensure package integrity

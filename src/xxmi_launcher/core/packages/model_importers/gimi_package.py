@@ -101,7 +101,7 @@ class GIMIPackage(ModelImporterPackage):
             signature_public_key='MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEYac352uRGKZh6LOwK0fVDW/TpyECEfnRtUp+bP2PJPP63SWOkJ3a/d9pAnPfYezRVJ1hWjZtpRTT8HEAN/b4mWpJvqO43SAEV/1Q6vz9Rk/VvRV3jZ6B/tmqVnIeHKEb',
             exit_after_update=False,
             installation_path='GIMI/',
-            dependencies=['GI-FPS-Unlocker'],
+            requirements=['GI-FPS-Unlocker'],
         ))
 
     def get_installed_version(self):
@@ -129,7 +129,7 @@ class GIMIPackage(ModelImporterPackage):
             work_dir_path = str(game_exe_path.parent)
         else:
             game_exe_path = self.validate_game_exe_path(game_path)
-            work_dir_path = None
+            work_dir_path = str(game_exe_path.parent)
         return game_exe_path, [], work_dir_path
 
     def initialize_game_launch(self, game_path: Path):
