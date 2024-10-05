@@ -15,7 +15,7 @@ import core.config_manager as Config
 from core.package_manager import Package, PackageMetadata
 
 from core.utils.dll_injector import DllInjector, direct_inject
-from core.utils.process_tracker import wait_for_process, WaitResult, ProcessPriority
+from core.utils.process_tracker import wait_for_process, WaitResult, ProcessPriority, wait_for_process_exit
 
 log = logging.getLogger(__name__)
 
@@ -79,12 +79,14 @@ class MigotoPackage(Package):
         subprocess.Popen(['explorer.exe', Config.Active.Importer.importer_path / 'Mods'])
 
     def handle_start_and_inject(self, event: MigotoManagerEvents.StartAndInject):
+        process_name = event.game_exe_path.name
+
         try:
             # Copy XXMI package files to game instance
-            self.deploy_client_files()
+            self.deploy_client_files(process_name)
         except Exception as e:
             # Attempt to restore damaged game instance files
-            self.restore_package_files(e, validate=False)
+            self.restore_package_files(e, process_name, validate=False)
 
         Events.Fire(Events.Application.Busy())
 
@@ -93,12 +95,11 @@ class MigotoPackage(Package):
                 # Check signatures to prevent 3rd-party 3dmigoto libraries from loading
                 self.validate_deployed_files()
             except Exception as e:
-                self.restore_package_files(e, validate=True)
+                self.restore_package_files(e, process_name, validate=True)
 
         Events.Fire(Events.Application.Busy())
 
         dll_path = Config.Active.Importer.importer_path / 'd3d11.dll'
-        process_name = event.game_exe_path.name
         launch_cmd = [str(event.start_exe_path)] + event.start_args + Config.Active.Importer.launch_options.split()
         launch_work_dir = event.work_dir
         launch_flags = ProcessPriority(Config.Active.Importer.process_priority).get_process_flags()
@@ -178,7 +179,7 @@ class MigotoPackage(Package):
         # Wait a bit more for window to maximize
         time.sleep(1)
 
-    def restore_package_files(self, e: Exception, validate=False):
+    def restore_package_files(self, e: Exception, process_name: str, validate=False):
         user_requested_restore = Events.Call(Events.Application.ShowError(
             modal=True,
             confirm_text='Restore',
@@ -199,9 +200,9 @@ class MigotoPackage(Package):
         else:
             Events.Fire(Events.Application.Update(packages=[self.metadata.package_name], no_thread=True, force=True, reinstall=True, silent=True))
 
-        self.deploy_client_files()
+        self.deploy_client_files(process_name)
 
-    def deploy_client_files(self):
+    def deploy_client_files(self, process_name: str):
         for client_file in ['d3d11.dll', 'd3dcompiler_47.dll', 'nvapi64.dll']:
             client_file_path = Config.Active.Importer.importer_path / client_file
             client_file_signature = Config.Active.Importer.deployed_migoto_signatures.get(client_file, '')
@@ -220,6 +221,14 @@ class MigotoPackage(Package):
                             log.debug(f'Skipped auto-deploy for {client_file_path} (signature mismatch)!')
 
             if deploy_pending:
+                Events.Fire(Events.Application.StatusUpdate(status='Ensuring the game is closed...'))
+                result, pid = wait_for_process_exit(process_name=process_name, timeout=5, kill_timeout=0)
+                if result == WaitResult.Timeout:
+                    Events.Fire(Events.Application.ShowError(
+                        modal=True,
+                        message=f'Failed to stop {process_name}!\n\n'
+                                'Please close the game manually and press [OK] to continue.',
+                    ))
                 package_file_path = self.package_path / client_file
                 if package_file_path.exists():
                     shutil.copy2(package_file_path, client_file_path)
