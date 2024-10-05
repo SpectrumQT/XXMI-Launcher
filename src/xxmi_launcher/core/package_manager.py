@@ -27,7 +27,7 @@ class PackageMetadata:
     package_name: str = ''
     auto_load: bool = False
     installation_path: str = ''
-    dependencies: List[str] = field(default_factory=lambda: [])
+    requirements: List[str] = field(default_factory=lambda: [])
     github_repo_owner: str = ''
     github_repo_name: str = ''
     asset_version_pattern: str = ''
@@ -398,7 +398,7 @@ class PackageManager:
     def load_package(self, package: Union[Package, str]):
         package = self.get_package(package)
         # Load required packages
-        for required_package in package.metadata.dependencies:
+        for required_package in package.metadata.requirements:
             self.load_package(required_package)
         # Mark package as active
         package.load()
@@ -411,7 +411,7 @@ class PackageManager:
     def unload_package(self, package: Union[Package, str]):
         package = self.get_package(package)
         package.unload()
-        for required_package in package.metadata.dependencies:
+        for required_package in package.metadata.requirements:
             self.unload_package(required_package)
 
     def get_package(self, package: Union[Package, str]) -> Package:
@@ -462,6 +462,12 @@ class PackageManager:
         if not silent:
             Events.Fire(Events.Application.Busy())
             Events.Fire(Events.PackageManager.StartCheckUpdate())
+            
+        requirements = []
+        if packages:
+            for package_name in packages:
+                package = self.packages[package_name]
+                requirements += package.metadata.requirements
 
         try:
             for package_name, package in self.packages.items():
@@ -471,7 +477,7 @@ class PackageManager:
                     continue
 
                 # Skip package processing if it's name isn't listed in provided package list
-                if packages is not None and package_name not in packages:
+                if (packages is not None) and (package_name not in packages) and (package_name not in requirements):
                     continue
 
                 # Download and install the latest package version, it can take a while
