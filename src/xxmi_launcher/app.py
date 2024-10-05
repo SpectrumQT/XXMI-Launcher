@@ -6,6 +6,7 @@ import subprocess
 import multiprocessing
 import time
 import traceback
+import re
 
 from typing import Union, Callable
 from dataclasses import dataclass, field
@@ -19,7 +20,6 @@ import core.config_manager as Config
 
 from core.package_manager import PackageManager
 
-from core.packages.installer_package import InstallerPackage
 from core.packages.launcher_package import LauncherPackage
 from core.packages.migoto_package import MigotoPackage
 from core.packages.genshin_fps_unlock_package import GenshinFpsUnlockerPackage
@@ -179,8 +179,14 @@ class Application:
                             help="Automatically clean-install the latest XXMI version")
         parser.add_argument('-x', '--xxmi', type=str,
                             help="Set provided XXMI edition as default")
-        self.args = parser.parse_args()
-        logging.debug(f'Arguments: {self.args}')
+        parser.add_argument('-i', '--msi', type=str,
+                            help="Name of .msi file")
+
+        try:
+            self.args = parser.parse_args()
+            logging.debug(f'Arguments: {self.args}')
+        except BaseException:
+            raise ValueError(f'Failed to parse args: {sys.argv}')
 
         try:
             Config.Config.load()
@@ -199,7 +205,6 @@ class Application:
         self.error_queue = Queue()
 
         self.packages = [
-            InstallerPackage(),
             LauncherPackage(),
             MigotoPackage(),
             GenshinFpsUnlockerPackage(),
@@ -211,8 +216,9 @@ class Application:
 
         self.package_manager = PackageManager(self.packages)
 
-        if self.args.xxmi is not None:
-            Config.Launcher.active_importer = self.args.xxmi
+        default_xxmi = self.get_default_xxmi()
+        if default_xxmi is not None:
+            Config.Launcher.active_importer = default_xxmi
 
         # Load packages of active importer and skip update for fast start
         self.load_importer(Config.Launcher.active_importer, update=False)
@@ -263,6 +269,22 @@ class Application:
         self.gui.open()
 
         self.exit()
+
+    def get_default_xxmi(self):
+        if self.args.xxmi:
+            return self.args.xxmi
+        if not self.args.msi:
+            return None
+        model_importers = {
+            r'.*(WW).*': 'WWMI',
+            r'.*(ZZ).*': 'ZZMI',
+            r'.*(SR).*': 'SRMI',
+            r'.*(GI).*': 'GIMI',
+        }
+        for pattern, xxmi in model_importers.items():
+            if len(re.compile(pattern).findall(self.args.msi.upper())):
+                return xxmi
+        return None
 
     def auto_update(self):
         # Query GitHub for updates and skip installation, force query and lock GUI if --update argument is supplied
@@ -491,14 +513,14 @@ class Application:
 
 
 if __name__ == '__main__':
-    multiprocessing.freeze_support()
-
     if getattr(sys, 'frozen', False):
-        root_path = Path(sys.executable).parent
-        log_name = Path(sys.executable).stem
+        # Pyinstaller (debug build): `XXMI Launcher\Resources\Bin\XXMI Launcher.exe`
+        multiprocessing.freeze_support()
+        root_path = Path(sys.executable).parent.parent.parent
     else:
-        root_path = Path().resolve()
-        log_name = root_path.name
+        # Python (native): `XXMI Launcher\src\xxmi_launcher\app.py`
+        # Nuitka (release build): `XXMI Launcher\Resources\Bin\XXMI Launcher.exe`
+        root_path = Path(__file__).resolve().parent.parent.parent
 
     # import binascii
     # arr = []
@@ -507,7 +529,7 @@ if __name__ == '__main__':
 
     Paths.initialize(root_path)
 
-    logging.basicConfig(filename=root_path / f'{log_name} Log.txt',
+    logging.basicConfig(filename=root_path / 'XXMI Launcher Log.txt',
                         filemode='a',
                         format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
                         level=logging.DEBUG)
@@ -519,8 +541,7 @@ if __name__ == '__main__':
     try:
         # raise ValueError('1\n2\n3')
         Application(gui)
-    except Exception as e:
-        # raise e
+    except BaseException as e:
         logging.exception(e)
         gui.show_messagebox(Events.Application.ShowError(
             modal=True,
