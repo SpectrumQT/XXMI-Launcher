@@ -1,3 +1,4 @@
+/!BUILD/
 /!MEDIA/
 /!RELEASES/
 /!TRASH/
@@ -14,4 +15,5 @@ __pycache__/
 /ReShade/
 /XXMI Launcher Config.json
 /XXMI-Launcher Log.txt
+/XXMI Launcher Log.txt
 /fps_config.json
