@@ -68,6 +68,7 @@ class GIMIConfig(ModelImporterConfig):
         },
     })
     unlock_fps: bool = False
+    disable_dcr: bool = True
 
 
 @dataclass
@@ -139,7 +140,11 @@ class GIMIPackage(ModelImporterPackage):
             self.use_hook = False
         else:
             self.use_hook = True
-        self.disable_dcr()
+        try:
+            self.update_dcr(Config.Importers.GIMI.Importer.disable_dcr)
+        except Exception as e:
+            failed_action = 'Disable' if Config.Importers.GIMI.Importer.disable_dcr else 'Enable'
+            raise ValueError(f'Failed to {failed_action} DCR (Dynamic Character Resolution)!\n\n{str(e)}')
 
     def get_game_data_path(self):
         output_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'miHoYo' / 'Genshin Impact' / 'output_log.txt'
@@ -165,7 +170,6 @@ class GIMIPackage(ModelImporterPackage):
                         return data_path
 
     def update_gimi_ini(self):
-
         Events.Fire(Events.Application.StatusUpdate(status='Updating GIMI main.ini...'))
 
         gimi_ini_path = Config.Importers.GIMI.Importer.importer_path / 'Core' / 'GIMI' / 'main.ini'
@@ -188,11 +192,23 @@ class GIMIPackage(ModelImporterPackage):
             with open(gimi_ini_path, 'w', encoding='utf-8') as f:
                 f.write(ini.to_string())
 
-    def disable_dcr(self):
-
+    def update_dcr(self, enabled: bool):
         log.debug(f'Checking DCR...')
-        # Open HSR registry key
-        settings_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, 'SOFTWARE\\miHoYo\\Genshin Impact', 0, winreg.KEY_ALL_ACCESS)
+
+        # Open GI registry settings key
+        settings_key = None
+        gi_reg_keys = [
+            (winreg.HKEY_CURRENT_USER, 'SOFTWARE\\miHoYo\\Genshin Impact'),
+            (winreg.HKEY_CURRENT_USER, 'SOFTWARE\\miHoYo\\原神'),
+        ]
+        for (key, subkey) in gi_reg_keys:
+            try:
+                settings_key = winreg.OpenKey(key, subkey, 0, winreg.KEY_ALL_ACCESS)
+                break
+            except FileNotFoundError:
+                continue
+        if settings_key is None:
+            raise ValueError(f'Failed to locate Genshin Impact registry key!')
 
         # Read binary Graphics Settings key
         try:
@@ -255,7 +271,7 @@ class GIMIPackage(ModelImporterPackage):
         if not settings_updated:
             return
 
-        log.debug(f'Disabling DCR...')
+        log.debug(f'Setting DCR to {enabled}...')
 
         # Serialize settings dict back to string
         settings_dict['graphicsData'] = json.dumps(graphics_data, separators=(',', ':'))

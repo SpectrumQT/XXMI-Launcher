@@ -39,7 +39,8 @@ class GeneralSettingsFrame(UIFrame):
             self.put(UnlockFPSCheckbox(self)).grid(row=3, column=1, padx=(10, 10), pady=(10, 10), sticky='w')
             # Window mode for GI FPS Unlocker
             if Vars.Launcher.active_importer.get() == 'GIMI':
-                self.put(UnlockFPSWindowOptionMenu(self)).grid(row=3, column=1, padx=(180, 10), pady=(10, 10), sticky='w')
+                self.put(UnlockFPSWindowOptionMenu(self)).grid(row=3, column=1, padx=(170, 10), pady=(10, 10), sticky='w')
+                self.put(DisableDCR(self)).grid(row=3, column=2, padx=(0, 10), pady=(10, 10), sticky='w')
             #  Performance Tweaks
             if Vars.Launcher.active_importer.get() == 'WWMI':
                 self.put(ApplyTweaksCheckbox(self)).grid(row=3, column=2, padx=(20, 10), pady=(10, 10), sticky='w')
@@ -284,6 +285,18 @@ class ApplyTweaksCheckbox(UICheckbox):
             '* tick.AllowAsyncTickCleanup = 1\n'
             '* tick.AllowAsyncTickDispatch = 1'
         )
+
+
+class DisableDCR(UICheckbox):
+    def __init__(self, master):
+        super().__init__(
+            text='Disable DCR',
+            variable=Vars.Active.Importer.disable_dcr,
+            master=master)
+        self.set_tooltip(
+            'Warning! GIMI model mods are *NOT* compatible with Dynamic Character Resolution Graphics Setting!\n'
+            'Enabled: Turn Off DCR, allowing all kinds of character mods to work.\n'
+            'Disabled: DCR setting will not be affected (use in-game Graphics Settings to enable it again).')
 
 
 class LauncherLabel(UILabel):
