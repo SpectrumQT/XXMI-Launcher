@@ -521,12 +521,12 @@ class PackageManager:
         if force_check or package.cfg.update_check_time + 3600 < current_time:
             package.cfg.update_check_time = current_time
             if self.api_connection_refused:
-                return
+                return False
             try:
                 package.detect_latest_version()
             except ConnectionRefusedError as e:
                 self.api_connection_refused = True
-                log.error(e)
+                log.exception(e)
                 return False
             self.api_connection_refused_notified = False
 

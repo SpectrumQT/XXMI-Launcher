@@ -288,7 +288,13 @@ class Application:
 
     def auto_update(self):
         # Query GitHub for updates and skip installation, force query and lock GUI if --update argument is supplied
-        self.package_manager.update_packages(force=self.args.update, no_install=True, silent=not self.args.update)
+        try:
+            self.package_manager.update_packages(no_install=True, force=self.args.update, silent=not self.args.update)
+        except Exception as e:
+            if self.args.update:
+                Events.Fire(Events.Application.ShowWarning(
+                    message=f'Failed to get latest versions list from GitHub!\n\n{str(e)}',
+                    modal=True))
         # Exit early if there are no updates available
         if not self.package_manager.update_available():
             return
@@ -299,7 +305,7 @@ class Application:
         if self.launching_game:
             return
         # Install any updates we've managed to find during previous update_packages call
-        self.package_manager.update_packages(force=self.args.update, no_check=True, silent=False)
+        self.package_manager.update_packages(no_check=True, force=self.args.update, silent=False)
         # This flag is supposed to affect only the first auto-update after launcher start, so lets remove it here
         self.args.update = False
 
@@ -355,10 +361,16 @@ class Application:
         return bool(user_requested_update)
 
     def check_for_updates(self, force: bool = True):
-        self.package_manager.update_packages(no_install=True, force=force)
+        try:
+            self.package_manager.update_packages(no_install=True, force=force)
+        except Exception as e:
+            Events.Fire(Events.Application.ShowWarning(
+                message=f'Failed to get latest versions list from GitHub!\n\n{str(e)}',
+                modal=True
+            ))
         if self.package_manager.update_available():
             if self.update_scheduled():
-                self.package_manager.update_packages(force=force)
+                self.package_manager.update_packages(no_check=True, force=force)
         else:
             Events.Fire(Events.Application.ShowInfo(
                 modal=True,
