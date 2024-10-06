@@ -13,9 +13,9 @@
 
 - **In-Dev Warning** — **GIMI** and **SRMI** packages are **in-dev** versions, feel free to test but please be aware!
 
-- **Paranoia Warning** — Some picky AVs may be triggered by XXMI .exe or .dll files. Installer and Launcher are unsigned python apps compiled with Pyinstaller, that is [known to have false positives](https://discuss.python.org/t/pyinstaller-false-positive/43171). DLLs are unsigned binaries intended to inject or be injected into the game process, and it doesn't help either. We can't do anything about it, so it's up to you to use them as is, build yourself or go by.
+- **Paranoia Warning** — Some picky AVs may trigger [false positives](https://learn.microsoft.com/en-us/defender-endpoint/defender-endpoint-false-positives-negatives) for XXMI **.exe** or **.dll** files. Project has no funds to [satisfy](https://learn.microsoft.com/en-us/windows/apps/develop/smart-app-control/code-signing-for-smart-app-control) Microsoft's [endless greed](https://www.reddit.com/r/electronjs/comments/17sizjf/a_guide_to_code_signing_certificates_for_the/), so it's up to you to use them as is, build yourself or go by.
 
-## Features  
+## Features
 
 - **One Ring** — Allows to launch and manage all supported Model Importers in unified and convenient way
 - **Plug-and-Play** — Configures any supported game and installs its XXMI instance automatically
@@ -27,9 +27,10 @@
 
 ## Installation
 
-1. Install [the latest Microsoft Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170) ([direct download](https://aka.ms/vs/17/release/vc_redist.x64.exe))
-2. Use [XXMI Installer](https://github.com/SpectrumQT/XXMI-Installer) to download and install **XXMI Launcher**.
-3. Once installation is complete, **XXMI Launcher** window will open and install **XXMI** instance automatically.
+1. Download the [latest release](https://github.com/SpectrumQT/XXMI-Launcher/releases/latest) of **XXMI-Launcher-Installer-Online-vX.X.X.msi**
+2. Run **XXMI-Launcher-Installer-Online-vX.X.X.msi** with Double-Click.
+3. Click **[Quick Installation]** to install **XXMI Launcher** to the default location (`%AppData%\XXMI Launcher`) or use **[Custom Installation]** to set another folder.
+4. Once installation is complete, **XXMI Launcher** window will open and install **XXMI** automatically.
 
 ## Supported Model Importers
 
