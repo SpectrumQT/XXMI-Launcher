@@ -285,9 +285,10 @@ class ModelImporterPackage(Package):
         shutil.copy2(file_path, self.backups_path / file_path.name)
 
     def restore(self, file_path: Path):
-        if not file_path.exists():
+        backup_path = self.backups_path / file_path.name
+        if not backup_path.exists():
             return
-        shutil.copy2(self.backups_path / file_path.name, file_path)
+        shutil.copy2(backup_path, file_path)
 
     def create_shortcut(self):
         pythoncom.CoInitialize()
