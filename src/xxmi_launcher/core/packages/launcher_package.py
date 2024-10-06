@@ -63,7 +63,7 @@ class LauncherPackage(Package):
     def install_latest_version(self, clean):
         Events.Fire(Events.PackageManager.InitializeInstallation())
 
-        subprocess.Popen(f'msiexec /i "{self.downloaded_asset_path}" /qr APPDIR="{Paths.App.Root}" CREATE_SHORTCUTS=""', shell=True)
+        subprocess.Popen(f'msiexec /i "{self.downloaded_asset_path}" /qr /norestart APPDIR="{Paths.App.Root}" CREATE_SHORTCUTS=""', shell=True)
 
         installer_process_name = 'EnhancedUI.exe'
 
