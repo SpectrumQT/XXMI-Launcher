@@ -154,9 +154,10 @@ class WWMIPackage(ModelImporterPackage):
         return game_exe_path, ['Client', '-DisableModule=streamline'], str(game_exe_path.parent)
 
     def initialize_game_launch(self, game_path: Path):
-        self.update_wwmi_ini()
         self.restore_streamline(game_path)
+        self.verify_plugins(game_path)
         self.update_engine_ini(game_path)
+        self.update_wwmi_ini()
         if Config.Importers.WWMI.Importer.unlock_fps:
             self.update_local_storage_db(game_path)
 
@@ -217,6 +218,22 @@ class WWMIPackage(ModelImporterPackage):
             # Close the database file
             connection.close()
             log.debug(f'Connection closed: {db_path}')
+
+    def verify_plugins(self, game_path: Path):
+        Events.Fire(Events.Application.StatusUpdate(status='Checking engine plugins integrity...'))
+
+        plugins_path = game_path / 'Engine' / 'Plugins' / 'Runtime' / 'Nvidia'
+        plugin_paths = [
+            plugins_path / 'DLSS',
+            plugins_path / 'Streamline',
+        ]
+
+        for path in plugin_paths:
+            path = path / 'Binaries' / 'ThirdParty' / 'Win64'
+            if len([x for x in path.iterdir() if x.suffix == '.dll']) == 0:
+                raise ValueError(f'Wuthering Waves installation is damaged!\n\n'
+                                 f'Removal of NVIDIA plugins is no longer required and may cause crashes!\n\n'
+                                 f'Please use official launcher to fix the game (wrench button in top-right corner).')
 
     def remove_streamline(self, game_path: Path):
         Events.Fire(Events.Application.StatusUpdate(status='Checking Streamline plugin...'))
