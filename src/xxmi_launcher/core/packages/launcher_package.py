@@ -2,9 +2,13 @@ import shutil
 import sys
 import logging
 import subprocess
+import os
 import time
+import winshell
+import pythoncom
 
 from dataclasses import dataclass
+from pathlib import Path
 
 import core.path_manager as Paths
 import core.event_manager as Events
@@ -35,6 +39,10 @@ class LauncherManagerEvents:
     class Update:
         pass
 
+    @dataclass
+    class CreateShortcut:
+        pass
+
 
 class LauncherPackage(Package):
     def __init__(self):
@@ -49,8 +57,11 @@ class LauncherPackage(Package):
             signature_public_key='MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEYac352uRGKZh6LOwK0fVDW/TpyECEfnRtUp+bP2PJPP63SWOkJ3a/d9pAnPfYezRVJ1hWjZtpRTT8HEAN/b4mWpJvqO43SAEV/1Q6vz9Rk/VvRV3jZ6B/tmqVnIeHKEb',
             exit_after_update=True,
         ))
+        self.subscribe(Events.LauncherManager.CreateShortcut, lambda event: self.create_shortcut())
         installed_version = self.get_installed_version()
         if Config.Launcher.config_version < installed_version:
+            if Config.Launcher.config_version and Config.Launcher.config_version < '1.0.2':
+                self.create_shortcut()
             Config.Config.upgrade(installed_version)
             self.cleanup_old_version()
 
@@ -63,7 +74,9 @@ class LauncherPackage(Package):
     def install_latest_version(self, clean):
         Events.Fire(Events.PackageManager.InitializeInstallation())
 
-        subprocess.Popen(f'msiexec /i "{self.downloaded_asset_path}" /qr /norestart APPDIR="{Paths.App.Root}" CREATE_SHORTCUTS=""', shell=True)
+        cmd = f'msiexec /i "{self.downloaded_asset_path}" /qr /norestart APPDIR="{Paths.App.Root}" CREATE_SHORTCUTS=""'
+        log.debug(f'Calling `{cmd}`...')
+        subprocess.Popen(cmd, shell=True)
 
         installer_process_name = 'EnhancedUI.exe'
 
@@ -102,3 +115,24 @@ class LauncherPackage(Package):
             msg += f'{Paths.App.Resources / "Bin" / "XXMI Launcher.exe"}\n\n'
             msg += f'Desktop shortcut was updated automatically. Sorry for bothering!'
             Events.Fire(Events.Application.ShowInfo(title='Update Notification', message=msg))
+
+    def create_shortcut(self):
+        pythoncom.CoInitialize()
+        with winshell.shortcut(str(Path(winshell.desktop()) / f'XXMI Launcher.lnk')) as link:
+            link.path = str(Path(sys.executable))
+            link.description = f'Shortcut to XXMI Launcher'
+            link.working_directory = str(Paths.App.Resources / 'Bin')
+            link.icon_location = (str(Paths.App.Themes / 'Default' / 'window-icon.ico'), 0)
+
+    def uninstall(self):
+        log.debug(f'Uninstalling package {self.metadata.package_name}...')
+
+        shortcut_path = Path(winshell.desktop()) / f'XXMI Launcher.lnk'
+        if shortcut_path.is_file():
+            log.debug(f'Removing {shortcut_path}...')
+            shortcut_path.unlink()
+
+        shortcut_path = Paths.App.Root / f'XXMI Launcher.lnk'
+        if shortcut_path.is_file():
+            log.debug(f'Removing {shortcut_path}...')
+            shortcut_path.unlink()

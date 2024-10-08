@@ -56,3 +56,10 @@ class GenshinFpsUnlockerPackage(Package):
     def validate_package_files(self):
         pass
         # self.validate_files([self.package_path / f for f in ['3dmloader.dll', 'd3d11.dll', 'd3dcompiler_47.dll', 'nvapi64.dll']])
+
+    def uninstall(self):
+        log.debug(f'Uninstalling package {self.metadata.package_name}...')
+
+        if self.package_path.is_dir():
+            log.debug(f'Removing {self.package_path}...')
+            shutil.rmtree(self.package_path)

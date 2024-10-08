@@ -181,6 +181,10 @@ class Application:
                             help="Set provided XXMI edition as default")
         parser.add_argument('-i', '--msi', type=str,
                             help="Name of .msi file")
+        parser.add_argument('-s', '--create_shortcut', type=str,
+                            help="Create desktop shortcut to launcher exe")
+        parser.add_argument('-un', '--uninstall', action='store_true',
+                            help="Run launcher in uninstallation mode")
 
         try:
             self.args = parser.parse_args()
@@ -216,12 +220,23 @@ class Application:
 
         self.package_manager = PackageManager(self.packages)
 
+        if self.args.uninstall:
+            self.package_manager.uninstall_packages()
+            self.exit()
+            return
+
+        if self.args.create_shortcut:
+            Events.Fire(Events.LauncherManager.CreateShortcut())
+
         default_xxmi = self.get_default_xxmi()
         if default_xxmi is not None:
             Config.Launcher.active_importer = default_xxmi
 
         # Load packages of active importer and skip update for fast start
         self.load_importer(Config.Launcher.active_importer, update=False)
+
+        if self.args.update:
+            Config.Config.save()
 
         # Quick launch mode
         if self.args.nogui:
@@ -275,6 +290,7 @@ class Application:
             return self.args.xxmi
         if not self.args.msi:
             return None
+        msi_name = Path(self.args.msi).name
         model_importers = {
             r'.*(WW).*': 'WWMI',
             r'.*(ZZ).*': 'ZZMI',
@@ -282,7 +298,7 @@ class Application:
             r'.*(GI).*': 'GIMI',
         }
         for pattern, xxmi in model_importers.items():
-            if len(re.compile(pattern).findall(self.args.msi.upper())):
+            if len(re.compile(pattern).findall(msi_name.upper())):
                 return xxmi
         return None
 

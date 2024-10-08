@@ -316,6 +316,9 @@ class Package:
         self.active = False
         log.debug(f'Unloaded package: {self.metadata.package_name}')
 
+    def uninstall(self):
+        pass
+
 
 @dataclass
 class PackageState:
@@ -543,3 +546,7 @@ class PackageManager:
     def skip_latest_updates(self):
         for package in self.packages.values():
             package.cfg.skipped_version = package.cfg.latest_version
+
+    def uninstall_packages(self):
+        for package_name, package in self.packages.items():
+            package.uninstall()

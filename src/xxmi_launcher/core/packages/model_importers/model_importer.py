@@ -295,7 +295,7 @@ class ModelImporterPackage(Package):
         with winshell.shortcut(str(Path(winshell.desktop()) / f'{Config.Launcher.active_importer} Quick Start.lnk')) as link:
             link.path = str(Path(sys.executable))
             link.description = f'Start game with {Config.Launcher.active_importer} and skip launcher load'
-            link.working_directory = str(Paths.App.Root)
+            link.working_directory = str(Paths.App.Resources / 'Bin')
             link.arguments = f'--nogui --xxmi {Config.Launcher.active_importer}'
             link.icon_location = (str(Config.Active.Importer.theme_path / 'Shortcuts' / f'{Config.Launcher.active_importer}.ico'), 0)
         Config.Active.Importer.shortcut_deployed = True
@@ -383,3 +383,14 @@ class ModelImporterPackage(Package):
             except Exception as e:
                 pass
 
+    def uninstall(self):
+        log.debug(f'Uninstalling package {self.metadata.package_name}...')
+
+        if self.package_path.is_dir():
+            log.debug(f'Removing {self.package_path}...')
+            shutil.rmtree(self.package_path)
+
+        shortcut_path = Path(winshell.desktop()) / f'{self.metadata.package_name} Quick Start.lnk'
+        if shortcut_path.is_file():
+            log.debug(f'Removing {shortcut_path}...')
+            shortcut_path.unlink()
