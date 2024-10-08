@@ -140,11 +140,12 @@ class GIMIPackage(ModelImporterPackage):
             self.use_hook = False
         else:
             self.use_hook = True
-        try:
-            self.update_dcr(Config.Importers.GIMI.Importer.disable_dcr)
-        except Exception as e:
-            failed_action = 'Disable' if Config.Importers.GIMI.Importer.disable_dcr else 'Enable'
-            raise ValueError(f'Failed to {failed_action} DCR (Dynamic Character Resolution)!\n\n{str(e)}')
+
+        if Config.Importers.GIMI.Importer.disable_dcr:
+            try:
+                self.update_dcr()
+            except Exception as e:
+                raise ValueError(f'Failed to disable DCR (Dynamic Character Resolution)!\n\n{str(e)}')
 
     def get_game_data_path(self):
         output_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'miHoYo' / 'Genshin Impact' / 'output_log.txt'
@@ -192,7 +193,7 @@ class GIMIPackage(ModelImporterPackage):
             with open(gimi_ini_path, 'w', encoding='utf-8') as f:
                 f.write(ini.to_string())
 
-    def update_dcr(self, enabled: bool):
+    def update_dcr(self):
         log.debug(f'Checking DCR...')
 
         # Open GI registry settings key
@@ -271,7 +272,7 @@ class GIMIPackage(ModelImporterPackage):
         if not settings_updated:
             return
 
-        log.debug(f'Setting DCR to {enabled}...')
+        log.debug(f'Disabling DCR...')
 
         # Serialize settings dict back to string
         settings_dict['graphicsData'] = json.dumps(graphics_data, separators=(',', ':'))
