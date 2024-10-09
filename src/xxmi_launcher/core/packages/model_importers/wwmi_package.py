@@ -230,10 +230,14 @@ class WWMIPackage(ModelImporterPackage):
 
         for path in plugin_paths:
             path = path / 'Binaries' / 'ThirdParty' / 'Win64'
-            if len([x for x in path.iterdir() if x.suffix == '.dll']) == 0:
-                raise ValueError(f'Wuthering Waves installation is damaged!\n\n'
-                                 f'Removal of NVIDIA plugins is no longer required and may cause crashes!\n\n'
-                                 f'Please use official launcher to fix the game (wrench button in top-right corner).')
+            if not path.is_dir() or len([x for x in path.iterdir() if x.suffix == '.dll']) == 0:
+                Events.Fire(Events.Application.ShowWarning(
+                    modal=True,
+                    message=f'Wuthering Waves installation is damaged!\n\n'
+                            f'Removal of NVIDIA plugins is no longer required and may cause crashes!\n\n'
+                            f'Please use official launcher to fix the game (wrench button in top-right corner).'
+                ))
+                break
 
     def remove_streamline(self, game_path: Path):
         Events.Fire(Events.Application.StatusUpdate(status='Checking Streamline plugin...'))
