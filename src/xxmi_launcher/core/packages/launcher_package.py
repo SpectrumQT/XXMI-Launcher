@@ -118,7 +118,14 @@ class LauncherPackage(Package):
 
     def create_shortcut(self):
         pythoncom.CoInitialize()
+
         with winshell.shortcut(str(Path(winshell.desktop()) / f'XXMI Launcher.lnk')) as link:
+            link.path = str(Path(sys.executable))
+            link.description = f'Shortcut to XXMI Launcher'
+            link.working_directory = str(Paths.App.Resources / 'Bin')
+            link.icon_location = (str(Paths.App.Themes / 'Default' / 'window-icon.ico'), 0)
+
+        with winshell.shortcut(str(Paths.App.Root / f'XXMI Launcher.lnk')) as link:
             link.path = str(Path(sys.executable))
             link.description = f'Shortcut to XXMI Launcher'
             link.working_directory = str(Paths.App.Resources / 'Bin')
