@@ -184,8 +184,8 @@ class MigotoPackage(Package):
             modal=True,
             confirm_text='Restore',
             cancel_text='Cancel',
-            message=f'XXMI installation is damaged!\n'
-                    f'Details: {str(e).strip()}\n'
+            message=f'XXMI installation is damaged!\n\n'
+                    f'Details: {str(e).strip()}\n\n'
                     f'Would you like to restore XXMI automatically?',
         ))
 
@@ -200,9 +200,9 @@ class MigotoPackage(Package):
         else:
             Events.Fire(Events.Application.Update(packages=[self.metadata.package_name], no_thread=True, force=True, reinstall=True, silent=True))
 
-        self.deploy_client_files(process_name)
+        self.deploy_client_files(process_name, force=True)
 
-    def deploy_client_files(self, process_name: str):
+    def deploy_client_files(self, process_name: str, force: bool = False):
         for client_file in ['d3d11.dll', 'd3dcompiler_47.dll', 'nvapi64.dll']:
             client_file_path = Config.Active.Importer.importer_path / client_file
             client_file_signature = Config.Active.Importer.deployed_migoto_signatures.get(client_file, '')
@@ -210,6 +210,9 @@ class MigotoPackage(Package):
             deploy_pending = False
             if not client_file_path.exists() or not client_file_signature:
                 log.debug(f'Deploying new {client_file_path}...')
+                deploy_pending = True
+            elif force:
+                log.debug(f'Forcing re-deploy of {client_file_path}...')
                 deploy_pending = True
             else:
                 if client_file_signature != self.get_signature(client_file_path):
