@@ -54,6 +54,10 @@ class AppConfig:
     # Active: Optional[WWMIConfig] = field(init=False, default=None)
 
     @property
+    def config_path(self):
+        return Paths.App.Root / 'XXMI Launcher Config.json'
+
+    @property
     def Active(self) -> Union[gimi_package.GIMIPackageConfig, srmi_package.SRMIPackageConfig,
                               zzmi_package.ZZMIPackageConfig, wwmi_package.WWMIPackageConfig]:
         global Active
@@ -108,11 +112,11 @@ class AppConfig:
             if hasattr(self, key):
                 setattr(self, key, value)
 
-    def load(self):
+    def load(self, cfg_path=None):
         try:
-            Config.from_json(Paths.App.Root / self.Launcher.config_path)
-
+            Config.from_json(cfg_path or self.config_path)
         except Exception as e:
+            log.exception(e)
             raise e
         finally:
             global Launcher
@@ -124,7 +128,7 @@ class AppConfig:
 
     def save(self):
         cfg = Config.as_json()
-        with open(Paths.App.Root / self.Launcher.config_path, 'w', encoding='utf-8') as f:
+        with open(self.config_path, 'w', encoding='utf-8') as f:
             return f.write(cfg)
 
     def upgrade(self, version):

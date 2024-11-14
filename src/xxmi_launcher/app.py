@@ -1,6 +1,7 @@
 import os
 import argparse
 import sys
+import shutil
 import logging
 import subprocess
 import multiprocessing
@@ -193,13 +194,12 @@ class Application:
             raise ValueError(f'Failed to parse args: {sys.argv}')
 
         try:
-            Config.Config.load()
-        except Exception as e:
-            logging.exception(e)
+            self.load_config()
+        except Exception:
             self.gui.show_messagebox(Events.Application.ShowError(
                 modal=True,
-                screen_center=True,
-                lock_master=False,
+                screen_center=not self.gui.is_shown(),
+                lock_master=self.gui.is_shown(),
                 message=f'Failed to load configuration! Falling back to defaults.',
             ))
 
@@ -228,7 +228,7 @@ class Application:
         if self.args.create_shortcut:
             Events.Fire(Events.LauncherManager.CreateShortcut())
 
-        default_xxmi = self.get_default_xxmi()
+        default_xxmi = self.get_default_importer()
         if default_xxmi is not None:
             Config.Launcher.active_importer = default_xxmi
 
@@ -285,7 +285,7 @@ class Application:
 
         self.exit()
 
-    def get_default_xxmi(self):
+    def get_default_importer(self):
         if self.args.xxmi:
             return self.args.xxmi
         if not self.args.msi:
@@ -301,6 +301,28 @@ class Application:
             if len(re.compile(pattern).findall(msi_name.upper())):
                 return xxmi
         return None
+
+    def load_config(self):
+        cfg_backup_path = Paths.App.Backups / Config.Config.config_path.name
+        try:
+            Config.Config.load()
+            # Backup last successfully loaded config
+            shutil.copy2(Config.Config.config_path, cfg_backup_path)
+        except Exception as e:
+            if Config.Config.config_path.is_file():
+                error_dialogue = Events.Application.ShowError(
+                    modal=True,
+                    screen_center=not self.gui.is_shown(),
+                    lock_master=self.gui.is_shown(),
+                    confirm_text='Load Backup',
+                    cancel_text='Load Default',
+                    message='Failed to load configuration!',
+                )
+                user_requested_backup_load = self.gui.show_messagebox(error_dialogue)
+                if user_requested_backup_load:
+                    Config.Config.load(cfg_backup_path)
+            else:
+                raise e
 
     def auto_update(self):
         # Query GitHub for updates and skip installation, force query and lock GUI if --update argument is supplied
