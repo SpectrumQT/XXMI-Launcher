@@ -166,6 +166,32 @@ class AppConfig:
                 except:
                     pass
 
+        # Apply 1.0.5 config patch
+        if self.Launcher.config_version < '1.0.5':
+            log.debug(f'Upgrading launcher config to 1.0.5...')
+            for package_name, importer in self.Importers.__dict__.items():
+                # Set new default process priority to Normal
+                if importer.Importer.process_priority == 'Above Normal':
+                    importer.Importer.process_priority = 'Normal'
+                # Add deployed model importers to list of selected games for launcher to work with
+                package_config = self.Packages.packages.get(package_name, None)
+                if package_config is not None and package_config.deployed_version != '':
+                    if package_name not in self.Launcher.enabled_importers:
+                        self.Launcher.enabled_importers.append(package_name)
+                # Modify changed d3dx.ini settings stacks
+                ini_overrides = importer.Importer.d3dx_ini
+                new_config = type(importer)()
+                try:
+                    del ini_overrides['core']['Rendering']
+                except:
+                    pass
+                ini_overrides['enforce_rendering'] = new_config.Importer.d3dx_ini['enforce_rendering']
+                try:
+                    del ini_overrides['debug_logging']['Logging']['calls']
+                except:
+                    pass
+                ini_overrides['calls_logging'] = new_config.Importer.d3dx_ini['calls_logging']
+
         self.Launcher.config_version = version
 
 
