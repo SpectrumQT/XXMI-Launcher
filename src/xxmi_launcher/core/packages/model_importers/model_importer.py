@@ -102,6 +102,79 @@ class ModelImporterConfig:
         return dll_paths
 
 
+class ModelImporterCommandFileSection(Enum):
+    PreInstall = 'PreInstall'
+    PostInstall = 'PostInstall'
+    PreLaunch = 'PreLaunch'
+
+
+class ModelImporterCommandFileHandler:
+    def __init__(self, ini_path):
+        self.ini_path = ini_path
+        self.ini = None
+        self.load_ini()
+
+    def load_ini(self):
+        if not self.ini_path.is_file():
+            return
+
+        with open(self.ini_path, 'r', encoding='utf-8') as f:
+            self.ini = IniHandler(IniHandlerSettings(option_value_spacing=True, ignore_comments=False), f)
+
+    def execute_command_section(self, cmd_section: ModelImporterCommandFileSection):
+        if self.ini is None:
+            return
+
+        section = self.ini.get_section(cmd_section.value)
+
+        if section is None:
+            return
+
+        supported_commands = {
+            'delete': self.cmd_delete
+        }
+
+        for (name, value, flag_modified, comments, inline_comment) in section.options:
+            command_handler = supported_commands.get(name, None)
+            if command_handler is None:
+                raise ValueError(f'Unknown command {name}!')
+            try:
+                command_handler(value)
+            except Exception as e:
+                raise ValueError(f'Failed to execute `{name} = {value}` of auto_update.xcmd!:\n{str(e)}') from e
+
+    @staticmethod
+    def cmd_delete(path: str):
+        # Remove any `.` or `..` parts from path for security reasons
+        parts = Path(path).parts
+        non_dots_parts = []
+        for part in parts:
+            if part != '..' and part != '.':
+                non_dots_parts.append(part)
+        path = Path(*non_dots_parts)
+
+        # Limit removal scope to Core and ShaderFixes folders
+        valid_roots = ['Core', 'ShaderFixes']
+        path_root = non_dots_parts[0]
+        if path_root.lower() not in [x.lower() for x in valid_roots]:
+            raise ValueError(f'File or folder removal is allowed only from Core or ShaderFixes folder!')
+
+        # Forbid removal of entire Core or ShaderFixes folder for security reasons
+        if len(non_dots_parts) == 1:
+            raise ValueError(f'Explicit removal of entire Core or ShaderFixes folder is not allowed!')
+
+        # Execute removal for given path
+        path = Config.Active.Importer.importer_path.joinpath(path)
+        if path.is_file():
+            log.debug(f'Removing file {path}...')
+            Paths.assert_file_write(path)
+            path.unlink()
+        elif path.is_dir():
+            log.debug(f'Removing folder {path}...')
+            Paths.assert_path(path)
+            shutil.rmtree(path)
+
+
 class ModelImporterPackage(Package):
     def __init__(self, metadata: PackageMetadata):
         super().__init__(metadata)
@@ -139,7 +212,13 @@ class ModelImporterPackage(Package):
         d3dx_ini_path = Config.Active.Importer.importer_path / 'd3dx.ini'
         self.backup(d3dx_ini_path)
 
+        xxmi_cmd_handler = ModelImporterCommandFileHandler(self.downloaded_asset_path / 'Core' / 'auto_update.xcmd')
+        xxmi_cmd_handler.execute_command_section(ModelImporterCommandFileSection.PreInstall)
+
         self.move_contents(self.downloaded_asset_path, Config.Active.Importer.importer_path)
+
+        xxmi_cmd_handler = ModelImporterCommandFileHandler(Config.Active.Importer.importer_path / 'Core' / 'auto_update.xcmd')
+        xxmi_cmd_handler.execute_command_section(ModelImporterCommandFileSection.PostInstall)
 
         if not Config.Active.Importer.overwrite_ini:
             self.restore(d3dx_ini_path)
@@ -228,6 +307,10 @@ class ModelImporterPackage(Package):
     def start_game(self, event):
         # Ensure package integrity
         self.validate_package_files()
+        
+        # Execute commands from XXMI command file
+        xxmi_cmd_handler = ModelImporterCommandFileHandler(Config.Active.Importer.importer_path / 'Core' / 'auto_update.xcmd')
+        xxmi_cmd_handler.execute_command_section(ModelImporterCommandFileSection.PreLaunch)
 
         # Check if game location is properly configured
         try:
