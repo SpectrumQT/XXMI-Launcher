@@ -171,8 +171,11 @@ class WWMIPackage(ModelImporterPackage):
         Events.Fire(Events.Application.StatusUpdate(status='Updating Engine.ini...'))
 
         engine_ini_path = game_path / 'Client' / 'Saved' / 'Config' / 'WindowsNoEditor' / 'Engine.ini'
+
         if not engine_ini_path.exists():
-            raise ValueError('Failed to locate Engine.ini!')
+            Paths.verify_path(engine_ini_path.parent)
+            with open(engine_ini_path, 'w', encoding='utf-8') as f:
+                f.write('')
 
         Events.Fire(Events.Application.VerifyFileAccess(path=engine_ini_path, write=True))
         with open(engine_ini_path, 'r', encoding='utf-8') as f:
