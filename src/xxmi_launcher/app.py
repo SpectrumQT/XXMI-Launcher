@@ -334,6 +334,10 @@ class Application:
                 raise e
 
     def auto_update(self):
+        # Exit early if current active model importer is not installed
+        importer_package = self.package_manager.packages.get(Config.Launcher.active_importer, None)
+        if importer_package is None or importer_package.get_installed_version() == '':
+            return
         # Query GitHub for updates and skip installation, force query and lock GUI if --update argument is supplied
         try:
             self.package_manager.update_packages(no_install=True, force=self.args.update, silent=not self.args.update)
