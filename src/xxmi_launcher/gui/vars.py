@@ -26,7 +26,7 @@ class AppSettings(Config.AppConfig):
 
     @property
     def Active(self):
-        return Settings.Importers.__dict__[Config.Launcher.active_importer]
+        return Settings.Importers.__dict__.get(Config.Launcher.active_importer, None)
 
     def initialize(self, cfg, gui):
         self.gui = gui
@@ -47,14 +47,14 @@ class AppSettings(Config.AppConfig):
         Active = self.Active
 
     def subscribe_on_save(self, var, callback, caller_id=None):
-        if not var._name in self.on_save_callbacks:
+        if var._name not in self.on_save_callbacks:
             self.on_save_callbacks[var._name] = {}
         callback_id = f'{caller_id.__class__}_{len(self.on_save_callbacks[var._name])}'
         self.on_save_callbacks[var._name][callback_id] = (var, callback, caller_id, None)
         return callback_id
 
     def subscribe_on_write(self, var, callback, caller_id=None):
-        if not var._name in self.on_write_callbacks:
+        if var._name not in self.on_write_callbacks:
             self.on_write_callbacks[var._name] = {}
         callback_id = f'{caller_id.__class__}_{len(self.on_write_callbacks[var._name])}'
         trace_id = var.trace('w', lambda var_id, index, mode: callback(var, var.get()))
