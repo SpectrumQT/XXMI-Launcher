@@ -83,6 +83,8 @@ class MigotoPackage(Package):
     def handle_start_and_inject(self, event: MigotoManagerEvents.StartAndInject):
         process_name = event.game_exe_path.name
 
+        Events.Fire(Events.Application.Busy())
+
         try:
             # Copy XXMI package files to game instance
             self.deploy_client_files(process_name)

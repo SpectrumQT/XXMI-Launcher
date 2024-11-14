@@ -1,5 +1,7 @@
 import logging
+import os
 import sys
+import platform
 import shutil
 import winshell
 import pythoncom
@@ -182,6 +184,19 @@ class ModelImporterPackage(Package):
         self.use_hook: bool = True
         self.ini = None
 
+    def validate_game_path(self, game_folder) -> Path:
+        game_path = Path(game_folder)
+        if not game_path.is_absolute():
+            raise ValueError(f'Game folder is not a valid path!')
+        if not game_path.exists():
+            raise ValueError(f'Game folder does not exist!')
+        if not game_path.is_dir():
+            raise ValueError(f'Game folder is not a directory!')
+        return game_path
+
+    def validate_game_exe_path(self, game_path: Path) -> Path:
+        raise NotImplementedError
+
     def load(self):
         self.subscribe(Events.ModelImporter.StartGame, self.start_game)
         self.subscribe(Events.ModelImporter.ValidateGameFolder, lambda event: self.validate_game_path(event.game_folder))
@@ -205,6 +220,38 @@ class ModelImporterPackage(Package):
         self.unsubscribe()
         super().unload()
 
+    def get_game_paths(self):
+        try:
+            game_path = self.validate_game_path(Config.Active.Importer.game_folder)
+            game_exe_path = self.validate_game_exe_path(game_path)
+        except Exception as e:
+            try:
+                game_folder = self.autodetect_game_folder()
+                game_path = self.validate_game_path(game_folder)
+                game_exe_path = self.validate_game_exe_path(game_path)
+                Config.Active.Importer.game_folder = str(game_folder)
+            except Exception as e:
+                Events.Fire(Events.Application.OpenSettings())
+                raise ValueError(f'Failed to detect Game Folder!\n\nRefer to tooltip of Settings > Game Folder for details.')
+
+        # Skip installation locations check for Linux
+        if platform.system() == 'Linux' or any(x in os.environ for x in ['WINE', 'WINEPREFIX', 'WINELOADER']):
+            return game_path, game_exe_path
+
+        # Ensure that user didn't install the launcher to the game exe location
+        if str(game_exe_path.parent) in str(Paths.App.Root):
+            raise ValueError(f'\n'
+                             f'Launcher must be installed outside of the game folder!\n\n'
+                             f'Please reinstall the launcher to another location.')
+
+        # Ensure that user didn't set a model importer folder to the game exe location
+        if str(game_exe_path.parent) in str(Config.Active.Importer.importer_path):
+            raise ValueError(f'\n'
+                             f'{Config.Launcher.active_importer} Folder must be located outside of the Game Folder!\n\n'
+                             f'Please use Settings > {Config.Launcher.active_importer} to set another location.')
+
+        return game_path, game_exe_path
+
     def install_latest_version(self, clean):
         Events.Fire(Events.PackageManager.InitializeInstallation())
 
@@ -226,21 +273,17 @@ class ModelImporterPackage(Package):
         if not Config.Active.Importer.shortcut_deployed:
             self.create_shortcut()
 
-    def get_game_exe_path(self, game_path: Path) -> Path:
-        raise NotImplementedError
+    def update(self, clean=False):
+        # Assert installation path
+        try:
+            self.get_game_paths()
+        except Exception as e:
+            raise ValueError(f'{Config.Launcher.active_importer} Installation Failed:\n{e}') from e
+        # Run default package update logic
+        super().update(clean)
 
     def initialize_game_launch(self, game_path: Path):
         raise NotImplementedError
-
-    def validate_game_path(self, game_folder) -> Path:
-        game_path = Path(game_folder)
-        if not game_path.is_absolute():
-            raise ValueError(f'Game folder is not a valid path!')
-        if not game_path.exists():
-            raise ValueError(f'Game folder does not exist!')
-        if not game_path.is_dir():
-            raise ValueError(f'Game folder is not a directory!')
-        return game_path
 
     def update_d3dx_ini(self, game_exe_path: Path):
         Events.Fire(Events.Application.StatusUpdate(status='Updating d3dx.ini...'))
@@ -300,9 +343,6 @@ class ModelImporterPackage(Package):
                 except Exception as e:
                     raise ValueError(f'Failed to set section {section} option {option} to {value}: {str(e)}') from e
 
-    def validate_game_exe_path(self, game_path: Path) -> Path:
-        raise NotImplementedError
-
     def get_start_cmd(self, game_path: Path) -> Tuple[Path, List[str], Optional[str]]:
         game_exe_path = self.validate_game_exe_path(game_path)
         return game_exe_path, [], str(game_exe_path.parent)
@@ -316,18 +356,7 @@ class ModelImporterPackage(Package):
         xxmi_cmd_handler.execute_command_section(ModelImporterCommandFileSection.PreLaunch)
 
         # Check if game location is properly configured
-        try:
-            game_path = self.validate_game_path(Config.Active.Importer.game_folder)
-            game_exe_path = self.validate_game_exe_path(game_path)
-        except Exception as e:
-            try:
-                game_folder = self.autodetect_game_folder()
-                game_path = self.validate_game_path(game_folder)
-                game_exe_path = self.validate_game_exe_path(game_path)
-                Config.Active.Importer.game_folder = str(game_folder)
-            except Exception as e:
-                Events.Fire(Events.Application.OpenSettings())
-                raise ValueError(f'Failed to detect Game Folder!\n\nRefer to tooltip of Settings > Game Folder for details.')
+        game_path, game_exe_path = self.get_game_paths()
 
         # Write configured settings to main 3dmigoto ini file
         self.update_d3dx_ini(game_exe_path=game_exe_path)
