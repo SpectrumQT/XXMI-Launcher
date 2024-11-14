@@ -118,7 +118,10 @@ class SRMIPackage(ModelImporterPackage):
     def initialize_game_launch(self, game_path: Path):
         self.update_srmi_ini()
         if Config.Importers.SRMI.Importer.unlock_fps:
-            self.unlock_fps()
+            try:
+                self.unlock_fps()
+            except Exception as e:
+                raise ValueError(f'Failed to force 120 FPS!\n\n{str(e)}')
         self.use_hook = False
 
     def get_game_data_path(self):
@@ -173,7 +176,10 @@ class SRMIPackage(ModelImporterPackage):
 
     def unlock_fps(self):
         # Open HSR registry key
-        settings_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, 'Software\\Cognosphere\\Star Rail', 0, winreg.KEY_ALL_ACCESS)
+        try:
+            settings_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, 'Software\\Cognosphere\\Star Rail', 0, winreg.KEY_ALL_ACCESS)
+        except FileNotFoundError:
+            raise ValueError(f'Failed to locate Star Rail registry key!')
         # Read binary Graphics Settings key
         (settings_bytes, regtype) = winreg.QueryValueEx(settings_key, 'GraphicsSettings_Model_h2986158309')
         if regtype != winreg.REG_BINARY:
