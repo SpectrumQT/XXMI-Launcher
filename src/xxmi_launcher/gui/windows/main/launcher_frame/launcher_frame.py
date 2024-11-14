@@ -38,6 +38,11 @@ class LauncherFrame(UIFrame):
         # Bottom Panel
         self.put(BottomBarFrame(self, self.canvas, width=master.cfg.width, height=master.cfg.height)).grid(row=0, column=0, sticky='swe')
 
+        # Game Tiles Panel
+        self.put(SelectGameText(self))
+        for index, importer_id in enumerate(Config.Importers.__dict__.keys()):
+            self.put(GameTileButton(self, index, importer_id))
+
         # Action Panel
         self.put(UpdateButton(self))
         tools_button = self.put(ToolsButton(self))
@@ -67,11 +72,15 @@ class ImporterVersionText(UIText):
                          activefill='white',
                          anchor='nw',
                          master=master)
+        self.subscribe(Events.Application.LoadImporter, self.handle_load_importer)
         self.subscribe(Events.PackageManager.VersionNotification, self.handle_version_notification)
         self.set_tooltip(self.get_tooltip)
         # self.subscribe_show(
         #     Events.GUI.LauncherFrame.StageUpdate,
         #     lambda event: event.stage == Stage.Ready)
+
+    def handle_load_importer(self, event):
+        self.show(event.importer_id != 'XXMI')
 
     def handle_version_notification(self, event):
         package_state = event.package_states.get(Config.Launcher.active_importer, None)
@@ -98,6 +107,118 @@ class ImporterVersionText(UIText):
         return msg.strip()
 
 
+class SelectGameText(UIText):
+    def __init__(self, master):
+        super().__init__(x=30,
+                         y=495,
+                         text='Select Games To Mod:',
+                         font=('Microsoft YaHei', 24, 'bold'),
+                         fill='white',
+                         activefill='white',
+                         anchor='nw',
+                         master=master)
+        self.subscribe(Events.Application.LoadImporter, self.handle_load_importer)
+        self.subscribe(Events.GUI.LauncherFrame.StageUpdate, self.handle_stage_update)
+        # self.subscribe_show(
+        #     Events.GUI.LauncherFrame.StageUpdate,
+        #     lambda event: event.stage == Stage.Ready)
+
+    def handle_load_importer(self, event):
+        self.show(self.stage == Stage.Ready and event.importer_id == 'XXMI')
+
+    def handle_stage_update(self, event):
+        self.stage = event.stage
+        self.show(self.stage == Stage.Ready and Config.Launcher.active_importer == 'XXMI')
+
+
+class GameTileButton(UIImageButton):
+    def __init__(self, master, pos_id, importer_id):
+        super().__init__(
+            x=130+pos_id*234,
+            y=600,
+            button_image_path='game-tile-background.png',
+            width=206,
+            height=116,
+            button_normal_opacity=0.35,
+            button_hover_opacity=0.65,
+            button_selected_opacity=1,
+            button_normal_brightness=1,
+            button_selected_brightness=1,
+            bg_image_path=f'game-tile-{importer_id.lower()}.png',
+            bg_width=204,
+            bg_height=113,
+            bg_normal_opacity=0.75,
+            bg_hover_opacity=0.75,
+            bg_selected_opacity=1,
+            bg_normal_brightness=0.6,
+            bg_selected_brightness=1,
+            command=lambda: Events.Fire(Events.Application.ToggleImporter(importer_id=importer_id)),
+            master=master)
+
+        self.eye_button_image = self.put(UIImageButton(
+            x=self._x + 80, y=self._y - 42,
+            button_image_path='eye-show.png',
+            width=28,
+            height=28,
+            button_normal_opacity=0,
+            button_hover_opacity=1,
+            button_selected_opacity=0,
+            bg_image_path=f'eye-hide.png',
+            bg_width=28,
+            bg_height=28,
+            bg_normal_opacity=0,
+            bg_hover_opacity=0,
+            bg_selected_opacity=1,
+            master=master))
+
+        self.eye_button_image.bind("<ButtonPress-1>", self._handle_button_press)
+        self.eye_button_image.bind("<ButtonRelease-1>", self._handle_button_release)
+        self.eye_button_image.bind("<Enter>", self._handle_enter)
+        self.eye_button_image.bind("<Leave>", self._handle_leave)
+
+        self.importer_id = importer_id
+
+        self.subscribe(Events.Application.LoadImporter, self.handle_load_importer)
+        self.subscribe(Events.GUI.LauncherFrame.StageUpdate, self.handle_stage_update)
+        self.subscribe(Events.GUI.LauncherFrame.ToggleImporter, self.handle_toggle_importer)
+
+        try:
+            idx = Config.Launcher.enabled_importers.index(importer_id)
+            self.set_selected(True)
+        except ValueError:
+            self.set_selected(False)
+
+    def handle_load_importer(self, event):
+        self.show(self.stage == Stage.Ready and event.importer_id == 'XXMI')
+
+    def handle_stage_update(self, event):
+        self.stage = event.stage
+        self.show(self.stage == Stage.Ready and Config.Launcher.active_importer == 'XXMI')
+
+    def handle_toggle_importer(self, event):
+        if event.importer_id != self.importer_id:
+            return
+        self.set_selected(event.show)
+
+    def _handle_enter(self, event):
+        super()._handle_enter(event)
+        Events.Fire(Events.GUI.LauncherFrame.HoverImporter(importer_id=self.importer_id, hover=True))
+        self.eye_button_image._handle_enter(event)
+        if self.selected:
+            self.eye_button_image.set_selected(self.selected)
+
+    def _handle_leave(self, event):
+        super()._handle_leave(event)
+        Events.Fire(Events.GUI.LauncherFrame.HoverImporter(importer_id=self.importer_id, hover=False))
+        self.eye_button_image._handle_leave(event)
+        self.eye_button_image.set_selected(False)
+
+    def set_selected(self, selected: bool = False):
+        super().set_selected(selected)
+        if self.hovered:
+            self.eye_button_image.set_selected(selected)
+
+
 class MainActionButton(UIImageButton):
     def __init__(self, **kwargs):
         self.command = kwargs['command']
@@ -118,6 +239,15 @@ class MainActionButton(UIImageButton):
         )
         defaults.update(kwargs)
         super().__init__(**defaults)
+        self.subscribe(Events.Application.LoadImporter, self.handle_load_importer)
+        self.subscribe(Events.GUI.LauncherFrame.StageUpdate, self.handle_stage_update)
+
+    def handle_load_importer(self, event):
+        self.show(event.importer_id != 'XXMI')
+
+    def handle_stage_update(self, event):
+        self.stage = event.stage
+        self.show(self.stage == Stage.Ready and Config.Launcher.active_importer != 'XXMI')
 
 
 class UpdateButton(MainActionButton):
@@ -131,11 +261,6 @@ class UpdateButton(MainActionButton):
         self.stage = None
         self.set_tooltip('Update packages to latest versions', delay=0.01)
         self.subscribe(Events.PackageManager.VersionNotification, self.handle_version_notification)
-        self.subscribe(Events.GUI.LauncherFrame.StageUpdate, self.handle_stage_update)
-
-    def handle_stage_update(self, event):
-        self.stage = event.stage
-        self.show(self.stage == Stage.Ready)
 
     def handle_version_notification(self, event):
         pending_update_message = []
@@ -146,7 +271,7 @@ class UpdateButton(MainActionButton):
         if len(pending_update_message) > 0:
             self.enabled = True
             self.set_tooltip('Update packages to latest versions:\n' + '\n'.join(pending_update_message))
-            self.show(self.stage == Stage.Ready)
+            self.show(self.stage == Stage.Ready and Config.Launcher.active_importer != 'XXMI')
         else:
             self.enabled = False
             self.set_tooltip('No updates available!')
@@ -172,7 +297,6 @@ class StartButton(MainActionButton):
             master=master)
         self.tools_button = tools_button
         self.stage = None
-        self.subscribe(Events.GUI.LauncherFrame.StageUpdate, self.handle_stage_update)
         self.subscribe(
             Events.PackageManager.VersionNotification,
             self.handle_version_notification)
@@ -183,11 +307,7 @@ class StartButton(MainActionButton):
             return
         installed = package_state.installed_version != ''
         self.set_enabled(installed)
-        self.show(self.stage == Stage.Ready)
-
-    def handle_stage_update(self, event):
-        self.stage = event.stage
-        self.show(self.stage == Stage.Ready)
+        self.show(self.stage == Stage.Ready and Config.Launcher.active_importer != 'XXMI')
 
     def _handle_enter(self, event):
         self.tools_button._handle_enter(None, True)
@@ -225,7 +345,6 @@ class InstallButton(MainActionButton):
             command=lambda: Events.Fire(Events.Application.Update(packages=[Config.Launcher.active_importer], force=True, reinstall=True)),
             master=master)
         self.tools_button = tools_button
-        self.subscribe(Events.GUI.LauncherFrame.StageUpdate, self.handle_stage_update)
         self.subscribe(
             Events.PackageManager.VersionNotification,
             self.handle_version_notification)
@@ -236,11 +355,7 @@ class InstallButton(MainActionButton):
             return
         not_installed = package_state.installed_version == ''
         self.set_enabled(not_installed)
-        self.show(self.stage == Stage.Ready)
-
-    def handle_stage_update(self, event):
-        self.stage = event.stage
-        self.show(self.stage == Stage.Ready)
+        self.show(self.stage == Stage.Ready and Config.Launcher.active_importer != 'XXMI')
 
     def _handle_enter(self, event):
         self.tools_button._handle_enter(None, True)
@@ -268,7 +383,6 @@ class ToolsButton(MainActionButton):
             button_image_path='button-tools.png',
             command=lambda: True,
             master=master)
-        self.subscribe_show(Events.GUI.LauncherFrame.StageUpdate, lambda event: event.stage == Stage.Ready)
 
     def _handle_enter(self, event, suppress=False):
         if not suppress:

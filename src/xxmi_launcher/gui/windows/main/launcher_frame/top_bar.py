@@ -25,10 +25,11 @@ class TopBarFrame(UIFrame):
         self.background_image.bind('<Button-1>', self._handle_button_press)
         self.background_image.bind('<B1-Motion>', self._handle_mouse_move)
 
-        self.put(LoadWWMIButton(self))
-        self.put(LoadZZMIButton(self))
-        self.put(LoadSRMIButton(self))
-        self.put(LoadGIMIButton(self))
+        # for index, importer_id in enumerate(Config.Launcher.enabled_importers):
+
+        for importer_id in Config.Importers.__dict__.keys():
+            self.put(ImporterSelectButton(self, importer_id))
+        self.put(LoadXXMIButton(self))
 
         self.put(GameBananaButton(self))
         self.put(DiscordButton(self))
@@ -40,6 +41,9 @@ class TopBarFrame(UIFrame):
 
         self.put(UnsafeModeText(self))
 
+        self.subscribe(Events.Application.ToggleImporter, self.handle_toggle_importer)
+        self.handle_toggle_importer(event=None)
+
     def _handle_button_press(self, event):
         self._offset_x = event.x
         self._offset_y = event.y
@@ -47,27 +51,71 @@ class TopBarFrame(UIFrame):
     def _handle_mouse_move(self, event):
         Events.Fire(Events.Application.MoveWindow(offset_x=self._offset_x, offset_y=self._offset_y))
 
+    def handle_toggle_importer(self, event):
+        if event is not None:
+            try:
+                index = Config.Launcher.enabled_importers.index(event.importer_id)
+                del Config.Launcher.enabled_importers[index]
+                Events.Fire(Events.GUI.LauncherFrame.ToggleImporter(importer_id=event.importer_id, index=0, show=False))
+
+                for idx, importer_id in enumerate(Config.Launcher.enabled_importers):
+                    if idx < index:
+                        continue
+                    Events.Fire(Events.GUI.LauncherFrame.ToggleImporter(importer_id=importer_id, index=idx, show=True))
+
+            except ValueError:
+                Config.Launcher.enabled_importers.append(event.importer_id)
+                idx = len(Config.Launcher.enabled_importers) - 1
+                Events.Fire(Events.GUI.LauncherFrame.ToggleImporter(importer_id=event.importer_id, index=idx, show=True))
+
+        idx = len(Config.Launcher.enabled_importers)
+        Events.Fire(Events.GUI.LauncherFrame.ToggleImporter(importer_id='XXMI', index=idx, show=True))
+
 
 # region Importer Selection Buttons
+
 class ImporterSelectButton(UIImageButton):
-    def __init__(self, **kwargs):
-        self.command = kwargs['command']
-        kwargs.update(
-            # button_normal_brightness=0.8,
-            # button_selected_brightness=1,
-            # button_hover_brightness=1,
+    def __init__(self, master, importer_id, **kwargs):
+        defaults = {}
+        defaults.update(
+            button_image_path=f'button-select-game-{importer_id.lower()}.png',
             button_normal_opacity=0.8,
             button_hover_opacity=1,
             button_selected_opacity=1,
             button_disabled_opacity=0.5,
             bg_image_path='button-select-game-background.png',
+            bg_width=60,
+            bg_height=60,
             bg_normal_opacity=0,
-            bg_hover_opacity=0.5,
-            bg_selected_opacity=1,
+            bg_hover_opacity=0.4,
+            bg_selected_opacity=0.6,
             bg_disabled_opacity=0,
+            command=lambda: Events.Fire(Events.Application.LoadImporter(importer_id=importer_id)),
+            master=master
         )
-        super().__init__(**kwargs)
+        defaults.update(kwargs)
+        super().__init__(**defaults)
+        self.importer_id = importer_id
         self.subscribe(Events.GUI.LauncherFrame.StageUpdate, self.handle_stage_update)
+        self.subscribe(Events.Application.LoadImporter,
+                       lambda event: self.set_selected(event.importer_id == importer_id))
+        self.subscribe(Events.GUI.LauncherFrame.ToggleImporter, self.handle_toggle_importer)
+        self.subscribe(Events.GUI.LauncherFrame.HoverImporter, self.handle_hover_importer)
+
+        tooltips = {
+            'XXMI': f'Manage Model Importers',
+            'WWMI': f'Wuthering Waves Model Importer',
+            'ZZMI': f'Zenless Zone Zero Model Importer',
+            'SRMI': f'Honkai: Star Rail Model Importer',
+            'GIMI': f'Genshin Impact Model Importer',
+        }
+        self.set_tooltip(tooltips[importer_id], delay=0.5)
+
+        try:
+            idx = Config.Launcher.enabled_importers.index(importer_id)
+            Events.Fire(Events.GUI.LauncherFrame.ToggleImporter(importer_id=importer_id, index=idx, show=True))
+        except ValueError:
+            Events.Fire(Events.GUI.LauncherFrame.ToggleImporter(importer_id=importer_id, index=-1, show=False))
 
     def _handle_button_press(self, event):
         if self.disabled:
@@ -83,56 +131,36 @@ class ImporterSelectButton(UIImageButton):
         elif not self.selected:
             self.set_disabled(True)
 
+    def handle_toggle_importer(self, event):
+        if event.importer_id != self.importer_id:
+            return
+        if event.show:
+            self.move(x=40 + 80 * event.index)
+            self.show()
+        else:
+            self.hide()
 
-class LoadWWMIButton(ImporterSelectButton):
+    def handle_hover_importer(self, event):
+        if event.importer_id != self.importer_id:
+            return
+        if event.hover:
+            self._handle_enter(None)
+        else:
+            self._handle_leave(None)
+
+
+class LoadXXMIButton(ImporterSelectButton):
     def __init__(self, master):
         super().__init__(
-            x=40,
-            button_image_path='button-select-game-wwmi.png',
-            command=lambda: Events.Fire(Events.Application.LoadImporter(importer_id='WWMI')),
+            importer_id='XXMI',
+            width=38,
+            height=38,
+            button_normal_opacity=0.25,
+            button_hover_opacity=0.9,
+            button_selected_opacity=0.9,
+            # bg_hover_opacity=0,
+            # bg_selected_opacity=0,
             master=master)
-        self.subscribe(Events.Application.LoadImporter,
-                       lambda event: self.set_selected(event.importer_id == 'WWMI'))
-        self.set_tooltip(f'Wuthering Waves Model Importer', delay=0.5)
-
-
-class LoadZZMIButton(ImporterSelectButton):
-    def __init__(self, master):
-        super().__init__(
-            x=120,
-            button_image_path='button-select-game-zzmi.png',
-            command=lambda: Events.Fire(Events.Application.LoadImporter(importer_id='ZZMI')),
-            master=master)
-
-        self.subscribe(Events.Application.LoadImporter,
-                       lambda event: self.set_selected(event.importer_id == 'ZZMI'))
-        self.set_tooltip(f'Zenless Zone Zero Model Importer', delay=0.5)
-
-
-class LoadSRMIButton(ImporterSelectButton):
-    def __init__(self, master):
-        super().__init__(
-            x=200,
-            button_image_path='button-select-game-srmi.png',
-            command=lambda: Events.Fire(Events.Application.LoadImporter(importer_id='SRMI')),
-            master=master)
-
-        self.subscribe(Events.Application.LoadImporter,
-                       lambda event: self.set_selected(event.importer_id == 'SRMI'))
-        self.set_tooltip(f'Honkai: Star Rail Model Importer', delay=0.5)
-
-
-class LoadGIMIButton(ImporterSelectButton):
-    def __init__(self, master):
-        super().__init__(
-            x=280,
-            button_image_path='button-select-game-gimi.png',
-            command=lambda: Events.Fire(Events.Application.LoadImporter(importer_id='GIMI')),
-            master=master)
-
-        self.subscribe(Events.Application.LoadImporter,
-                       lambda event: self.set_selected(event.importer_id == 'GIMI'))
-        self.set_tooltip(f'Genshin Impact Model Importer', delay=0.5)
 
 # endregion
 
@@ -234,7 +262,11 @@ class SettingsButton(ControlButton):
             command=lambda: Events.Fire((Events.Application.OpenSettings())),
             master=master)
         self.set_tooltip(f'Open Settings', delay=0.1)
+        self.subscribe(Events.Application.LoadImporter, self.handle_load_importer)
         self.subscribe(Events.GUI.LauncherFrame.StageUpdate, self.handle_stage_update)
+
+    def handle_load_importer(self, event):
+        self.set_disabled(event.importer_id == 'XXMI')
 
     def handle_stage_update(self, event):
         if event.stage == Stage.Ready:
@@ -284,5 +316,5 @@ class UnsafeModeText(UIText):
         self.set_tooltip(f'Usage of 3-rd party 3dmigoto DLLs is allowed. Make sure to use ones only from a trusted source!')
 
     def handle_config_update(self, event=None):
-        self.enabled = Config.Active.Migoto.unsafe_mode
+        self.enabled = Config.Launcher.active_importer != 'XXMI' and Config.Active.Migoto.unsafe_mode
         self.show()

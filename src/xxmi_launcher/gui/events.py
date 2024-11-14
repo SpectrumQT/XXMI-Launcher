@@ -23,3 +23,14 @@ class GUIEvents:
         class ToggleToolbox:
             show: bool = False
             hide_on_leave: bool = False
+
+        @dataclass
+        class ToggleImporter:
+            importer_id: str
+            index: int
+            show: bool = False
+
+        @dataclass
+        class HoverImporter:
+            importer_id: str
+            hover: bool = False

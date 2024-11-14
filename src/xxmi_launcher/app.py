@@ -49,6 +49,10 @@ class ApplicationEvents:
         reload: bool = False
 
     @dataclass
+    class ToggleImporter:
+        importer_id: str
+
+    @dataclass
     class Ready:
         pass
 
@@ -236,9 +240,14 @@ class Application:
         if self.args.create_shortcut:
             Events.Fire(Events.LauncherManager.CreateShortcut())
 
-        default_xxmi = self.get_default_importer()
-        if default_xxmi is not None:
-            Config.Launcher.active_importer = default_xxmi
+        if self.args.xxmi:
+            if self.args.xxmi not in Config.Importers.__dict__.keys():
+                raise ValueError(f'Unknown model importer supplied in command line arg `--xxmi {self.args.xxmi}`!')
+            if self.args.xxmi not in Config.Launcher.enabled_importers:
+                Config.Launcher.enabled_importers.append(self.args.xxmi)
+
+        # Activate MI based on args, use last one or fallback to XXMI homepage
+        Config.Launcher.active_importer = str(self.get_default_importer() or Config.Launcher.active_importer or 'XXMI').upper()
 
         # Load packages of active importer and skip update for fast start
         self.load_importer(Config.Launcher.active_importer, update=False)
@@ -361,16 +370,28 @@ class Application:
         self.args.update = False
 
     def load_importer(self, importer_id, update=True, reload=False):
+        # Unload package of other MI if there's one loaded
         if hasattr(Config, 'Active'):
             if importer_id == Config.Launcher.active_importer and not reload:
                 return
             self.package_manager.unload_package(Config.Launcher.active_importer)
+        # Go to game selection page if folder of target MI was removed by the user
+        if importer_id != 'XXMI':
+            package = self.package_manager.get_package(importer_id)
+            if package.cfg.deployed_version != '' and package.get_installed_version() == '':
+                importer_id = 'XXMI'
+        # Mark requested MI as active
         Config.Launcher.active_importer = importer_id
+        # Exit early if requested MI is `XXMI` aka dummy id used for homepage
+        if importer_id == 'XXMI':
+            return
+        # Load MI package
         Config.Active = getattr(Config.Importers, importer_id)
         self.package_manager.load_package(importer_id)
         self.package_manager.notify_package_versions()
         Config.ConfigSecurity.validate_config()
         Events.Fire(Events.Application.ConfigUpdate())
+        # Check for updates
         if update:
             self.run_as_thread(self.package_manager.update_packages, no_install=True, silent=True)
 

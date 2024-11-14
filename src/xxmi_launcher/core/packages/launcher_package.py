@@ -7,7 +7,7 @@ import time
 import winshell
 import pythoncom
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 import core.path_manager as Paths
@@ -26,8 +26,8 @@ class LauncherManagerConfig:
     auto_update: bool = True
     auto_close: bool = True
     theme_mode: str = 'System'
-    active_importer: str = 'WWMI'
-    config_path: str = 'XXMI Launcher Config.json'
+    active_importer: str = 'XXMI'
+    enabled_importers: list = field(default_factory=lambda: [])
     log_level: str = 'DEBUG'
     config_version: str = ''
 
