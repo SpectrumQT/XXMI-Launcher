@@ -12,7 +12,6 @@ class UIElement:
         self._id = None
         self.elements: Dict[str, 'UIElement'] = {}
         self.tooltip = None
-        self.var = None
         self.enabled = True
         self.is_hidden = False
 
@@ -45,9 +44,6 @@ class UIElement:
         self.enabled = enabled
 
     def trace_save(self, var, callback):
-        if self.var is not None and self.var != var:
-            raise ValueError(f'Cannot trace multiple vars at the same time!')
-        self.var = var
         if (hasattr(self, 'set') and callback == self.set) or callback == self.show or callback == self.set_tooltip or callback == self.set_enabled:
             callback(var.get())
             Vars.Settings.subscribe_on_save(var, lambda traced_var, value, _: callback(value), caller_id=self)
@@ -56,9 +52,6 @@ class UIElement:
             Vars.Settings.subscribe_on_save(var, callback, caller_id=self)
 
     def trace_write(self, var, callback):
-        if self.var is not None and self.var != var:
-            raise ValueError(f'Cannot trace multiple vars at the same time!')
-        self.var = var
         if callback == self.set or callback == self.show or callback == self.set_tooltip or callback == self.set_enabled:
             callback(var.get())
             Vars.Settings.subscribe_on_write(var, lambda traced_var, value: callback(value), caller_id=self)
@@ -70,13 +63,11 @@ class UIElement:
         for element in self.elements.values():
             element.untrace_save()
         Vars.Settings.unsubscribe_on_save(callback_id=callback_id, var=var, callback=callback, caller_id=self)
-        self.var = None
 
     def untrace_write(self, callback_id=None, var=None, callback=None):
         for element in self.elements.values():
             element.untrace_write()
         Vars.Settings.unsubscribe_on_write(callback_id=callback_id, var=var, callback=callback, caller_id=self)
-        self.var = None
 
     def hide(self, hide=True):
         if hide or not self.enabled:
