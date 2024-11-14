@@ -201,7 +201,8 @@ class Application:
         # Load config json
         try:
             self.load_config()
-        except Exception:
+        except Exception as error:
+            logging.exception(error)
             self.gui.show_messagebox(Events.Application.ShowError(
                 modal=True,
                 screen_center=not self.gui.is_shown(),
@@ -314,7 +315,8 @@ class Application:
         try:
             Config.Config.load()
             # Backup last successfully loaded config
-            shutil.copy2(Config.Config.config_path, cfg_backup_path)
+            if Config.Config.config_path.is_file():
+                shutil.copy2(Config.Config.config_path, cfg_backup_path)
         except Exception as e:
             if Config.Config.config_path.is_file():
                 error_dialogue = Events.Application.ShowError(
