@@ -36,6 +36,7 @@ class MainWindow(UIMainWindow):
         # Fix pyglet font load
         pyglet.options['win32_gdi_font'] = True
 
+        self.active_theme_path = None
         self.load_theme(Paths.App.Themes / 'Default')
 
         Events.Subscribe(Events.Application.ShowMessage,
@@ -48,6 +49,9 @@ class MainWindow(UIMainWindow):
                          lambda event: self.show_messagebox(event))
 
     def load_theme(self, theme_path: Path):
+        if self.active_theme_path == theme_path:
+            return
+        self.active_theme_path = theme_path
         # Load custom tkinter theme
         try:
             set_default_color_theme(str(theme_path / 'custom-tkinter-theme.json'))
@@ -62,6 +66,8 @@ class MainWindow(UIMainWindow):
                 pyglet.font.add_file(str(font_path))
             except Exception as e:
                 log.exception(e)
+        # Set icon path
+        self.cfg.icon_path = theme_path / 'window-icon.ico'
 
     def initialize(self):
         import gui.vars as Vars
@@ -75,10 +81,9 @@ class MainWindow(UIMainWindow):
         # Vars.Settings.Launcher.log_level.set('TEST')
         # Vars.Settings.save()
 
-        self.load_theme(Config.Active.Importer.theme_path)
+        self.load_theme(Config.Launcher.theme_path)
 
         self.cfg.title = 'XXMI Launcher'
-        self.cfg.icon_path = Config.Active.Importer.theme_path / 'window-icon.ico'
 
         self.cfg.width = 1280
         self.cfg.height = 720
@@ -94,6 +99,8 @@ class MainWindow(UIMainWindow):
 
         Events.Fire(Events.Application.Ready())
         # Events.Fire(Events.Application.Busy())
+        # Events.Fire(Events.PackageManager.InitializeDownload())
+        # Events.Fire(Events.PackageManager.UpdateDownloadProgress(downloaded_bytes=430000, total_bytes=1000000))
         # Events.Fire(Events.PackageManager.InitializeInstallation())
 
         self.show()

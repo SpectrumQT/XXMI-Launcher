@@ -288,4 +288,4 @@ Active: Union[gimi_package.GIMIPackageConfig, srmi_package.SRMIPackageConfig,
 
 
 def get_resource_path(element):
-    return Active.Importer.theme_path / element.get_resource_path()
+    return Launcher.theme_path / element.get_resource_path()

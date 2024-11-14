@@ -31,6 +31,13 @@ class LauncherManagerConfig:
     log_level: str = 'DEBUG'
     config_version: str = ''
 
+    @property
+    def theme_path(self) -> Path:
+        if self.active_importer == 'XXMI':
+            return Paths.App.Themes / 'Default'
+        else:
+            return Paths.App.Themes / Config.Active.Importer.launcher_theme
+
 
 @dataclass
 class LauncherManagerEvents:
