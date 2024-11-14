@@ -127,11 +127,45 @@ class RunPreLaunchEntry(UIEntry):
             'Windows console command to be executed before game exe launch.\n'
             'Note: If something needs to be done before the game start, do it here.')
 
+        self.trace_write(Vars.Active.Importer.run_pre_launch_enabled, self.handle_write_run_pre_launch_enabled)
+
+    def handle_write_run_pre_launch_enabled(self, var, val):
+        if val:
+            self.configure(state='normal')
+        else:
+            self.configure(state='disabled')
+
     # def handle_unsafe_mode_update(self, var, val):
     #     if val:
     #         self.configure(state='normal', fg_color='#ffffff')
     #     else:
     #         self.configure(state='disabled', fg_color='#c0c0c0')
+
+
+class RunPreLaunchWaitCheckbox(UICheckbox):
+    def __init__(self, master):
+        super().__init__(
+            text='Wait',
+            variable=Vars.Active.Importer.run_pre_launch_wait,
+            width=10,
+            master=master)
+        # self.trace_write(Vars.Active.Migoto.unsafe_mode, self.handle_unsafe_mode_update)
+        self.set_tooltip(
+            'Enabled: Wait for (blocking) command to finish its execution before launching the game exe.')
+
+        self.trace_write(Vars.Active.Importer.run_pre_launch_enabled, self.handle_write_run_pre_launch_enabled)
+
+    def handle_write_run_pre_launch_enabled(self, var, val):
+        if val:
+            self.configure(state='normal')
+        else:
+            self.configure(state='disabled')
+
+    # def handle_unsafe_mode_update(self, var, val):
+    #     if val:
+    #         self.configure(state='normal')
+    #     else:
+    #         self.configure(state='disabled')
 
 
 class CustomLaunchCheckbox(UICheckbox):
@@ -156,6 +190,14 @@ class CustomLaunchEntry(UIEntry):
             font=('Arial', 14),
             master=master)
         self.set_tooltip(self.get_tooltip)
+
+        self.trace_write(Vars.Active.Importer.custom_launch_enabled, self.handle_write_custom_launch_enabled)
+
+    def handle_write_custom_launch_enabled(self, var, val):
+        if val:
+            self.configure(state='normal')
+        else:
+            self.configure(state='disabled')
 
     def get_tooltip(self):
         message = ''
@@ -183,23 +225,13 @@ class CustomLaunchInjectModeOptionMenu(UIOptionMenu):
                          '* Inject: Use WriteProcessMemory, more reliable but requires direct memory access.\n'
                          '* Hook: Use SetWindowsHookEx, less reliable, but potentially less prominent for anti-cheats.')
 
+        self.trace_write(Vars.Active.Importer.custom_launch_enabled, self.handle_write_custom_launch_enabled)
 
-class RunPreLaunchWaitCheckbox(UICheckbox):
-    def __init__(self, master):
-        super().__init__(
-            text='Wait',
-            variable=Vars.Active.Importer.run_pre_launch_wait,
-            width=10,
-            master=master)
-        # self.trace_write(Vars.Active.Migoto.unsafe_mode, self.handle_unsafe_mode_update)
-        self.set_tooltip(
-            'Enabled: Wait for (blocking) command to finish its execution before launching the game exe.')
-
-    # def handle_unsafe_mode_update(self, var, val):
-    #     if val:
-    #         self.configure(state='normal')
-    #     else:
-    #         self.configure(state='disabled')
+    def handle_write_custom_launch_enabled(self, var, val):
+        if val:
+            self.configure(state='normal')
+        else:
+            self.configure(state='disabled')
 
 
 class RunPostLoadCheckbox(UICheckbox):
@@ -228,6 +260,14 @@ class RunPostLoadEntry(UIEntry):
             'Windows console command to be executed after hooking d3d11.dll to launched game exe.\n'
             'Note: If something needs to be done after 3dmigoto injection, do it here.')
 
+        self.trace_write(Vars.Active.Importer.run_post_load_enabled, self.handle_write_run_post_load_enabled)
+
+    def handle_write_run_post_load_enabled(self, var, val):
+        if val:
+            self.configure(state='normal')
+        else:
+            self.configure(state='disabled')
+
     # def handle_unsafe_mode_update(self, var, val):
     #     if val:
     #         self.configure(state='normal', fg_color='#ffffff')
@@ -245,6 +285,14 @@ class RunPostLoadWaitCheckbox(UICheckbox):
         # self.trace_write(Vars.Active.Migoto.unsafe_mode, self.handle_unsafe_mode_update)
         self.set_tooltip(
             'Enabled: Wait for (blocking) command to finish its execution before treating the game launch as complete.')
+
+        self.trace_write(Vars.Active.Importer.run_post_load_enabled, self.handle_write_run_post_load_enabled)
+
+    def handle_write_run_post_load_enabled(self, var, val):
+        if val:
+            self.configure(state='normal')
+        else:
+            self.configure(state='disabled')
 
     # def handle_unsafe_mode_update(self, var, val):
     #     if val:
@@ -278,6 +326,14 @@ class InjectLibrariesTextbox(UITextbox):
             'injection will be made via WriteProcessMemory method.\n'
             'Example (inject ReShade dll):\n'
             '`C:\Games\ReShade\ReShade64.dll`')
+
+        self.trace_write(Vars.Active.Importer.extra_libraries_enabled, self.handle_write_extra_libraries_enabled)
+
+    def handle_write_extra_libraries_enabled(self, var, val):
+        if val:
+            self.configure(state='normal')
+        else:
+            self.configure(state='disabled')
 
     def get(self, index1, index2=None):
         return super().get(index1, index2).strip()
