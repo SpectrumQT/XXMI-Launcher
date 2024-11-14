@@ -147,7 +147,11 @@ class MigotoPackage(Package):
                 Events.Fire(Events.Application.WaitForProcess(process_name=process_name))
                 result, pid = wait_for_process(process_name, with_window=True, timeout=30, check_visibility=True)
                 if result == WaitResult.Timeout:
-                    raise ValueError(f'Failed to start {process_name}!')
+                    if hooked:
+                        raise ValueError(f'Failed to detect game process {process_name}!\n\n'
+                                         f'If game crashed, try to clear Mods and ShaderFixes folders.')
+                    else:
+                        raise ValueError(f'Failed to start {process_name}!')
 
                 # Late DLL injection verification
                 Events.Fire(Events.Application.VerifyHook(library_name=dll_path.name, process_name=process_name))
@@ -158,7 +162,7 @@ class MigotoPackage(Package):
 
             except Exception as e:
                 raise e
-                    
+
             finally:
                 # Remove global hook to free system resources
                 injector.unhook_library()
@@ -176,7 +180,8 @@ class MigotoPackage(Package):
             Events.Fire(Events.Application.WaitForProcess(process_name=process_name))
             result, pid = wait_for_process(process_name, with_window=True, timeout=30, check_visibility=True)
             if result == WaitResult.Timeout:
-                raise ValueError(f'Failed to start {process_name}!')
+                raise ValueError(f'Failed to detect game process {process_name}!\n\n'
+                                 f'If game crashed, try to clear Mods and ShaderFixes folders.')
 
         # Wait a bit more for window to maximize
         time.sleep(1)
