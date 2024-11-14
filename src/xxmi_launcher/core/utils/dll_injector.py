@@ -124,6 +124,10 @@ def direct_inject(dll_paths: List[Path], process_name: str = None, pid: int = No
                 if process.name() == process_name or process.pid == pid:
                     for dll_path in dll_paths:
                         try:
+                            str(dll_path).encode('ascii')
+                        except Exception as e:
+                            raise ValueError(f'Please rename all folders from the path using only English letters:\n{dll_path}') from e
+                        try:
                             inject(process.pid, str(dll_path))
                         except Exception as e:
                             raise ValueError(f'Failed to inject extra library {dll_path}:\n{str(e)}!\nPlease check Advanced Settings -> Inject Libraries.') from e
