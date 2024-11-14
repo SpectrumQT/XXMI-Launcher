@@ -51,7 +51,7 @@ class ModelImporterConfig:
     game_folder: str = ''
     launcher_theme: str = 'Default'
     overwrite_ini: bool = True
-    process_priority: str = 'Above Normal'
+    process_priority: str = 'Normal'
     window_mode: str = 'Borderless'
     run_pre_launch_enabled: bool = False
     run_pre_launch: str = ''
