@@ -173,26 +173,32 @@ class Application:
         self.gui = app_gui
         self.launching_game = False
 
-        parser = argparse.ArgumentParser(description='Launches and updates XXMI')
-        parser.add_argument('-n', '--nogui', action='store_true',
-                            help="Instantly launch XXMI if there's no update available")
-        parser.add_argument('-u', '--update', action='store_true',
-                            help="Automatically clean-install the latest XXMI version")
+        # Parse console args
+        parser = argparse.ArgumentParser(add_help=False)
+        parser.add_argument('-h', '--help', '-help', action='store_true',
+                            help='Show this help message and exit.')
         parser.add_argument('-x', '--xxmi', type=str,
-                            help="Set provided XXMI edition as default")
+                            help='Set active model importer (WWMI/ZZMI/SRMI/GIMI) used by launcher.')
+        parser.add_argument('-n', '--nogui', action='store_true',
+                            help='Start game with active model importer without showing launcher window.')
+        parser.add_argument('-u', '--update', action='store_true',
+                            help='Force check for updates and install available ones.')
         parser.add_argument('-i', '--msi', type=str,
-                            help="Name of .msi file")
+                            help='Parse default active importer from tagged .msi name.')
         parser.add_argument('-s', '--create_shortcut', type=str,
-                            help="Create desktop shortcut to launcher exe")
+                            help='Create desktop shortcut for launcher .exe.')
         parser.add_argument('-un', '--uninstall', action='store_true',
-                            help="Run launcher in uninstallation mode")
-
+                            help='Remove downloaded packages from the Resources folder.')
         try:
             self.args = parser.parse_args()
             logging.debug(f'Arguments: {self.args}')
+            if self.args.help:
+                parser.print_help()
+                return
         except BaseException:
             raise ValueError(f'Failed to parse args: {sys.argv}')
 
+        # Load config json
         try:
             self.load_config()
         except Exception:
@@ -205,6 +211,7 @@ class Application:
 
         logging.getLogger().setLevel(logging.getLevelNamesMapping().get(Config.Launcher.log_level, 'DEBUG'))
 
+        # Load packages
         self.threads = []
         self.error_queue = Queue()
 
