@@ -267,6 +267,14 @@ class UIImageButton(UIWidget, CTkBaseClass):
         self.command = command
         self.disabled = disabled
 
+        self._x = x
+        self._y = y
+        self._anchor = anchor
+        self._button_x_offset = button_x_offset
+        self._button_y_offset = button_y_offset
+        self._text_x_offset = text_x_offset
+        self._text_y_offset = text_y_offset
+
         self._bg_image = None
         if bg_image_path is not None:
             self._bg_image = self.put(UIImage(master=master, image_path=bg_image_path, width=bg_width, height=bg_height,
@@ -300,6 +308,16 @@ class UIImageButton(UIWidget, CTkBaseClass):
         self.bind("<ButtonRelease-1>", self._handle_button_release)
         self.bind("<Enter>", self._handle_enter)
         self.bind("<Leave>", self._handle_leave)
+
+    def move(self, x=None, y=None):
+        x = x or self._x
+        y = y or self._y
+        if self._bg_image is not None:
+            self._bg_image.move(x, y)
+        if self._button_image is not None:
+            self._button_image.move(self._button_x_offset+x, self._button_y_offset+y)
+        if self._text_image is not None:
+            self._text_image.move(self._text_x_offset+x, self._text_y_offset+y)
 
     def set_text(self, text):
         self._text_image.set(text)
@@ -489,6 +507,9 @@ class UIEntry(CTkEntry, UIWidget):
                  master: Union[UIWindow, 'UIFrame'],
                  **kwargs):
         UIWidget.__init__(self, master,  **kwargs)
+        self._fg_color_disabled = ThemeManager.theme["CTkEntry"].get("fg_color_disabled", None)
+        self._border_color_disabled = ThemeManager.theme["CTkEntry"].get("border_color_disabled", None)
+        self._text_color_disabled = ThemeManager.theme["CTkEntry"].get("text_color_disabled", None)
         CTkEntry.__init__(self, master, **kwargs)
 
         self.state_log = [('', 0)]
@@ -506,6 +527,63 @@ class UIEntry(CTkEntry, UIWidget):
         self.context_menu.add_command(label="Cut")
         self.context_menu.add_command(label="Copy")
         self.context_menu.add_command(label="Paste")
+
+    def configure(self, require_redraw=False, **kwargs):
+        if "state" in kwargs:
+            require_redraw = True
+        super().configure(require_redraw=require_redraw, **kwargs)
+
+    def _draw(self, no_color_updates=False):
+        super()._draw(no_color_updates)
+
+        requires_recoloring = self._draw_engine.draw_rounded_rect_with_border(self._apply_widget_scaling(self._current_width),
+                                                                              self._apply_widget_scaling(self._current_height),
+                                                                              self._apply_widget_scaling(self._corner_radius),
+                                                                              self._apply_widget_scaling(self._border_width))
+
+        if requires_recoloring or no_color_updates is False:
+            self._canvas.configure(bg=self._apply_appearance_mode(self._bg_color))
+
+            if self._apply_appearance_mode(self._fg_color) == "transparent":
+                self._canvas.itemconfig("inner_parts",
+                                        fill=self._apply_appearance_mode(self._bg_color),
+                                        outline=self._apply_appearance_mode(self._bg_color))
+                self._entry.configure(bg=self._apply_appearance_mode(self._bg_color),
+                                      disabledbackground=self._apply_appearance_mode(self._bg_color),
+                                      readonlybackground=self._apply_appearance_mode(self._bg_color),
+                                      highlightcolor=self._apply_appearance_mode(self._bg_color))
+            else:
+                fg_color = self._fg_color
+                if self._state == tkinter.DISABLED and self._fg_color_disabled:
+                    fg_color = self._fg_color_disabled
+                self._canvas.itemconfig("inner_parts",
+                                        fill=self._apply_appearance_mode(fg_color),
+                                        outline=self._apply_appearance_mode(fg_color))
+                self._entry.configure(bg=self._apply_appearance_mode(fg_color),
+                                      disabledbackground=self._apply_appearance_mode(fg_color),
+                                      readonlybackground=self._apply_appearance_mode(fg_color),
+                                      highlightcolor=self._apply_appearance_mode(fg_color))
+
+            border_color = self._border_color
+            if self._state == tkinter.DISABLED and self._border_color_disabled:
+                border_color = self._border_color_disabled
+
+            self._canvas.itemconfig("border_parts",
+                                    fill=self._apply_appearance_mode(border_color),
+                                    outline=self._apply_appearance_mode(border_color))
+
+            if self._placeholder_text_active:
+                self._entry.config(fg=self._apply_appearance_mode(self._placeholder_text_color),
+                                   disabledforeground=self._apply_appearance_mode(self._placeholder_text_color),
+                                   insertbackground=self._apply_appearance_mode(self._placeholder_text_color))
+            else:
+                text_color = self._text_color
+                if self._state == tkinter.DISABLED and self._text_color_disabled:
+                    text_color = self._text_color_disabled
+
+                self._entry.config(fg=self._apply_appearance_mode(text_color),
+                                   disabledforeground=self._apply_appearance_mode(text_color),
+                                   insertbackground=self._apply_appearance_mode(text_color))
 
     def event_generate(self, *args, **kwargs):
         self._entry.event_generate(*args, **kwargs)
@@ -615,10 +693,11 @@ class UIEntry(CTkEntry, UIWidget):
             self.state_id = new_state_id
 
     def show_context_menu(self, event):
-        self.context_menu.post(event.x_root, event.y_root)
-        self.context_menu.entryconfigure('Cut', command=lambda: self.event_generate('<<Cut>>'))
-        self.context_menu.entryconfigure('Copy', command=lambda: self.event_generate('<<Copy>>'))
-        self.context_menu.entryconfigure('Paste', command=lambda: self.event_generate('<<Paste>>'))
+        if self._state != tkinter.DISABLED:
+            self.context_menu.post(event.x_root, event.y_root)
+            self.context_menu.entryconfigure('Cut', command=lambda: self.event_generate('<<Cut>>'))
+            self.context_menu.entryconfigure('Copy', command=lambda: self.event_generate('<<Copy>>'))
+            self.context_menu.entryconfigure('Paste', command=lambda: self.event_generate('<<Paste>>'))
 
 
 class UICheckbox(CTkCheckBox, UIWidget):
@@ -626,6 +705,8 @@ class UICheckbox(CTkCheckBox, UIWidget):
                  master: Union[UIWindow, 'UIFrame'],
                  **kwargs):
         UIWidget.__init__(self, master,  **kwargs)
+
+        self._fg_color_disabled = ThemeManager.theme["CTkCheckBox"].get("fg_color_disabled", None)
 
         self.is_hovered = False
 
@@ -639,6 +720,56 @@ class UICheckbox(CTkCheckBox, UIWidget):
             self._text_color_hovered = self._text_color
 
         self.unbind('<Button-1>')
+
+    def _draw(self, no_color_updates=False):
+        super()._draw(no_color_updates)
+
+        requires_recoloring_1 = self._draw_engine.draw_rounded_rect_with_border(self._apply_widget_scaling(self._checkbox_width),
+                                                                                self._apply_widget_scaling(self._checkbox_height),
+                                                                                self._apply_widget_scaling(self._corner_radius),
+                                                                                self._apply_widget_scaling(self._border_width))
+
+        if self._check_state is True:
+            requires_recoloring_2 = self._draw_engine.draw_checkmark(self._apply_widget_scaling(self._checkbox_width),
+                                                                     self._apply_widget_scaling(self._checkbox_height),
+                                                                     self._apply_widget_scaling(self._checkbox_height * 0.58))
+        else:
+            requires_recoloring_2 = False
+            self._canvas.delete("checkmark")
+
+        if no_color_updates is False or requires_recoloring_1 or requires_recoloring_2:
+            self._bg_canvas.configure(bg=self._apply_appearance_mode(self._bg_color))
+            self._canvas.configure(bg=self._apply_appearance_mode(self._bg_color))
+
+            if self._check_state is True:
+                fg_color = self._fg_color
+                if self._state == tkinter.DISABLED and self._fg_color_disabled:
+                    fg_color = self._fg_color_disabled
+                self._canvas.itemconfig("inner_parts",
+                                        outline=self._apply_appearance_mode(fg_color),
+                                        fill=self._apply_appearance_mode(fg_color))
+                self._canvas.itemconfig("border_parts",
+                                        outline=self._apply_appearance_mode(fg_color),
+                                        fill=self._apply_appearance_mode(fg_color))
+
+                if "create_line" in self._canvas.gettags("checkmark"):
+                    self._canvas.itemconfig("checkmark", fill=self._apply_appearance_mode(self._checkmark_color))
+                else:
+                    self._canvas.itemconfig("checkmark", fill=self._apply_appearance_mode(self._checkmark_color))
+            else:
+                self._canvas.itemconfig("inner_parts",
+                                        outline=self._apply_appearance_mode(self._bg_color),
+                                        fill=self._apply_appearance_mode(self._bg_color))
+                self._canvas.itemconfig("border_parts",
+                                        outline=self._apply_appearance_mode(self._border_color),
+                                        fill=self._apply_appearance_mode(self._border_color))
+
+            if self._state == tkinter.DISABLED:
+                self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color_disabled)))
+            else:
+                self._text_label.configure(fg=self._apply_appearance_mode(self._text_color))
+
+            self._text_label.configure(bg=self._apply_appearance_mode(self._bg_color))
 
     def set(self, value):
         if value == self._onvalue:
@@ -658,14 +789,18 @@ class UICheckbox(CTkCheckBox, UIWidget):
 
     def _on_enter(self, event=None):
         self.is_hovered = True
-        super()._on_enter(event)
         self._set_cursor()
+        if self._state == tkinter.DISABLED:
+            return
+        super()._on_enter(event)
         self._text_label.configure(fg=self._apply_appearance_mode(self._text_color_hovered))
 
     def _on_leave(self, event=None):
         self.is_hovered = False
-        super()._on_leave(event)
         self._set_cursor()
+        if self._state == tkinter.DISABLED:
+            return
+        super()._on_leave(event)
         self._text_label.configure(fg=self._apply_appearance_mode(self._text_color))
 
     def toggle(self, event=0):
@@ -681,7 +816,7 @@ class UICheckbox(CTkCheckBox, UIWidget):
 
     def _set_cursor(self):
         if self._cursor_manipulation_enabled:
-            if self._state == tkinter.DISABLED or not self.is_hovered:
+            if not self.is_hovered:
                 if sys.platform == "darwin":
                     self._canvas.configure(cursor="arrow")
                     if self._text_label is not None:
@@ -691,7 +826,7 @@ class UICheckbox(CTkCheckBox, UIWidget):
                     if self._text_label is not None:
                         self._text_label.configure(cursor="arrow")
 
-            elif self._state == tkinter.NORMAL:
+            else:
                 if sys.platform == "darwin":
                     self._canvas.configure(cursor="pointinghand")
                     if self._text_label is not None:
@@ -708,7 +843,7 @@ class UIOptionMenu(CTkOptionMenu, UIWidget):
                  **kwargs):
         UIWidget.__init__(self, master,  **kwargs)
         CTkOptionMenu.__init__(self, master, **kwargs)
-        self._button_color_disabled = ThemeManager.theme["CTkOptionMenu"]["button_color_disabled"]
+        self._button_color_disabled = ThemeManager.theme["CTkOptionMenu"].get("button_color_disabled", None)
 
     def _draw(self, no_color_updates=False):
         CTkBaseClass._draw(self, no_color_updates)
@@ -749,8 +884,8 @@ class UIOptionMenu(CTkOptionMenu, UIWidget):
 
             if self._state == tkinter.DISABLED:
                 self._canvas.itemconfig("inner_parts_right",
-                                        outline=self._apply_appearance_mode(self._button_color_disabled),
-                                        fill=self._apply_appearance_mode(self._button_color_disabled))
+                                        outline=self._apply_appearance_mode(self._button_color_disabled or self._button_color),
+                                        fill=self._apply_appearance_mode(self._button_color_disabled or self._button_color))
                 self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color_disabled)))
                 self._canvas.itemconfig("dropdown_arrow",
                                         fill=self._apply_appearance_mode(self._fg_color))
@@ -784,7 +919,14 @@ class UITextbox(CTkTextbox, UIWidget):
                  text_variable,
                  **kwargs):
         UIWidget.__init__(self, master,  **kwargs)
+
+        self._state = tkinter.NORMAL
+
         CTkTextbox.__init__(self, master, **kwargs)
+
+        self._fg_color_disabled = ThemeManager.theme["CTkTextbox"].get("fg_color_disabled", None)
+        self._border_color_disabled = ThemeManager.theme["CTkTextbox"].get("border_color_disabled", None)
+        self._text_color_disabled = ThemeManager.theme["CTkTextbox"].get("text_color_disabled", None)
 
         self.context_menu = Menu(self, tearoff=0)
         self.context_menu.config(font=self._apply_font_scaling(('Asap', 14)))
@@ -797,6 +939,68 @@ class UITextbox(CTkTextbox, UIWidget):
         self.bind("<Control-KeyPress>", self.handle_key_press)
         self.bind('<KeyRelease>', self.handle_on_widget_change)
         self.bind("<Button-3>", self.handle_button3)
+
+    def configure(self, require_redraw=False, **kwargs):
+        if "state" in kwargs:
+            self._state = kwargs.pop("state")
+            self._textbox.configure(state=self._state)
+            require_redraw = True
+        super().configure(require_redraw=require_redraw, **kwargs)
+
+    def _draw(self, no_color_updates=False):
+        super()._draw(no_color_updates)
+
+        if not self._canvas.winfo_exists():
+            return
+
+        requires_recoloring = self._draw_engine.draw_rounded_rect_with_border(self._apply_widget_scaling(self._current_width),
+                                                                              self._apply_widget_scaling(self._current_height),
+                                                                              self._apply_widget_scaling(self._corner_radius),
+                                                                              self._apply_widget_scaling(self._border_width))
+
+        if no_color_updates is False or requires_recoloring:
+            text_color = self._text_color
+            if self._state == tkinter.DISABLED and self._text_color_disabled:
+                text_color = self._text_color_disabled
+
+            if self._fg_color == "transparent":
+                self._canvas.itemconfig("inner_parts",
+                                        fill=self._apply_appearance_mode(self._bg_color),
+                                        outline=self._apply_appearance_mode(self._bg_color))
+                self._textbox.configure(fg=self._apply_appearance_mode(text_color),
+                                        bg=self._apply_appearance_mode(self._bg_color),
+                                        insertbackground=self._apply_appearance_mode(text_color))
+                self._x_scrollbar.configure(fg_color=self._bg_color, button_color=self._scrollbar_button_color,
+                                            button_hover_color=self._scrollbar_button_hover_color)
+                self._y_scrollbar.configure(fg_color=self._bg_color, button_color=self._scrollbar_button_color,
+                                            button_hover_color=self._scrollbar_button_hover_color)
+            else:
+                fg_color = self._fg_color
+                if self._state == tkinter.DISABLED and self._fg_color_disabled:
+                    fg_color = self._fg_color_disabled
+
+                self._canvas.itemconfig("inner_parts",
+                                        fill=self._apply_appearance_mode(fg_color),
+                                        outline=self._apply_appearance_mode(fg_color))
+                self._textbox.configure(fg=self._apply_appearance_mode(text_color),
+                                        bg=self._apply_appearance_mode(fg_color),
+                                        insertbackground=self._apply_appearance_mode(text_color))
+                self._x_scrollbar.configure(fg_color=fg_color, button_color=self._scrollbar_button_color,
+                                            button_hover_color=self._scrollbar_button_hover_color)
+                self._y_scrollbar.configure(fg_color=fg_color, button_color=self._scrollbar_button_color,
+                                            button_hover_color=self._scrollbar_button_hover_color)
+
+            border_color = self._border_color
+            if self._state == tkinter.DISABLED and self._border_color_disabled:
+                border_color = self._border_color_disabled
+
+            self._canvas.itemconfig("border_parts",
+                                    fill=self._apply_appearance_mode(border_color),
+                                    outline=self._apply_appearance_mode(border_color))
+            self._canvas.configure(bg=self._apply_appearance_mode(self._bg_color))
+
+        self._canvas.tag_lower("inner_parts")
+        self._canvas.tag_lower("border_parts")
 
     def set(self, value):
         self.delete(1.0, END)
@@ -829,7 +1033,8 @@ class UITextbox(CTkTextbox, UIWidget):
         self.show_context_menu(event)
 
     def show_context_menu(self, event):
-        self.context_menu.post(event.x_root, event.y_root)
-        self.context_menu.entryconfigure('Cut', command=lambda: self._textbox.event_generate('<<Cut>>'))
-        self.context_menu.entryconfigure('Copy', command=lambda: self._textbox.event_generate('<<Copy>>'))
-        self.context_menu.entryconfigure('Paste', command=lambda: self._textbox.event_generate('<<Paste>>'))
+        if self._state != tkinter.DISABLED:
+            self.context_menu.post(event.x_root, event.y_root)
+            self.context_menu.entryconfigure('Cut', command=lambda: self._textbox.event_generate('<<Cut>>'))
+            self.context_menu.entryconfigure('Copy', command=lambda: self._textbox.event_generate('<<Copy>>'))
+            self.context_menu.entryconfigure('Paste', command=lambda: self._textbox.event_generate('<<Paste>>'))
