@@ -259,6 +259,9 @@ class ModelImporterPackage(Package):
         ini.set_option('Loader', 'target', game_exe_path.name)
 
         self.set_default_ini_values(ini, 'core', SettingType.Constant)
+        if Config.Active.Migoto.enforce_rendering:
+            self.set_default_ini_values(ini, 'enforce_rendering', SettingType.Constant)
+        self.set_default_ini_values(ini, 'calls_logging', SettingType.Bool, Config.Active.Migoto.calls_logging)
         self.set_default_ini_values(ini, 'debug_logging', SettingType.Bool, Config.Active.Migoto.debug_logging)
         self.set_default_ini_values(ini, 'mute_warnings', SettingType.Bool, Config.Active.Migoto.mute_warnings)
         self.set_default_ini_values(ini, 'enable_hunting', SettingType.Bool, Config.Active.Migoto.enable_hunting)

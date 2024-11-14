@@ -23,12 +23,18 @@ class ModelImporterSettingsFrame(UIFrame):
         # Error Handling
         self.put(ErrorHandlingLabel(self)).grid(row=1, column=0, padx=(20, 10), pady=(20, 20), sticky='w')
         self.put(MuteWarningsCheckbox(self)).grid(row=1, column=1, padx=10, pady=(20, 20), sticky='w')
+        self.put(CallsLoggingCheckbox(self)).grid(row=1, column=2, padx=10, pady=(20, 20), sticky='w')
         self.put(DebugLoggingCheckbox(self)).grid(row=1, column=3, padx=10, pady=(20, 20), sticky='w')
 
         # Shader Hunting
         self.put(ShaderHuntingLabel(self)).grid(row=2, column=0, padx=(20, 10), pady=(20, 20), sticky='w')
         self.put(EnableHuntingCheckbox(self)).grid(row=2, column=1, padx=10, pady=(20, 20), sticky='w')
-        self.put(DumpShadersCheckbox(self)).grid(row=2, column=3, padx=10, pady=(20, 20), sticky='w')
+        self.put(DumpShadersCheckbox(self)).grid(row=2, column=2, padx=10, pady=(20, 20), sticky='w')
+
+        # Fail-Safe
+        self.put(FailSafeLabel(self)).grid(row=3, column=0, padx=(20, 10), pady=(20, 20), sticky='w')
+        self.put(EnforceRenderingCheckbox(self)).grid(row=3, column=1, padx=10, pady=(20, 20), sticky='w', columnspan=2)
+
 
 
 class ShaderHuntingLabel(UILabel):
@@ -83,9 +89,22 @@ class MuteWarningsCheckbox(UICheckbox):
             master=master)
         self.set_tooltip(
             'Enabled: No error warnings or beeps whatsoever. Ignorance is bliss.\n'
-            '* [d3dx.ini]: mute_warnings = 1\n'
+            '* [d3dx.ini]: show_warnings = 0\n'
             'Disabled: Ini parser error warnings and beeps on F10 will haunt poor souls.\n'
-            '* [d3dx.ini]: mute_warnings = 0')
+            '* [d3dx.ini]: show_warnings = 1')
+
+
+class CallsLoggingCheckbox(UICheckbox):
+    def __init__(self, master):
+        super().__init__(
+            text='Calls Logging',
+            variable=Vars.Active.Migoto.calls_logging,
+            master=master)
+        self.set_tooltip(
+            'Enabled: Log API usage.\n'
+            '* [d3dx.ini]: calls = 1\n'
+            'Disabled: Do not log calls. Maximum performance.\n'
+            '* [d3dx.ini]: calls = 0')
 
 
 class DebugLoggingCheckbox(UICheckbox):
@@ -95,11 +114,9 @@ class DebugLoggingCheckbox(UICheckbox):
             variable=Vars.Active.Migoto.debug_logging,
             master=master)
         self.set_tooltip(
-            'Enabled: Verbose logging of 3dmigoto actions and API calls.\n'
-            '* [d3dx.ini]: calls = 1\n'
+            'Enabled: Super verbose debug logging.\n'
             '* [d3dx.ini]: debug = 1\n'
-            'Disabled: No logging whatsoever. Maximum performance.\n'
-            '* [d3dx.ini]: calls = 0\n'
+            'Disabled: No debug logging. Maximum performance.\n'
             '* [d3dx.ini]: debug = 0')
 
 
@@ -151,3 +168,25 @@ class ChangeImporterFolderButton(UIButton):
         if importer_folder == '':
             return
         Vars.Active.Importer.importer_folder.set(importer_folder)
+
+
+class FailSafeLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text='Ini Protection:',
+            font=('Roboto', 16, 'bold'),
+            fg_color='transparent',
+            master=master)
+
+
+class EnforceRenderingCheckbox(UICheckbox):
+    def __init__(self, master):
+        super().__init__(
+            text='Enforce Rendering Settings',
+            variable=Vars.Active.Migoto.mute_warnings,
+            master=master)
+        self.set_tooltip(
+            f'Enabled: Ensure {Config.Launcher.active_importer}-compatible [Rendering] section settings.\n'
+            f'* [d3dx.ini]: texture_hash = {0 if Config.Launcher.active_importer != "WWMI" else 1}\n'
+            f'* [d3dx.ini]: track_texture_updates = {0 if Config.Launcher.active_importer != "WWMI" else 1}\n'
+            'Disabled: Settings above will not be forced into d3dx.ini.')

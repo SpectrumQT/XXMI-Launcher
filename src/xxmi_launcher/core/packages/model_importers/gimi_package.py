@@ -40,14 +40,20 @@ class GIMIConfig(ModelImporterConfig):
             'Loader': {
                 'loader': 'XXMI Launcher.exe',
             },
+        },
+        'enforce_rendering': {
             'Rendering': {
                 'texture_hash': 0,
                 'track_texture_updates': 0,
             },
         },
-        'debug_logging': {
+        'calls_logging': {
             'Logging': {
                 'calls': {'on': 1, 'off': 0},
+            },
+        },
+        'debug_logging': {
+            'Logging': {
                 'debug': {'on': 1, 'off': 0},
             },
         },
