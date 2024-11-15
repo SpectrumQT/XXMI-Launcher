@@ -28,7 +28,8 @@ class GitHubClient:
         try:
             response = requests.get(f'https://api.github.com/repos/{self.owner}/{self.repo}/releases/latest').json()
         except Exception as e:
-            raise ValueError(f'Failed to connect to GitHub!') from e
+            raise ValueError(f'Failed to establish HTTPS connection to GitHub!\n\n'
+                             f'Please check your Antivirus, Firewall, Proxy and VPN settings.') from e
 
         if 'message' in response and 'API rate limit exceeded' in response['message']:
             raise ConnectionRefusedError('GitHub API rate limit exceeded!')
