@@ -107,7 +107,7 @@ class GIMIPackage(ModelImporterPackage):
             signature_public_key='MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEYac352uRGKZh6LOwK0fVDW/TpyECEfnRtUp+bP2PJPP63SWOkJ3a/d9pAnPfYezRVJ1hWjZtpRTT8HEAN/b4mWpJvqO43SAEV/1Q6vz9Rk/VvRV3jZ6B/tmqVnIeHKEb',
             exit_after_update=False,
             installation_path='GIMI/',
-            requirements=['GI-FPS-Unlocker'],
+            requirements=['XXMI', 'GI-FPS-Unlocker'],
         ))
 
     def get_installed_version(self):

@@ -94,6 +94,7 @@ class ZZMIPackage(ModelImporterPackage):
             signature_public_key='MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEb11GjbKQS6SmRe8TcIc5VMu5Ob3moo5v2YeD+s53xEe4bVPGcToUNLu3Jgqo0OwWZ4RsNy1nR0HId6pR09HedyEMifxebsyPT3T5PH82QozEXHQlTDySklWUfGItoOdf',
             exit_after_update=False,
             installation_path='ZZMI/',
+            requirements=['XXMI'],
         ))
 
     def get_installed_version(self):
