@@ -192,10 +192,11 @@ class GameBananaButton(WebResourceButton):
             button_image_path='button-resource-gamebanana.png',
             command=self.open_link,
             master=master)
+        self.subscribe(Events.Application.LoadImporter, self.handle_load_importer)
         self.set_tooltip(self.get_tooltip, delay=0.01)
 
-    def get_tooltip(self):
-        return f'{Config.Launcher.active_importer} GameBanana'
+    def handle_load_importer(self, event):
+        self.show(event.importer_id != 'XXMI')
 
     def open_link(self):
         if Config.Launcher.active_importer == 'WWMI':
@@ -206,6 +207,9 @@ class GameBananaButton(WebResourceButton):
             webbrowser.open('https://gamebanana.com/tools/13050'),
         elif Config.Launcher.active_importer == 'GIMI':
             webbrowser.open('https://gamebanana.com/tools/10093'),
+
+    def get_tooltip(self):
+        return f'{Config.Launcher.active_importer} GameBanana'
 
 
 class DiscordButton(WebResourceButton):
