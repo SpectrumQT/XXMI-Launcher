@@ -342,7 +342,7 @@ class InstallButton(MainActionButton):
             text_x_offset=18,
             text_y_offset=-1,
             font=('Microsoft YaHei', 23, 'bold'),
-            command=lambda: Events.Fire(Events.Application.Update(packages=[Config.Launcher.active_importer], force=True, reinstall=True)),
+            command=lambda: Events.Fire(Events.ModelImporter.Install()),
             master=master)
         self.tools_button = tools_button
         self.subscribe(

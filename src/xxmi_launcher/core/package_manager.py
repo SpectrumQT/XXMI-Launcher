@@ -457,7 +457,7 @@ class PackageManager:
         log.debug(f'Initializing packages update (no_install={no_install}, no_check={no_check}, force={force}, reinstall={reinstall}, silent={silent}, packages={packages})...')
 
         if self.update_running:
-            log.debug(f'Packages update canceled: update is already in process!')
+            log.debug(f'Packages update canceled: update is already in progress!')
             return
         self.update_running = True
         self.api_connection_refused = False

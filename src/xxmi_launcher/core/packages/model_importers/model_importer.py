@@ -34,6 +34,10 @@ class SettingType(Enum):
 class ModelImporterEvents:
 
     @dataclass
+    class Install:
+        pass
+
+    @dataclass
     class StartGame:
         pass
 
@@ -198,6 +202,7 @@ class ModelImporterPackage(Package):
         raise NotImplementedError
 
     def load(self):
+        self.subscribe(Events.ModelImporter.Install, self.install)
         self.subscribe(Events.ModelImporter.StartGame, self.start_game)
         self.subscribe(Events.ModelImporter.ValidateGameFolder, lambda event: self.validate_game_path(event.game_folder))
         self.subscribe(Events.ModelImporter.CreateShortcut, lambda event: self.create_shortcut())
@@ -232,7 +237,9 @@ class ModelImporterPackage(Package):
                 Config.Active.Importer.game_folder = str(game_folder)
             except Exception as e:
                 Events.Fire(Events.Application.OpenSettings())
-                raise ValueError(f'Failed to detect Game Folder!\n\nRefer to tooltip of Settings > Game Folder for details.')
+                raise ValueError(f'\n'
+                                 f'Failed to detect Game Folder!\n\n'
+                                 f'Refer to tooltip of Settings > General > Game Folder for details.')
 
         # Skip installation locations check for Linux
         if platform.system() == 'Linux' or any(x in os.environ for x in ['WINE', 'WINEPREFIX', 'WINELOADER']):
@@ -248,7 +255,7 @@ class ModelImporterPackage(Package):
         if str(game_exe_path.parent) in str(Config.Active.Importer.importer_path):
             raise ValueError(f'\n'
                              f'{Config.Launcher.active_importer} Folder must be located outside of the Game Folder!\n\n'
-                             f'Please use Settings > {Config.Launcher.active_importer} to set another location.')
+                             f'Please chose another location for Settings > {Config.Launcher.active_importer} > {Config.Launcher.active_importer} Folder.')
 
         return game_path, game_exe_path
 
@@ -273,14 +280,14 @@ class ModelImporterPackage(Package):
         if not Config.Active.Importer.shortcut_deployed:
             self.create_shortcut()
 
-    def update(self, clean=False):
+    def install(self, event):
         # Assert installation path
         try:
             self.get_game_paths()
         except Exception as e:
             raise ValueError(f'{Config.Launcher.active_importer} Installation Failed:\n{e}') from e
-        # Run default package update logic
-        super().update(clean)
+        # Install importer package and its requirements
+        Events.Fire(Events.Application.Update(packages=[Config.Launcher.active_importer], force=True, reinstall=True))
 
     def initialize_game_launch(self, game_path: Path):
         raise NotImplementedError

@@ -36,7 +36,6 @@ class ModelImporterSettingsFrame(UIFrame):
         self.put(EnforceRenderingCheckbox(self)).grid(row=3, column=1, padx=10, pady=(20, 20), sticky='w', columnspan=2)
 
 
-
 class ShaderHuntingLabel(UILabel):
     def __init__(self, master):
         super().__init__(
