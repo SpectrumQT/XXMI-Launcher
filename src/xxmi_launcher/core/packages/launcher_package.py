@@ -65,12 +65,8 @@ class LauncherPackage(Package):
             exit_after_update=True,
         ))
         self.subscribe(Events.LauncherManager.CreateShortcut, lambda event: self.create_shortcut())
-        installed_version = self.get_installed_version()
-        if Config.Launcher.config_version < installed_version:
-            if Config.Launcher.config_version and Config.Launcher.config_version < '1.0.2':
-                self.create_shortcut()
-            Config.Config.upgrade(installed_version)
-            self.cleanup_old_version()
+
+        self.upgrade_installation()
 
     def get_installed_version(self):
         if getattr(sys, 'frozen', False):
@@ -96,32 +92,50 @@ class LauncherPackage(Package):
 
         time.sleep(1)
 
-    def cleanup_old_version(self):
-        # Cleanup pre-0.9.7
-        old_exe_path = Paths.App.Root / 'XXMI Launcher.exe'
-        if old_exe_path.is_file():
-            Events.Fire(Events.Application.StatusUpdate(status='Removing old files...'))
-            # Remove pre-0.9.7 files and folders from `XXMI Launcher/Resources`
-            for path in Paths.App.Resources.iterdir():
-                if path.name in ['Bin', 'Packages', 'Security']:
-                    continue
-                if path.is_dir():
-                    shutil.rmtree(path)
-                else:
-                    path.unlink()
-                time.sleep(0.01)
-            # Remove pre-0.9.7 Installer
-            installer_path = Paths.App.Resources / 'Packages' / 'Installer'
-            if installer_path.is_dir():
-                shutil.rmtree(installer_path)
-            # Remove pre-0.9.7 exe
-            old_exe_path.unlink()
-            # Notify user about new exe path
-            msg = ''
-            msg += f'Launcher .exe file location was changed to:\n\n'
-            msg += f'{Paths.App.Resources / "Bin" / "XXMI Launcher.exe"}\n\n'
-            msg += f'Desktop shortcut was updated automatically. Sorry for bothering!'
-            Events.Fire(Events.Application.ShowInfo(title='Update Notification', message=msg))
+    def upgrade_installation(self):
+        # Grab old version info from config
+        old_version = Config.Launcher.config_version
+
+        # Grab new version info from exe
+        new_version = self.get_installed_version()
+
+        # Exit early if no version upgrade required
+        if old_version == new_version:
+            return
+
+        # Upgrade existing config to the latest version
+        Config.Config.upgrade(old_version, new_version)
+
+        # Exit early if old version is empty (aka fresh installation)
+        if not old_version:
+            return
+
+        # Cleanup existing pre-msi installation
+        if old_version < '0.9.7':
+            old_exe_path = Paths.App.Root / 'XXMI Launcher.exe'
+            if old_exe_path.is_file():
+                Events.Fire(Events.Application.StatusUpdate(status='Removing old files...'))
+                # Remove pre-nuitka files and folders from `XXMI Launcher/Resources`
+                for path in Paths.App.Resources.iterdir():
+                    if path.name in ['Bin', 'Packages', 'Security']:
+                        continue
+                    if path.is_dir():
+                        shutil.rmtree(path)
+                    else:
+                        path.unlink()
+                    time.sleep(0.01)
+                # Remove pre-msi installer
+                installer_path = Paths.App.Resources / 'Packages' / 'Installer'
+                if installer_path.is_dir():
+                    shutil.rmtree(installer_path)
+                # Remove pre-nuitka exe
+                old_exe_path.unlink()
+                # Notify user about new exe path
+                msg = ''
+                msg += f'Launcher .exe file location was changed to:\n\n'
+                msg += f'{Paths.App.Resources / "Bin" / "XXMI Launcher.exe"}\n\n'
+                msg += f'Desktop shortcut was updated automatically. Sorry for bothering!'
+                Events.Fire(Events.Application.ShowInfo(title='Update Notification', message=msg))
 
     def create_shortcut(self):
         pythoncom.CoInitialize()

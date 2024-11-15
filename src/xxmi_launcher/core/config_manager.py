@@ -131,68 +131,56 @@ class AppConfig:
         with open(self.config_path, 'w', encoding='utf-8') as f:
             return f.write(cfg)
 
-    def upgrade(self, version):
-        # Apply 0.9.3 config patch
-        if self.Launcher.config_version < '0.9.3':
-            log.debug(f'Upgrading launcher config to 0.9.3...')
-            for package_name, importer in self.Importers.__dict__.items():
-                # Disable unused advanced commands
-                if not importer.Importer.run_pre_launch:
-                    importer.Importer.run_pre_launch_enabled = False
-                if not importer.Importer.run_post_load:
-                    importer.Importer.run_post_load_enabled = False
-                if not importer.Importer.extra_libraries:
-                    importer.Importer.extra_libraries_enabled = False
-                # Modify changed d3dx.ini settings stacks
-                ini_overrides = importer.Importer.d3dx_ini
-                try:
-                    del ini_overrides['core']['Loader']['target']
-                except:
-                    pass
-                try:
-                    del ini_overrides['debug_logging']['Logging']['unbuffered']
-                except:
-                    pass
-                try:
-                    del ini_overrides['debug_logging']['Logging']['force_cpu_affinity']
-                except:
-                    pass
-                try:
-                    del ini_overrides['debug_logging']['Logging']['debug_locks']
-                except:
-                    pass
-                try:
-                    del ini_overrides['debug_logging']['Logging']['crash']
-                except:
-                    pass
+    def run_patch_110(self):
+        for package_name, importer in self.Importers.__dict__.items():
+            # Set new default process priority to Normal
+            if importer.Importer.process_priority == 'Above Normal':
+                importer.Importer.process_priority = 'Normal'
 
-        # Apply 1.0.5 config patch
-        if self.Launcher.config_version < '1.0.5':
-            log.debug(f'Upgrading launcher config to 1.0.5...')
-            for package_name, importer in self.Importers.__dict__.items():
-                # Set new default process priority to Normal
-                if importer.Importer.process_priority == 'Above Normal':
-                    importer.Importer.process_priority = 'Normal'
-                # Add deployed model importers to list of selected games for launcher to work with
-                package_config = self.Packages.packages.get(package_name, None)
-                if package_config is not None and package_config.deployed_version != '':
-                    if package_name not in self.Launcher.enabled_importers:
-                        self.Launcher.enabled_importers.append(package_name)
-                # Modify changed d3dx.ini settings stacks
-                ini_overrides = importer.Importer.d3dx_ini
-                new_config = type(importer)()
-                try:
-                    del ini_overrides['core']['Rendering']
-                except:
-                    pass
-                ini_overrides['enforce_rendering'] = new_config.Importer.d3dx_ini['enforce_rendering']
-                try:
-                    del ini_overrides['debug_logging']['Logging']['calls']
-                except:
-                    pass
-                ini_overrides['calls_logging'] = new_config.Importer.d3dx_ini['calls_logging']
+            # Add deployed model importers to list of selected games for launcher to work with
+            package_config = self.Packages.packages.get(package_name, None)
+            if package_config is not None and package_config.deployed_version != '':
+                if package_name not in self.Launcher.enabled_importers:
+                    self.Launcher.enabled_importers.append(package_name)
 
-        self.Launcher.config_version = version
+            # Modify changed d3dx.ini settings stacks
+            ini_overrides = importer.Importer.d3dx_ini
+            new_config = type(importer)()
+            try:
+                del ini_overrides['core']['Rendering']
+            except:
+                pass
+            ini_overrides['enforce_rendering'] = new_config.Importer.d3dx_ini['enforce_rendering']
+            try:
+                del ini_overrides['debug_logging']['Logging']['calls']
+            except:
+                pass
+            ini_overrides['calls_logging'] = new_config.Importer.d3dx_ini['calls_logging']
+
+    def upgrade(self, old_version, new_version):
+        # Save config to file and exit early if old version is empty (aka fresh installation)
+        if not old_version:
+            log.debug(f'Saving new config...')
+            self.Launcher.config_version = new_version
+            self.save()
+            return
+
+        # Apply patches
+        patches = {
+            '1.1.0': self.run_patch_110,
+        }
+        applied_patches = []
+        for patch_version, patch_func in patches.items():
+            if old_version < patch_version:
+                log.debug(f'Upgrading launcher config from {old_version} to {patch_version}...')
+                patch_func()
+                applied_patches.append(patch_version)
+
+        # Save patched config to file
+        if len(applied_patches) > 0:
+            log.debug(f'Saving patched config...')
+            self.Launcher.config_version = new_version
+            self.save()
 
 
 class AppConfigSecurity:

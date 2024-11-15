@@ -599,11 +599,11 @@ class Application:
 if __name__ == '__main__':
     if getattr(sys, 'frozen', False):
         # Pyinstaller (debug build): `XXMI Launcher\Resources\Bin\XXMI Launcher.exe`
+        # Nuitka (release build): `XXMI Launcher\Resources\Bin\XXMI Launcher.exe`
         multiprocessing.freeze_support()
         root_path = Path(sys.executable).parent.parent.parent
     else:
         # Python (native): `XXMI Launcher\src\xxmi_launcher\app.py`
-        # Nuitka (release build): `XXMI Launcher\Resources\Bin\XXMI Launcher.exe`
         root_path = Path(__file__).resolve().parent.parent.parent
 
     # import binascii
