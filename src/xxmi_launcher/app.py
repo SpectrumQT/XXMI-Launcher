@@ -375,11 +375,6 @@ class Application:
             if importer_id == Config.Launcher.active_importer and not reload:
                 return
             self.package_manager.unload_package(Config.Launcher.active_importer)
-        # Go to game selection page if folder of target MI was removed by the user
-        if importer_id != 'XXMI':
-            package = self.package_manager.get_package(importer_id)
-            if package.cfg.deployed_version != '' and package.get_installed_version() == '':
-                importer_id = 'XXMI'
         # Mark requested MI as active
         Config.Launcher.active_importer = importer_id
         # Exit early if requested MI is `XXMI` aka dummy id used for homepage
