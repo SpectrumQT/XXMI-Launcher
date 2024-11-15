@@ -346,6 +346,7 @@ class Application:
         # Exit early if current active model importer is not installed
         importer_package = self.package_manager.packages.get(Config.Launcher.active_importer, None)
         if importer_package is None or importer_package.get_installed_version() == '':
+            Events.Fire(Events.Application.Ready())
             return
         # Query GitHub for updates and skip installation, force query and lock GUI if --update argument is supplied
         try:
