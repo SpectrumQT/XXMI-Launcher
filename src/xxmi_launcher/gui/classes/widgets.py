@@ -189,6 +189,8 @@ class UIImage(UIWidget, CTkBaseClass):
         return ImageTk.PhotoImage(image)
 
     def move(self, x, y):
+        x = int(self._apply_widget_scaling(x))
+        y = int(self._apply_widget_scaling(y))
         self.canvas.coords(self.image_tag, x, y)
 
     def _show(self):
