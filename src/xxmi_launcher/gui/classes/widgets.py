@@ -1,5 +1,6 @@
 import sys
 import logging
+import time
 import tkinter
 import re
 
@@ -846,6 +847,8 @@ class UIOptionMenu(CTkOptionMenu, UIWidget):
         UIWidget.__init__(self, master,  **kwargs)
         CTkOptionMenu.__init__(self, master, **kwargs)
         self._button_color_disabled = ThemeManager.theme["CTkOptionMenu"].get("button_color_disabled", None)
+        self.dropdown_menu_opened = False
+        self.dropdown_menu_close_time = 0
 
     def _draw(self, no_color_updates=False):
         CTkBaseClass._draw(self, no_color_updates)
@@ -913,6 +916,33 @@ class UIOptionMenu(CTkOptionMenu, UIWidget):
             self._canvas.itemconfig("inner_parts_right",
                                     outline=self._apply_appearance_mode(self._button_color),
                                     fill=self._apply_appearance_mode(self._button_color))
+
+    def _clicked(self, event=0):
+        if self._state is not tkinter.DISABLED and len(self._values) > 0:
+            if not self.dropdown_menu_opened:
+                # Adding toggle behaviour to dropdown button is a bit tricky
+                # By default, the same click that closes the menu will open it again if dropdown button is clicked
+                # Also, as _open_dropdown_menu() is blocking, we can't directly check if menu is shown
+                # So we'll use a timer to distinguish closing clicks from opening ones
+                # World record is less than 20 CPS (~0.05 between clicks), so 5 times smaller interval should be fine
+                if time.time() - self.dropdown_menu_close_time < 0.01:
+                    return
+                self._open_dropdown_menu()
+            else:
+                self._close_dropdown_menu()
+
+    def _open_dropdown_menu(self):
+        self.dropdown_menu_opened = True
+        # Following call is blocking until the menu is closed
+        super()._open_dropdown_menu()
+        self.dropdown_menu_opened = False
+        self.dropdown_menu_close_time = time.time()
+
+    def _close_dropdown_menu(self):
+        self._dropdown_menu.unpost()
+
+    def _dropdown_callback(self, value: str):
+        super()._dropdown_callback(value)
 
 
 class UITextbox(CTkTextbox, UIWidget):
