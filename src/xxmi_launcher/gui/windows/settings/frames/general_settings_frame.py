@@ -376,7 +376,6 @@ class ApplyThemeButton(UIButton):
             hover_color='#ffffff',
             border_width=1,
             master=master)
-        self.set_tooltip(f'Restart launcher to apply selected theme.')
 
         self.trace_write(Vars.Launcher.gui_theme, self.handle_write_gui_theme)
 
