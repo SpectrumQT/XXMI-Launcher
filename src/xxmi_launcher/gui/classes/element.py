@@ -52,7 +52,7 @@ class UIElement:
             Vars.Settings.subscribe_on_save(var, callback, caller_id=self)
 
     def trace_write(self, var, callback):
-        if callback == self.set or callback == self.show or callback == self.set_tooltip or callback == self.set_enabled:
+        if (hasattr(self, 'set') and callback == self.set) or callback == self.show or callback == self.set_tooltip or callback == self.set_enabled:
             callback(var.get())
             Vars.Settings.subscribe_on_write(var, lambda traced_var, value: callback(value), caller_id=self)
         else:
@@ -144,6 +144,8 @@ class UIElementBase(UIElement):
     def grid(self, **kwargs):
         self.manager = 'grid'
         super().grid(**kwargs)
+        if self.is_hidden:
+            self.grid_remove()
 
     def place(self, **kwargs):
         self.manager = 'place'
@@ -152,6 +154,8 @@ class UIElementBase(UIElement):
         else:
             self.last_place = kwargs
             super().place(**kwargs)
+        if self.is_hidden:
+            self.place_forget()
 
     def pack(self, **kwargs):
         self.manager = 'pack'
@@ -160,3 +164,5 @@ class UIElementBase(UIElement):
         else:
             self.last_pack = kwargs
             super().pack(**kwargs)
+        if self.is_hidden:
+            self.pack_forget()
