@@ -22,10 +22,7 @@ class MessageWindow(UIToplevel):
 
         self.cfg.title = title
 
-        if hasattr(Config, 'Active'):
-            self.cfg.icon_path = Paths.App.Themes / Config.Active.Importer.launcher_theme / 'MessageWindow' / icon
-        else:
-            self.cfg.icon_path = Paths.App.Themes / 'Default' / 'MessageWindow' / icon
+        self.cfg.icon_path = Paths.App.Themes / Config.Launcher.gui_theme / 'MessageWindow' / icon
 
         self.cfg.width = 640
         self.cfg.height = 225

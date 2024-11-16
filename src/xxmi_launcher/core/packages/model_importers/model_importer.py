@@ -88,10 +88,6 @@ class ModelImporterConfig:
             return Paths.App.Root / importer_path
 
     @property
-    def theme_path(self) -> Path:
-        return Paths.App.Themes / self.launcher_theme
-
-    @property
     def extra_dll_paths(self) -> List[Path]:
         dll_paths = []
         for dll_path in self.extra_libraries.split('\n'):
@@ -418,7 +414,7 @@ class ModelImporterPackage(Package):
             link.description = f'Start game with {Config.Launcher.active_importer} and skip launcher load'
             link.working_directory = str(Paths.App.Resources / 'Bin')
             link.arguments = f'--nogui --xxmi {Config.Launcher.active_importer}'
-            link.icon_location = (str(Config.Active.Importer.theme_path / 'Shortcuts' / f'{Config.Launcher.active_importer}.ico'), 0)
+            link.icon_location = (str(Config.Launcher.theme_path / 'Shortcuts' / f'{Config.Launcher.active_importer}.ico'), 0)
         Config.Active.Importer.shortcut_deployed = True
 
     def disable_duplicate_libraries(self, libs_path: Path):
