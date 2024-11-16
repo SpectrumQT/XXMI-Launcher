@@ -44,6 +44,10 @@ class ApplicationEvents:
         wait_window: bool = False
 
     @dataclass
+    class CloseSettings:
+        save: bool = False
+
+    @dataclass
     class LoadImporter:
         importer_id: str
         reload: bool = False
@@ -91,6 +95,11 @@ class ApplicationEvents:
 
     @dataclass
     class Close:
+        delay: int = 0
+        pass
+
+    @dataclass
+    class Restart:
         delay: int = 0
 
     @dataclass
@@ -287,6 +296,8 @@ class Application:
                          lambda event: self.run_as_thread(self.load_importer, importer_id=event.importer_id, reload=event.reload))
         Events.Subscribe(Events.Application.Launch,
                          lambda event: self.run_as_thread(self.launch))
+        Events.Subscribe(Events.Application.Restart,
+                         lambda event: self.run_as_thread(self.restart, delay=event.delay))
 
         Events.Fire(Events.Application.ConfigUpdate())
 
@@ -590,6 +601,11 @@ class Application:
                 break
         logging.debug(f'App Exit')
         os._exit(os.EX_OK)
+
+    def restart(self, delay: int = 0):
+        if getattr(sys, 'frozen', False):
+            subprocess.Popen(sys.executable, shell=True)
+        Events.Fire(Events.Application.Close(delay=delay))
 
 
 if __name__ == '__main__':
