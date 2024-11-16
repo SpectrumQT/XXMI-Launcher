@@ -55,7 +55,6 @@ class ModelImporterConfig:
     package_name: str = ''
     importer_folder: str = ''
     game_folder: str = ''
-    launcher_theme: str = 'Default'
     overwrite_ini: bool = True
     process_priority: str = 'Normal'
     window_mode: str = 'Borderless'

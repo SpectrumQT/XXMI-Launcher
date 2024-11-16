@@ -45,6 +45,7 @@ class SettingsWindow(UIToplevel):
 
         self.subscribe(Events.Application.CheckForUpdates, self.save_and_close)
         self.subscribe(Events.Application.Update, self.save_and_close)
+        self.subscribe(Events.Application.CloseSettings, self.handle_close_settings)
 
         self.trace_save(Vars.Active.Importer.importer_folder, self.handle_importer_folder_update)
 
@@ -62,6 +63,12 @@ class SettingsWindow(UIToplevel):
         Vars.Settings.save()
         Config.Config.save()
         self.close()
+
+    def handle_close_settings(self, event=None):
+        if event.save:
+            self.save_and_close()
+        else:
+            self.close()
 
 
 class CancelButton(UIButton):

@@ -9,6 +9,7 @@ import pythoncom
 
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Optional
 
 import core.path_manager as Paths
 import core.event_manager as Events
@@ -25,18 +26,18 @@ log = logging.getLogger(__name__)
 class LauncherManagerConfig:
     auto_update: bool = True
     auto_close: bool = True
+    gui_theme: str = 'Default'
     theme_mode: str = 'System'
     active_importer: str = 'XXMI'
     enabled_importers: list = field(default_factory=lambda: [])
     log_level: str = 'DEBUG'
     config_version: str = ''
 
+    active_theme: Optional[str] = field(init=False, default=None)
+
     @property
     def theme_path(self) -> Path:
-        if self.active_importer == 'XXMI':
-            return Paths.App.Themes / 'Default'
-        else:
-            return Paths.App.Themes / Config.Active.Importer.launcher_theme
+        return Paths.App.Themes / Config.Launcher.active_theme
 
 
 @dataclass

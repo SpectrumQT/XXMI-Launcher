@@ -81,6 +81,7 @@ class MainWindow(UIMainWindow):
         # Vars.Settings.Launcher.log_level.set('TEST')
         # Vars.Settings.save()
 
+        Config.Launcher.active_theme = Config.Launcher.gui_theme
         self.load_theme(Config.Launcher.theme_path)
 
         self.cfg.title = 'XXMI Launcher'

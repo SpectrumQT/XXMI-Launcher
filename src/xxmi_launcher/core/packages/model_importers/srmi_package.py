@@ -29,7 +29,6 @@ log = logging.getLogger(__name__)
 @dataclass
 class SRMIConfig(ModelImporterConfig):
     importer_folder: str = 'SRMI/'
-    launcher_theme: str = 'Default'
     launch_options: str = ''
     d3dx_ini: Dict[
         str, Dict[str, Dict[str, Union[str, int, float, Dict[str, Union[str, int, float]]]]]

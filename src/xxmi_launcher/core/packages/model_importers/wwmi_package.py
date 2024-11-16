@@ -29,7 +29,6 @@ log = logging.getLogger(__name__)
 @dataclass
 class WWMIConfig(ModelImporterConfig):
     importer_folder: str = 'WWMI/'
-    launcher_theme: str = 'Default'
     launch_options: str = '-SkipSplash'
     d3dx_ini: Dict[
         str, Dict[str, Dict[str, Union[str, int, float, Dict[str, Union[str, int, float]]]]]

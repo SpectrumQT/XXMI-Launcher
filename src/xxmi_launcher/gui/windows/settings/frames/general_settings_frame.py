@@ -4,6 +4,7 @@ from customtkinter import filedialog
 
 import core.event_manager as Events
 import core.config_manager as Config
+import core.path_manager as Paths
 import gui.vars as Vars
 
 from gui.classes.containers import UIFrame
@@ -44,11 +45,16 @@ class GeneralSettingsFrame(UIFrame):
             #  Performance Tweaks
             if Vars.Launcher.active_importer.get() == 'WWMI':
                 self.put(ApplyTweaksCheckbox(self)).grid(row=3, column=2, padx=(20, 10), pady=(10, 10), sticky='w')
-                self.put(OpenEngineIniButton(self)).grid(row=3, column=3, padx=(10, 20), pady=(10, 10), sticky='w')
+                self.put(OpenEngineIniButton(self)).grid(row=3, column=3, padx=(10, 20), pady=(10, 10), sticky='e')
 
         # Auto close
         self.put(LauncherLabel(self)).grid(row=4, column=0, padx=(20, 10), pady=(10, 10), sticky='w')
         self.put(AutoCloseCheckbox(self)).grid(row=4, column=1, padx=(10, 10), pady=(10, 10), sticky='w', columnspan=3)
+
+        # Theme
+        self.put(ThemeLabel(self)).grid(row=4, column=1, padx=(240, 10), pady=(10, 10), sticky='w', columnspan=3)
+        self.put(LauncherThemeOptionMenu(self)).grid(row=4, column=1, padx=(310, 10), pady=(10, 10), sticky='w', columnspan=3)
+        self.put(ApplyThemeButton(self)).grid(row=4, column=1, padx=(0, 20), pady=(10, 10), sticky='e', columnspan=3)
 
 
 class GameFolderLabel(UILabel):
@@ -317,3 +323,71 @@ class AutoCloseCheckbox(UICheckbox):
         self.set_tooltip(
             'Enabled: Launcher will close itself once the game has started and 3dmigoto injection has been confirmed.\n'
             'Disabled: Launcher will keep itself running.')
+
+
+class ThemeLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text='Theme:',
+            font=('Roboto', 16, 'bold'),
+            fg_color='transparent',
+            master=master)
+
+
+class LauncherThemeOptionMenu(UIOptionMenu):
+    def __init__(self, master):
+        super().__init__(
+            values=['Default'],
+            variable=Vars.Launcher.gui_theme,
+            width=150,
+            height=36,
+            font=('Arial', 14),
+            dropdown_font=('Arial', 14),
+            master=master)
+        self.set_tooltip('Select launcher GUI theme.\n'
+                         'Warning! `Default` theme will be overwritten by launcher updates!\n'
+                         'To make a custom theme:\n'
+                         '1. Create a duplicate of `Default` folder in `Themes` folder.\n'
+                         '2. Rename the duplicate in a way you want it to be shown in Settings.\n'
+                         '3. Edit or replace any images to your liking.')
+
+    def update_values(self):
+        values = ['Default']
+        for path in Paths.App.Themes.iterdir():
+            if path.is_dir() and path.name != 'Default':
+                values.append(path.name)
+        self.configure(values=values)
+
+    def _open_dropdown_menu(self):
+        self.update_values()
+        super()._open_dropdown_menu()
+
+
+class ApplyThemeButton(UIButton):
+    def __init__(self, master):
+        super().__init__(
+            text='Apply',
+            command=self.apply_theme,
+            width=100,
+            height=36,
+            font=('Roboto', 14),
+            fg_color='#eeeeee',
+            text_color='#000000',
+            hover_color='#ffffff',
+            border_width=1,
+            master=master)
+        self.set_tooltip(f'Restart launcher to apply selected theme.')
+
+        self.trace_write(Vars.Launcher.gui_theme, self.handle_write_gui_theme)
+
+        self.hide()
+
+    def apply_theme(self):
+        Events.Fire(Events.Application.CloseSettings(save=True))
+        Events.Fire(Events.Application.Restart(delay=0))
+
+    def handle_write_gui_theme(self, var, val):
+        if val != Config.Launcher.active_theme:
+            self.show()
+        else:
+            self.hide()
