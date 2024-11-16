@@ -182,7 +182,7 @@ class EnforceRenderingCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
             text='Enforce Rendering Settings',
-            variable=Vars.Active.Migoto.mute_warnings,
+            variable=Vars.Active.Migoto.enforce_rendering,
             master=master)
         self.set_tooltip(
             f'Enabled: Ensure {Config.Launcher.active_importer}-compatible [Rendering] section settings.\n'
