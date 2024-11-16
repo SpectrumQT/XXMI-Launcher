@@ -136,7 +136,7 @@ class AppSettings(Config.AppConfig):
                 value = getattr(src, dst_field.name)
                 if hasattr(value, '__dataclass_fields__'):
                     self.load_vars(value, var)
-                elif isinstance(value, dict | list | tuple):
+                elif isinstance(value, dict | list | tuple) or (not dst_field.init and dst_field.default is None):
                     pass
                 else:
                     var.set(value)
@@ -148,6 +148,8 @@ class AppSettings(Config.AppConfig):
             value = getattr(dst, dst_field.name)
             if hasattr(value, '__dataclass_fields__'):
                 self.save_vars(var, value)
+            elif not dst_field.init and dst_field.default is None:
+                pass
             elif isinstance(value, str | int | float | bool):
                 var_value = var.get()
                 setattr(dst, dst_field.name, var_value)
