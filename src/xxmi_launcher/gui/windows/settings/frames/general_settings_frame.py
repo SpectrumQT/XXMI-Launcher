@@ -386,7 +386,7 @@ class ApplyThemeButton(UIButton):
         Events.Fire(Events.Application.Restart(delay=0))
 
     def handle_write_gui_theme(self, var, val):
-        if val != Config.Launcher.active_theme:
+        if val != Config.Config.active_theme:
             self.show()
         else:
             self.hide()

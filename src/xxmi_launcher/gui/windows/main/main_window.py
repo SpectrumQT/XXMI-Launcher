@@ -36,8 +36,9 @@ class MainWindow(UIMainWindow):
         # Fix pyglet font load
         pyglet.options['win32_gdi_font'] = True
 
-        self.active_theme_path = None
-        self.load_theme(Paths.App.Themes / 'Default')
+        self.active_theme = None
+
+        self.load_theme('Default')
 
         Events.Subscribe(Events.Application.ShowMessage,
                          lambda event: self.show_messagebox(event))
@@ -48,11 +49,13 @@ class MainWindow(UIMainWindow):
         Events.Subscribe(Events.Application.ShowInfo,
                          lambda event: self.show_messagebox(event))
 
-    def load_theme(self, theme_path: Path):
-        if self.active_theme_path == theme_path:
+    def load_theme(self, theme: str):
+        # Skip loading the same theme
+        if self.active_theme == theme:
             return
-        self.active_theme_path = theme_path
+        self.active_theme = theme
         # Load custom tkinter theme
+        theme_path = Paths.App.Themes / theme
         try:
             set_default_color_theme(str(theme_path / 'custom-tkinter-theme.json'))
         except Exception as e:
@@ -81,8 +84,7 @@ class MainWindow(UIMainWindow):
         # Vars.Settings.Launcher.log_level.set('TEST')
         # Vars.Settings.save()
 
-        Config.Launcher.active_theme = Config.Launcher.gui_theme
-        self.load_theme(Config.Launcher.theme_path)
+        self.load_theme(Config.Config.active_theme)
 
         self.cfg.title = 'XXMI Launcher'
 

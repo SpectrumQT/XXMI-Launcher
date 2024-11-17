@@ -33,12 +33,6 @@ class LauncherManagerConfig:
     log_level: str = 'DEBUG'
     config_version: str = ''
 
-    active_theme: Optional[str] = field(init=False, default=None)
-
-    @property
-    def theme_path(self) -> Path:
-        return Paths.App.Themes / Config.Launcher.active_theme
-
 
 @dataclass
 class LauncherManagerEvents:

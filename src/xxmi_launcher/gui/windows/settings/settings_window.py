@@ -24,7 +24,7 @@ class SettingsWindow(UIToplevel):
         Vars.Settings.load()
 
         self.cfg.title = 'Settings'
-        self.cfg.icon_path = Config.Launcher.theme_path / 'window-icon.ico'
+        self.cfg.icon_path = Config.Config.theme_path / 'window-icon.ico'
         self.cfg.width = 800
         self.cfg.height = 450
         self.cfg.no_titlebar = False

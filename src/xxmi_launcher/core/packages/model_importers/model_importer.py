@@ -414,7 +414,7 @@ class ModelImporterPackage(Package):
             link.description = f'Start game with {Config.Launcher.active_importer} and skip launcher load'
             link.working_directory = str(Paths.App.Resources / 'Bin')
             link.arguments = f'--nogui --xxmi {Config.Launcher.active_importer}'
-            link.icon_location = (str(Config.Launcher.theme_path / 'Shortcuts' / f'{Config.Launcher.active_importer}.ico'), 0)
+            link.icon_location = (str(Config.Config.theme_path / 'Shortcuts' / f'{Config.Launcher.active_importer}.ico'), 0)
         Config.Active.Importer.shortcut_deployed = True
 
     def disable_duplicate_libraries(self, libs_path: Path):

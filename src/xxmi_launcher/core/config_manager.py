@@ -4,7 +4,7 @@ import json
 
 from pathlib import Path
 from dataclasses import dataclass, field, fields
-from typing import Union, Dict, Any
+from typing import Union, Dict, Any, Optional
 
 from dacite import from_dict
 
@@ -52,6 +52,12 @@ class AppConfig:
     )
     # State fields
     # Active: Optional[WWMIConfig] = field(init=False, default=None)
+
+    active_theme: Optional[str] = field(init=False, default=None)
+
+    @property
+    def theme_path(self) -> Path:
+        return Paths.App.Themes / Config.active_theme
 
     @property
     def config_path(self):
@@ -111,6 +117,7 @@ class AppConfig:
         for key, value in from_dict(data_class=AppConfig, data=cfg).__dict__.items():
             if hasattr(self, key):
                 setattr(self, key, value)
+        self.active_theme = self.Launcher.gui_theme or 'Default'
 
     def load(self, cfg_path=None):
         try:
@@ -302,4 +309,4 @@ Active: Union[gimi_package.GIMIPackageConfig, srmi_package.SRMIPackageConfig,
 
 
 def get_resource_path(element):
-    return Launcher.theme_path / element.get_resource_path()
+    return Config.theme_path / element.get_resource_path()
