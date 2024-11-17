@@ -349,7 +349,7 @@ class LauncherThemeOptionMenu(UIOptionMenu):
                          'To make a custom theme:\n'
                          '1. Create a duplicate of `Default` folder in `Themes` folder.\n'
                          '2. Rename the duplicate in a way you want it to be shown in Settings.\n'
-                         '3. Edit or replace any images to your liking.')
+                         '3. Edit or replace any images (valid extensions: webp, jpeg, png, jpg).')
 
     def update_values(self):
         values = ['Default']

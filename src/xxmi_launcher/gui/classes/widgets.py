@@ -3,7 +3,8 @@ import logging
 import time
 import tkinter
 import re
-import cv2
+# import cv2
+# import math
 
 from typing import Union, Tuple, List, Dict, Optional, Callable
 from pathlib import Path
@@ -140,11 +141,13 @@ class UIImage(UIWidget, CTkBaseClass):
         self.image_path = None
         self.image_tag = None
 
-        self._video = None
-        self._video_fps = None
-        self._video_frame_time = None
-        self._video_buffer = []
-        self._video_rendering_active = False
+        # self._video = None
+        # self._video_fps = None
+        # self._video_frame_time = None
+        # self._video_last_frame_time = 0
+        # self._video_buffer = []
+        # self._video_buffering_time = 0
+        # self._video_rendering_active = False
         # self._video_frame_counter = []
 
         self.configure(image_path=image_path, x=x, y=y, width=width, height=height, anchor=anchor,
@@ -160,7 +163,8 @@ class UIImage(UIWidget, CTkBaseClass):
 
             # Search for files with same name but different extension to support advanced themes
             if not path.is_file():
-                supported_extensions = ['.mp4', '.mkv', '.avi', '.gif', '.webp', '.jpeg', '.png', '.jpg']
+                # supported_extensions = ['.mp4', '.mkv', '.avi', '.gif', '.webp', '.jpeg', '.png', '.jpg']
+                supported_extensions = ['.webp', '.jpeg', '.png', '.jpg']
                 supported_extensions.remove(path.suffix)
                 found = False
                 for extension in supported_extensions:
@@ -173,29 +177,30 @@ class UIImage(UIWidget, CTkBaseClass):
                                      f'{path}\n\n'
                                      f'Hint: You can also use other extensions: {", ".join(supported_extensions)}')
 
-            if path.suffix in ['.mp4', '.gif', '.mkv', '.avi']:
-                self._update_attrs(list(kwargs.keys()), kwargs)
+            # if path.suffix in ['.mp4', '.gif', '.mkv', '.avi']:
+            #     self._update_attrs(list(kwargs.keys()), kwargs)
+            #
+            #     self._video = cv2.VideoCapture(str(path))
+            #
+            #     self._video_fps = int(self._video.get(cv2.CAP_PROP_FPS))
+            #     self._video_frame_time = 1000 / self._video_fps / 1000
+            #
+            #     if self.image_tag is None:
+            #         self.image_tag = self.canvas.create_image(self.x, self.y, anchor=self.anchor, **kwargs)
+            #
+            #     # Start async video renderer
+            #     if not self._video_rendering_active:
+            #         self._video_rendering_active = True
+            #         self._buffer_frame()
+            #         self._render_frame()
+            #         # self.print_fps()
+            #
+            # else:
+            # Signal async video renderer to stop if it's active
+            #     if self._video_rendering_active:
+            #         self._video_rendering_active = False
 
-                self._video = cv2.VideoCapture(str(path))
-
-                self._video_fps = int(self._video.get(cv2.CAP_PROP_FPS))
-                self._video_frame_time = 1000 / self._video_fps / 1000
-
-                if self.image_tag is None:
-                    self.image_tag = self.canvas.create_image(self.x, self.y, anchor=self.anchor, **kwargs)
-
-                # Start async video renderer
-                if not self._video_rendering_active:
-                    self._video_rendering_active = True
-                    self._buffer_frame()
-                    self._render_frame()
-
-            else:
-                # Signal async video renderer to stop if it's active
-                if self._video_rendering_active:
-                    self._video_rendering_active = False
-
-                self._image = Image.open(str(path))
+            self._image = Image.open(str(path))
 
         if self._update_attrs(['width', 'height', 'opacity', 'brightness'], kwargs):
             self.image = self.create_image(self._image, self.width, self.height, self.opacity, self.brightness)
@@ -210,68 +215,87 @@ class UIImage(UIWidget, CTkBaseClass):
         if self._update_attrs(['anchor'], kwargs):
             self.canvas.itemconfigure(self.image_tag, anchor=self.anchor)
 
-    def _buffer_frame(self):
-        if not self._video_rendering_active:
-            if self._video is not None:
-                self._video.release()
-                self._video = None
-            return
-
-        if len(self._video_buffer) > 2:
-            return
-
-        ret, frame = self._video.read()
-
-        if not ret:
-            self._video.set(cv2.CAP_PROP_POS_FRAMES, 0)
-            self._buffer_frame()
-            return
-
-        image = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-
-        self._video_buffer.append(self.create_image(image, self.width, self.height, self.opacity, self.brightness))
-
-        self.after(5, self._buffer_frame)
-
-    def _render_frame(self):
-        if not self._video_rendering_active:
-            return
-
-        t = time.time()
-
-        # self.count_fps()
-
-        # Buffer few frames ahead in async way so rendering wouldn't have to wait for frame image extraction
-        self.after(5, self._buffer_frame)
-        
-        delay = self._video_frame_time
-
-        if len(self._video_buffer) != 0:
-
-            self.image = self._video_buffer.pop(0)
-            self.set_image(self.image)
-
-            # print(t - self._last_frame_time)
-            # self._last_frame_time = t
-
-            render_time = time.time() - t
-
-            delay -= render_time
-
-        self.after(int(delay*1000), self._render_frame)
-
-    def count_fps(self):
-        t = time.time()
-        for x in range(len(self._video_frame_counter)):
-            if t - self._video_frame_counter[0] > 1:
-                del self._video_frame_counter[0]
-            else:
-                break
-        self._video_frame_counter.append(t)
-
-    def print_fps(self, interval=250):
-        print(len(self.frame_counter), len(self._video_buffer))
-        self.after(interval, self.print_fps)
+    # def _buffer_frame(self):
+    #     if not self._video_rendering_active:
+    #         if self._video is not None:
+    #             self._video.release()
+    #             self._video = None
+    #         return
+    #
+    #     if len(self._video_buffer) > 2:
+    #         return
+    #
+    #     t = time.time()
+    #
+    #     ret, frame = self._video.read()
+    #
+    #     if not ret:
+    #         self._video.set(cv2.CAP_PROP_POS_FRAMES, 0)
+    #         self._buffer_frame()
+    #         return
+    #
+    #     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    #
+    #     frame_height, frame_width, channels = frame.shape
+    #     width = int(self._apply_widget_scaling(self.width))
+    #     height = int(self._apply_widget_scaling(self.height))
+    #     if frame_width != width or frame_height != height:
+    #         frame = cv2.resize(frame, (width, height))
+    #
+    #     # self._video_buffer.append(self.create_image(image, self.width, self.height, self.opacity, self.brightness))
+    #     self._video_buffer.append(ImageTk.PhotoImage(Image.fromarray(frame)))
+    #
+    #     self._video_buffering_time = time.time()-t
+    #
+    #     self.after(5, self._buffer_frame)
+    #
+    # def _render_frame(self):
+    #     if not self._video_rendering_active:
+    #         return
+    #
+    #     render_time = time.time() - self._video_last_frame_time
+    #
+    #     # t = time.time()
+    #
+    #     # self.count_fps()
+    #
+    #     # Buffer few frames ahead in async way so rendering wouldn't have to wait for frame image extraction
+    #     self.after(5, self._buffer_frame)
+    #
+    #     delay = self._video_frame_time
+    #
+    #     if len(self._video_buffer) != 0:
+    #
+    #         self.image = self._video_buffer.pop(0)
+    #         self.set_image(self.image)
+    #
+    #         # print(t - self._last_frame_time)
+    #         # self._last_frame_time = t
+    #
+    #         # render_time = time.time() - t
+    #
+    #         if render_time + self._video_buffering_time > self._video_frame_time:
+    #             delay *= math.ceil((render_time + self._video_buffering_time) / self._video_frame_time)
+    #
+    #         delay -= render_time
+    #
+    #         # print(render_time, self._video_buffering_time, delay)
+    #         self._video_last_frame_time = time.time()
+    #
+    #     self.after(int(delay*1000), self._render_frame)
+    #
+    # def count_fps(self):
+    #     t = time.time()
+    #     for x in range(len(self._video_frame_counter)):
+    #         if t - self._video_frame_counter[0] > 1:
+    #             del self._video_frame_counter[0]
+    #         else:
+    #             break
+    #     self._video_frame_counter.append(t)
+    #
+    # def print_fps(self, interval=250):
+    #     print(len(self._video_frame_counter), len(self._video_buffer))
+    #     self.after(interval, self.print_fps)
 
     def _update_attrs(self, attrs, kwargs):
         attrs_updated = False
