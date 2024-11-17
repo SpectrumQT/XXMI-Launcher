@@ -25,7 +25,7 @@ class LauncherFrame(UIFrame):
         self.canvas.grid(row=0, column=0)
 
         def upd_bg(event):
-            self.set_background_image(Config.get_resource_path(self) / f'background-image-{event.importer_id.lower()}.jpg', width=master.cfg.width, height=master.cfg.height)
+            self.set_background_image(f'background-image-{event.importer_id.lower()}.jpg', width=master.cfg.width, height=master.cfg.height)
         upd_bg(Events.Application.LoadImporter(importer_id=Config.Launcher.active_importer))
         self.subscribe(Events.Application.LoadImporter, upd_bg)
 

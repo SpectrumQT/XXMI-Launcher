@@ -3,6 +3,7 @@ import logging
 import time
 import tkinter
 import re
+import cv2
 
 from typing import Union, Tuple, List, Dict, Optional, Callable
 from pathlib import Path
@@ -134,23 +135,73 @@ class UIImage(UIWidget, CTkBaseClass):
         self.brightness = None
         self.anchor = None
 
-        self._original_image = None
+        self._image = None
         self.image = None
         self.image_path = None
         self.image_tag = None
 
-        self.configure(image_path=image_path, x=x, y=y, width=width, height=height, anchor=anchor, opacity=opacity,
-                       brightness=brightness, **kwargs)
+        self._video = None
+        self._video_fps = None
+        self._video_frame_time = None
+        self._video_buffer = []
+        self._video_rendering_active = False
+        # self._video_frame_counter = []
+
+        self.configure(image_path=image_path, x=x, y=y, width=width, height=height, anchor=anchor,
+                       opacity=opacity, brightness=brightness, **kwargs)
 
     def configure(self, **kwargs):
         if self._update_attrs(['image_path'], kwargs):
-            self._original_image = Image.open(str(Config.get_resource_path(self) / self.image_path))
+            path = Path(self.image_path)
+            
+            # Resolve relative path from active theme
+            if not path.is_absolute():
+                path = Config.get_resource_path(self) / path
+
+            # Search for files with same name but different extension to support advanced themes
+            if not path.is_file():
+                supported_extensions = ['.mp4', '.mkv', '.avi', '.gif', '.webp', '.jpeg', '.png', '.jpg']
+                supported_extensions.remove(path.suffix)
+                found = False
+                for extension in supported_extensions:
+                    if path.with_suffix(extension).is_file():
+                        path = path.with_suffix(extension)
+                        found = True
+                        break
+                if not found:
+                    raise ValueError(f'Resource not found:\n\n'
+                                     f'{path}\n\n'
+                                     f'Hint: You can also use other extensions: {", ".join(supported_extensions)}')
+
+            if path.suffix in ['.mp4', '.gif', '.mkv', '.avi']:
+                self._update_attrs(list(kwargs.keys()), kwargs)
+
+                self._video = cv2.VideoCapture(str(path))
+
+                self._video_fps = int(self._video.get(cv2.CAP_PROP_FPS))
+                self._video_frame_time = 1000 / self._video_fps / 1000
+
+                if self.image_tag is None:
+                    self.image_tag = self.canvas.create_image(self.x, self.y, anchor=self.anchor, **kwargs)
+
+                # Start async video renderer
+                if not self._video_rendering_active:
+                    self._video_rendering_active = True
+                    self._buffer_frame()
+                    self._render_frame()
+
+            else:
+                # Signal async video renderer to stop if it's active
+                if self._video_rendering_active:
+                    self._video_rendering_active = False
+
+                self._image = Image.open(str(path))
 
         if self._update_attrs(['width', 'height', 'opacity', 'brightness'], kwargs):
-            self.image = self.create_image(self._original_image, self.width, self.height, self.opacity, self.brightness)
+            self.image = self.create_image(self._image, self.width, self.height, self.opacity, self.brightness)
             if self.image_tag is None:
                 self._update_attrs(['x', 'y', 'anchor'], kwargs)
-                self.image_tag = self.canvas.create_image(self.x, self.y, image=self.image, anchor=self.anchor, **kwargs)
+                self.image_tag = self.canvas.create_image(self.x, self.y, anchor=self.anchor, **kwargs)
             self.set_image(self.image)
 
         if self._update_attrs(['x', 'y'], kwargs):
@@ -158,6 +209,69 @@ class UIImage(UIWidget, CTkBaseClass):
 
         if self._update_attrs(['anchor'], kwargs):
             self.canvas.itemconfigure(self.image_tag, anchor=self.anchor)
+
+    def _buffer_frame(self):
+        if not self._video_rendering_active:
+            if self._video is not None:
+                self._video.release()
+                self._video = None
+            return
+
+        if len(self._video_buffer) > 2:
+            return
+
+        ret, frame = self._video.read()
+
+        if not ret:
+            self._video.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            self._buffer_frame()
+            return
+
+        image = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+
+        self._video_buffer.append(self.create_image(image, self.width, self.height, self.opacity, self.brightness))
+
+        self.after(5, self._buffer_frame)
+
+    def _render_frame(self):
+        if not self._video_rendering_active:
+            return
+
+        t = time.time()
+
+        # self.count_fps()
+
+        # Buffer few frames ahead in async way so rendering wouldn't have to wait for frame image extraction
+        self.after(5, self._buffer_frame)
+        
+        delay = self._video_frame_time
+
+        if len(self._video_buffer) != 0:
+
+            self.image = self._video_buffer.pop(0)
+            self.set_image(self.image)
+
+            # print(t - self._last_frame_time)
+            # self._last_frame_time = t
+
+            render_time = time.time() - t
+
+            delay -= render_time
+
+        self.after(int(delay*1000), self._render_frame)
+
+    def count_fps(self):
+        t = time.time()
+        for x in range(len(self._video_frame_counter)):
+            if t - self._video_frame_counter[0] > 1:
+                del self._video_frame_counter[0]
+            else:
+                break
+        self._video_frame_counter.append(t)
+
+    def print_fps(self, interval=250):
+        print(len(self.frame_counter), len(self._video_buffer))
+        self.after(interval, self.print_fps)
 
     def _update_attrs(self, attrs, kwargs):
         attrs_updated = False
@@ -174,19 +288,25 @@ class UIImage(UIWidget, CTkBaseClass):
         self.canvas.itemconfig(self.image_tag, image=image)
 
     def create_image(self, image: Image, width, height, opacity: float, brightness: float):
+        # Modify opacity and/or brightness
+        if opacity != 1 or brightness != 1:
+            channels = image.split()
+            output = []
+            for channel_id, channel in enumerate(channels):
+                # RGB
+                if channel_id <= 2 and brightness != 1:
+                    channel = channel.point(lambda p: p * brightness)
+                # Alpha
+                elif channel_id == 3 and opacity != 1:
+                    channel = channel.point(lambda p: p * opacity)
+                output.append(channel)
+            image = Image.merge(image.mode, output)
+        # Modify size and/or brightness
         width = int(self._apply_widget_scaling(width))
         height = int(self._apply_widget_scaling(height))
-        channels = image.split()
-        output = []
-        for channel_id, channel in enumerate(channels):
-            # RGB
-            if channel_id <= 2 and brightness != 1:
-                channel = channel.point(lambda p: p * brightness)
-            # Alpha
-            elif channel_id == 3 and opacity != 1:
-                channel = channel.point(lambda p: p * opacity)
-            output.append(channel)
-        image = Image.merge(image.mode, output).resize((width, height))
+        if image.width != width or image.height != height:
+            image = image.resize((width, height))
+
         return ImageTk.PhotoImage(image)
 
     def move(self, x, y):
