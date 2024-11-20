@@ -314,7 +314,7 @@ class GIMIPackage(ModelImporterPackage):
 
         modified = False
 
-        if fps_config['GamePath'] != str(game_exe_path):
+        if fps_config.get('GamePath', None) != str(game_exe_path):
             fps_config['GamePath'] = str(game_exe_path)
             modified = True
 
@@ -333,8 +333,12 @@ class GIMIPackage(ModelImporterPackage):
             Config.Active.Importer.process_priority = process_priority.value
         process_priority = process_priorities[process_priority]
 
-        if fps_config['Priority'] != process_priority:
+        if fps_config.get('Priority', None) != process_priority:
             fps_config['Priority'] = process_priority
+            modified = True
+
+        if fps_config.get('AdditionalCommandLine', None) != Config.Active.Importer.launch_options:
+            fps_config['AdditionalCommandLine'] = Config.Active.Importer.launch_options
             modified = True
 
         window_modes = {
@@ -366,7 +370,7 @@ class GIMIPackage(ModelImporterPackage):
             Config.Active.Importer.window_mode = window_mode.value
 
         for setting, value in window_modes[window_mode].items():
-            if fps_config[setting] != value:
+            if fps_config.get(setting, None) != value:
                 fps_config[setting] = value
                 modified = True
 
