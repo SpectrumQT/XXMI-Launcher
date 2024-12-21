@@ -1,6 +1,6 @@
 import logging
 
-import app
+import core.application as application
 import core.package_manager as package_manager
 from core.packages import launcher_package
 from core.packages import migoto_package
@@ -9,7 +9,7 @@ from gui import events as gui_events
 
 log = logging.getLogger(__name__)
 
-Application = app.ApplicationEvents
+Application = application.ApplicationEvents
 PackageManager = package_manager.PackageManagerEvents
 LauncherManager = launcher_package.LauncherManagerEvents
 MigotoManager = migoto_package.MigotoManagerEvents
