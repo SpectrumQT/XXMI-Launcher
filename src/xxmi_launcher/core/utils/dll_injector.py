@@ -106,6 +106,13 @@ class DllInjector:
 
 
 def direct_inject(dll_paths: List[Path], process_name: str = None, pid: int = None, start_cmd: list = None, work_dir: str = '', timeout: int = 15, creationflags: int = None, use_shell: bool = False):
+    # Pyinjector fails with non-ascii paths
+    for dll_path in dll_paths:
+        try:
+            str(dll_path).encode('ascii')
+        except Exception as e:
+            raise ValueError(f'Please rename all folders from the path using only English letters:\n{dll_path}') from e
+
     if start_cmd:
         subprocess.Popen(start_cmd, cwd=work_dir, creationflags=creationflags, shell=use_shell)
 
@@ -123,10 +130,6 @@ def direct_inject(dll_paths: List[Path], process_name: str = None, pid: int = No
             try:
                 if process.name() == process_name or process.pid == pid:
                     for dll_path in dll_paths:
-                        try:
-                            str(dll_path).encode('ascii')
-                        except Exception as e:
-                            raise ValueError(f'Please rename all folders from the path using only English letters:\n{dll_path}') from e
                         try:
                             inject(process.pid, str(dll_path))
                         except Exception as e:
