@@ -228,6 +228,9 @@ class Application:
         self.threads = []
         self.error_queue = Queue()
 
+        # Async query and log OS and hardware info
+        self.run_as_thread(system_info.log_system_info)
+
         self.packages = [
             LauncherPackage(),
             MigotoPackage(),
