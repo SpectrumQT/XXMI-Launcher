@@ -142,10 +142,6 @@ class GIMIPackage(ModelImporterPackage):
         self.update_gimi_ini()
         if Config.Importers.GIMI.Importer.unlock_fps:
             self.configure_fps_unlocker()
-            self.use_hook = False
-        else:
-            self.use_hook = True
-
         if Config.Importers.GIMI.Importer.disable_dcr:
             try:
                 self.update_dcr()

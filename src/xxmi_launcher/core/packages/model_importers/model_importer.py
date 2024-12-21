@@ -65,7 +65,7 @@ class ModelImporterConfig:
     custom_launch_enabled: bool = False
     custom_launch: str = ''
     custom_launch_signature: str = ''
-    custom_launch_inject_mode: str = 'Inject'
+    custom_launch_inject_mode: str = 'Hook'
     run_post_load_enabled: bool = False
     run_post_load: str = ''
     run_post_load_signature: str = ''

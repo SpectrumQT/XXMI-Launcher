@@ -122,7 +122,6 @@ class SRMIPackage(ModelImporterPackage):
                 self.unlock_fps()
             except Exception as e:
                 raise ValueError(f'Failed to force 120 FPS!\n\n{str(e)}')
-        self.use_hook = False
 
     def get_game_data_path(self):
         player_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'Cognosphere' / 'Star Rail' / 'Player.log'
