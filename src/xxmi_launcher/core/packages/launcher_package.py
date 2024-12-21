@@ -64,10 +64,13 @@ class LauncherPackage(Package):
         self.upgrade_installation()
 
     def get_installed_version(self):
-        if getattr(sys, 'frozen', False):
+        if '__compiled__' in globals() or getattr(sys, 'frozen', False):
             return self.get_file_version(sys.executable, max_parts=3)
         else:
             return '0.0.0'
+
+    def get_last_installed_version(self):
+        return self.get_installed_version()
 
     def install_latest_version(self, clean):
         Events.Fire(Events.PackageManager.InitializeInstallation())
