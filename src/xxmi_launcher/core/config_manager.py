@@ -55,6 +55,9 @@ class AppConfig:
 
     active_theme: Optional[str] = field(init=False, default=None)
 
+    def __post_init__(self):
+        self.active_theme = 'Default'
+
     @property
     def theme_path(self) -> Path:
         return Paths.App.Themes / Config.active_theme
@@ -117,7 +120,8 @@ class AppConfig:
         for key, value in from_dict(data_class=AppConfig, data=cfg).__dict__.items():
             if hasattr(self, key):
                 setattr(self, key, value)
-        self.active_theme = self.Launcher.gui_theme or 'Default'
+        if self.Launcher.gui_theme:
+            self.active_theme = self.Launcher.gui_theme
 
     def load(self, cfg_path=None):
         try:
