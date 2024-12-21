@@ -111,11 +111,11 @@ class MigotoPackage(Package):
         use_shell = False
 
         if Config.Active.Importer.custom_launch_enabled:
+            use_hook = Config.Active.Importer.custom_launch_inject_mode == 'Hook'
             custom_launch_cmd = Config.Active.Importer.custom_launch.strip()
             if custom_launch_cmd:
                 launch_cmd = custom_launch_cmd
                 launch_work_dir = None
-                use_hook = Config.Active.Importer.custom_launch_inject_mode == 'Hook'
                 use_shell = True
 
         extra_dll_paths = []

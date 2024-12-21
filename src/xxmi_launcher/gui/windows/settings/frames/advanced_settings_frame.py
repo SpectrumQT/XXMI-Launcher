@@ -202,6 +202,7 @@ class CustomLaunchEntry(UIEntry):
     def get_tooltip(self):
         message = ''
         message += 'Windows console command to run when Start button is pressed instead of default game exe launch.\n'
+        message += 'Hint: If you want to change injection method only, just leave this field empty.\n'
         message += 'Warning! This command also overrides `Launch Options` from General Settings.\n'
         if Config.Launcher.active_importer == 'WWMI':
             message += 'Warning! Make sure to pass `Client -DisableModule=streamline` arguments to Client-Win64-Shipping.exe to force DX11 mode!\n'
@@ -214,7 +215,7 @@ class CustomLaunchEntry(UIEntry):
 class CustomLaunchInjectModeOptionMenu(UIOptionMenu):
     def __init__(self, master):
         super().__init__(
-            values=['Inject', 'Hook'],
+            values=['Hook', 'Inject'],
             variable=Vars.Active.Importer.custom_launch_inject_mode,
             width=90,
             height=36,
