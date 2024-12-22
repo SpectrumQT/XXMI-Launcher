@@ -273,10 +273,7 @@ class SettingsButton(ControlButton):
         self.set_disabled(event.importer_id == 'XXMI')
 
     def handle_stage_update(self, event):
-        if event.stage == Stage.Ready:
-            self.set_disabled(False)
-        elif not self.selected:
-            self.set_disabled(True)
+        self.set_disabled(event.stage != Stage.Ready or Config.Launcher.active_importer == 'XXMI')
 
 
 class MinimizeButton(ControlButton):
