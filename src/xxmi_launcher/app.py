@@ -24,6 +24,7 @@ if __name__ == '__main__':
     # test = bytestring.decode("ascii")
 
     logging.basicConfig(filename=root_path / 'XXMI Launcher Log.txt',
+                        encoding='utf-8',
                         filemode='a',
                         format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
                         level=logging.DEBUG)
