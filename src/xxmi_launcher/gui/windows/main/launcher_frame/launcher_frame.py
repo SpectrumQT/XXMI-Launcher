@@ -87,23 +87,13 @@ class ImporterVersionText(UIText):
         if package_state is None:
             return
         package_name = Config.Launcher.active_importer
-        if Config.Launcher.active_importer not in ['WWMI', 'ZZMI']:
-            package_name += ' TEST'
         if package_state.installed_version:
             self.set(f'{package_name} {package_state.installed_version}')
         else:
             self.set(f'{package_name}: Not Installed')
 
     def get_tooltip(self):
-        msg = ''
-        if Config.Launcher.active_importer == 'WWMI':
-            msg = 'Stable release build.\n'
-        if Config.Launcher.active_importer == 'ZZMI':
-            msg = 'Stable release build.\n'
-        if Config.Launcher.active_importer == 'SRMI':
-            msg = 'Experimental alpha version build.\n'
-        if Config.Launcher.active_importer == 'GIMI':
-            msg = 'Experimental alpha version build.\n'
+        msg = 'Stable release build.\n'
         return msg.strip()
 
 
