@@ -86,7 +86,7 @@ class ZZMIPackage(ModelImporterPackage):
             package_name='ZZMI',
             auto_load=False,
             github_repo_owner='leotorrez',
-            github_repo_name='ZZMI-TEST',
+            github_repo_name='ZZMI-Package',
             asset_version_pattern=r'.*(\d\.\d\.\d).*',
             asset_name_format='ZZMI-PACKAGE-v%s.zip',
             signature_pattern=r'^## Signature[\r\n]+- ((?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{4}|[A-Za-z0-9+\/]{3}=|[A-Za-z0-9+\/]{2}={2})$)',
