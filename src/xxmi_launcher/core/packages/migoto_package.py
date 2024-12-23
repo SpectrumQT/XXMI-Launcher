@@ -41,7 +41,7 @@ class MigotoManagerConfig:
     enforce_rendering: bool = True
     enable_hunting: bool = True
     dump_shaders: bool = False
-    shader_cache: bool = True
+    shader_cache: bool = False
     mute_warnings: bool = True
     calls_logging: bool = False
     debug_logging: bool = False
