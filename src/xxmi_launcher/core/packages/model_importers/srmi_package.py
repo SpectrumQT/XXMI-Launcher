@@ -64,6 +64,11 @@ class SRMIConfig(ModelImporterConfig):
                 'hunting': {'on': 2, 'off': 0},
             },
         },
+        'shader_cache': {
+            'Rendering': {
+                'cache_shaders': {'on': 1, 'off': 0},
+            },
+        },
         'dump_shaders': {
             'Hunting': {
                 'marking_actions': {'on': 'clipboard hlsl asm regex', 'off': 'clipboard'},

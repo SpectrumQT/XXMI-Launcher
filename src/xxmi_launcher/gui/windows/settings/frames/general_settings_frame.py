@@ -34,18 +34,19 @@ class GeneralSettingsFrame(UIFrame):
         self.put(ProcessPriorityLabel(self)).grid(row=2, column=0, padx=20, pady=(10, 10), sticky='ew')
         self.put(ProcessPriorityOptionMenu(self)).grid(row=2, column=1, padx=(10, 10), pady=(10, 10), sticky='w')
 
+        self.put(TweaksLabel(self)).grid(row=3, column=0, padx=(20, 10), pady=(10, 10), sticky='w')
+        self.put().grid(row=3, column=1, padx=(20, 10), pady=(10, 10), sticky='w')
         # Force 120 FPS
         if Vars.Launcher.active_importer.get() in ['WWMI', 'SRMI', 'GIMI']:
-            self.put(TweaksLabel(self)).grid(row=3, column=0, padx=(20, 10), pady=(10, 10), sticky='w')
-            self.put(UnlockFPSCheckbox(self)).grid(row=3, column=1, padx=(10, 10), pady=(10, 10), sticky='w')
+            self.put(UnlockFPSCheckbox(self)).grid(row=3, column=2, padx=(10, 10), pady=(10, 10), sticky='w')
             # Window mode for GI FPS Unlocker
             if Vars.Launcher.active_importer.get() == 'GIMI':
-                self.put(UnlockFPSWindowOptionMenu(self)).grid(row=3, column=1, padx=(170, 10), pady=(10, 10), sticky='w')
-                self.put(DisableDCR(self)).grid(row=3, column=2, padx=(0, 10), pady=(10, 10), sticky='w')
+                self.put(UnlockFPSWindowOptionMenu(self)).grid(row=3, column=2, padx=(170, 10), pady=(10, 10), sticky='w')
+                self.put(DisableDCR(self)).grid(row=3, column=3, padx=(0, 10), pady=(10, 10), sticky='w')
             #  Performance Tweaks
             if Vars.Launcher.active_importer.get() == 'WWMI':
-                self.put(ApplyTweaksCheckbox(self)).grid(row=3, column=2, padx=(20, 10), pady=(10, 10), sticky='w')
-                self.put(OpenEngineIniButton(self)).grid(row=3, column=3, padx=(10, 20), pady=(10, 10), sticky='e')
+                self.put(ApplyTweaksCheckbox(self)).grid(row=3, column=3, padx=(20, 10), pady=(10, 10), sticky='w')
+                self.put(OpenEngineIniButton(self)).grid(row=3, column=4, padx=(10, 20), pady=(10, 10), sticky='e')
 
         # Auto close
         self.put(LauncherLabel(self)).grid(row=4, column=0, padx=(20, 10), pady=(10, 10), sticky='w')
@@ -221,6 +222,18 @@ class TweaksLabel(UILabel):
             master=master)
 
 
+class ShaderCacheCheckbox(UICheckbox):
+    def __init__(self, master):
+        super().__init__(
+            text='Shader caching',
+            variable=Vars.Active.Migoto.shader_cache,
+            master=master)
+        self.set_tooltip(self.get_tooltip)
+
+    def get_tooltip(self):
+        msg = 'Improve performance by saving processed shaders in cache folder, may cause little stuttering on first run, until new shaders are saved.'
+        return msg.strip()
+
 class UnlockFPSCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
@@ -273,7 +286,7 @@ class UnlockFPSWindowOptionMenu(UIOptionMenu):
 class ApplyTweaksCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Apply Performance Tweaks',
+            text='Performance Tweaks',
             variable=Vars.Active.Importer.apply_perf_tweaks,
             master=master)
         self.set_tooltip(
