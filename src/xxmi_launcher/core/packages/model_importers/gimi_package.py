@@ -74,6 +74,7 @@ class GIMIConfig(ModelImporterConfig):
     })
     unlock_fps: bool = False
     disable_dcr: bool = True
+    enable_hdr: bool = False
 
 
 @dataclass
@@ -141,12 +142,20 @@ class GIMIPackage(ModelImporterPackage):
         self.disable_duplicate_libraries(Config.Active.Importer.importer_path / 'Core' / 'GIMI' / 'Libraries')
         self.update_gimi_ini()
         if Config.Importers.GIMI.Importer.unlock_fps:
-            self.configure_fps_unlocker()
+            try:
+                self.configure_fps_unlocker()
+            except Exception as e:
+                raise Exception(f'Failed to configure FPS Unlocker!\n\n{str(e)}')
         if Config.Importers.GIMI.Importer.disable_dcr:
             try:
                 self.update_dcr()
             except Exception as e:
-                raise ValueError(f'Failed to disable DCR (Dynamic Character Resolution)!\n\n{str(e)}')
+                raise Exception(f'Failed to disable DCR (Dynamic Character Resolution)!\n\n{str(e)}')
+        if Config.Importers.GIMI.Importer.enable_hdr:
+            try:
+                self.enable_hdr()
+            except Exception as e:
+                raise Exception(f'Failed to enable HDR!\n\n{str(e)}')
 
     def get_game_data_path(self):
         output_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'miHoYo' / 'Genshin Impact' / 'output_log.txt'
@@ -285,6 +294,27 @@ class GIMIPackage(ModelImporterPackage):
 
         # Write encoded settings back to registry
         winreg.SetValueEx(settings_key, 'GENERAL_DATA_h2389025596', None, regtype, settings_bytes)
+
+    def enable_hdr(self):
+        log.debug(f'Enabling HDR...')
+
+        # Open GI registry settings key
+        settings_key = None
+        gi_reg_keys = [
+            (winreg.HKEY_CURRENT_USER, 'SOFTWARE\\miHoYo\\Genshin Impact'),
+            (winreg.HKEY_CURRENT_USER, 'SOFTWARE\\miHoYo\\原神'),
+        ]
+        for (key, subkey) in gi_reg_keys:
+            try:
+                settings_key = winreg.OpenKey(key, subkey, 0, winreg.KEY_ALL_ACCESS)
+                break
+            except FileNotFoundError:
+                continue
+        if settings_key is None:
+            raise ValueError(f'Failed to locate Genshin Impact registry key!')
+
+        # Write required key to registry, we need to do it each time, as it's getting removed after the game start
+        winreg.SetValueEx(settings_key, 'WINDOWS_HDR_ON_h3132281285', None, winreg.REG_DWORD, 1)
 
     def configure_fps_unlocker(self):
         Events.Fire(Events.Application.StatusUpdate(status='Configuring FPS Unlocker...'))

@@ -40,8 +40,9 @@ class GeneralSettingsFrame(UIFrame):
             self.put(UnlockFPSCheckbox(self)).grid(row=3, column=1, padx=(10, 10), pady=(10, 10), sticky='w')
             # Window mode for GI FPS Unlocker
             if Vars.Launcher.active_importer.get() == 'GIMI':
-                self.put(UnlockFPSWindowOptionMenu(self)).grid(row=3, column=1, padx=(170, 10), pady=(10, 10), sticky='w')
-                self.put(DisableDCR(self)).grid(row=3, column=2, padx=(0, 10), pady=(10, 10), sticky='w')
+                self.put(UnlockFPSWindowOptionMenu(self)).grid(row=3, column=1, padx=(150, 10), pady=(10, 10), sticky='w', columnspan=3)
+                self.put(EnableHDR(self)).grid(row=3, column=1, padx=(330, 10), pady=(10, 10), sticky='w', columnspan=3)
+                self.put(DisableDCR(self)).grid(row=3, column=1, padx=(460, 10), pady=(10, 10), sticky='w', columnspan=3)
             #  Performance Tweaks
             if Vars.Launcher.active_importer.get() == 'WWMI':
                 self.put(ApplyTweaksCheckbox(self)).grid(row=3, column=2, padx=(20, 10), pady=(10, 10), sticky='w')
@@ -291,6 +292,18 @@ class ApplyTweaksCheckbox(UICheckbox):
             '* tick.AllowAsyncTickCleanup = 1\n'
             '* tick.AllowAsyncTickDispatch = 1'
         )
+
+
+class EnableHDR(UICheckbox):
+    def __init__(self, master):
+        super().__init__(
+            text='Enable HDR',
+            variable=Vars.Active.Importer.enable_hdr,
+            master=master)
+        self.set_tooltip(
+            'Warning! Your monitor must support HDR and `Use HDR` must be enabled in Windows Display settings!\n'
+            'Enabled: Turn HDR On. Launcher will create HDR registry record each time before the game launch.\n'
+            'Disabled: Turn HDR Off. No extra action required, game auto-removes HDR registry record on launch.')
 
 
 class DisableDCR(UICheckbox):
