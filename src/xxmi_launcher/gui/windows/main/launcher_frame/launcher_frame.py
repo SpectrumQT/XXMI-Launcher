@@ -255,9 +255,9 @@ class UpdateButton(MainActionButton):
     def handle_version_notification(self, event):
         pending_update_message = []
         for package_name, package in event.package_states.items():
-            if (package.installed_version != package.latest_version) and package.latest_version != '' and package.installed_version != '':
+            if package.latest_version != '' and (package.installed_version != package.latest_version):
                 pending_update_message.append(
-                    f'{package_name}: {package.installed_version} -> {package.latest_version}')
+                    f'{package_name}: {package.installed_version or 'N/A'} -> {package.latest_version}')
         if len(pending_update_message) > 0:
             self.enabled = True
             self.set_tooltip('Update packages to latest versions:\n' + '\n'.join(pending_update_message))

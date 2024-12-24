@@ -240,7 +240,7 @@ class UnlockFPSCheckbox(UICheckbox):
             msg = 'This option allows to set FPS limit to 120.\n'
             msg += '* Enabled: Updates Graphics Settings Windows Registry key with 120 FPS value on game start.\n'
             msg += '* Disabled: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.\n'
-            msg += 'Note: Edits "FPS" value in "HKEY_CURRENT_USER\SOFTWARE\Cognosphere\Star Rail\GraphicsSettings_Model_h2986158309".'
+            msg += 'Note: Edits "FPS" value in "HKEY_CURRENT_USER/SOFTWARE/Cognosphere/Star Rail/GraphicsSettings_Model_h2986158309".'
         if Config.Launcher.active_importer == 'GIMI':
             msg = 'This option allows to force 120 FPS mode.\n'
             msg += '* Enabled: Launch game via "unlockfps_nc.exe" and let it run in background to continuously apply FPS limit tweak.\n'

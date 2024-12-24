@@ -419,9 +419,9 @@ class Application:
             if package.latest_version == package.skipped_version:
                 continue
             # Include packages with version different from the latest
-            if (package.installed_version != package.latest_version) and package.latest_version != '':
+            if package.latest_version != '' and (package.installed_version != package.latest_version):
                 pending_update_message.append(
-                    f'{package_name} update found: {package.installed_version} -> {package.latest_version}')
+                    f'{package_name} update found: {package.installed_version or 'N/A'} -> {package.latest_version}')
 
         if len(pending_update_message) == 0:
             return False
