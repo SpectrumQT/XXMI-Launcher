@@ -6,6 +6,7 @@ import shutil
 import winshell
 import pythoncom
 import re
+import time
 
 from datetime import datetime
 from pathlib import Path
@@ -459,7 +460,12 @@ class ModelImporterPackage(Package):
             return
 
         for ini_path in duplicate_ini_paths:
-            ini_path.rename(ini_path.parent / f'DISABLED{ini_path.name}')
+            disabled_ini_path = ini_path.parent / f'DISABLED_{ini_path.name}'
+            if disabled_ini_path.is_file():
+                timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+                disabled_ini_path = ini_path.parent / f'DISABLED_{ini_path.stem}_{timestamp}{ini_path.suffix}'
+            ini_path.rename(disabled_ini_path)
+            time.sleep(0.01)
 
     def index_namespaces(self, folder_path: Path, exclude_patterns):
         log.debug(f'Indexing namespaces for {folder_path}...')
