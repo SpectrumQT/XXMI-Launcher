@@ -71,6 +71,7 @@ class Package:
         self.security = Security(public_key=self.metadata.signature_public_key)
         self.github_client = GitHubClient(owner=self.metadata.github_repo_owner, repo=self.metadata.github_repo_name)
 
+        self.manager: Optional[PackageManager] = None
         self.active = False
         self.installed_version: str = ''
         self.state: PackageConfig
@@ -84,29 +85,6 @@ class Package:
 
     def get_installed_version(self) -> str:
         raise NotImplementedError(f'Method "get_installed_version" is not implemented for package {self.metadata.package_name}!')
-
-    def get_last_installed_version(self):
-        installed_version = self.get_installed_version()
-        try:
-            # If detected version is different from the last deployed one, use it as result
-            # It allows to reinstall update when user either:
-            # * Replaced already deployed folder with one containing older package version
-            # * Changed location of already deployed package to folder with older package version
-            if installed_version != self.cfg.deployed_version:
-                return installed_version
-            # If installed and deployed version matches, we'll use one from... the manifest of last downloaded version
-            # It allows us to mitigate major potential distribution error of version mismatch between:
-            # * Package version parsed from update filename
-            # * Package version detected with self.get_installed_version() from update contents
-            # (otherwise automatic update will try to "update" package with such mismatch on every startup)
-            self.load_manifest()
-            return self.manifest.version
-        except Exception as e:
-            try:
-                return installed_version
-            except Exception as e:
-                pass
-        return ''
 
     def detect_installed_version(self):
         try:
@@ -131,7 +109,7 @@ class Package:
             raise ValueError(f'Failed to detect latest {self.metadata.package_name} version:\n\n{e}') from e
 
     def update_available(self):
-        return self.cfg.latest_version != '' and self.cfg.latest_version != self.get_last_installed_version()
+        return self.cfg.latest_version != '' and self.cfg.latest_version != self.get_installed_version()
 
     def download_latest_version_data(self):
         Events.Fire(Events.PackageManager.InitializeDownload())
@@ -296,8 +274,22 @@ class Package:
     def update(self, clean=False):
         if not self.download_url:
             self.detect_latest_version()
-        self.download_latest_version()
-        self.install_latest_version(clean=clean)
+
+        try:
+            self.download_latest_version()
+        except Exception as e:
+            raise Exception(f'Failed to download {self.cfg.latest_version} update for {self.metadata.package_name} package:\n{e}')
+
+        try:
+            self.install_latest_version(clean=clean)
+        except Exception as e:
+            manifest_path = self.package_path / f'Manifest.json'
+            if manifest_path.is_file():
+                manifest_path.unlink()
+            raise Exception(f'Failed to install {self.cfg.latest_version} update for {self.metadata.package_name} package!\n'
+                            f'Please restart the launcher or your PC and try again.\n\n'
+                            f'{e}')
+
         self.load_manifest()
         self.detect_installed_version()
         self.cfg.deployed_version = self.installed_version
@@ -390,6 +382,8 @@ class PackageManager:
 
     def register_package(self, package: Package):
         self.packages[package.metadata.package_name] = package
+
+        package.manager = self
 
         if package.metadata.package_name not in Config.Packages.packages:
             Config.Packages.packages[package.metadata.package_name] = PackageConfig()
