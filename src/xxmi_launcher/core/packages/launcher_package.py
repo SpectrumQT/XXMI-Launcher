@@ -2,10 +2,10 @@ import shutil
 import sys
 import logging
 import subprocess
-import os
 import time
 import winshell
 import pythoncom
+import winreg
 
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -25,6 +25,7 @@ log = logging.getLogger(__name__)
 @dataclass
 class LauncherManagerConfig:
     auto_update: bool = True
+    update_channel: str = 'AUTO'
     auto_close: bool = True
     gui_theme: str = 'Default'
     theme_mode: str = 'System'
@@ -89,6 +90,46 @@ class LauncherPackage(Package):
                              f'Was it blocked by Antivirus software or security settings?')
 
         time.sleep(1)
+
+    def detect_update_channel(self):
+        try:
+            launcher_key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, 'SOFTWARE\\SpectrumQT\\XXMI Launcher', 0, winreg.KEY_READ)
+        except FileNotFoundError:
+            return 'ZIP'
+
+        try:
+            (path_value, regtype) = winreg.QueryValueEx(launcher_key, 'Path')
+            if regtype != winreg.REG_SZ:
+                return 'ZIP'
+        except FileNotFoundError:
+            return 'ZIP'
+
+        if Path(path_value) != Paths.App.Root:
+            return 'ZIP'
+
+        return 'MSI'
+
+    def update(self, clean=False):
+        # Launcher releases come in 2 formats:
+        # * .msi (installer) - updated via Windows Installer
+        # * .zip (portable) - updated via custom exe (https://github.com/SpectrumQT/XXMI-Installer)
+        if Config.Launcher.update_channel.upper() in ['MSI', 'ZIP']:
+            # Use update channel override provided by user
+            update_channel = Config.Launcher.update_channel.upper()
+        else:
+            # Autodetect installation format based (check for .msi registry record)
+            update_channel = self.detect_update_channel()
+        log.debug(f'Using {update_channel} update channel')
+
+        if update_channel == 'MSI':
+            # Use default package update method (targeted at .msi) and let Windows Installer do the heavy lifting
+            super().update()
+        else:
+            # Use installer (updater) package (targeted at .zip)
+            # If we're not relying on Windows Installer for self-update, we'll have to do the heavy lifting ourselves
+            from core.packages.installer_package import InstallerPackage
+            self.manager.register_package(InstallerPackage())
+            Events.Fire(Events.InstallerManager.UpdateLauncher())
 
     def upgrade_installation(self):
         # Grab old version info from config

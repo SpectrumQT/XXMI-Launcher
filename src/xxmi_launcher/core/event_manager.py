@@ -2,6 +2,7 @@ import logging
 
 import core.application as application
 import core.package_manager as package_manager
+from core.packages import installer_package
 from core.packages import launcher_package
 from core.packages import migoto_package
 from core.packages.model_importers import model_importer
@@ -12,6 +13,7 @@ log = logging.getLogger(__name__)
 Application = application.ApplicationEvents
 PackageManager = package_manager.PackageManagerEvents
 LauncherManager = launcher_package.LauncherManagerEvents
+InstallerManager = installer_package.InstallerManagerEvents
 MigotoManager = migoto_package.MigotoManagerEvents
 ModelImporter = model_importer.ModelImporterEvents
 GUI = gui_events.GUIEvents
