@@ -162,7 +162,7 @@ class LauncherPackage(Package):
                         shutil.rmtree(path)
                     else:
                         path.unlink()
-                    time.sleep(0.01)
+                    time.sleep(0.001)
                 # Remove pre-msi installer
                 installer_path = Paths.App.Resources / 'Packages' / 'Installer'
                 if installer_path.is_dir():

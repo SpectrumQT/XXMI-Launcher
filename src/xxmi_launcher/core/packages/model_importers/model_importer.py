@@ -465,7 +465,7 @@ class ModelImporterPackage(Package):
                 timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
                 disabled_ini_path = ini_path.parent / f'DISABLED_{ini_path.stem}_{timestamp}{ini_path.suffix}'
             ini_path.rename(disabled_ini_path)
-            time.sleep(0.01)
+            time.sleep(0.001)
 
     def index_namespaces(self, folder_path: Path, exclude_patterns):
         log.debug(f'Indexing namespaces for {folder_path}...')
