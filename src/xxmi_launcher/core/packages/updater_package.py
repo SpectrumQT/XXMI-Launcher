@@ -17,30 +17,29 @@ log = logging.getLogger(__name__)
 
 
 @dataclass
-class InstallerManagerEvents:
+class UpdaterManagerEvents:
 
     @dataclass
     class UpdateLauncher:
         pass
 
 
-class InstallerPackage(Package):
+class UpdaterPackage(Package):
     def __init__(self):
         super().__init__(PackageMetadata(
-            package_name='Installer',
+            package_name='Updater',
             auto_load=True,
             github_repo_owner='SpectrumQT',
-            github_repo_name='XXMI-Installer',
+            github_repo_name='XXMI-Updater',
             asset_version_pattern=r'.*(\d\.\d\.\d).*',
-            asset_name_format='XXMI-Installer-v%s.exe',
+            asset_name_format='XXMI-UPDATER-PACKAGE-v%s.zip',
             signature_pattern=r'^## Signature[\r\n]+- ((?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{4}|[A-Za-z0-9+\/]{3}=|[A-Za-z0-9+\/]{2}={2})$)',
             signature_public_key='MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEYac352uRGKZh6LOwK0fVDW/TpyECEfnRtUp+bP2PJPP63SWOkJ3a/d9pAnPfYezRVJ1hWjZtpRTT8HEAN/b4mWpJvqO43SAEV/1Q6vz9Rk/VvRV3jZ6B/tmqVnIeHKEb',
             exit_after_update=False,
-            deploy_name='XXMI-Installer.exe',
         ))
-        self.exe_path = self.package_path / self.metadata.deploy_name
+        self.exe_path = self.package_path / 'XXMI Updater.exe'
 
-        Events.Subscribe(Events.InstallerManager.UpdateLauncher, lambda event: self.update_launcher())
+        Events.Subscribe(Events.UpdaterManager.UpdateLauncher, lambda event: self.update_launcher())
 
     def get_installed_version(self):
         if self.exe_path.exists():
@@ -50,15 +49,11 @@ class InstallerPackage(Package):
 
     def install_latest_version(self, clean):
         Events.Fire(Events.PackageManager.InitializeInstallation())
-        self.move(self.downloaded_asset_path, self.exe_path)
+
+        self.move_contents(self.downloaded_asset_path, self.package_path)
 
     def update_launcher(self):
         self.manager.update_package(self, force=True)
-
-        try:
-            self.validate_files([self.exe_path])
-        except Exception:
-            self.manager.update_package(self, force=True, reinstall=True)
 
         Events.Fire(Events.PackageManager.InitializeInstallation())
 
@@ -68,7 +63,7 @@ class InstallerPackage(Package):
 
         result, pid = wait_for_process(self.exe_path.name, with_window=True, timeout=15)
         if result == WaitResult.Timeout:
-            raise ValueError('Failed to start XXMI-Installer.exe in update mode!\n\n'
+            raise ValueError('Failed to start XXMI Updater.exe!\n\n'
                              'Was it blocked by Antivirus software or security settings?')
 
         time.sleep(1)

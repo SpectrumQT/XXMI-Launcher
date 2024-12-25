@@ -112,7 +112,7 @@ class LauncherPackage(Package):
     def update(self, clean=False):
         # Launcher releases come in 2 formats:
         # * .msi (installer) - updated via Windows Installer
-        # * .zip (portable) - updated via custom exe (https://github.com/SpectrumQT/XXMI-Installer)
+        # * .zip (portable) - updated via custom exe (https://github.com/SpectrumQT/XXMI-Updater)
         if Config.Launcher.update_channel.upper() in ['MSI', 'ZIP']:
             # Use update channel override provided by user
             update_channel = Config.Launcher.update_channel.upper()
@@ -127,9 +127,9 @@ class LauncherPackage(Package):
         else:
             # Use installer (updater) package (targeted at .zip)
             # If we're not relying on Windows Installer for self-update, we'll have to do the heavy lifting ourselves
-            from core.packages.installer_package import InstallerPackage
-            self.manager.register_package(InstallerPackage())
-            Events.Fire(Events.InstallerManager.UpdateLauncher())
+            from core.packages.updater_package import UpdaterPackage
+            self.manager.register_package(UpdaterPackage())
+            Events.Fire(Events.UpdaterManager.UpdateLauncher())
 
     def upgrade_installation(self):
         # Grab old version info from config
