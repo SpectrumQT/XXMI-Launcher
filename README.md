@@ -25,10 +25,20 @@
 
 ## Installation
 
-1. Download the [latest release](https://github.com/SpectrumQT/XXMI-Launcher/releases/latest) of **XXMI-Launcher-Installer-Online-vX.X.X.msi**
-2. Run **XXMI-Launcher-Installer-Online-vX.X.X.msi** with Double-Click.
-3. Click **[Quick Installation]** to install **XXMI Launcher** to the default location (`%AppData%\XXMI Launcher`) or use **[Custom Installation]** to set another folder.
-4. Once installation is complete, **XXMI Launcher** window will open and install **XXMI** automatically.
+* **Native Windows APP** (for **Windows** only)
+  1. Download the [latest release](https://github.com/SpectrumQT/XXMI-Launcher/releases/latest) of **XXMI-Launcher-Installer-Online-vX.X.X.msi**
+  2. Run **XXMI-Launcher-Installer-Online-vX.X.X.msi** with Double-Click.
+  3. Click **[Quick Installation]** to install **XXMI Launcher** to the default location (`%AppData%\XXMI Launcher`) or use **[Custom Installation]** to set another folder.
+  4. On the game selection page of **XXMI Launcher Window** click desired **Game Tile** to add **Model Importer Icon** to the top-left corner.
+  5. Click **Model Importer Icon** to open Model Importer page and press **[Install]** button to download and install selected Model Importer.
+
+* **Portable** (for **Windows** and **Linux** via **WINE 9.22+**)
+  1. Download and install [the latest Microsoft Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe).
+  2. Download the [latest release](https://github.com/SpectrumQT/XXMI-Launcher/releases/latest) of **XXMI-Launcher-Portable-vX.X.X.zip**.
+  3. Extract the archive to desired location (avoid Program Files folders!).
+  4. Create shortcut for `Resources\Bin\XXMI Launcher.exe` for convenience and run it.
+  5. On the game selection page of **XXMI Launcher Window** click desired **Game Tile** to add **Model Importer Icon** to the top-left corner.
+  6. Click **Model Importer Icon** to open Model Importer page and press **[Install]** button to download and install selected Model Importer.
 
 ## Supported Model Importers
 
