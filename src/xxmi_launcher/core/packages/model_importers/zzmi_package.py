@@ -2,6 +2,7 @@ import re
 import os
 import logging
 import ctypes
+import json
 
 from dataclasses import field
 from typing import Dict, Union
@@ -20,6 +21,7 @@ from core.package_manager import PackageMetadata
 from core.utils.ini_handler import IniHandler, IniHandlerSettings
 from core.packages.model_importers.model_importer import ModelImporterPackage, ModelImporterConfig
 from core.packages.migoto_package import MigotoManagerConfig
+from core.utils.sleepy import Sleepy
 
 log = logging.getLogger(__name__)
 
@@ -68,6 +70,7 @@ class ZZMIConfig(ModelImporterConfig):
             },
         },
     })
+    configure_game: bool = True
 
 
 @dataclass
@@ -114,6 +117,19 @@ class ZZMIPackage(ModelImporterPackage):
 
     def initialize_game_launch(self, game_path: Path):
         self.update_zzmi_ini()
+        if Config.Importers.ZZMI.Importer.configure_game:
+            try:
+                self.configure_game_settings(game_path)
+            except FileNotFoundError as e:
+                raise ValueError(f'Failed to configure in-game settings for ZZMI!\n'
+                                 f'Please start the game with official launcher once.\n\n'
+                                 f'{e}') from e
+            except Exception as e:
+                raise ValueError(f'Failed to configure in-game settings for ZZMI!\n'
+                      f"Please disable `Configure Game` in launcher's General Settings and check in-game settings:\n"
+                      f'* Graphics > `Character Quality` must be `High`.\n'
+                      f'* Graphics > `High-Precision Character Animation` must be `Disabled`.\n\n'
+                      f'{e}') from e
 
     def get_game_data_path(self):
         player_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'miHoYo' / 'ZenlessZoneZero' / 'Player.log'
@@ -164,6 +180,67 @@ class ZZMIPackage(ModelImporterPackage):
         if ini.is_modified():
             with open(zzmi_ini_path, 'w', encoding='utf-8') as f:
                 f.write(ini.to_string())
+
+    def configure_game_settings(self, game_path: Path):
+        log.debug(f'Configuring in-game settings for ZZMI...')
+
+        config_path = game_path / 'ZenlessZoneZero_Data' / 'Persistent' / 'LocalStorage' / 'GENERAL_DATA.bin'
+        if not config_path.is_file():
+            raise FileNotFoundError(f'Settings file not found: {config_path}')
+
+        settings_manager = SettingsManager(config_path)
+
+        settings_manager.load_settings()
+
+        # Set "High-Precision Character Animation" to "Disabled"
+        settings_manager.set_system_setting('13162', 0)
+
+        # Set "Character Quality" to "High"
+        settings_manager.set_system_setting('99', 1)
+
+        settings_manager.save_settings()
+
+
+class SettingsManager:
+    def __init__(self, config_path: Path):
+        self.path = config_path
+        self.sleepy = Sleepy()
+        self.magic = bytes([85, 110, 209, 150, 116, 209, 131, 206, 149, 110, 103, 105, 110, 208, 181, 46, 71, 208, 176, 109, 101, 206, 159, 98, 106, 101, 209, 129, 116])
+        self.settings = {}
+        self.modified = False
+
+    def load_settings(self):
+        content = self.sleepy.read_file(self.path, self.magic)
+        self.settings = json.loads(content)
+
+    def save_settings(self):
+        if not self.modified:
+            return
+        content = json.dumps(self.settings, indent=4, separators=(',', ':')).replace('\n', '\r\n')
+        self.sleepy.write_file(self.path, self.magic, content)
+
+    def set_system_setting(self, setting_id: str, new_value: int):
+        system_settings = self.settings.get('SystemSettingDataMap', {})
+        setting = system_settings.get(setting_id, None)
+        if setting is None:
+            system_settings[setting_id] = {
+                '$Type': 'MoleMole.SystemSettingLocalData',
+                'Version': 0,
+                'Data': new_value
+            }
+            self.modified = True
+            log.debug(f'Added new setting {setting_id}: {new_value}')
+        else:
+            old_value = setting.get('Data', None)
+            if old_value is None:
+                raise ValueError(f'Unknown system settings entry format: {setting}!')
+            if old_value == new_value:
+                log.debug(f'Setting {setting_id} is already set to {old_value}')
+                return
+            setting['Data'] = new_value
+            self.modified = True
+            log.debug(f'Updated setting {setting_id}: {old_value} -> {new_value}')
+        self.settings['SystemSettingDataMap'] = system_settings
 
 
 class Version:

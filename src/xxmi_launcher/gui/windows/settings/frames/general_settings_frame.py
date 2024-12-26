@@ -34,19 +34,21 @@ class GeneralSettingsFrame(UIFrame):
         self.put(ProcessPriorityLabel(self)).grid(row=2, column=0, padx=20, pady=(10, 10), sticky='ew')
         self.put(ProcessPriorityOptionMenu(self)).grid(row=2, column=1, padx=(10, 10), pady=(10, 10), sticky='w')
 
-        # Force 120 FPS
-        if Vars.Launcher.active_importer.get() in ['WWMI', 'SRMI', 'GIMI']:
-            self.put(TweaksLabel(self)).grid(row=3, column=0, padx=(20, 10), pady=(10, 10), sticky='w')
+        # Tweaks
+        self.put(TweaksLabel(self)).grid(row=3, column=0, padx=(20, 10), pady=(10, 10), sticky='w')
+        if Vars.Launcher.active_importer.get() != 'ZZMI':
             self.put(UnlockFPSCheckbox(self)).grid(row=3, column=1, padx=(10, 10), pady=(10, 10), sticky='w')
-            # Window mode for GI FPS Unlocker
-            if Vars.Launcher.active_importer.get() == 'GIMI':
-                self.put(UnlockFPSWindowOptionMenu(self)).grid(row=3, column=1, padx=(150, 10), pady=(10, 10), sticky='w', columnspan=3)
-                self.put(EnableHDR(self)).grid(row=3, column=1, padx=(330, 10), pady=(10, 10), sticky='w', columnspan=3)
-                self.put(DisableDCR(self)).grid(row=3, column=1, padx=(460, 10), pady=(10, 10), sticky='w', columnspan=3)
-            #  Performance Tweaks
-            if Vars.Launcher.active_importer.get() == 'WWMI':
-                self.put(ApplyTweaksCheckbox(self)).grid(row=3, column=2, padx=(20, 10), pady=(10, 10), sticky='w')
-                self.put(OpenEngineIniButton(self)).grid(row=3, column=3, padx=(10, 20), pady=(10, 10), sticky='e')
+        # Window mode for GI FPS Unlocker
+        if Vars.Launcher.active_importer.get() == 'GIMI':
+            self.put(UnlockFPSWindowOptionMenu(self)).grid(row=3, column=1, padx=(150, 10), pady=(10, 10), sticky='w', columnspan=3)
+            self.put(EnableHDR(self)).grid(row=3, column=1, padx=(330, 10), pady=(10, 10), sticky='w', columnspan=3)
+            self.put(DisableDCR(self)).grid(row=3, column=1, padx=(460, 10), pady=(10, 10), sticky='w', columnspan=3)
+        #  Performance Tweaks
+        if Vars.Launcher.active_importer.get() == 'WWMI':
+            self.put(ApplyTweaksCheckbox(self)).grid(row=3, column=2, padx=(20, 10), pady=(10, 10), sticky='w')
+            self.put(OpenEngineIniButton(self)).grid(row=3, column=3, padx=(10, 20), pady=(10, 10), sticky='e')
+        if Vars.Launcher.active_importer.get() == 'ZZMI':
+            self.put(ConfigureGame(self)).grid(row=3, column=1, padx=(10, 10), pady=(10, 10), sticky='w')
 
         # Auto close
         self.put(LauncherLabel(self)).grid(row=4, column=0, padx=(20, 10), pady=(10, 10), sticky='w')
@@ -316,6 +318,19 @@ class DisableDCR(UICheckbox):
             'Warning! GIMI model mods are *NOT* compatible with Dynamic Character Resolution Graphics Setting!\n'
             'Enabled: Turn Off DCR, allowing all kinds of character mods to work.\n'
             'Disabled: DCR setting will not be affected (use in-game Graphics Settings to enable it again).')
+
+
+class ConfigureGame(UICheckbox):
+    def __init__(self, master):
+        super().__init__(
+            text='Configure Game Settings',
+            variable=Vars.Active.Importer.configure_game,
+            master=master)
+        self.set_tooltip(
+            'Enabled: Ensure ZZMI-compatible in-game Graphics Settings before game start:\n'
+            '  * `Character Quality` = `High`\n'
+            '  * `High-Precision Character Animation` = `Disabled`\n'
+            'Disabled: In-game settings will not be affected. Mods will not work with wrong settings.')
 
 
 class LauncherLabel(UILabel):
