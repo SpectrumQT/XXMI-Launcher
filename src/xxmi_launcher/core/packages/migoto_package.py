@@ -54,7 +54,7 @@ class MigotoPackage(Package):
             package_name='XXMI',
             auto_load=True,
             github_repo_owner='SpectrumQT',
-            github_repo_name='3Dmigoto',
+            github_repo_name='XXMI-Libs-Package',
             asset_version_pattern=r'.*(\d\.\d\.\d).*',
             asset_name_format='XXMI-PACKAGE-v%s.zip',
             signature_pattern=r'^## Signature[\r\n]+- ((?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{4}|[A-Za-z0-9+\/]{3}=|[A-Za-z0-9+\/]{2}={2})$)',

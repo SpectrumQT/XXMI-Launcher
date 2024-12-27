@@ -33,7 +33,7 @@ class GenshinFpsUnlockerPackage(Package):
             package_name='GI-FPS-Unlocker',
             auto_load=False,
             github_repo_owner='SpectrumQT',
-            github_repo_name='genshin-fps-unlock',
+            github_repo_name='GI-FPS-Unlocker-Package',
             asset_version_pattern=r'.*(\d\.\d\.\d).*',
             asset_name_format='GENSHIN-FPS-UNLOCK-PACKAGE-v%s.zip',
             signature_pattern=r'^## Signature[\r\n]+- ((?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{4}|[A-Za-z0-9+\/]{3}=|[A-Za-z0-9+\/]{2}={2})$)',
