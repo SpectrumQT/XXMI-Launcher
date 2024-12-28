@@ -104,6 +104,7 @@ class Paths:
     Resources: Path = Path('Resources')
     Themes: Path = Path('Themes')
     Backups: Path = Path('Backups')
+    Locale: Path = Path('Locale')
 
     def set_root_path(self, root_path: Path):
         for field in fields(self):
