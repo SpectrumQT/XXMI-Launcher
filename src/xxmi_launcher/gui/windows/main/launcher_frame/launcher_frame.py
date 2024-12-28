@@ -380,6 +380,9 @@ class PackageVersionText(UIImageButton):
         super().__init__(**defaults)
         self.package_name = ''
         self.set_tooltip(self.get_tooltip, delay = 0.1)
+        self.subscribe_show(
+            Events.GUI.LauncherFrame.StageUpdate,
+            lambda event: event.stage == Stage.Ready)
 
     def open_link(self):
         package = Events.Call(Events.PackageManager.GetPackage(Config.Launcher.active_importer))
@@ -401,6 +404,11 @@ class PackageVersionText(UIImageButton):
             package_release_notes = L('package_release_notes_update_available', dedent("""
                 # Update {package_name} to v{new_package_version} for:
                 {latest_release_notes}
+            """))
+
+        if not package.cfg.deployed_release_notes and not package.cfg.latest_release_notes:
+            package_release_notes = L('package_release_notes_not_installed', dedent("""
+                Press **Install** button to setup the package.
             """))
 
         if self.package_name == 'Launcher':
@@ -427,6 +435,7 @@ class PackageVersionText(UIImageButton):
         return txt.format(
            package_name=package.metadata.package_name,
            package_description=package_description,
+           active_importer=Config.Launcher.active_importer,
            installed_package_version=package.installed_version,
            new_package_version=package.cfg.latest_version,
            latest_release_notes=package.cfg.latest_release_notes,
@@ -441,9 +450,6 @@ class LauncherVersionText(PackageVersionText):
                          master=master)
         self.package_name = 'Launcher'
         self.subscribe(Events.PackageManager.VersionNotification, self.handle_version_notification)
-        self.subscribe_show(
-            Events.GUI.LauncherFrame.StageUpdate,
-            lambda event: event.stage == Stage.Ready)
 
     def handle_version_notification(self, event):
         self.set_text(f'CORE {event.package_states["Launcher"].installed_version}')
@@ -454,15 +460,12 @@ class XXMIVersionText(PackageVersionText):
         super().__init__(x=115,
                          y=680,
                          master=master)
-        # self.subscribe(Events.Application.LoadImporter, self.handle_load_importer)
+        self.subscribe(Events.Application.LoadImporter, self.handle_load_importer)
         self.subscribe(Events.PackageManager.VersionNotification, self.handle_version_notification)
-        # self.subscribe_show(
-        #     Events.GUI.LauncherFrame.StageUpdate,
-        #     lambda event: event.stage ==
         self.package_name = 'XXMI'
 
-    # def handle_load_importer(self, event):
-    #     self.show(event.importer_id != 'XXMI')
+    def handle_load_importer(self, event):
+        self.show(event.importer_id != 'XXMI')
 
     def handle_version_notification(self, event):
         package_state = event.package_states.get('XXMI', None)
@@ -481,9 +484,6 @@ class ImporterVersionText(PackageVersionText):
                          master=master)
         self.subscribe(Events.Application.LoadImporter, self.handle_load_importer)
         self.subscribe(Events.PackageManager.VersionNotification, self.handle_version_notification)
-        # self.subscribe_show(
-        #     Events.GUI.LauncherFrame.StageUpdate,
-        #     lambda event: event.stage == Stage.Ready)
 
     def handle_load_importer(self, event):
         self.show(event.importer_id != 'XXMI')
