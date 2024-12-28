@@ -1,3 +1,7 @@
+import webbrowser
+from textwrap import dedent
+
+from core.locale_manager import L
 import core.event_manager as Events
 import core.path_manager as Paths
 import core.config_manager as Config
@@ -29,9 +33,6 @@ class LauncherFrame(UIFrame):
         upd_bg(Events.Application.LoadImporter(importer_id=Config.Launcher.active_importer))
         self.subscribe(Events.Application.LoadImporter, upd_bg)
 
-        self.put(ImporterVersionText(self))
-        self.put(LauncherVersionText(self))
-
         # Top Panel
         self.put(TopBarFrame(self, self.canvas))
 
@@ -50,6 +51,11 @@ class LauncherFrame(UIFrame):
         self.put(InstallButton(self, tools_button))
         self.put(ToolBarFrame(self, self.canvas))
 
+        # Package versions
+        self.put(LauncherVersionText(self))
+        self.put(XXMIVersionText(self))
+        self.put(ImporterVersionText(self))
+
         # Application Events
         self.subscribe(
             Events.Application.Ready,
@@ -60,41 +66,6 @@ class LauncherFrame(UIFrame):
         self.subscribe(
             Events.Application.Busy,
             lambda event: Events.Fire(Events.GUI.LauncherFrame.StageUpdate(Stage.Busy)))
-
-
-class ImporterVersionText(UIText):
-    def __init__(self, master):
-        super().__init__(x=20,
-                         y=95,
-                         text='',
-                         font=('Roboto', 19),
-                         fill='#cccccc',
-                         activefill='white',
-                         anchor='nw',
-                         master=master)
-        self.subscribe(Events.Application.LoadImporter, self.handle_load_importer)
-        self.subscribe(Events.PackageManager.VersionNotification, self.handle_version_notification)
-        self.set_tooltip(self.get_tooltip)
-        # self.subscribe_show(
-        #     Events.GUI.LauncherFrame.StageUpdate,
-        #     lambda event: event.stage == Stage.Ready)
-
-    def handle_load_importer(self, event):
-        self.show(event.importer_id != 'XXMI')
-
-    def handle_version_notification(self, event):
-        package_state = event.package_states.get(Config.Launcher.active_importer, None)
-        if package_state is None:
-            return
-        package_name = Config.Launcher.active_importer
-        if package_state.installed_version:
-            self.set(f'{package_name} {package_state.installed_version}')
-        else:
-            self.set(f'{package_name}: Not Installed')
-
-    def get_tooltip(self):
-        msg = 'Stable release build.\n'
-        return msg.strip()
 
 
 class SelectGameText(UIText):
@@ -257,10 +228,17 @@ class UpdateButton(MainActionButton):
         for package_name, package in event.package_states.items():
             if package.latest_version != '' and (package.installed_version != package.latest_version):
                 pending_update_message.append(
-                    f'{package_name}: {package.installed_version or 'N/A'} -> {package.latest_version}')
+                    f'* {package_name}: {package.installed_version or 'N/A'} → {package.latest_version}')
         if len(pending_update_message) > 0:
             self.enabled = True
-            self.set_tooltip('Update packages to latest versions:\n' + '\n'.join(pending_update_message))
+            self.set_tooltip(L('action_update_packages', dedent("""
+                ## Update packages to latest versions:
+                {pending_update_message}
+                
+                *Hover over versions in the bottom-left corner to view update descriptions.*
+            """).format(
+                pending_update_message='\n'.join(pending_update_message)
+            )))
             self.show(self.stage == Stage.Ready and Config.Launcher.active_importer != 'XXMI')
         else:
             self.enabled = False
@@ -385,20 +363,141 @@ class ToolsButton(MainActionButton):
         super()._handle_leave(self)
 
 
-class LauncherVersionText(UIText):
+class PackageVersionText(UIImageButton):
+    def __init__(self, **kwargs):
+        defaults = {}
+        defaults.update(
+            width=32,
+            height=32,
+            text='',
+            font=('Roboto', 18),
+            fill='#999999',
+            activefill='white',
+            anchor='nw',
+            command=self.open_link,
+        )
+        defaults.update(kwargs)
+        super().__init__(**defaults)
+        self.package_name = ''
+        self.set_tooltip(self.get_tooltip, delay = 0.1)
+
+    def open_link(self):
+        package = Events.Call(Events.PackageManager.GetPackage(Config.Launcher.active_importer))
+        metadata = package.metadata
+        webbrowser.open(f'https://github.com/{metadata.github_repo_owner}/{metadata.github_repo_name}/releases')
+
+    def get_tooltip(self):
+        package = Events.Call(Events.PackageManager.GetPackage(self.package_name))
+
+        installed_release_notes = package.cfg.deployed_release_notes
+
+        if package.installed_version == package.cfg.latest_version:
+            package_release_notes = L('package_release_notes_up_to_date', dedent("""
+                # What's new in {package_name} v{new_package_version}:
+                {installed_release_notes}
+            """))
+            installed_release_notes = installed_release_notes or package.cfg.latest_release_notes
+        else:
+            package_release_notes = L('package_release_notes_update_available', dedent("""
+                # Update {package_name} to v{new_package_version} for:
+                {latest_release_notes}
+            """))
+
+        if self.package_name == 'Launcher':
+            package_description = L('package_description_launcher', dedent("""
+                *This package is XXMI Launcher itself and defines its features.*
+            """))
+        elif self.package_name == 'XXMI':
+            package_description = L('package_description_xxmi_libraries', dedent("""
+                *XXMI Libraries package is custom 3dmigoto build that does heavy lifting around the game process.*
+            """))
+        else:
+            package_description = L('package_description_model_importer', dedent("""
+                *Model Importer package offers set of API functions required for mods to work for given game.*
+            """))
+
+        txt = L('package_release_notes', dedent("""
+            {package_release_notes}
+            *<u>Left-Click</u> to open {package_name} Package GitHub releases for full changelog.*
+            {package_description}
+        """)).format(
+            package_release_notes=package_release_notes
+        )
+
+        return txt.format(
+           package_name=package.metadata.package_name,
+           package_description=package_description,
+           installed_package_version=package.installed_version,
+           new_package_version=package.cfg.latest_version,
+           latest_release_notes=package.cfg.latest_release_notes,
+           installed_release_notes=installed_release_notes
+        )
+
+
+class LauncherVersionText(PackageVersionText):
     def __init__(self, master):
         super().__init__(x=20,
                          y=680,
-                         text='',
-                         font=('Roboto', 19),
-                         fill='#bbbbbb',
-                         activefill='#cccccc',
-                         anchor='nw',
                          master=master)
-        self.subscribe_set(
-            Events.PackageManager.VersionNotification,
-            lambda event: f'{event.package_states["Launcher"].installed_version}')
+        self.package_name = 'Launcher'
+        self.subscribe(Events.PackageManager.VersionNotification, self.handle_version_notification)
         self.subscribe_show(
             Events.GUI.LauncherFrame.StageUpdate,
             lambda event: event.stage == Stage.Ready)
 
+    def handle_version_notification(self, event):
+        self.set_text(f'CORE {event.package_states["Launcher"].installed_version}')
+
+
+class XXMIVersionText(PackageVersionText):
+    def __init__(self, master):
+        super().__init__(x=115,
+                         y=680,
+                         master=master)
+        # self.subscribe(Events.Application.LoadImporter, self.handle_load_importer)
+        self.subscribe(Events.PackageManager.VersionNotification, self.handle_version_notification)
+        # self.subscribe_show(
+        #     Events.GUI.LauncherFrame.StageUpdate,
+        #     lambda event: event.stage ==
+        self.package_name = 'XXMI'
+
+    # def handle_load_importer(self, event):
+    #     self.show(event.importer_id != 'XXMI')
+
+    def handle_version_notification(self, event):
+        package_state = event.package_states.get('XXMI', None)
+        if package_state is None:
+            return
+        if package_state.installed_version:
+            self.set_text(f'XXMI {package_state.installed_version}')
+        else:
+            self.set_text(f'XXMI N/A')
+
+
+class ImporterVersionText(PackageVersionText):
+    def __init__(self, master):
+        super().__init__(x=210,
+                         y=680,
+                         master=master)
+        self.subscribe(Events.Application.LoadImporter, self.handle_load_importer)
+        self.subscribe(Events.PackageManager.VersionNotification, self.handle_version_notification)
+        # self.subscribe_show(
+        #     Events.GUI.LauncherFrame.StageUpdate,
+        #     lambda event: event.stage == Stage.Ready)
+
+    def handle_load_importer(self, event):
+        self.show(event.importer_id != 'XXMI')
+
+    def handle_version_notification(self, event):
+        package_state = event.package_states.get(Config.Launcher.active_importer, None)
+        if package_state is None:
+            return
+        package_name = Config.Launcher.active_importer
+        if package_state.installed_version:
+            self.set_text(f'{package_name} {package_state.installed_version}')
+        else:
+            self.set_text(f'{package_name} N/A')
+
+    def get_tooltip(self, package_name=''):
+        self.package_name = Config.Launcher.active_importer
+        return super().get_tooltip()

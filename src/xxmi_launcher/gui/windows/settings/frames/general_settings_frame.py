@@ -1,6 +1,7 @@
 import subprocess
 from pathlib import Path
 from customtkinter import filedialog
+from textwrap import dedent
 
 import core.event_manager as Events
 import core.config_manager as Config
@@ -326,11 +327,18 @@ class ConfigureGame(UICheckbox):
             text='Configure Game Settings',
             variable=Vars.Active.Importer.configure_game,
             master=master)
-        self.set_tooltip(
-            'Enabled: Ensure ZZMI-compatible in-game Graphics Settings before game start:\n'
-            '  * `Character Quality` = `High`\n'
-            '  * `High-Precision Character Animation` = `Disabled`\n'
-            'Disabled: In-game settings will not be affected. Mods will not work with wrong settings.')
+        var = dedent("""
+            **Enabled**: Ensure ZZMI-compatible in-game **Graphics Settings** before game start:
+            
+            - `Character Quality: High`
+            - `High-Precision Character Animation: Disabled`
+            
+            **Disabled**: In-game settings will not be affected.
+            
+            <br/>
+            <font color="red">⚠ Mods will not work with wrong settings! ⚠</font>
+        """)
+        self.set_tooltip(var)
 
 
 class LauncherLabel(UILabel):
