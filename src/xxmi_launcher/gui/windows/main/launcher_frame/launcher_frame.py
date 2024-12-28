@@ -220,7 +220,7 @@ class UpdateButton(MainActionButton):
             command=lambda: Events.Fire(Events.Application.Update(force=True)),
             master=master)
         self.stage = None
-        self.set_tooltip('Update packages to latest versions', delay=0.01)
+        self.set_tooltip('Update packages to latest versions', delay=0.01, anchor='sw')
         self.subscribe(Events.PackageManager.VersionNotification, self.handle_version_notification)
 
     def handle_version_notification(self, event):
@@ -379,10 +379,7 @@ class PackageVersionText(UIImageButton):
         defaults.update(kwargs)
         super().__init__(**defaults)
         self.package_name = ''
-        self.set_tooltip(self.get_tooltip, delay = 0.1)
-        self.subscribe_show(
-            Events.GUI.LauncherFrame.StageUpdate,
-            lambda event: event.stage == Stage.Ready)
+        self.set_tooltip(self.get_tooltip, delay = 0.1, anchor='sw')
 
     def open_link(self):
         package = Events.Call(Events.PackageManager.GetPackage(Config.Launcher.active_importer))
@@ -450,6 +447,9 @@ class LauncherVersionText(PackageVersionText):
                          master=master)
         self.package_name = 'Launcher'
         self.subscribe(Events.PackageManager.VersionNotification, self.handle_version_notification)
+        self.subscribe_show(
+            Events.GUI.LauncherFrame.StageUpdate,
+            lambda event: event.stage == Stage.Ready)
 
     def handle_version_notification(self, event):
         self.set_text(f'CORE {event.package_states["Launcher"].installed_version}')
@@ -463,6 +463,9 @@ class XXMIVersionText(PackageVersionText):
         self.subscribe(Events.Application.LoadImporter, self.handle_load_importer)
         self.subscribe(Events.PackageManager.VersionNotification, self.handle_version_notification)
         self.package_name = 'XXMI'
+        self.subscribe_show(
+            Events.GUI.LauncherFrame.StageUpdate,
+            lambda event: event.stage == Stage.Ready and Config.Launcher.active_importer != 'XXMI')
 
     def handle_load_importer(self, event):
         self.show(event.importer_id != 'XXMI')
@@ -484,6 +487,9 @@ class ImporterVersionText(PackageVersionText):
                          master=master)
         self.subscribe(Events.Application.LoadImporter, self.handle_load_importer)
         self.subscribe(Events.PackageManager.VersionNotification, self.handle_version_notification)
+        self.subscribe_show(
+            Events.GUI.LauncherFrame.StageUpdate,
+            lambda event: event.stage == Stage.Ready and Config.Launcher.active_importer != 'XXMI')
 
     def handle_load_importer(self, event):
         self.show(event.importer_id != 'XXMI')

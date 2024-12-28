@@ -363,14 +363,13 @@ class Application:
         # Exit early if current active model importer is not installed
         importer_package = self.package_manager.packages.get(Config.Launcher.active_importer, None)
         if importer_package is None or importer_package.get_installed_version() == '':
+            self.package_manager.update_packages(packages=['Launcher'], no_install=True, silent=True)
             Events.Fire(Events.Application.Ready())
             return
         # Query GitHub for updates and skip installation, force query and lock GUI if --update argument is supplied
         try:
-            if Config.Launcher.active_importer != 'XXMI' or self.args.update:
-                self.package_manager.update_packages(no_install=True, force=self.args.update, silent=not self.args.update)
-            else:
-                self.package_manager.update_packages(packages=['Launcher'], no_install=True, silent=True)
+            self.package_manager.update_packages(no_install=True, force=self.args.update, silent=not self.args.update)
+            if Config.Launcher.active_importer == 'XXMI' and not self.args.update:
                 return
         except Exception as e:
             if self.args.update:
