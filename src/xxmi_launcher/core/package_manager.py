@@ -7,7 +7,7 @@ import os
 import json
 
 from dataclasses import dataclass, field, asdict
-from typing import Union, List, Dict, Optional
+from typing import Union, List, Dict, Optional, Tuple
 from pathlib import Path
 from dacite import from_dict
 from win32api import GetFileVersionInfo, HIWORD, LOWORD
@@ -44,6 +44,8 @@ class PackageConfig:
     skipped_version: str = ''
     deployed_version: str = ''
     update_check_time: int = 0
+    latest_release_notes: str = ''
+    deployed_release_notes: str = ''
 
 
 @dataclass
@@ -93,19 +95,19 @@ class Package:
             self.installed_version = ''
             raise ValueError(f'Failed to detect installed {self.metadata.package_name} version:\n\n{e}') from e
 
-    def get_latest_version(self) -> (str, str, Union[str, None]):
-        version, url, signature = self.github_client.fetch_latest_release(self.asset_version_pattern,
+    def get_latest_version(self) -> Tuple[str, str, Union[str, None], str]:
+        version, url, signature, release_notes = self.github_client.fetch_latest_release(self.asset_version_pattern,
                                                                           self.metadata.asset_name_format,
                                                                           self.signature_pattern)
-        return version, url, signature
+        return version, url, signature, release_notes
 
     def detect_latest_version(self):
         try:
-            self.cfg.latest_version, self.download_url, self.signature = self.get_latest_version()
+            self.cfg.latest_version, self.download_url, self.signature, self.cfg.latest_release_notes = self.get_latest_version()
         except ConnectionRefusedError as e:
             raise e
         except Exception as e:
-            self.cfg.latest_version, self.download_url, self.signature = '', '', ''
+            self.cfg.latest_version, self.download_url, self.signature, self.cfg.latest_release_notes = '', '', '', ''
             raise ValueError(f'Failed to detect latest {self.metadata.package_name} version:\n\n{e}') from e
 
     def update_available(self):
@@ -293,6 +295,7 @@ class Package:
         self.load_manifest()
         self.detect_installed_version()
         self.cfg.deployed_version = self.installed_version
+        self.cfg.deployed_release_notes = self.cfg.latest_release_notes
 
     def subscribe(self, event, callback):
         Events.Subscribe(event, callback, caller_id=self)
@@ -369,6 +372,10 @@ class PackageManagerEvents:
         auto_update: bool
         package_states: Dict[str, PackageState]
 
+    @dataclass
+    class GetPackage:
+        package_name: str
+
 
 class PackageManager:
     def __init__(self, packages: Optional[List[Package]] = None):
@@ -379,6 +386,7 @@ class PackageManager:
         self.update_running = False
         self.api_connection_refused = False
         self.api_connection_refused_notified = False
+        Events.Subscribe(Events.PackageManager.GetPackage, lambda event: self.get_package(event.package_name))
 
     def register_package(self, package: Package):
         self.packages[package.metadata.package_name] = package

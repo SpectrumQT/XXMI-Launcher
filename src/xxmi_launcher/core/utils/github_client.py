@@ -54,7 +54,8 @@ class GitHubClient:
 
         for asset in response.assets:
             if asset.name == asset_name_format % version:
-                return version, asset.browser_download_url, signature
+                release_notes = self.parse_release_notes(response.body)
+                return version, asset.browser_download_url, signature, release_notes
 
         raise ValueError(f"Failed to locate asset matching to '{asset_name_format}'!")
 
@@ -75,4 +76,16 @@ class GitHubClient:
 
         return data
 
-
+    def parse_release_notes(self, body) -> str:
+        # Skip warning section header to exclude it from search
+        body = body.replace('## Warning', '')
+        # Search for start of section
+        start = body.find('##')
+        if start == -1:
+            return '<font color="red">⚠ Error! Invalid release notes format! ⚠</font>'
+        # Search for start of signature section (footer)
+        end = body.find('## Signature')
+        if end == -1:
+            return '<font color="red">☢ Error! Release is unsigned! ☢</font>'
+        # Return text inbetween
+        return body[start:end]
