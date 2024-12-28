@@ -51,6 +51,7 @@ class ToolTip(tk.Toplevel):
         y_offset: int = +10,
         style: str = '',
         parent_kwargs: dict | None = None,
+        anchor: str = 'ne',
         **message_kwargs: Any,
     ):
         """Create a ToolTip. Allows for `**kwargs` to be passed on both
@@ -80,6 +81,8 @@ class ToolTip(tk.Toplevel):
             by default `{"bg": "black", "padx": 1, "pady": 1}`
         **message_kwargs : tkinter `**kwargs` passed directly into the ToolTip
         """
+        self.x = 0
+        self.y = 0
         self.widget = widget
         # ToolTip should have the same parent as the widget unless stated
         # otherwise in the `parent_kwargs`
@@ -106,6 +109,7 @@ class ToolTip(tk.Toplevel):
         self.message_kwargs: dict = self.DEFAULT_MESSAGE_KWARGS.copy()
         self.message_kwargs.update(message_kwargs)
         self.style = style
+        self.cursor_anchor = anchor
 
         # self.message_widget = tk.Message(
         #     self,
@@ -164,13 +168,23 @@ class ToolTip(tk.Toplevel):
         """
         x = event.x_root + self.x_offset
         y = event.y_root + self.y_offset
+        if self.x == self.y == 0:
+            self.geometry(f"+{self.x}+{self.y}")
+        self.x = x
+        self.y = y
+
+    def place_tooltip(self) -> None:
+        x = self.x
+        y = self.y
         # Clamp tooltip to screen area
-        x_offset = x + self.winfo_width() - self.winfo_screenwidth()
+        x_offset = x + self.winfo_width() - self.winfo_screenwidth() + 42
         if x_offset > 0:
             x -= x_offset
-        y_offset = y + self.winfo_height() - self.winfo_screenheight()
+        y_offset = y + self.winfo_height() - self.winfo_screenheight() + 42
         if y_offset > 0:
             y -= y_offset
+        if self.cursor_anchor == 'sw':
+            y -= self.winfo_height() + self.y_offset
         # Update tooltip coords
         self.geometry(f"+{x}+{y}")
 
@@ -207,7 +221,8 @@ class ToolTip(tk.Toplevel):
         if self.status == ToolTipStatus.VISIBLE:
             self._update_message()
             self.deiconify()
-
+            self.update()
+            self.place_tooltip()
             # Recursively call _show to update ToolTip with the newest value of msg
             # This is a race condition which only exits when upon a binding change
             # that in turn changes the `status` to outside
