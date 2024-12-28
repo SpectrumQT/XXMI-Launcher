@@ -367,7 +367,11 @@ class Application:
             return
         # Query GitHub for updates and skip installation, force query and lock GUI if --update argument is supplied
         try:
-            self.package_manager.update_packages(no_install=True, force=self.args.update, silent=not self.args.update)
+            if Config.Launcher.active_importer != 'XXMI' or self.args.update:
+                self.package_manager.update_packages(no_install=True, force=self.args.update, silent=not self.args.update)
+            else:
+                self.package_manager.update_packages(packages=['Launcher'], no_install=True, silent=True)
+                return
         except Exception as e:
             if self.args.update:
                 Events.Fire(Events.Application.ShowWarning(
