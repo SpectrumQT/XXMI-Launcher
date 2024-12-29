@@ -235,7 +235,7 @@ class UpdateButton(MainActionButton):
                 ## Update packages to latest versions:
                 {pending_update_message}
                 
-                *Hover over versions in the bottom-left corner to view update descriptions.*
+                <font color="#3366ff">*Hover over versions in the bottom-left corner to view update descriptions.*</font>
             """).format(
                 pending_update_message='\n'.join(pending_update_message)
             )))
