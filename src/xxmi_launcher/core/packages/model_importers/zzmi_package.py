@@ -192,6 +192,9 @@ class ZZMIPackage(ModelImporterPackage):
 
         settings_manager.load_settings()
 
+        # Set "Image Quality" to "Custom"
+        settings_manager.set_system_setting('3', 3)
+
         # Set "High-Precision Character Animation" to "Disabled"
         settings_manager.set_system_setting('13162', 0)
 
