@@ -31,6 +31,7 @@ from core.packages.model_importers.wwmi_package import WWMIPackage
 from core.packages.model_importers.zzmi_package import ZZMIPackage
 
 
+
 @dataclass
 class ApplicationEvents:
 
@@ -180,9 +181,22 @@ class ApplicationEvents:
 
 
 class Application:
-    def __init__(self, app_gui):
+    def __init__(self, root_path: Path, gui):
+        Paths.initialize(root_path)
+        self.gui = gui
+        try:
+            self.initialize()
+        except BaseException as e:
+            logging.exception(e)
+            self.gui.show_messagebox(Events.Application.ShowError(
+                modal=True,
+                screen_center=True,
+                lock_master=False,
+                message=str(e),
+            ))
+
+    def initialize(self):
         self.is_alive = True
-        self.gui = app_gui
         self.launching_game = False
 
         # Parse console args

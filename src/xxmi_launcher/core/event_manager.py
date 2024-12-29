@@ -1,7 +1,7 @@
 import logging
 
-import core.application as application
-import core.package_manager as package_manager
+from core import application
+from core import package_manager
 from core.packages import updater_package
 from core.packages import launcher_package
 from core.packages import migoto_package

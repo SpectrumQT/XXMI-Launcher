@@ -32,23 +32,16 @@ if __name__ == '__main__':
     logging.debug(f'App Start')
 
     try:
-        import core.path_manager as Paths
-        Paths.initialize(root_path)
-
         import gui.windows.main.main_window as main_window
         gui = main_window.MainWindow()
 
-        import core.event_manager as Events
-
         from core.application import Application
-        Application(gui)
+        Application(root_path, gui)
 
     except BaseException as e:
         logging.exception(e)
-
-        gui.show_messagebox(Events.Application.ShowError(
-            modal=True,
-            screen_center=True,
-            lock_master=False,
-            message=str(e),
-        ))
+        import traceback
+        from tkinter.messagebox import showerror
+        showerror(title='XXMI Launcher - Fatal Error',
+                  message=f'{e}\n\n'
+                          f'{traceback.format_exc()}')
