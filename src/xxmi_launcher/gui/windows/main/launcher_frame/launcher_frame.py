@@ -370,7 +370,7 @@ class PackageVersionText(UIImageButton):
             width=32,
             height=32,
             text='',
-            font=('Roboto', 18),
+            font=('Consolas', 16),
             fill='#999999',
             activefill='white',
             anchor='nw',
@@ -410,21 +410,22 @@ class PackageVersionText(UIImageButton):
 
         if self.package_name == 'Launcher':
             package_description = L('package_description_launcher', dedent("""
-                *This package is XXMI Launcher itself and defines its features.*
+                *This package is XXMI Launcher App itself and defines its features.*
             """))
         elif self.package_name == 'XXMI':
             package_description = L('package_description_xxmi_libraries', dedent("""
-                *XXMI Libraries package is custom 3dmigoto build that does heavy lifting around the game process.*
+                *XXMI Libraries package is custom 3dmigoto build fiddling with data between GPU and a game process.*
             """))
         else:
             package_description = L('package_description_model_importer', dedent("""
-                *Model Importer package offers set of API functions required for mods to work for given game.*
+                *Model Importer package offers a set of API functions required for mods to work in given game.*
             """))
 
         txt = L('package_release_notes', dedent("""
             {package_release_notes}
-            *<u>Left-Click</u> to open {package_name} Package GitHub releases for full changelog.*
-            {package_description}
+            
+            <font color="#3366ff">*<u>Left-Click</u> to open {package_name} Package GitHub releases for full changelog.*</font>
+            <font color="#aaaaaa">{package_description}</font>
         """)).format(
             package_release_notes=package_release_notes
         )
@@ -457,7 +458,7 @@ class LauncherVersionText(PackageVersionText):
 
 class XXMIVersionText(PackageVersionText):
     def __init__(self, master):
-        super().__init__(x=115,
+        super().__init__(x=125,
                          y=680,
                          master=master)
         self.subscribe(Events.Application.LoadImporter, self.handle_load_importer)
@@ -482,7 +483,7 @@ class XXMIVersionText(PackageVersionText):
 
 class ImporterVersionText(PackageVersionText):
     def __init__(self, master):
-        super().__init__(x=210,
+        super().__init__(x=230,
                          y=680,
                          master=master)
         self.subscribe(Events.Application.LoadImporter, self.handle_load_importer)
