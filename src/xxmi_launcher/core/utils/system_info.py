@@ -1,7 +1,24 @@
-import wmi
 import logging
+import os
 
 from multiprocessing import Process, Array
+
+
+def is_wine():
+    return any(x in os.environ for x in ['WINE', 'WINEPREFIX', 'WINELOADER'])
+
+
+try:
+    import wmi
+except Exception as e:
+    if is_wine():
+        raise Exception(f'Failed to initialize WMI!\n'
+                        f'Make sure that launcher is installed to drive_c of WINE.\n\n'
+                        f'{e}')
+    else:
+        raise Exception(f'Failed to initialize WMI!\n'
+                        f'Make sure to use Windows or WINE 9.22+.\n\n'
+                        f'{e}')
 
 
 def log_system_info():
