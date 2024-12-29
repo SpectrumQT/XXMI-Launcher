@@ -47,6 +47,7 @@ class ToolTip(tk.Toplevel):
         delay: float = 0.0,
         follow: bool = True,
         refresh: float = 0.0,
+        scaling: float = 1.0,
         x_offset: int = +10,
         y_offset: int = +10,
         style: str = '',
@@ -83,6 +84,7 @@ class ToolTip(tk.Toplevel):
         """
         self.x = 0
         self.y = 0
+        self.scaling = scaling or 1.0
         self.widget = widget
         # ToolTip should have the same parent as the widget unless stated
         # otherwise in the `parent_kwargs`
@@ -166,8 +168,8 @@ class ToolTip(tk.Toplevel):
         """
         Updates the ToolTip's position.
         """
-        x = event.x_root + self.x_offset
-        y = event.y_root + self.y_offset
+        x = event.x_root + int(self.x_offset * self.scaling)
+        y = event.y_root + int(self.y_offset * self.scaling)
         if self.x == self.y == 0:
             self.geometry(f"+{self.x}+{self.y}")
         self.x = x
@@ -176,15 +178,18 @@ class ToolTip(tk.Toplevel):
     def place_tooltip(self) -> None:
         x = self.x
         y = self.y
+        screen_width = int(self.winfo_screenwidth() * self.scaling)
+        screen_height = int(self.winfo_screenheight() * self.scaling)
+        if self.cursor_anchor == 'sw':
+            y -= self.winfo_height() + int(self.y_offset * self.scaling * 2)
         # Clamp tooltip to screen area
-        x_offset = x + self.winfo_width() - self.winfo_screenwidth() + 42
+        x_offset = x + self.winfo_width() - screen_width + 42
         if x_offset > 0:
             x -= x_offset
-        y_offset = y + self.winfo_height() - self.winfo_screenheight() + 42
-        if y_offset > 0:
-            y -= y_offset
-        if self.cursor_anchor == 'sw':
-            y -= self.winfo_height() + self.y_offset
+        if self.cursor_anchor == 'nw':
+            y_offset = y + self.winfo_height() - screen_height + 42
+            if y_offset > 0:
+                y -= y_offset
         # Update tooltip coords
         self.geometry(f"+{x}+{y}")
 
@@ -241,6 +246,7 @@ class UIToolTip(ToolTip):
                 "padx": 1,
                 "pady": 1
             },
+            'scaling': master._CTkScalingBaseClass__widget_scaling,
             'style': dedent("""
                 <style>
                     p { font-family: Asap; margin: 5px;}
@@ -254,5 +260,4 @@ class UIToolTip(ToolTip):
         default.update(kwargs)
 
         ToolTip.__init__(self, master, **default)
-
         self.message_widget.set_fontscale(1.2 * master._CTkScalingBaseClass__widget_scaling)
