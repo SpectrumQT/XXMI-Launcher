@@ -181,8 +181,7 @@ class ApplicationEvents:
 
 
 class Application:
-    def __init__(self, root_path: Path, gui):
-        Paths.initialize(root_path)
+    def __init__(self, gui):
         self.gui = gui
         try:
             self.initialize()

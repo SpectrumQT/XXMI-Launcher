@@ -32,11 +32,14 @@ if __name__ == '__main__':
     logging.debug(f'App Start')
 
     try:
+        import core.path_manager as Paths
+        Paths.initialize(root_path)
+
         import gui.windows.main.main_window as main_window
         gui = main_window.MainWindow()
 
         from core.application import Application
-        Application(root_path, gui)
+        Application(gui)
 
     except BaseException as e:
         logging.exception(e)
