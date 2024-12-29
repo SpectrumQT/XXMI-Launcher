@@ -39,7 +39,7 @@ class MigotoManagerEvents:
 @dataclass
 class MigotoManagerConfig:
     enforce_rendering: bool = True
-    enable_hunting: bool = True
+    enable_hunting: bool = False
     dump_shaders: bool = False
     mute_warnings: bool = True
     calls_logging: bool = False

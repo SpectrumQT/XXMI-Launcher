@@ -168,6 +168,12 @@ class AppConfig:
                 pass
             ini_overrides['calls_logging'] = new_config.Importer.d3dx_ini['calls_logging']
 
+    def run_patch_143(self):
+        for package_name, importer in self.Importers.__dict__.items():
+            # Disable hunting by default
+            importer.Migoto.enable_hunting = False
+
+
     def upgrade(self, old_version, new_version):
         # Save config to file and exit early if old version is empty (aka fresh installation)
         if not old_version:
@@ -179,6 +185,7 @@ class AppConfig:
         # Apply patches
         patches = {
             '1.1.0': self.run_patch_110,
+            '1.4.3': self.run_patch_143,
         }
         applied_patches = []
         for patch_version, patch_func in patches.items():
