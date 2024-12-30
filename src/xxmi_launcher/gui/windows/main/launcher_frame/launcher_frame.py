@@ -382,7 +382,7 @@ class PackageVersionText(UIImageButton):
         self.set_tooltip(self.get_tooltip, delay = 0.1, anchor='sw')
 
     def open_link(self):
-        package = Events.Call(Events.PackageManager.GetPackage(Config.Launcher.active_importer))
+        package = Events.Call(Events.PackageManager.GetPackage(self.package_name))
         metadata = package.metadata
         webbrowser.open(f'https://github.com/{metadata.github_repo_owner}/{metadata.github_repo_name}/releases')
 
