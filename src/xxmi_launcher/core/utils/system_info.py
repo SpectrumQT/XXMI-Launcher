@@ -8,19 +8,6 @@ def is_wine():
     return any(x in os.environ for x in ['WINE', 'WINEPREFIX', 'WINELOADER'])
 
 
-try:
-    import wmi
-except Exception as e:
-    if is_wine():
-        raise Exception(f'Failed to initialize WMI!\n'
-                        f'Make sure that launcher is installed to drive_c of WINE.\n\n'
-                        f'{e}')
-    else:
-        raise Exception(f'Failed to initialize WMI!\n'
-                        f'Make sure to use Windows or WINE 9.22+.\n\n'
-                        f'{e}')
-
-
 def log_system_info():
     try:
         process = SystemInfoProcess()
@@ -37,9 +24,21 @@ class SystemInfoProcess(Process):
         self.data = Array('c', b'\0' * 512)
 
     def run(self):
-        pc = wmi.WMI()
-
         result = {}
+
+        try:
+            result['Platform'] = f'{os.name.upper()}{'+WINE' if is_wine() else ''}'
+        except Exception:
+            result['Platform'] = 'Unknown'
+
+        try:
+            import wmi
+            pc = wmi.WMI()
+        except Exception as e:
+            import traceback
+            error = f'WMI initialization failed on {result['Platform']} platform: {e}\n\n{traceback.format_exc()}'
+            self.data.raw = error.encode('utf-8')
+            return
 
         try:
             os_info = pc.Win32_OperatingSystem()[0]
