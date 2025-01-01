@@ -3,7 +3,7 @@ import struct
 
 from pathlib import Path
 from enum import Enum
-from typing import List
+from typing import List, Tuple, Union
 
 
 # https: // github.com / dotnet / runtime / blob / a7efcd9ca9255dc9faa8b4a2761cdfdb62619610 / src / libraries / System.Runtime.Serialization.Formatters / src / System / Runtime / Serialization / Formatters / Binary / BinaryEnums.cs  # L7C1-L32C6
@@ -186,6 +186,75 @@ class BinaryWriter:
 
     def emulate_sleepy_binary_formatter_footer_write(self):
         self.write_enum_as_byte(BinaryHeaderEnum.MessageEnd)
+
+
+class JsonSerializer:
+    def __init__(self,
+                 indent: Union[None, str, int] = 4,
+                 separators: Tuple[str, str] = (',', ':'),
+                 newline: str = '\r\n'):
+
+        if isinstance(indent, int):
+            self.indent = ' ' * indent
+        elif isinstance(indent, str):
+            self.indent = indent
+        elif indent is None:
+            self.indent = ''
+        else:
+            raise ValueError(f'Indent option {indent} has unsupported type {type(indent)}!')
+        self.item_separator = separators[0]
+        self.key_separator = separators[1]
+        self.newline = newline
+
+    def dumps(self, obj):
+        return self.newline + self.dump_value(obj)
+
+    def dump_value(self, value, level: int = 0) -> str:
+        if isinstance(value, str):
+            return '"' + value.replace('\\', '\\\\').replace('\"', '\\\"') + '"'
+        elif isinstance(value, bool):
+            return 'true' if value else 'false'
+        elif value is None:
+            return 'null'
+        elif isinstance(value, int):
+            return str(value)
+        elif isinstance(value, float):
+            return str(value).replace(',', '.')
+        elif isinstance(value, list):
+            return self.dump_list(value, level + 1)
+        elif isinstance(value, dict):
+            return self.dump_dict(value, level + 1)
+        else:
+            raise ValueError(f'Value {value} has unsupported type {type(value)}!')
+
+    def dump_list(self, src_list: list, level: int) -> str:
+        result = '[' + self.newline
+
+        for element_id, value in enumerate(src_list):
+            is_last_element = element_id == len(src_list) - 1
+            item_separator = '' if is_last_element else self.item_separator
+            value = self.dump_value(value, level)
+            result += f'{self.indent*level}{value}{item_separator}{self.newline}'
+
+        result += self.indent * (level - 1) + ']'
+
+        return result
+
+    def dump_dict(self, src_dict: dict, level: int) -> str:
+        result = '{' + self.newline
+
+        max_key_len = 0
+        for element_id, (key, value) in enumerate(src_dict.items()):
+            max_key_len = len(key) if len(key) > max_key_len else max_key_len
+            spacing = max_key_len - len(key) + 1
+            is_last_element = element_id == len(src_dict) - 1
+            item_separator = '' if is_last_element else self.item_separator
+            value = self.dump_value(value, level)
+            result += f'{self.indent*level}"{key}"{" " * spacing}{self.key_separator} {value}{item_separator}{self.newline}'
+
+        result += self.indent * (level - 1) + '}'
+
+        return result
 
 
 class Sleepy:

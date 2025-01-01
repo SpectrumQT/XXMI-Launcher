@@ -21,7 +21,7 @@ from core.package_manager import PackageMetadata
 from core.utils.ini_handler import IniHandler, IniHandlerSettings
 from core.packages.model_importers.model_importer import ModelImporterPackage, ModelImporterConfig
 from core.packages.migoto_package import MigotoManagerConfig
-from core.utils.sleepy import Sleepy
+from core.utils.sleepy import Sleepy, JsonSerializer
 
 log = logging.getLogger(__name__)
 
@@ -207,6 +207,7 @@ class ZZMIPackage(ModelImporterPackage):
 class SettingsManager:
     def __init__(self, config_path: Path):
         self.path = config_path
+        self.json = JsonSerializer()
         self.sleepy = Sleepy()
         self.magic = bytes([85, 110, 209, 150, 116, 209, 131, 206, 149, 110, 103, 105, 110, 208, 181, 46, 71, 208, 176, 109, 101, 206, 159, 98, 106, 101, 209, 129, 116])
         self.settings = {}
@@ -219,11 +220,13 @@ class SettingsManager:
     def save_settings(self):
         if not self.modified:
             return
-        content = json.dumps(self.settings, indent=4, separators=(',', ':')).replace('\n', '\r\n')
+        content = self.json.dumps(self.settings)
         self.sleepy.write_file(self.path, self.magic, content)
 
     def set_system_setting(self, setting_id: str, new_value: int):
-        system_settings = self.settings.get('SystemSettingDataMap', {})
+        system_settings = self.settings.get('SystemSettingDataMap', None)
+        if system_settings is None:
+            raise ValueError(f'SystemSettingDataMap is not found!')
         setting = system_settings.get(setting_id, None)
         if setting is None:
             system_settings[setting_id] = {
