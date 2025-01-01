@@ -157,7 +157,7 @@ class WWMIPackage(ModelImporterPackage):
 
     def get_start_cmd(self, game_path: Path) -> Tuple[Path, List[str], Optional[str]]:
         game_exe_path = self.validate_game_exe_path(game_path)
-        return game_exe_path, ['Client', '-DisableModule=streamline'], str(game_exe_path.parent)
+        return game_exe_path, ['-d3d11'], str(game_exe_path.parent)
 
     def initialize_game_launch(self, game_path: Path):
         self.restore_streamline(game_path)
@@ -234,7 +234,7 @@ class WWMIPackage(ModelImporterPackage):
         plugins_path = game_path / 'Engine' / 'Plugins' / 'Runtime' / 'Nvidia'
         plugin_paths = [
             plugins_path / 'DLSS',
-            plugins_path / 'Streamline',
+            plugins_path / 'Streamline_Old',
         ]
 
         for path in plugin_paths:
