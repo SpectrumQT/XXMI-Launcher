@@ -165,8 +165,31 @@ class WWMIPackage(ModelImporterPackage):
         # self.remove_streamline(game_path)
         self.update_engine_ini(game_path)
         self.update_wwmi_ini()
-        if Config.Importers.WWMI.Importer.unlock_fps:
-            self.update_local_storage_db(game_path)
+
+        if Config.Importers.WWMI.Importer.configure_game or Config.Importers.WWMI.Importer.unlock_fps:
+            settings_manager = SettingsManager(game_path)
+            settings_manager.connect()
+
+            if Config.Importers.WWMI.Importer.configure_game:
+                try:
+                    # Set "Image Quality" to "Quality" - required to force high quality textures mods are made for
+                    settings_manager.set_setting('ImageQuality', 3)
+                except Exception as e:
+                    raise ValueError(f'Failed to configure in-game settings for WWMI!\n'
+                                     f"Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:\n"
+                                     f'* Graphics > `Graphics Quality` must be `Quality`.\n\n'
+                                     f'{e}') from e
+
+            if Config.Importers.WWMI.Importer.unlock_fps:
+                try:
+                    # Set "Frame Rate" to "120"
+                    # States: 30 / 45 / 60 / 120
+                    settings_manager.set_setting('CustomFrameRate', 3)
+                except Exception as e:
+                    raise ValueError(f'Failed to force 120 FPS!\n\n'
+                                     f'{e}') from e
+
+            settings_manager.save_settings()
 
     def update_engine_ini(self, game_path: Path):
         Events.Fire(Events.Application.StatusUpdate(status='Updating Engine.ini...'))
@@ -194,40 +217,6 @@ class WWMIPackage(ModelImporterPackage):
         if ini.is_modified():
             with open(engine_ini_path, 'w', encoding='utf-8') as f:
                 f.write(ini.to_string())
-
-    def update_local_storage_db(self, game_path: Path):
-        Events.Fire(Events.Application.StatusUpdate(status='Setting FPS limit to 120...'))
-        local_storage_path = game_path / 'Client' / 'Saved' / 'LocalStorage'
-        Paths.verify_path(local_storage_path)
-        # Locate .db files within LocalStorage dir, there may be multiple files there, i.e. LocalStorage2.db
-        db_paths = list(local_storage_path.glob('LocalStorage*.db'))
-        log.debug(f'Found {len(db_paths)} database files in {local_storage_path}')
-        if len(db_paths) == 0:
-            raise ValueError(f'Failed to force 120 FPS!\n\n'
-                             'Settings file does not exist! Please start the game at least once.')
-        for db_path in db_paths:
-            # Connect to the database file
-            log.debug(f'Connecting {db_path}...')
-            Events.Fire(Events.Application.VerifyFileAccess(path=db_path, write=True))
-            connection = sqlite3.connect(db_path)
-            cursor = connection.cursor()
-            # Fetch existing FPS setting data
-            result = cursor.execute("SELECT value FROM LocalStorage WHERE key='CustomFrameRate'")
-            data = result.fetchone()
-            # Extract FPS setting value
-            if data is None or len(data) != 1:
-                custom_frame_rate = -1
-            else:
-                custom_frame_rate = int(data[0])
-            log.debug(f'Current FPS setting: {custom_frame_rate}')
-            # Write new FPS setting value
-            if custom_frame_rate != 120:
-                log.debug(f'Changing FPS setting to {120}...')
-                cursor.execute(f"UPDATE LocalStorage SET value = '{120}' WHERE key='CustomFrameRate'")
-                connection.commit()
-            # Close the database file
-            connection.close()
-            log.debug(f'Connection closed: {db_path}')
 
     def verify_plugins(self, game_path: Path):
         Events.Fire(Events.Application.StatusUpdate(status='Checking engine plugins integrity...'))
@@ -292,6 +281,83 @@ class WWMIPackage(ModelImporterPackage):
         if ini.is_modified():
             with open(wwmi_ini_path, 'w', encoding='utf-8') as f:
                 f.write(ini.to_string())
+
+
+class SettingsManager:
+    def __init__(self, game_path: Path):
+        self.path = game_path / 'Client' / 'Saved' / 'LocalStorage'
+        self.databases: List[LocalStorageClient] = []
+
+    def disconnect(self):
+        for db_client in self.databases:
+            db_client.disconnect()
+        self.databases = []
+
+    def connect(self):
+        self.disconnect()
+        # Locate .db files within LocalStorage dir, there may be multiple files there, i.e. LocalStorage2.db
+        db_paths = list(self.path.glob('LocalStorage*.db'))
+        if len(db_paths) == 0:
+            raise ValueError(f'Settings file does not exist!\n\n'
+                             f'Please start the game once with official launcher.')
+        log.debug(f'Found {len(db_paths)} database files in {self.path}: {db_paths}')
+        for db_path in db_paths:
+            db_client = LocalStorageClient(db_path)
+            db_client.connect()
+            self.databases.append(db_client)
+
+    def set_setting(self, key: str, value: Union[int, float, str]):
+        for db_client in self.databases:
+            db_client.set_setting(key, value)
+
+    def save_settings(self):
+        for db_client in self.databases:
+            db_client.save()
+
+
+class LocalStorageClient:
+    def __init__(self, path: Path):
+        self.path = path
+        self.connection = None
+        self.cursor = None
+        self.modified = False
+
+    def disconnect(self):
+        if self.connection is None:
+            return
+        self.connection.close()
+        self.cursor = None
+        self.modified = False
+        log.debug(f'Connection closed: {self.path}')
+
+    def connect(self):
+        self.disconnect()
+        log.debug(f'Connecting to {self.path}...')
+        Events.Fire(Events.Application.VerifyFileAccess(path=self.path, write=True))
+        self.connection = sqlite3.connect(self.path)
+        self.cursor = self.connection.cursor()
+
+    def save(self):
+        if not self.modified:
+            return
+        self.connection.commit()
+        self.disconnect()
+
+    def set_setting(self, key: str, value: Union[int, float, str]):
+        # Fetch existing setting data
+        result = self.cursor.execute(f"SELECT value FROM LocalStorage WHERE key='{key}'")
+        data = result.fetchone()
+        # Extract current setting value
+        if data is None or len(data) != 1:
+            old_value = -1
+        else:
+            old_value = int(data[0])
+        log.debug(f'Current {key} setting: {old_value}')
+        # Write new setting value
+        if value != old_value:
+            log.debug(f'Changing {key} setting to {value}...')
+            self.cursor.execute(f"UPDATE LocalStorage SET value = '{value}' WHERE key='{key}'")
+            self.modified = True
 
 
 class Version:

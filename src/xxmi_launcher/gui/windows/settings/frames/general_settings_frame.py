@@ -35,6 +35,11 @@ class GeneralSettingsFrame(UIFrame):
         self.put(ProcessPriorityLabel(self)).grid(row=2, column=0, padx=20, pady=(10, 10), sticky='ew')
         self.put(ProcessPriorityOptionMenu(self)).grid(row=2, column=1, padx=(10, 10), pady=(10, 10), sticky='w')
 
+        # Auto Config
+        if Vars.Launcher.active_importer.get() != 'SRMI':
+            self.put(AutoConfigLabel(self)).grid(row=2, column=1, padx=(210, 10), pady=(10, 10), sticky='w', columnspan=3)
+            self.put(ConfigureGame(self)).grid(row=2, column=1, padx=(320, 10), pady=(10, 10), sticky='w', columnspan=3)
+
         # Tweaks
         self.put(TweaksLabel(self)).grid(row=3, column=0, padx=(20, 10), pady=(10, 10), sticky='w')
         if Vars.Launcher.active_importer.get() != 'ZZMI':
@@ -43,13 +48,10 @@ class GeneralSettingsFrame(UIFrame):
         if Vars.Launcher.active_importer.get() == 'GIMI':
             self.put(UnlockFPSWindowOptionMenu(self)).grid(row=3, column=1, padx=(150, 10), pady=(10, 10), sticky='w', columnspan=3)
             self.put(EnableHDR(self)).grid(row=3, column=1, padx=(330, 10), pady=(10, 10), sticky='w', columnspan=3)
-            self.put(DisableDCR(self)).grid(row=3, column=1, padx=(460, 10), pady=(10, 10), sticky='w', columnspan=3)
         #  Performance Tweaks
         if Vars.Launcher.active_importer.get() == 'WWMI':
             self.put(ApplyTweaksCheckbox(self)).grid(row=3, column=2, padx=(20, 10), pady=(10, 10), sticky='w')
             self.put(OpenEngineIniButton(self)).grid(row=3, column=3, padx=(10, 20), pady=(10, 10), sticky='e')
-        if Vars.Launcher.active_importer.get() == 'ZZMI':
-            self.put(ConfigureGame(self)).grid(row=3, column=1, padx=(10, 10), pady=(10, 10), sticky='w')
 
         # Auto close
         self.put(LauncherLabel(self)).grid(row=4, column=0, padx=(20, 10), pady=(10, 10), sticky='w')
@@ -162,6 +164,60 @@ class ProcessPriorityOptionMenu(UIOptionMenu):
         self.set_tooltip('Set process priority for the game exe.')
 
 
+class AutoConfigLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text='Auto Config:',
+            font=('Roboto', 16, 'bold'),
+            fg_color='transparent',
+            master=master)
+
+
+class ConfigureGame(UICheckbox):
+    def __init__(self, master):
+        super().__init__(
+            text='Configure Game Settings',
+            variable=Vars.Active.Importer.configure_game,
+            master=master)
+
+        self.set_tooltip(self.get_tooltip)
+
+    def get_tooltip(self):
+        msg = ''
+        if Config.Launcher.active_importer == 'GIMI':
+            msg = dedent("""
+                **Enabled**: Ensure GIMI-compatible in-game **Graphics Settings** before game start:
+
+                - `Dynamic Character Resolution: Off`
+
+                **Disabled**: In-game settings will not be affected.
+
+                <font color="red">⚠ Mods will not work with wrong settings! ⚠</font>
+            """)
+        if Config.Launcher.active_importer == 'WWMI':
+            msg = dedent("""
+                **Enabled**: Ensure WWMI-compatible in-game **Graphics Settings** before game start:
+
+                - `Graphics Quality: Quality`
+
+                **Disabled**: In-game settings will not be affected.
+
+                <font color="red">⚠ Mods will not work with wrong settings! ⚠</font>
+            """)
+        if Config.Launcher.active_importer == 'ZZMI':
+            msg = dedent("""
+                **Enabled**: Ensure ZZMI-compatible in-game **Graphics Settings** before game start:
+
+                - `Character Quality: High`
+                - `High-Precision Character Animation: Disabled`
+
+                **Disabled**: In-game settings will not be affected.
+
+                <font color="red">⚠ Mods will not work with wrong settings! ⚠</font>
+            """)
+        return msg.strip()
+
+
 class LaunchOptionsLabel(UILabel):
     def __init__(self, master):
         super().__init__(
@@ -237,7 +293,7 @@ class UnlockFPSCheckbox(UICheckbox):
         msg = ''
         if Config.Launcher.active_importer == 'WWMI':
             msg = 'This option allows to set FPS limit to 120 even on not officially supported devices.\n'
-            msg += '* Enabled: Sets KeyCustomFrameRate to 120 in LocalStorage.db on game start.\n'
+            msg += '* Enabled: Sets CustomFrameRate to 3 in LocalStorage.db on game start.\n'
             msg += '* Disabled: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.'
         if Config.Launcher.active_importer == 'SRMI':
             msg = 'This option allows to set FPS limit to 120.\n'
@@ -307,38 +363,6 @@ class EnableHDR(UICheckbox):
             'Warning! Your monitor must support HDR and `Use HDR` must be enabled in Windows Display settings!\n'
             'Enabled: Turn HDR On. Launcher will create HDR registry record each time before the game launch.\n'
             'Disabled: Turn HDR Off. No extra action required, game auto-removes HDR registry record on launch.')
-
-
-class DisableDCR(UICheckbox):
-    def __init__(self, master):
-        super().__init__(
-            text='Disable DCR',
-            variable=Vars.Active.Importer.disable_dcr,
-            master=master)
-        self.set_tooltip(
-            'Warning! GIMI model mods are *NOT* compatible with Dynamic Character Resolution Graphics Setting!\n'
-            'Enabled: Turn Off DCR, allowing all kinds of character mods to work.\n'
-            'Disabled: DCR setting will not be affected (use in-game Graphics Settings to enable it again).')
-
-
-class ConfigureGame(UICheckbox):
-    def __init__(self, master):
-        super().__init__(
-            text='Configure Game Settings',
-            variable=Vars.Active.Importer.configure_game,
-            master=master)
-        var = dedent("""
-            **Enabled**: Ensure ZZMI-compatible in-game **Graphics Settings** before game start:
-            
-            - `Character Quality: High`
-            - `High-Precision Character Animation: Disabled`
-            
-            **Disabled**: In-game settings will not be affected.
-            
-            <br/>
-            <font color="red">⚠ Mods will not work with wrong settings! ⚠</font>
-        """)
-        self.set_tooltip(var)
 
 
 class LauncherLabel(UILabel):

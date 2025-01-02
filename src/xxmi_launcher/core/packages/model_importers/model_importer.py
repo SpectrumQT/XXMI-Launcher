@@ -79,6 +79,7 @@ class ModelImporterConfig:
     d3dx_ini: Dict[
         str, Dict[str, Dict[str, Union[str, int, float, Dict[str, Union[str, int, float]]]]]
     ] = field(default_factory=lambda: {})
+    configure_game: bool = True
 
     @property
     def importer_path(self) -> Path:

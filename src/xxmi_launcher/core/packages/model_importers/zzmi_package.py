@@ -70,7 +70,6 @@ class ZZMIConfig(ModelImporterConfig):
             },
         },
     })
-    configure_game: bool = True
 
 
 @dataclass
@@ -120,13 +119,9 @@ class ZZMIPackage(ModelImporterPackage):
         if Config.Importers.ZZMI.Importer.configure_game:
             try:
                 self.configure_game_settings(game_path)
-            except FileNotFoundError as e:
-                raise ValueError(f'Failed to configure in-game settings for ZZMI!\n'
-                                 f'Please start the game with official launcher once.\n\n'
-                                 f'{e}') from e
             except Exception as e:
                 raise ValueError(f'Failed to configure in-game settings for ZZMI!\n'
-                      f"Please disable `Configure Game` in launcher's General Settings and check in-game settings:\n"
+                      f"Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:\n"
                       f'* Graphics > `Character Quality` must be `High`.\n'
                       f'* Graphics > `High-Precision Character Animation` must be `Disabled`.\n\n'
                       f'{e}') from e
