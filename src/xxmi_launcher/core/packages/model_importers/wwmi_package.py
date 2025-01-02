@@ -160,8 +160,9 @@ class WWMIPackage(ModelImporterPackage):
         return game_exe_path, ['-d3d11'], str(game_exe_path.parent)
 
     def initialize_game_launch(self, game_path: Path):
-        self.restore_streamline(game_path)
-        self.verify_plugins(game_path)
+        # self.restore_streamline(game_path)
+        # self.verify_plugins(game_path)
+        self.remove_streamline(game_path)
         self.update_engine_ini(game_path)
         self.update_wwmi_ini()
         if Config.Importers.WWMI.Importer.unlock_fps:
@@ -249,17 +250,17 @@ class WWMIPackage(ModelImporterPackage):
                 break
 
     def remove_streamline(self, game_path: Path):
-        Events.Fire(Events.Application.StatusUpdate(status='Checking Streamline plugin...'))
-
-        streamline_path = game_path / 'Engine' / 'Plugins' / 'Runtime' / 'Nvidia' / 'Streamline'
+        streamline_path = game_path / 'Engine' / 'Plugins' / 'Runtime' / 'Nvidia' / 'Streamline_Old'
         if not streamline_path.exists():
             return
 
-        Events.Fire(Events.Application.StatusUpdate(status='Disabling Streamline plugin...'))
+        interposer_path = streamline_path / 'Binaries' / 'ThirdParty' / 'Win64' / 'sl.interposer.dll'
 
-        plugin_backups_path = Paths.App.Backups / 'Plugins'
-
-        self.move_contents(streamline_path, plugin_backups_path)
+        if interposer_path.is_file():
+            Events.Fire(Events.Application.StatusUpdate(status='Disabling Streamline plugin...'))
+            plugin_backups_path = Paths.App.Backups / 'Plugins' / 'Streamline_Old'
+            plugin_backups_path.mkdir(parents=True, exist_ok=True)
+            self.move(interposer_path, plugin_backups_path / interposer_path.name)
 
     def restore_streamline(self, game_path: Path):
         plugin_backups_path = Paths.App.Backups / 'Plugins'
