@@ -185,22 +185,20 @@ class ZZMIPackage(ModelImporterPackage):
         log.debug(f'Configuring in-game settings for ZZMI...')
 
         config_path = game_path / 'ZenlessZoneZero_Data' / 'Persistent' / 'LocalStorage' / 'GENERAL_DATA.bin'
-        if not config_path.is_file():
-            raise FileNotFoundError(f'Settings file not found: {config_path}')
 
         settings_manager = SettingsManager(config_path)
 
+        # Load settings from GENERAL_DATA.bin or initialize new settings container
         settings_manager.load_settings()
 
         # Set "Image Quality" to "Custom"
         settings_manager.set_system_setting('3', 3)
-
         # Set "High-Precision Character Animation" to "Disabled"
         settings_manager.set_system_setting('13162', 0)
-
         # Set "Character Quality" to "High"
         settings_manager.set_system_setting('99', 1)
 
+        # Write settings to GENERAL_DATA.bin
         settings_manager.save_settings()
 
 
@@ -214,8 +212,14 @@ class SettingsManager:
         self.modified = False
 
     def load_settings(self):
-        content = self.sleepy.read_file(self.path, self.magic)
-        self.settings = json.loads(content)
+        if self.path.is_file():
+            content = self.sleepy.read_file(self.path, self.magic)
+            self.settings = json.loads(content)
+        else:
+            self.settings = {
+                '$Type': 'MoleMole.GeneralLocalDataItem',
+                'userLocalDataVersionId': '0.0.1',
+            }
 
     def save_settings(self):
         if not self.modified:
@@ -224,9 +228,7 @@ class SettingsManager:
         self.sleepy.write_file(self.path, self.magic, content)
 
     def set_system_setting(self, setting_id: str, new_value: int):
-        system_settings = self.settings.get('SystemSettingDataMap', None)
-        if system_settings is None:
-            raise ValueError(f'SystemSettingDataMap is not found!')
+        system_settings = self.settings.get('SystemSettingDataMap', {})
         setting = system_settings.get(setting_id, None)
         if setting is None:
             system_settings[setting_id] = {
