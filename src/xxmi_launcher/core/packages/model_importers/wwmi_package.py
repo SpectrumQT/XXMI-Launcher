@@ -157,12 +157,12 @@ class WWMIPackage(ModelImporterPackage):
 
     def get_start_cmd(self, game_path: Path) -> Tuple[Path, List[str], Optional[str]]:
         game_exe_path = self.validate_game_exe_path(game_path)
-        return game_exe_path, ['-d3d11'], str(game_exe_path.parent)
+        return game_exe_path, ['Client', '-DisableModule=streamline', '-d3d11', '-dx11'], str(game_exe_path.parent)
 
     def initialize_game_launch(self, game_path: Path):
-        # self.restore_streamline(game_path)
-        # self.verify_plugins(game_path)
-        self.remove_streamline(game_path)
+        self.verify_plugins(game_path)
+        self.restore_streamline(game_path)
+        # self.remove_streamline(game_path)
         self.update_engine_ini(game_path)
         self.update_wwmi_ini()
         if Config.Importers.WWMI.Importer.unlock_fps:
@@ -263,12 +263,16 @@ class WWMIPackage(ModelImporterPackage):
             self.move(interposer_path, plugin_backups_path / interposer_path.name)
 
     def restore_streamline(self, game_path: Path):
-        plugin_backups_path = Paths.App.Backups / 'Plugins'
-        if not plugin_backups_path.is_dir():
+        interposer_backup_path = Paths.App.Backups / 'Plugins' / 'Streamline_Old' / 'sl.interposer.dll'
+        if not interposer_backup_path.is_file():
             return
         Events.Fire(Events.Application.StatusUpdate(status='Restoring Streamline plugin...'))
-        streamline_path = game_path / 'Engine' / 'Plugins' / 'Runtime' / 'Nvidia'
-        self.move_contents(plugin_backups_path, streamline_path)
+        streamline_path = game_path / 'Engine' / 'Plugins' / 'Runtime' / 'Nvidia' / 'Streamline_Old'
+        interposer_path = streamline_path / 'Binaries' / 'ThirdParty' / 'Win64' / 'sl.interposer.dll'
+        if interposer_path.is_file():
+            interposer_backup_path.unlink()
+        else:
+            self.move(interposer_backup_path, interposer_path)
 
     def update_wwmi_ini(self):
         Events.Fire(Events.Application.StatusUpdate(status='Updating WuWa-Model-Importer.ini...'))
