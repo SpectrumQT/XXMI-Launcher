@@ -87,7 +87,7 @@ class MigotoPackage(Package):
 
         try:
             # Copy XXMI package files to game instance
-            self.deploy_client_files(process_name)
+            self.deploy_package_files(process_name)
         except Exception as e:
             # Attempt to restore damaged game instance files
             self.restore_package_files(e, process_name, validate=False)
@@ -209,28 +209,38 @@ class MigotoPackage(Package):
         else:
             Events.Fire(Events.Application.Update(packages=[self.metadata.package_name], no_thread=True, force=True, reinstall=True, silent=True))
 
-        self.deploy_client_files(process_name, force=True)
+        self.deploy_package_files(process_name, force=True)
 
-    def deploy_client_files(self, process_name: str, force: bool = False):
-        for client_file in ['d3d11.dll', 'd3dcompiler_47.dll', 'nvapi64.dll']:
-            client_file_path = Config.Active.Importer.importer_path / client_file
-            client_file_signature = Config.Active.Importer.deployed_migoto_signatures.get(client_file, '')
+    def deploy_package_files(self, process_name: str, force: bool = False):
+        for file_name in ['d3d11.dll', 'd3dcompiler_47.dll', 'nvapi64.dll']:
+            deployment_path = Config.Active.Importer.importer_path / file_name
+            deployed_signature = Config.Active.Importer.deployed_migoto_signatures.get(file_name, '')
 
             deploy_pending = False
-            if not client_file_path.exists() or not client_file_signature:
-                log.debug(f'Deploying new {client_file_path}...')
+            if force:
+                # Forced redeployment requested, lets just redeploy without any extra checks
+                log.debug(f'Forcing re-deploy of {deployment_path}...')
                 deploy_pending = True
-            elif force:
-                log.debug(f'Forcing re-deploy of {client_file_path}...')
+            elif not deployment_path.is_file():
+                # DLL is not found at deployment path, we must deploy one
+                log.debug(f'Deploying new {deployment_path}...')
                 deploy_pending = True
-            else:
-                if client_file_signature != self.get_signature(client_file_path):
-                    with open(client_file_path, 'rb') as f:
-                        if self.security.verify(client_file_signature, f.read()):
-                            log.debug(f'Deploying updated {client_file_path}...')
+            elif not deployed_signature or deployed_signature != self.get_signature(deployment_path):
+                # Signature of deployed DLL doesn't match one from manifest of installed XXMI package
+                if Config.Active.Migoto.unsafe_mode:
+                    # Lets deside what to do based on DLL origin
+                    with open(deployment_path, 'rb') as f:
+                        if self.security.verify(deployed_signature, f.read()):
+                            # DLL matches the signature of last deployed one, it should be safe to update it
+                            log.debug(f'Deploying updated {deployment_path}...')
                             deploy_pending = True
                         else:
-                            log.debug(f'Skipped auto-deploy for {client_file_path} (signature mismatch)!')
+                            # Third-party DLL found, lets leave its management to user
+                            log.debug(f'Skipped auto-deploy for {deployment_path} (signature mismatch)!')
+                else:
+                    # We should never reach this point unless the config is desynced (and if it is, lets redeploy)
+                    log.debug(f'Re-deploying updated {deployment_path}...')
+                    deploy_pending = True
 
             if deploy_pending:
                 Events.Fire(Events.Application.StatusUpdate(status='Ensuring the game is closed...'))
@@ -241,13 +251,13 @@ class MigotoPackage(Package):
                         message=f'Failed to stop {process_name}!\n\n'
                                 'Please close the game manually and press [OK] to continue.',
                     ))
-                package_file_path = self.package_path / client_file
+                package_file_path = self.package_path / file_name
                 if package_file_path.exists():
-                    shutil.copy2(package_file_path, client_file_path)
+                    shutil.copy2(package_file_path, deployment_path)
                     if deploy_pending:
-                        Config.Active.Importer.deployed_migoto_signatures[client_file] = self.get_signature(client_file_path)
+                        Config.Active.Importer.deployed_migoto_signatures[file_name] = self.get_signature(deployment_path)
                 else:
-                    raise ValueError(f'XXMI package is missing critical file: {client_file_path.name}!\n')
+                    raise ValueError(f'XXMI package is missing critical file: {deployment_path.name}!\n')
 
     def validate_deployed_files(self):
         self.validate_files([Config.Active.Importer.importer_path / f for f in ['d3d11.dll', 'd3dcompiler_47.dll', 'nvapi64.dll']])
