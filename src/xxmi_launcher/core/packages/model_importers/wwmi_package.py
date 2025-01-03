@@ -328,17 +328,18 @@ class LocalStorageClient:
         self.connection.close()
         self.cursor = None
         self.modified = False
-        log.debug(f'Connection closed: {self.path}')
+        log.debug(f'[{self.path.name}]: Connection closed')
 
     def connect(self):
         self.disconnect()
-        log.debug(f'Connecting to {self.path}...')
+        log.debug(f'[{self.path.name}]: Connecting...')
         Events.Fire(Events.Application.VerifyFileAccess(path=self.path, write=True))
         self.connection = sqlite3.connect(self.path)
         self.cursor = self.connection.cursor()
 
     def save(self):
         if not self.modified:
+            self.disconnect()
             return
         self.connection.commit()
         self.disconnect()
@@ -352,10 +353,10 @@ class LocalStorageClient:
             old_value = -1
         else:
             old_value = int(data[0])
-        log.debug(f'Current {key} setting: {old_value}')
+        log.debug(f'[{self.path.name}]: Current {key} setting: {old_value}')
         # Write new setting value
         if value != old_value:
-            log.debug(f'Changing {key} setting to {value}...')
+            log.debug(f'[{self.path.name}]: Changing {key} setting to {value}...')
             self.cursor.execute(f"UPDATE LocalStorage SET value = '{value}' WHERE key='{key}'")
             self.modified = True
 
