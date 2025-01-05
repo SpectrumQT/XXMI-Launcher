@@ -370,6 +370,8 @@ class ModelImporterPackage(Package):
         # Assert installation path
         try:
             self.get_game_paths()
+        except UserWarning:
+            return
         except Exception as e:
             raise ValueError(f'{Config.Launcher.active_importer} Installation Failed:\n{e}') from e
         # Install importer package and its requirements
