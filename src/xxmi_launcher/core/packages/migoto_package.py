@@ -172,12 +172,19 @@ class MigotoPackage(Package):
 
         else:
             # Use WriteProcessMemory injection method
-            Events.Fire(Events.Application.Inject(library_name=dll_path.name, process_name=process_name))
-            dll_paths = [dll_path] + extra_dll_paths
+            if Config.Active.Importer.custom_launch_inject_mode == 'Bypass':
+                dll_paths = extra_dll_paths
+            else:
+                dll_paths = [dll_path] + extra_dll_paths
+
+            dll_names = ', '.join([dll_path.name for dll_path in dll_paths])
+
+            Events.Fire(Events.Application.Inject(library_name=dll_names, process_name=process_name))
+
             pid = direct_inject(dll_paths=dll_paths, process_name=process_name, start_cmd=launch_cmd,
                                 work_dir=launch_work_dir, creationflags=launch_flags, use_shell=use_shell)
             if pid == -1:
-                raise ValueError(f'Failed to inject {dll_path.name}!')
+                raise ValueError(f'Failed to inject {dll_names}!')
 
             Events.Fire(Events.Application.WaitForProcess(process_name=process_name))
             result, pid = wait_for_process(process_name, with_window=True, timeout=30, check_visibility=True)

@@ -215,16 +215,17 @@ class CustomLaunchEntry(UIEntry):
 class CustomLaunchInjectModeOptionMenu(UIOptionMenu):
     def __init__(self, master):
         super().__init__(
-            values=['Hook', 'Inject'],
+            values=['Hook', 'Inject', 'Bypass'],
             variable=Vars.Active.Importer.custom_launch_inject_mode,
             width=90,
             height=36,
             font=('Arial', 14),
             dropdown_font=('Arial', 14),
             master=master)
-        self.set_tooltip('Defines the way of d3d11.dll injection into the game process started via Custom Launch.\n'
+        self.set_tooltip('Defines the way of 3dmigoto injection into the game process started via Custom Launch.\n'
                          '* Inject: Use WriteProcessMemory, more reliable but requires direct memory access.\n'
-                         '* Hook: Use SetWindowsHookEx, less reliable, but potentially less prominent for anti-cheats.')
+                         '* Hook: Use SetWindowsHookEx, less reliable, but potentially less prominent for anti-cheats.\n'
+                         '* Bypass: Skip 3dmigoto injection and process only Inject Libraries field.')
 
         self.trace_write(Vars.Active.Importer.custom_launch_enabled, self.handle_write_custom_launch_enabled)
 
