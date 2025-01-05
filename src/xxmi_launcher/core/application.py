@@ -9,7 +9,7 @@ import traceback
 import re
 
 from pathlib import Path
-from typing import Union, Callable
+from typing import Union, Callable, List, Optional
 from dataclasses import dataclass
 from threading import Thread, current_thread, main_thread
 from queue import Queue, Empty
@@ -145,9 +145,10 @@ class ApplicationEvents:
         title: str = 'Message'
         message: str = '< Text >'
         confirm_text: str = 'OK'
-        confirm_command: Union[Callable, None] = None
+        confirm_command: Optional[Callable] = None
         cancel_text: str = ''
-        cancel_command: Union[Callable, None] = None
+        cancel_command: Optional[Callable] = None
+        radio_options: Optional[List[str]] = None
         lock_master: bool = None
         screen_center: bool = None
 

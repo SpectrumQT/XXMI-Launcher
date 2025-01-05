@@ -1,11 +1,15 @@
 import logging
 
+from typing import List, Optional
+
+from customtkinter import IntVar
+
 import core.path_manager as Paths
 import core.config_manager as Config
 
 from gui.classes.windows import UIToplevel
 from gui.classes.containers import UIScrollableFrame
-from gui.classes.widgets import UILabel, UIButton
+from gui.classes.widgets import UILabel, UIButton, UIRadioButton
 
 log = logging.getLogger(__name__)
 
@@ -13,9 +17,10 @@ log = logging.getLogger(__name__)
 class MessageWindow(UIToplevel):
     def __init__(self, master, icon='info-icon.ico', title='Message', message='< Text >',
                  confirm_text='OK', confirm_command=None, cancel_text='', cancel_command=None,
-                 lock_master=True, screen_center=False):
+                 radio_options: Optional[List[str]] = None, lock_master=True, screen_center=False):
         super().__init__(master, lock_master=lock_master)
 
+        self.radio_var = None
         self.response = None
 
         self.title(title)
@@ -43,7 +48,16 @@ class MessageWindow(UIToplevel):
                     hide_scrollbar=True,
                     master=master)
 
-                self.put(MessageTextLabel(self, str(message).strip())).pack(pady=(0, 0))
+                msg = str(message).strip()
+                height = 138 if radio_options is None else 52
+                self.put(MessageTextLabel(self, message=msg, height=height)).pack(pady=(0, 0))
+
+                if radio_options is not None:
+                    master.radio_var = IntVar(master=master, value=0)
+                    for option_id, option_text in enumerate(radio_options):
+                        button = UIRadioButton(self, text=option_text, variable=master.radio_var, value=option_id)
+                        button.set_tooltip(option_text)
+                        self.put(button).pack(pady=(5, 0))
 
                 self.update()
 
@@ -63,15 +77,16 @@ class MessageWindow(UIToplevel):
 
     def close(self):
         log.debug('Messagebox window closed')
+
         super().close()
 
 
 class MessageTextLabel(UILabel):
-    def __init__(self, master, message):
+    def __init__(self, master, message, height=138):
         super().__init__(
             text=message,
             wraplength=600,
-            height=138,
+            height=height,
             justify='center',
             anchor='center',
             font=('Asap', 16),
@@ -83,9 +98,9 @@ class ConfirmButton(UIButton):
         super().__init__(
             text=confirm_text,
             command=lambda: self.confirm(confirm_command),
-            fg_color='#666666',
-            text_color='#ffffff',
-            hover_color='#888888',
+            fg_color=('#666666', '#e5e5e5'),
+            text_color=('#ffffff', '#000000'),
+            hover_color=('#888888', '#ffffff'),
             width=180,
             height=30,
             master=master)
@@ -102,7 +117,9 @@ class CancelButton(UIButton):
         super().__init__(
             text=cancel_text,
             command=lambda: self.cancel(cancel_command),
-            fg_color='#e5e5e5',
+            fg_color=('#e5e5e5', 'gray10'),
+            text_color=('#000000', '#eeeeee'),
+            hover_color=('#ffffff', 'gray20'),
             border_width=1,
             width=180,
             height=30,

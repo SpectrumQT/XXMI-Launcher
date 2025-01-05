@@ -144,10 +144,14 @@ class MainWindow(UIMainWindow):
                                 title=event.title, message=event.message,
                                 confirm_text=event.confirm_text, confirm_command=event.confirm_command,
                                 cancel_text=event.cancel_text, cancel_command=event.cancel_command,
+                                radio_options=event.radio_options,
                                 lock_master=event.lock_master, screen_center=event.screen_center)
 
         if event.modal:
             self.wait_window(messagebox)
+
+        if messagebox.radio_var is not None:
+            return messagebox.response, messagebox.radio_var.get()
 
         return messagebox.response
 
