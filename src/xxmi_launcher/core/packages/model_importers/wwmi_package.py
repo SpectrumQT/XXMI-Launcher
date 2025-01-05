@@ -165,31 +165,40 @@ class WWMIPackage(ModelImporterPackage):
         # self.remove_streamline(game_path)
         self.update_engine_ini(game_path)
         self.update_wwmi_ini()
+        self.configure_settings(game_path)
 
-        if Config.Importers.WWMI.Importer.configure_game or Config.Importers.WWMI.Importer.unlock_fps:
-            settings_manager = SettingsManager(game_path)
-            settings_manager.connect()
+    def configure_settings(self, game_path: Path):
+        if not any([Config.Importers.WWMI.Importer.configure_game, Config.Importers.WWMI.Importer.unlock_fps]):
+            return
 
-            if Config.Importers.WWMI.Importer.configure_game:
-                try:
+        Events.Fire(Events.Application.StatusUpdate(status='Configuring in-game settings...'))
+
+        try:
+            with SettingsManager(game_path) as settings_manager:
+                # Set internal custom quality flag to True
+                settings_manager.set_setting('IsCustomImageQuality', '"___1B___"')
+
+                if Config.Importers.WWMI.Importer.configure_game:
                     # Set "Image Quality" to "Quality" - required to force high quality textures mods are made for
-                    settings_manager.set_setting('ImageQuality', 3)
-                except Exception as e:
-                    raise ValueError(f'Failed to configure in-game settings for WWMI!\n'
-                                     f"Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:\n"
-                                     f'* Graphics > `Graphics Quality` must be `Quality`.\n\n'
-                                     f'{e}') from e
+                    settings_manager.set_setting('ImageQuality', '3')
 
-            if Config.Importers.WWMI.Importer.unlock_fps:
-                try:
+                if Config.Importers.WWMI.Importer.unlock_fps:
                     # Set "Frame Rate" to "120"
                     # States: 30 / 45 / 60 / 120
-                    settings_manager.set_setting('CustomFrameRate', 3)
-                except Exception as e:
-                    raise ValueError(f'Failed to force 120 FPS!\n\n'
-                                     f'{e}') from e
+                    settings_manager.set_setting('CustomFrameRate', '3')
 
-            settings_manager.save_settings()
+        except Exception as e:
+
+            if Config.Importers.WWMI.Importer.configure_game:
+                raise Exception(f'Failed to configure in-game settings for WWMI!\n'
+                                f"Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:\n"
+                                f'* Graphics > `Graphics Quality` must be `Quality`.\n\n'
+                                f'{e}') from e
+
+            if Config.Importers.WWMI.Importer.unlock_fps:
+                raise Exception(f'Failed to force 120 FPS!\n'
+                                f"Please disable `Force 120 FPS` in launcher's General Settings.\n\n"
+                                f'{e}') from e
 
     def update_engine_ini(self, game_path: Path):
         Events.Fire(Events.Application.StatusUpdate(status='Updating Engine.ini...'))
@@ -286,36 +295,76 @@ class WWMIPackage(ModelImporterPackage):
 class SettingsManager:
     def __init__(self, game_path: Path):
         self.path = game_path / 'Client' / 'Saved' / 'LocalStorage'
-        self.databases: List[LocalStorageClient] = []
+        self.db: Optional[LocalStorage] = None
 
-    def disconnect(self):
-        for db_client in self.databases:
-            db_client.disconnect()
-        self.databases = []
+    def __enter__(self):
+        default_db_path = self.path / 'LocalStorage.db'
 
-    def connect(self):
-        self.disconnect()
-        # Locate .db files within LocalStorage dir, there may be multiple files there, i.e. LocalStorage2.db
-        db_paths = list(self.path.glob('LocalStorage*.db'))
-        if len(db_paths) == 0:
-            raise ValueError(f'Settings file does not exist!\n\n'
-                             f'Please start the game once with official launcher.')
-        log.debug(f'Found {len(db_paths)} database files in {self.path}: {db_paths}')
+        # Locate the most recently modified db file
+        active_db_path, db_paths = self.get_active_db_path()
+
+        # Remove all LocalStorage files except the most recently modified one
         for db_path in db_paths:
-            db_client = LocalStorageClient(db_path)
-            db_client.connect()
-            self.databases.append(db_client)
+            if db_path != active_db_path:
+                self.remove_db(db_path)
+
+        # Rename active LocalStorage files to default
+        if active_db_path is not None and active_db_path != default_db_path:
+            self.rename_db(active_db_path, default_db_path)
+
+        # Open active LocalStorage file for edits
+        self.db = LocalStorage(default_db_path)
+        self.db.connect()
+
+        return self
+
+    def __exit__(self, exception_type, exception_value, exception_traceback):
+        self.db.save()
 
     def set_setting(self, key: str, value: Union[int, float, str]):
-        for db_client in self.databases:
-            db_client.set_setting(key, value)
+        value = str(value)
+        self.db.set_value(key, value)
 
-    def save_settings(self):
-        for db_client in self.databases:
-            db_client.save()
+    def get_active_db_path(self):
+        active_db_path = None
+        db_paths = []
+        for db_path in self.path.iterdir():
+            # Skip anything that doesn't match `LocalStorage*.db` file mask
+            if not db_path.is_file() or not db_path.name.startswith('LocalStorage') or db_path.suffix != '.db':
+                continue
+            # Make sure we can write db file
+            Events.Fire(Events.Application.VerifyFileAccess(path=db_path, write=True))
+            # Make sure we can write journal file if it exists
+            journal_path = db_path.with_suffix('.db-journal')
+            if journal_path.is_file():
+                Events.Fire(Events.Application.VerifyFileAccess(path=journal_path, write=True))
+            # Search for the most recently modified file
+            if active_db_path is None or db_path.stat().st_mtime > active_db_path.stat().st_mtime:
+                active_db_path = db_path
+            # Add db to the list
+            db_paths.append(db_path)
+        return active_db_path, db_paths
+
+    def rename_db(self, old_path: Path, new_path: Path):
+        log.debug(f'Renaming {old_path} to {new_path}...')
+        # Rename DB journal
+        journal_path = old_path.with_suffix('.db-journal')
+        if journal_path.is_file():
+            journal_path.rename(new_path.with_suffix('.db-journal'))
+        # Rename DB file
+        old_path.rename(new_path)
+
+    def remove_db(self, db_path: Path):
+        log.debug(f'Removing {db_path}...')
+        # Remove DB journal
+        journal_path = db_path.with_suffix('.db-journal')
+        if journal_path.is_file():
+            journal_path.unlink()
+        # Remove DB file
+        db_path.unlink()
 
 
-class LocalStorageClient:
+class LocalStorage:
     def __init__(self, path: Path):
         self.path = path
         self.connection = None
@@ -328,14 +377,29 @@ class LocalStorageClient:
         self.connection.close()
         self.cursor = None
         self.modified = False
+        self.connection = None
         log.debug(f'[{self.path.name}]: Connection closed')
 
     def connect(self):
         self.disconnect()
         log.debug(f'[{self.path.name}]: Connecting...')
-        Events.Fire(Events.Application.VerifyFileAccess(path=self.path, write=True))
         self.connection = sqlite3.connect(self.path)
-        self.cursor = self.connection.cursor()
+        try:
+            self.cursor = self.connection.cursor()
+            try:
+                self.cursor.execute("SELECT * FROM LocalStorage")
+            except sqlite3.OperationalError:
+                log.debug(f'[{self.path.name}]: Creating new settings database...')
+                self.cursor.execute("CREATE TABLE LocalStorage(key text primary key not null, value text not null)")
+                data = [
+                    ('NotFirstTimeOpenPush', '"___1B___"'),
+                    ('HasLocalGameSettings', '"___1B___"'),
+                    ('IsCustomImageQuality', '"___1B___"'),
+                ]
+                self.cursor.executemany(f"INSERT INTO LocalStorage VALUES (?,?)", data)
+        except Exception as e:
+            self.disconnect()
+            raise Exception(f'Failed to initialize LocalStorage: {e}')
 
     def save(self):
         if not self.modified:
@@ -343,22 +407,28 @@ class LocalStorageClient:
             return
         self.connection.commit()
         self.disconnect()
+        log.debug(f'[{self.path.name}]: File updated')
 
-    def set_setting(self, key: str, value: Union[int, float, str]):
-        # Fetch existing setting data
+    def get_value(self, key) -> Union[str, None]:
         result = self.cursor.execute(f"SELECT value FROM LocalStorage WHERE key='{key}'")
         data = result.fetchone()
-        # Extract current setting value
         if data is None or len(data) != 1:
-            old_value = -1
+            return None
         else:
-            old_value = int(data[0])
-        log.debug(f'[{self.path.name}]: Current {key} setting: {old_value}')
-        # Write new setting value
-        if value != old_value:
-            log.debug(f'[{self.path.name}]: Changing {key} setting to {value}...')
+            return data[0]
+
+    def set_value(self, key: str, value: str):
+        old_value = self.get_value(key)
+        if value == old_value:
+            log.debug(f'[{self.path.name}]: Skipped {key} value: {value} (already set)')
+            return
+        if old_value is None:
+            self.cursor.execute(f"INSERT INTO LocalStorage VALUES ('{key}', '{value}')")
+            log.debug(f'[{self.path.name}]: Added {key} value: {value}...')
+        else:
             self.cursor.execute(f"UPDATE LocalStorage SET value = '{value}' WHERE key='{key}'")
-            self.modified = True
+            log.debug(f'[{self.path.name}]: Updated {key} value: {old_value} -> {value}...')
+        self.modified = True
 
 
 class Version:
