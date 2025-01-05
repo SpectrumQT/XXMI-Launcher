@@ -123,5 +123,14 @@ App = Paths()
 
 
 def initialize(root_path: Path):
+    # Library tkinterweb crashes with { or } chars in the path to tcl
+    # Traceback: utilities.py, line 978, in load_tkhtml
+    # _tkinter.TclError: missing close-brace
+    if '{' in str(root_path) or '}' in str(root_path):
+        raise Exception(f'Launcher initialization failed!\n\n'
+                        f'Curly brackets {{ and }} in launcher path are not supported:\n'
+                        f'{root_path}\n\n'
+                        f'Please reinstall the launcher to another location.\n')
+
     App.set_root_path(root_path)
     App.verify()
