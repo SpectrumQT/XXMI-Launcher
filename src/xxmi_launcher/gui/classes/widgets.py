@@ -10,7 +10,7 @@ from typing import Union, Tuple, List, Dict, Optional, Callable
 from pathlib import Path
 
 from tkinter import Menu, INSERT
-from customtkinter import CTkBaseClass, CTkButton, CTkImage, CTkLabel, CTkProgressBar, CTkEntry, CTkCheckBox, CTkTextbox, CTkOptionMenu
+from customtkinter import CTkBaseClass, CTkButton, CTkImage, CTkLabel, CTkProgressBar, CTkEntry, CTkCheckBox, CTkTextbox, CTkOptionMenu, CTkRadioButton
 from customtkinter import END, CURRENT
 from customtkinter import ThemeManager, CTkFont
 from PIL import Image, ImageTk
@@ -639,6 +639,16 @@ class UIButton(UIWidget, CTkButton):
                     self.configure(cursor="pointinghand")
                 elif sys.platform.startswith("win") and self._command is not None:
                     self.configure(cursor="hand2")
+
+
+class UIRadioButton(UIWidget, CTkRadioButton):
+    def __init__(self,
+                 master: Union[UIWindow, 'UIFrame'],
+                 **kwargs):
+
+        UIWidget.__init__(self, master,  **kwargs)
+
+        CTkRadioButton.__init__(self, master, **kwargs)
 
 
 class UIProgressBar(UIWidget, CTkProgressBar):
