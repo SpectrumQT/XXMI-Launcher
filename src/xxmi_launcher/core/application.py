@@ -503,7 +503,10 @@ class Application:
                 process = subprocess.Popen(Config.Active.Importer.run_post_load, shell=True)
                 if Config.Active.Importer.run_post_load_wait:
                     process.wait()
-
+        except UserWarning:
+            self.launching_game = False
+            self.gui.after(100, Events.Fire, Events.Application.Ready())
+            return
         except Exception as e:
             raise Exception(f'{Config.Launcher.active_importer} Loading Failed:\n{str(e)}') from e
         finally:
@@ -532,6 +535,7 @@ class Application:
                             f'Press [Confirm] to remove this flag and continue.',
                 ))
                 if user_requested_flag_remove:
+                    logging.debug(f'Removing Read-Only flag from {event.path}...')
                     Paths.remove_read_only(event.path)
                     Paths.assert_file_write(event.path)
                 else:

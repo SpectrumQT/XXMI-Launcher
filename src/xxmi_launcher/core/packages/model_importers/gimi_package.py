@@ -116,9 +116,29 @@ class GIMIPackage(ModelImporterPackage):
         except Exception as e:
             return ''
 
-    def autodetect_game_folder(self) -> Path:
-        data_path = self.get_game_data_path()
-        return Path(str(data_path.parent).replace('\\', '/'))
+    def autodetect_game_folders(self) -> List[Path]:
+        paths = []
+
+        common_pattern = re.compile(r'([a-zA-Z]:[^:\"\']*Genshin[^:\"\']*)')
+        known_children = ['GenshinImpact_Data']
+
+        # "installPath":"D:\\Games\\Genshin Impact game"
+        # "persistentInstallPath":"D:\\Games\\Genshin Impact game"
+        hoyoplay_pattern = re.compile(r'\"(?:installPath|persistentInstallPath)\":\"([a-zA-Z]:[^:^\"]*)\"')
+
+        paths += self.get_paths_from_hoyoplay([common_pattern, hoyoplay_pattern], known_children)
+
+        # dll path: C:/Games/Genshin Impact/DATA/Genshin Impact game/GenshinImpact_Data\Plugins\EOSSDK-Win64-Shipping.dll
+        # TelemetryInterface path:C:\Games\Genshin Impact\DATA\Genshin Impact game\GenshinImpact_Data\SDKCaches, level:2, dest:0
+        output_log_pattern = re.compile(r'([a-zA-Z]:[^:\"\']*)(?:Plugins|SDKCaches|StreamingAssets|Persistent)')
+
+        output_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'miHoYo' / 'Genshin Impact' / 'output_log.txt'
+        paths += self.find_paths_in_file(output_log_path, [common_pattern, output_log_pattern], known_children)
+
+        output_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'miHoYo' / 'Genshin Impact' / 'output_log.txt.last'
+        paths += self.find_paths_in_file(output_log_path, [common_pattern, output_log_pattern], known_children)
+
+        return paths
 
     def validate_game_exe_path(self, game_path: Path) -> Path:
         game_exe_path = game_path / 'GenshinImpact.exe'
@@ -160,29 +180,6 @@ class GIMIPackage(ModelImporterPackage):
                 self.enable_hdr()
             except Exception as e:
                 raise Exception(f'Failed to enable HDR!\n\n{str(e)}')
-
-    def get_game_data_path(self):
-        output_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'miHoYo' / 'Genshin Impact' / 'output_log.txt'
-
-        # dll path: C:/Games/Genshin Impact/DATA/Genshin Impact game/GenshinImpact_Data\Plugins\EOSSDK-Win64-Shipping.dll
-        # TelemetryInterface path:C:\Games\Genshin Impact\DATA\Genshin Impact game\GenshinImpact_Data\SDKCaches, level:2, dest:0
-        path_pattern = re.compile(r'([a-zA-Z]:[^:]*)(?:Plugins|SDKCaches|StreamingAssets|Persistent)')
-        data_path = self.find_in_file(path_pattern, output_log_path)
-        if data_path is not None:
-            return data_path
-
-        return None
-
-    def find_in_file(self, pattern, file_path: Path):
-        if not file_path.exists():
-            raise ValueError(f'File {file_path} does not exist!')
-        with open(file_path, 'r', encoding='utf-8') as f:
-            for line in f.readlines():
-                result = pattern.findall(line)
-                if len(result) == 1:
-                    data_path = Path(result[0])
-                    if data_path.exists():
-                        return data_path
 
     def update_gimi_ini(self):
         Events.Fire(Events.Application.StatusUpdate(status='Updating GIMI main.ini...'))

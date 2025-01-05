@@ -5,7 +5,7 @@ import ctypes
 import json
 
 from dataclasses import field
-from typing import Dict, Union
+from typing import Dict, Union, List
 
 
 from datetime import datetime
@@ -104,9 +104,35 @@ class ZZMIPackage(ModelImporterPackage):
         except Exception as e:
             return ''
 
-    def autodetect_game_folder(self) -> Path:
-        data_path = self.get_game_data_path()
-        return Path(str(data_path.parent).replace('\\', '/'))
+    def autodetect_game_folders(self) -> List[Path]:
+        paths = []
+
+        common_pattern = re.compile(r'([a-zA-Z]:[^:\"\']*Zenless[^:\"\']*)')
+        known_children = ['ZenlessZoneZero_Data']
+
+        # "installPath":"D:\\Games\\ZenlessZoneZero Game"
+        # "persistentInstallPath":"D:\\Games\\ZenlessZoneZero Game"
+        hoyoplay_pattern = re.compile(r'\"(?:installPath|persistentInstallPath)\":\"([a-zA-Z]:[^:^\"]*)\"')
+
+        paths += self.get_paths_from_hoyoplay([common_pattern, hoyoplay_pattern], known_children)
+
+        # WwiseUnity: Setting Plugin DLL path to: C:/Games/ZenlessZoneZero Game/ZenlessZoneZero_Data\Plugins\x86_64
+        # [Subsystems] Discovering subsystems at path C:/Games/ZenlessZoneZero Game/ZenlessZoneZero_Data/UnitySubsystems
+        player_log_pattern = re.compile(r'([a-zA-Z]:[^:\"\']*)(?:Plugins|UnitySubsystems)')
+
+        player_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'miHoYo' / 'ZenlessZoneZero' / 'Player.log'
+        paths += self.find_paths_in_file(player_log_path, [common_pattern, player_log_pattern], known_children)
+
+        player_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'miHoYo' / 'ZenlessZoneZero' / 'Player-prev.log'
+        paths += self.find_paths_in_file(player_log_path, [common_pattern, player_log_pattern], known_children)
+
+        # [0704/170821.845:INFO:API.cpp(331)] zfb_init: Using --apm_config={"astrolabePath":"Astrolabe.dll","reportPath":"C:\\Games\\ZenlessZoneZero Game\\ZenlessZoneZero_Data\\SDKCaches\\webview","logLevel":2"}
+        output_log_pattern = re.compile(r'([a-zA-Z]:[^:\"\']*)SDKCaches"')
+
+        output_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'miHoYo' / 'ZenlessZoneZero' / 'output_log.txt'
+        paths += self.find_paths_in_file(output_log_path, [common_pattern, output_log_pattern], known_children)
+
+        return paths
 
     def validate_game_exe_path(self, game_path: Path) -> Path:
         game_exe_path = game_path / 'ZenlessZoneZero.exe'
@@ -125,37 +151,6 @@ class ZZMIPackage(ModelImporterPackage):
                       f'* Graphics > `Character Quality` must be `High`.\n'
                       f'* Graphics > `High-Precision Character Animation` must be `Disabled`.\n\n'
                       f'{e}') from e
-
-    def get_game_data_path(self):
-        player_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'miHoYo' / 'ZenlessZoneZero' / 'Player.log'
-
-        # WwiseUnity: Setting Plugin DLL path to: C:/Games/ZenlessZoneZero Game/ZenlessZoneZero_Data\Plugins\x86_64
-        # [Subsystems] Discovering subsystems at path C:/Games/ZenlessZoneZero Game/ZenlessZoneZero_Data/UnitySubsystems
-        subsystems_pattern = re.compile(r'([a-zA-Z]:[^:]*)(?:Plugins|UnitySubsystems)')
-        data_path = self.find_in_file(subsystems_pattern, player_log_path)
-        if data_path is not None:
-            return data_path
-
-        output_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'miHoYo' / 'ZenlessZoneZero' / 'output_log.txt'
-
-        # [0704/170821.845:INFO:API.cpp(331)] zfb_init: Using --apm_config={"astrolabePath":"Astrolabe.dll","reportPath":"C:\\Games\\ZenlessZoneZero Game\\ZenlessZoneZero_Data\\SDKCaches\\webview","logLevel":2"}
-        report_path_pattern = re.compile(r'([a-zA-Z]:[^:]*)SDKCaches"')
-        data_path = self.find_in_file(report_path_pattern, output_log_path)
-        if data_path is not None:
-            return data_path
-
-        return None
-
-    def find_in_file(self, pattern, file_path: Path):
-        if not file_path.exists():
-            raise ValueError(f'File {file_path} does not exist!')
-        with open(file_path, 'r', encoding='utf-8') as f:
-            for line in f.readlines():
-                result = pattern.findall(line)
-                if len(result) == 1:
-                    data_path = Path(result[0])
-                    if data_path.exists():
-                        return data_path
 
     def update_zzmi_ini(self):
         Events.Fire(Events.Application.StatusUpdate(status='Updating ZZMI main.ini...'))
@@ -177,7 +172,7 @@ class ZZMIPackage(ModelImporterPackage):
                 f.write(ini.to_string())
 
     def configure_game_settings(self, game_path: Path):
-        log.debug(f'Configuring in-game settings for ZZMI...')
+        Events.Fire(Events.Application.StatusUpdate(status='Configuring in-game settings...'))
 
         config_path = game_path / 'ZenlessZoneZero_Data' / 'Persistent' / 'LocalStorage' / 'GENERAL_DATA.bin'
 
@@ -208,6 +203,7 @@ class SettingsManager:
 
     def load_settings(self):
         if self.path.is_file():
+            Events.Fire(Events.Application.VerifyFileAccess(path=self.path, write=True))
             content = self.sleepy.read_file(self.path, self.magic)
             self.settings = json.loads(content)
         else:

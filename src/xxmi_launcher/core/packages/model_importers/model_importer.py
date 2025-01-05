@@ -1,7 +1,6 @@
 import logging
 import os
 import sys
-import platform
 import shutil
 import winshell
 import pythoncom
@@ -204,17 +203,6 @@ class ModelImporterPackage(Package):
         self.subscribe(Events.ModelImporter.ValidateGameFolder, lambda event: self.validate_game_path(event.game_folder))
         self.subscribe(Events.ModelImporter.CreateShortcut, lambda event: self.create_shortcut())
         super().load()
-        try:
-            game_path = self.validate_game_path(Config.Active.Importer.game_folder)
-            self.validate_game_exe_path(game_path)
-        except Exception as e:
-            try:
-                game_folder = self.autodetect_game_folder()
-                game_path = self.validate_game_path(game_folder)
-                self.validate_game_exe_path(game_path)
-                Config.Active.Importer.game_folder = str(game_folder)
-            except Exception as e:
-                pass
         if self.get_installed_version() != '' and not Config.Active.Importer.shortcut_deployed:
             self.create_shortcut()
 
@@ -222,24 +210,125 @@ class ModelImporterPackage(Package):
         self.unsubscribe()
         super().unload()
 
+    def validate_game_folders(self, game_folders: List[Path]):
+        cache, known_paths = [], []
+        for game_folder in game_folders:
+            try:
+                game_path = self.validate_game_path(game_folder)
+                exe_path = self.validate_game_exe_path(game_path)
+                mod_time = exe_path.stat().st_mtime
+                if game_path in known_paths:
+                    continue
+                known_paths.append(game_path)
+                cache.append((game_folder, mod_time, game_path, exe_path))
+            except:
+                continue
+        cache.sort(key=lambda data: data[1], reverse=True)
+        return cache
+
+    def notify_game_folder_detection_failure(self):
+        user_requested_settings = Events.Call(Events.Application.ShowError(
+            message=f'Automatic detection of the game installation folder failed!\n\n'
+                    f'Please configure it manually with Game Folder option of General Settings.',
+            confirm_text='Open Settings',
+            cancel_text='Cancel',
+            modal=True,
+        ))
+
+        if user_requested_settings:
+            Events.Fire(Events.Application.OpenSettings())
+
+    def notify_game_folder_detection(self, game_folders_index):
+        if len(game_folders_index) == 1:
+            game_folder_id = 0
+            user_confirmed_game_folder = Events.Call(Events.Application.ShowInfo(
+                message=f'Launcher detected the game installation location:\n\n'
+                        f'{game_folders_index[0]}\n\n'
+                        f'It can be changed with Game Folder option of General Settings.',
+                confirm_text='Confirm',
+                cancel_text='Open Settings',
+                modal=True,
+            ))
+            if user_confirmed_game_folder is None:
+                user_confirmed_game_folder = True
+        else:
+            (user_confirmed_game_folder, game_folder_id) = Events.Call(Events.Application.ShowWarning(
+                message=f'Multiple game installations detected!\n\n'
+                        f'Select a Game Folder from the list below or set it in General Settings:\n',
+                confirm_text='Confirm',
+                cancel_text='Open Settings',
+                radio_options=game_folders_index,
+                modal=True,
+            ))
+        return user_confirmed_game_folder, game_folder_id
+
+    def notify_game_folder_not_configured(self):
+        user_requested_settings = Events.Call(Events.Application.ShowError(
+            message=f'Game installation folder is not configured!\n\n'
+                    f'Please set it with Game Folder option of General Settings.',
+            confirm_text='Open Settings',
+            cancel_text='Cancel',
+            modal=True,
+        ))
+
+        if user_requested_settings:
+            Events.Fire(Events.Application.OpenSettings())
+
     def get_game_paths(self):
         try:
+
             game_path = self.validate_game_path(Config.Active.Importer.game_folder)
             game_exe_path = self.validate_game_exe_path(game_path)
-        except Exception as e:
+
+        except:
+
             try:
-                game_folder = self.autodetect_game_folder()
-                game_path = self.validate_game_path(game_folder)
-                game_exe_path = self.validate_game_exe_path(game_path)
+
+                Events.Fire(Events.Application.StatusUpdate(status='Autodetecting game installation folder...'))
+
+                # Try to automatically detect the game folder using search algo dedicated for given game
+                # Those results are inaccurate as algos try to parse as much path-like strings as possible
+                game_folders_candidates = self.autodetect_game_folders()
+
+                # Exclude folders not matching the expected file structure
+                # Results are sorted based on game exe last modification time (with latest being at 0 index)
+                game_folders = self.validate_game_folders(game_folders_candidates)
+
+                # Notify user if there are no game folders detected
+                if len(game_folders) == 0:
+                    self.notify_game_folder_detection_failure()
+                    # User is already notified, lets skip error popup
+                    raise UserWarning
+
+                # Notify user if about game folder detection, ask which to use if there are more than 1 folder found
+                game_folders_index = [x[0] for x in game_folders]
+                (user_confirmed_game_folder, game_folder_id) = self.notify_game_folder_detection(game_folders_index)
+                if user_confirmed_game_folder is None:
+                    # User neither confirmed detection result nor decided to open settings
+                    # With multiple game installations detected it might end up miserably, lets show them error
+                    raise Exception
+
+                # Set folder with selected game_folder_id as game folder
+                game_folder, mod_time, game_path, game_exe_path = game_folders[game_folder_id]
                 Config.Active.Importer.game_folder = str(game_folder)
+
+                # User decided to open Settings
+                if not user_confirmed_game_folder:
+                    Events.Fire(Events.Application.OpenSettings())
+                    # User is already notified, lets skip error popup
+                    raise UserWarning
+
+            except UserWarning:
+                # Upcast UserWarning
+                raise UserWarning
+
             except Exception as e:
-                Events.Fire(Events.Application.OpenSettings())
-                raise ValueError(f'\n'
-                                 f'Failed to detect Game Folder!\n\n'
-                                 f'Refer to tooltip of Settings > General > Game Folder for details.')
+                self.notify_game_folder_not_configured()
+                # User is already notified, lets skip error popup
+                raise UserWarning
 
         # Skip installation locations check for Linux
-        if platform.system() == 'Linux' or any(x in os.environ for x in ['WINE', 'WINEPREFIX', 'WINELOADER']):
+        if os.name != 'nt' or any(x in os.environ for x in ['WINE', 'WINEPREFIX', 'WINELOADER']):
             return game_path, game_exe_path
 
         # Ensure that user didn't install the launcher to the game exe location
@@ -373,7 +462,7 @@ class ModelImporterPackage(Package):
         Events.Fire(Events.MigotoManager.StartAndInject(game_exe_path=game_exe_path, start_exe_path=start_exe_path,
                                                         start_args=start_args, work_dir=work_dir, use_hook=self.use_hook))
 
-    def autodetect_game_folder(self) -> Path:
+    def autodetect_game_folders(self) -> List[Path]:
         raise NotImplementedError
 
     def validate_package_files(self):
@@ -454,7 +543,7 @@ class ModelImporterPackage(Package):
             cancel_text='Ignore',
             message=f'Your {Config.Launcher.active_importer} installation already includes some libraries present in the Mods folder!\n\n'
                     f'Would you like to disable following duplicates automatically (recommended)?\n'
-                    f'\n' + '\n'.join([f'Mods\{x.relative_to(mods_path)}' for x in duplicate_ini_paths])
+                    '\n' + '\n'.join([f'Mods\\{x.relative_to(mods_path)}' for x in duplicate_ini_paths])
         ))
 
         if not user_requested_disable:
@@ -506,6 +595,41 @@ class ModelImporterPackage(Package):
                                 namespaces[namespace] = [path]
             except Exception as e:
                 pass
+
+    def get_paths_from_hoyoplay(self, patterns: Union[re.Pattern, List[re.Pattern]], known_children: List[str] = None):
+        hoyoplay_path = Path(os.getenv('APPDATA')).parent / 'Roaming' / 'Cognosphere' / 'HYP'
+        paths = []
+        if hoyoplay_path.is_dir():
+            for root, dirs, files in hoyoplay_path.walk():
+                for file in files:
+                    if file == 'gamedata.dat':
+                        file_path = root / file
+                        paths += self.find_paths_in_file(file_path, patterns, known_children)
+        return paths
+
+    def find_paths_in_file(self, file_path: Path, patterns: Union[re.Pattern, List[re.Pattern]], known_children: List[str] = None):
+        paths = []
+        try:
+            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                data = f.read()
+                if isinstance(patterns, re.Pattern):
+                    patterns = [patterns]
+                if known_children is None:
+                    known_children = []
+                for pattern in patterns:
+                    result = pattern.findall(data)
+                    for string in result:
+                        for child in known_children:
+                            pos = string.rfind(child)
+                            if pos != -1:
+                                string = string[:pos]
+                        path = Path(string)
+                        if path not in paths:
+                            paths.append(path)
+        except Exception as e:
+            log.debug(f'Failed to parse path from {file_path}:')
+            log.exception(e)
+        return paths
 
     def uninstall(self):
         log.debug(f'Uninstalling package {self.metadata.package_name}...')

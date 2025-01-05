@@ -127,15 +127,22 @@ class WWMIPackage(ModelImporterPackage):
         except Exception as e:
             return ''
 
-    def autodetect_game_folder(self) -> Path:
-        kuro_config_path = Path(os.getenv('APPDATA')) / 'KRLauncher' / 'G153' / 'C50003' / 'kr_starter_game.json'
-        if not kuro_config_path.is_file():
-            raise ValueError(f'Launch config {kuro_config_path} does not exist!')
-        with open(kuro_config_path, 'r', encoding='utf-8') as f:
-            launch_path = json.load(f).get('path', None)
-            if launch_path is None:
-                raise ValueError(f'Failed to locate game path in launch config')
-            return Path(launch_path)
+    def autodetect_game_folders(self) -> List[Path]:
+        game_paths = []
+        kuro_launcher_path = Path(os.getenv('APPDATA')) / 'KRLauncher'
+        for root, dirs, files in kuro_launcher_path.walk():
+            for file in files:
+                if file != 'kr_starter_game.json':
+                    continue
+                file_path = root / file
+                try:
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        path = json.load(f).get('path', None)
+                        if path is not None:
+                            game_paths.append(path)
+                except:
+                    continue
+        return game_paths
 
     def validate_game_path(self, game_folder):
         Events.Fire(Events.Application.StatusUpdate(status='Validating game path...'))

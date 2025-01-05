@@ -6,7 +6,7 @@ import winreg
 import json
 
 from dataclasses import field
-from typing import Dict, Union
+from typing import Dict, Union, List
 
 
 from datetime import datetime
@@ -105,9 +105,35 @@ class SRMIPackage(ModelImporterPackage):
         except Exception as e:
             return ''
 
-    def autodetect_game_folder(self) -> Path:
-        data_path = self.get_game_data_path()
-        return Path(str(data_path.parent).replace('\\', '/'))
+    def autodetect_game_folders(self) -> List[Path]:
+        paths = []
+
+        common_pattern = re.compile(r'([a-zA-Z]:[^:\"\']*Rail[^:\"\']*)')
+        known_children = ['StarRail_Data']
+
+        # "installPath":"D:\\Games\\Star Rail Games"
+        # "persistentInstallPath":"D:\\Games\\Star Rail Games"
+        hoyoplay_pattern = re.compile(r'\"(?:installPath|persistentInstallPath)\":\"([a-zA-Z]:[^:^\"]*)\"')
+
+        paths += self.get_paths_from_hoyoplay([common_pattern, hoyoplay_pattern], known_children)
+
+        # WwiseUnity: Setting Plugin DLL path to: C:/Games/HonkaiStarRail/DATA/Games/StarRail_Data\Plugins\x86_64
+        # [Subsystems] Discovering subsystems at path C:/Games/HonkaiStarRail/DATA/Games/StarRail_Data/UnitySubsystems
+        player_log_pattern = re.compile(r'([a-zA-Z]:[^:\"\']*)(?:Plugins|UnitySubsystems)')
+
+        player_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'Cognosphere' / 'Star Rail' / 'Player.log'
+        paths += self.find_paths_in_file(player_log_path, [common_pattern, player_log_pattern], known_children)
+
+        player_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'Cognosphere' / 'Star Rail' / 'Player-prev.log'
+        paths += self.find_paths_in_file(player_log_path, [common_pattern, player_log_pattern], known_children)
+
+        # [0314/092021.404:ERROR:cache_util.cc(146)] Unable to move cache folder C:\Games\HonkaiStarRail\DATA\Games\StarRail_Data\webCaches\2.20.0.0\GPUCache to C:\Games\HonkaiStarRail\DATA\Games\StarRail_Data\webCaches\2.20.0.0\old_GPUCache_000
+        output_log_pattern = re.compile(r'([a-zA-Z]:[^:\"\']*)webCaches"')
+
+        output_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'Cognosphere' / 'Star Rail' / 'output_log.txt'
+        paths += self.find_paths_in_file(output_log_path, [common_pattern, output_log_pattern], known_children)
+
+        return paths
 
     def validate_game_exe_path(self, game_path: Path) -> Path:
         game_exe_path = game_path / 'StarRail.exe'
@@ -122,37 +148,6 @@ class SRMIPackage(ModelImporterPackage):
                 self.unlock_fps()
             except Exception as e:
                 raise ValueError(f'Failed to force 120 FPS!\n\n{str(e)}')
-
-    def get_game_data_path(self):
-        player_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'Cognosphere' / 'Star Rail' / 'Player.log'
-
-        # WwiseUnity: Setting Plugin DLL path to: C:/Games/HonkaiStarRail/DATA/Games/StarRail_Data\Plugins\x86_64
-        # [Subsystems] Discovering subsystems at path C:/Games/HonkaiStarRail/DATA/Games/StarRail_Data/UnitySubsystems
-        path_pattern = re.compile(r'([a-zA-Z]:[^:]*)(?:Plugins|UnitySubsystems)')
-        data_path = self.find_in_file(path_pattern, player_log_path)
-        if data_path is not None:
-            return data_path
-
-        output_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'Cognosphere' / 'Star Rail' / 'output_log.txt'
-
-        # [0314/092021.404:ERROR:cache_util.cc(146)] Unable to move cache folder C:\Games\HonkaiStarRail\DATA\Games\StarRail_Data\webCaches\2.20.0.0\GPUCache to C:\Games\HonkaiStarRail\DATA\Games\StarRail_Data\webCaches\2.20.0.0\old_GPUCache_000
-        report_path_pattern = re.compile(r'([a-zA-Z]:[^:]*)webCaches"')
-        data_path = self.find_in_file(report_path_pattern, output_log_path)
-        if data_path is not None:
-            return data_path
-
-        return None
-
-    def find_in_file(self, pattern, file_path: Path):
-        if not file_path.exists():
-            raise ValueError(f'File {file_path} does not exist!')
-        with open(file_path, 'r', encoding='utf-8') as f:
-            for line in f.readlines():
-                result = pattern.findall(line)
-                if len(result) == 1:
-                    data_path = Path(result[0])
-                    if data_path.exists():
-                        return data_path
 
     def update_srmi_ini(self):
         Events.Fire(Events.Application.StatusUpdate(status='Updating SRMI main.ini...'))
