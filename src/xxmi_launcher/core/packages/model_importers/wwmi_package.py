@@ -160,7 +160,7 @@ class WWMIPackage(ModelImporterPackage):
         return game_exe_path, ['Client', '-DisableModule=streamline', '-d3d11', '-dx11'], str(game_exe_path.parent)
 
     def initialize_game_launch(self, game_path: Path):
-        self.verify_plugins(game_path)
+        # self.verify_plugins(game_path)
         self.restore_streamline(game_path)
         # self.remove_streamline(game_path)
         self.update_engine_ini(game_path)
