@@ -79,7 +79,9 @@ class CancelButton(UIButton):
             width=240,
             height=36,
             font=('Roboto', 16, 'bold'),
-            fg_color='#e5e5e5',
+            fg_color=('#e5e5e5', 'gray10'),
+            text_color=('#000000', '#eeeeee'),
+            hover_color=('#ffffff', 'gray20'),
             border_width=1,
             master=master)
 
@@ -92,9 +94,9 @@ class ConfirmButton(UIButton):
             width=240,
             height=36,
             font=('Roboto', 16, 'bold'),
-            fg_color='#666666',
-            text_color='#ffffff',
-            hover_color='#888888',
+            fg_color=('#666666', '#e5e5e5'),
+            text_color=('#ffffff', '#000000'),
+            hover_color=('#888888', '#ffffff'),
             border_width=1,
             master=master)
 
