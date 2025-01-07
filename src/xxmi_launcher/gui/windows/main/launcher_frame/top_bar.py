@@ -158,6 +158,7 @@ class LoadXXMIButton(ImporterSelectButton):
             button_normal_opacity=0.25,
             button_hover_opacity=0.9,
             button_selected_opacity=0.9,
+            button_disabled_opacity=0.15,
             # bg_hover_opacity=0,
             # bg_selected_opacity=0,
             master=master)
@@ -260,20 +261,22 @@ class SettingsButton(ControlButton):
             x=1120,
             width=36,
             height=36,
-            button_disabled_opacity=0.5,
+            button_disabled_opacity=0.25,
             bg_disabled_opacity=0,
             button_image_path='button-system-settings.png',
             command=lambda: Events.Fire((Events.Application.OpenSettings())),
             master=master)
+        self.stage = None
         self.set_tooltip(f'Open Settings', delay=0.1)
         self.subscribe(Events.Application.LoadImporter, self.handle_load_importer)
         self.subscribe(Events.GUI.LauncherFrame.StageUpdate, self.handle_stage_update)
 
     def handle_load_importer(self, event):
-        self.set_disabled(event.importer_id == 'XXMI')
+        self.set_disabled(self.stage != Stage.Ready or event.importer_id == 'XXMI')
 
     def handle_stage_update(self, event):
-        self.set_disabled(event.stage != Stage.Ready or Config.Launcher.active_importer == 'XXMI')
+        self.stage = event.stage
+        self.set_disabled(self.stage != Stage.Ready or Config.Launcher.active_importer == 'XXMI')
 
 
 class MinimizeButton(ControlButton):
