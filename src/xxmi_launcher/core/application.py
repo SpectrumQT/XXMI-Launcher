@@ -282,14 +282,14 @@ class Application:
 
         # Quick launch mode
         if self.args.nogui:
-            # Async run update_packages in check-for-updates mode to save available updates versions to config
-            # It allows to go straight to game launch at the cost of update notification being delayed by 1 restart
-            self.run_as_thread(self.package_manager.update_packages, no_install=True, silent=True)
             # If there are any updates, ask user whether they want to install or skip them and just launch the game
             if self.update_scheduled():
                 # Force update_packages call below to install the latest updates
                 self.args.update = True
             else:
+                # Async run update_packages in check-for-updates mode to save available updates versions to config
+                # It allows to go straight to game launch at the cost of update notification being delayed by 1 restart
+                self.run_as_thread(self.package_manager.update_packages, no_install=True, silent=True)
                 # Launch game and close launcher
                 self.launch()
                 self.exit()
