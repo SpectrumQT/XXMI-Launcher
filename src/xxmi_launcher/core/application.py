@@ -209,8 +209,6 @@ class Application:
                             help='Start game with active model importer without showing launcher window.')
         parser.add_argument('-u', '--update', action='store_true',
                             help='Force check for updates and install available ones.')
-        parser.add_argument('-i', '--msi', type=str,
-                            help='Parse default active importer from tagged .msi name.')
         parser.add_argument('-s', '--create_shortcut', type=str,
                             help='Create desktop shortcut for launcher .exe.')
         parser.add_argument('-un', '--uninstall', action='store_true',
@@ -238,13 +236,13 @@ class Application:
 
         logging.getLogger().setLevel(logging.getLevelNamesMapping().get(Config.Launcher.log_level, 'DEBUG'))
 
-        # Load packages
         self.threads = []
         self.error_queue = Queue()
 
         # Async query and log OS and hardware info
         self.run_as_thread(system_info.log_system_info)
 
+        # Load packages
         self.packages = [
             LauncherPackage(),
             MigotoPackage(),
@@ -265,14 +263,13 @@ class Application:
         if self.args.create_shortcut:
             Events.Fire(Events.LauncherManager.CreateShortcut())
 
-        if self.args.xxmi:
-            if self.args.xxmi not in Config.Importers.__dict__.keys():
-                raise ValueError(f'Unknown model importer supplied in command line arg `--xxmi {self.args.xxmi}`!')
-            if self.args.xxmi not in Config.Launcher.enabled_importers:
-                Config.Launcher.enabled_importers.append(self.args.xxmi)
+        # Get active MI from args, use one from config or fallback to XXMI homepage
+        active_importer = self.get_active_importer()
 
-        # Activate MI based on args, use last one or fallback to XXMI homepage
-        Config.Launcher.active_importer = str(self.get_default_importer() or Config.Launcher.active_importer or 'XXMI').upper()
+        if active_importer != 'XXMI' and active_importer not in Config.Launcher.enabled_importers:
+            Config.Launcher.enabled_importers.append(active_importer)
+
+        Config.Launcher.active_importer = active_importer
 
         # Load packages of active importer and skip update for fast start
         self.load_importer(Config.Launcher.active_importer, update=False)
@@ -333,23 +330,6 @@ class Application:
 
         self.exit()
 
-    def get_default_importer(self):
-        if self.args.xxmi:
-            return self.args.xxmi
-        if not self.args.msi:
-            return None
-        msi_name = Path(self.args.msi).name
-        model_importers = {
-            r'.*(WW).*': 'WWMI',
-            r'.*(ZZ).*': 'ZZMI',
-            r'.*(SR).*': 'SRMI',
-            r'.*(GI).*': 'GIMI',
-        }
-        for pattern, xxmi in model_importers.items():
-            if len(re.compile(pattern).findall(msi_name.upper())):
-                return xxmi
-        return None
-
     def load_config(self):
         cfg_backup_path = Paths.App.Backups / Config.Config.config_path.name
         try:
@@ -372,6 +352,38 @@ class Application:
                     Config.Config.load(cfg_backup_path)
             else:
                 raise e
+
+    def validate_importer_name(self, importer_name: str) -> str:
+        importer_name = importer_name.upper()
+        if importer_name not in Config.Importers.__dict__.keys():
+            raise ValueError(f'Unknown model importer {importer_name}!')
+        return importer_name
+
+    def get_active_importer(self) -> str:
+        active_importer = None
+
+        if self.args.xxmi:
+            # Active model importer override is supplied via command line arg `--xxmi`
+            try:
+                active_importer = self.validate_importer_name(self.args.xxmi)
+            except Exception:
+                Events.Fire(Events.Application.ShowWarning(
+                    message=f'Unknown model importer supplied as command line arg `--xxmi={self.args.xxmi}`!')
+                )
+
+        elif Config.Launcher.active_importer:
+            # Active model importer override is supplied via `active_importer` setting
+            try:
+                active_importer = self.validate_importer_name(Config.Launcher.active_importer)
+            except Exception:
+                Events.Fire(Events.Application.ShowWarning(
+                    message=f'Unknown model importer `{Config.Launcher.active_importer}` supplied with `active_importer` setting!')
+                )
+
+        if active_importer is None:
+            active_importer = 'XXMI'
+
+        return active_importer
 
     def auto_update(self):
         # Exit early if current active model importer is not installed
