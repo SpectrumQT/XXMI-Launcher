@@ -1,4 +1,7 @@
 {
+  "Metadata": {
+    "theme_api_version": "1.0.0"
+  },
   "CTk": {
     "fg_color": ["gray95", "gray10"]
   },
@@ -14,17 +17,20 @@
   },
   "CTkButton": {
     "corner_radius": 6,
-    "border_width": 0,
-    "fg_color": "#f0f0f0",
-    "hover_color": "#ffffff",
-    "border_color": ["#3E454A", "#949A9F"],
-    "text_color": "#000000",
+    "border_width": 2,
+    "fg_color": ["#f0f0f0", "#2b2c30"],
+    "hover_color": ["#ffffff", "#3b3e40"],
+    "select_color": ["#888888", "#2c2e33"],
+    "border_color": ["#3E454A", "#565B5E"],
+    "text_color": ["#000000", "#eeeeee"],
+    "text_color_hovered": ["#000000", "#ffffff"],
+    "text_color_selected": ["#000000", "#ffffff"],
     "text_color_disabled": ["gray74", "gray60"]
   },
   "CTkLabel": {
     "corner_radius": 0,
     "fg_color": "transparent",
-    "text_color": ["gray14", "gray84"]
+    "text_color": ["gray14", "gray74"]
   },
   "CTkSwitch": {
     "corner_radius": 1000,
@@ -94,31 +100,32 @@
   },
   "CTkCheckBox": {
     "corner_radius": 6,
-    "border_width": 3,
-    "fg_color": "#666666",
-    "fg_color_disabled":  ["#999999", "#444444"],
-    "border_color": ["#3E454A", "#949A9F"],
-    "hover_color": "#888888",
+    "border_width": 2,
+    "fg_color": ["#666666","#2b2c30"],
+    "fg_color_disabled":  ["#999999", "#222326"],
+    "border_color": ["#3E454A", "#565B5E"],
+    "hover_color": ["#888888", "#3b3e40"],
     "checkmark_color": "#ffffff",
     "text_color": ["#000000", "#eeeeee"],
     "text_color_disabled": ["gray60", "#909090"]
   },
   "CTkOptionMenu": {
     "corner_radius": 6,
-    "fg_color": ["#f5f5f5", "#2f2f2f"],
-    "button_color": ["#666666", "#7d7d7d"],
-    "button_hover_color": ["#888888", "#999999"],
-    "button_color_disabled": ["#999999", "#4d4d4d"],
+    "border_width": 2,
+    "fg_color": ["#f5f5f5", "#2b2c30"],
+    "button_color": ["#666666", "#565B5E"],
+    "button_hover_color": ["#888888", "#6d7377"],
+    "button_color_disabled": ["#999999", "#313436"],
     "text_color": ["#000000", "#eeeeee"],
-    "text_color_disabled": ["gray74", "#909090"]
+    "text_color_disabled": ["gray74", "#707070"]
   },
   "CTkEntry": {
     "corner_radius": 6,
     "border_width": 2,
-    "fg_color": ["#F9F9FA", "#343638"],
-    "fg_color_disabled": ["#eeeeee", "#282828"],
+    "fg_color": ["#F9F9FA", "#2b2c30"],
+    "fg_color_disabled": ["#eeeeee", "#222326"],
     "border_color": ["#979DA2", "#565B5E"],
-    "border_color_disabled": ["#cccccc", "#404040"],
+    "border_color_disabled": ["#cccccc", "#313436"],
     "text_color": ["gray14", "#eeeeee"],
     "text_color_disabled": ["#888888", "#909090"],
     "placeholder_text_color": ["gray52", "gray62"]
@@ -126,10 +133,10 @@
   "CTkTextbox": {
     "corner_radius": 6,
     "border_width": 2,
-    "fg_color": ["#F9F9FA", "#343638"],
-    "fg_color_disabled": ["#eeeeee", "#282828"],
+    "fg_color": ["#F9F9FA", "#2b2c30"],
+    "fg_color_disabled": ["#eeeeee", "#222326"],
     "border_color": ["#aaaaaa", "#555555"],
-    "border_color_disabled": ["#cccccc", "#404040"],
+    "border_color_disabled": ["#cccccc", "#313436"],
     "text_color": ["gray14", "#eeeeee"],
     "text_color_disabled": ["#888888", "#909090"],
     "scrollbar_button_color": ["gray55", "gray41"],
@@ -142,6 +149,34 @@
     "fg_color": ["gray90", "gray20"],
     "hover_color": ["gray75", "gray28"],
     "text_color": ["gray14", "gray84"]
+  },
+  "SettingsTabLabel": {
+    "text_color": "white",
+    "font": ["Microsoft YaHei", 20]
+  },
+  "SelectGameText": {
+  },
+  "SettingsTabsFrame": {
+    "corner_radius": 0,
+    "fg_color": ["white", "#24252a"]
+  },
+  "SettingsTabContentFrame": {
+    "corner_radius": 0,
+    "fg_color": ["#f0f0f0", "#24252a"]
+  },
+  "SettingsTabsListFrame": {
+    "corner_radius": 0,
+    "fg_color": ["#f0f0f0", "#1f2024"]
+  },
+  "SettingsTabButton": {
+    "corner_radius": 10,
+    "border_width": 0,
+    "hover_color": ["#888888", "#2c2e33"],
+    "select_color": ["#888888", "#2c2e33"],
+    "fg_color": ["#666666", "#1f2024"],
+    "text_color_hovered": ["#888888", "#ffffff"],
+    "text_color": ["#ffffff", "#999999"],
+    "font": ["Microsoft YaHei", 16]
   },
   "CTkFont": {
     "macOS": {

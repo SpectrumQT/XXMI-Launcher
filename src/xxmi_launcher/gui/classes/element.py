@@ -1,5 +1,5 @@
-from typing import Dict, Union
-from customtkinter import CTkBaseClass, CTk, CTkToplevel
+from typing import Dict, Union, Tuple
+from customtkinter import CTkBaseClass, CTk, CTkToplevel, ThemeManager
 
 import core.event_manager as Events
 import gui.vars as Vars
@@ -97,6 +97,9 @@ class UIElement:
             self.tooltip.destroy()
         except:
             pass
+        self.unsubscribe()
+        self.untrace_save()
+        self.untrace_write()
         super().destroy()
 
     def _show(self):
@@ -110,6 +113,20 @@ class UIElement:
 
     def get_resource_path(self, resource_path: str = ''):
         return self.master.get_resource_path()
+
+    def get_color(self, key: str, default: Union[str, Tuple[str, str]] = ('white', 'black')) -> Union[str, Tuple[str, str]]:
+        return ThemeManager.theme[str(self.__class__.__qualname__)].get(key, default)
+
+    def _apply_theme(self, recursive=False):
+        theme_colors = ThemeManager.theme.get(str(self.__class__.__qualname__), {})
+        for key, color in theme_colors.items():
+            try:
+                self.configure(**{key: color})
+            except:
+                pass
+        if recursive:
+            for element in self.elements.values():
+                element._apply_theme(recursive=True)
 
 
 class UIElementBase(UIElement):

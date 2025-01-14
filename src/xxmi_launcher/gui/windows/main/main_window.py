@@ -1,4 +1,7 @@
+import json
 import logging
+import shutil
+
 import pyglet
 
 from pathlib import Path
@@ -21,6 +24,7 @@ log = logging.getLogger(__name__)
 # set_widget_scaling(2)
 # set_window_scaling(2)
 # deactivate_automatic_dpi_awareness()
+
 # Limit automatic scaling in a way to fit arbitrary width and height on screen
 limit_scaling(1280, 720)
 
@@ -31,8 +35,9 @@ class MainWindow(UIMainWindow):
 
         self.hide()
 
-        # Set appearance mode to same as one of user OS
-        set_appearance_mode('System')
+        # Use dark mode theme colors
+        set_appearance_mode('Dark')
+
         # Fix pyglet font load
         pyglet.options['win32_gdi_font'] = True
 
@@ -53,11 +58,14 @@ class MainWindow(UIMainWindow):
         # Skip loading the same theme
         if self.active_theme == theme:
             return
-        self.active_theme = theme
-        # Load custom tkinter theme
         theme_path = Paths.App.Themes / theme
+        theme_json_path = theme_path / 'custom-tkinter-theme.json'
+        # Ensure customtkinter theme integrity
+        if not self.validate_theme(theme_json_path):
+            return
+        # Load customtkinter theme
         try:
-            set_default_color_theme(str(theme_path / 'custom-tkinter-theme.json'))
+            set_default_color_theme(str(theme_json_path))
         except Exception as e:
             log.exception(e)
         # Load custom fonts
@@ -71,6 +79,101 @@ class MainWindow(UIMainWindow):
                 log.exception(e)
         # Set icon path
         self.cfg.icon_path = theme_path / 'window-icon.ico'
+        # Set theme as active
+        self.active_theme = theme
+
+    def validate_theme(self, theme_json_path):
+        theme_name = theme_json_path.parent.name
+        if theme_name == 'Default':
+            return True
+
+        # Make sure that theme exists
+        if not theme_json_path.is_file():
+            Config.Config.active_theme = 'Default'
+            Config.Launcher.gui_theme = 'Default'
+            self.load_theme('Default')
+            Events.Fire(Events.Application.ShowWarning(
+                message=f'Failed to load {theme_name} theme:\n\n'
+                        f'Theme folder does not exist!'
+            ))
+            return False
+
+        if not theme_json_path.parent.is_dir():
+            Config.Config.active_theme = 'Default'
+            Config.Launcher.gui_theme = 'Default'
+            self.load_theme('Default')
+            Events.Fire(Events.Application.ShowWarning(
+                message=f'Failed to load {theme_name} theme:\n\n'
+                        f'Theme file `custom-tkinter-theme.json` does not exist!'
+            ))
+            return False
+
+        try:
+            with open(theme_json_path, 'r') as f:
+                theme_data = json.load(f)
+                theme_api_version = theme_data['Metadata']['theme_api_version']
+        except:
+            theme_api_version = '0.0.0'
+
+        if theme_api_version <  '1.0.0':
+            default_json_path = Paths.App.Themes / 'Default' / 'custom-tkinter-theme.json'
+            set_default_color_theme(str(default_json_path))
+            update_dialogue = Events.Application.ShowWarning(
+                modal=True,
+                screen_center=not self.is_shown(),
+                lock_master=self.is_shown(),
+                icon='update-icon.ico',
+                title='Theme Update Required',
+                confirm_text='Use Default',
+                cancel_text='Patch Theme',
+                message=f'Selected {theme_name} theme cannot be loaded!\n\n'
+                        f'Click `Use Default` to use default theme instead (ensures proper visuals).\n'
+                        f'Click `Patch Theme` to replace `custom-tkinter-theme.json` with new one.',
+            )
+            user_requested_default_theme = self.show_messagebox(update_dialogue)
+            if user_requested_default_theme:
+                Config.Config.active_theme = 'Default'
+                Config.Launcher.gui_theme = 'Default'
+                self.load_theme('Default')
+            else:
+                Events.Fire(Events.Application.VerifyFileAccess(path=theme_json_path, write=True))
+                theme_json_path.unlink()
+                shutil.copy2(default_json_path, theme_json_path)
+                self.load_theme(theme_name)
+
+        return False
+
+    def reload_theme(self, last_mod_time=0):
+        if not Config.Config.Launcher.theme_dev_mode:
+            return
+
+        theme_path = Paths.App.Themes / self.active_theme
+        mod_time = theme_path.stat().st_mtime
+
+        # self._verify_chain()
+
+        if mod_time != last_mod_time:
+            try:
+                set_default_color_theme(str(theme_path / 'custom-tkinter-theme.json'))
+            except Exception as e:
+                log.exception(e)
+            self._apply_theme(recursive=True)
+
+        self.after(100, self.reload_theme, mod_time)
+
+    def _verify_chain(self):
+        self._verify_chain_recursive(self)
+
+    def _verify_chain_recursive(self, widget):
+        for child in widget.children.values():
+            if not hasattr(child, 'elements'):
+                continue
+            if not hasattr(child.master, 'elements'):
+                raise Exception(f'Object of class {child.__class__.__qualname__} master is not of UIElement base class!')
+            if child not in child.master.elements.values():
+                raise Exception(f'Object of class {child.__class__.__qualname__} is not listed in elements of master {child.master.__class__.__qualname__}!\n'
+                                f'{child.__dict__}')
+            self._verify_chain_recursive(child)
 
     def initialize(self):
         import gui.vars as Vars
@@ -98,7 +201,11 @@ class MainWindow(UIMainWindow):
         self.launcher_frame = self.put(LauncherFrame(self))
         self.launcher_frame.grid(row=0, column=0, padx=0, pady=0, sticky='news')
 
+        # Auto reload
+        self.reload_theme()
+
         Events.Subscribe(Events.Application.MoveWindow, lambda event: self.move(event.offset_x, event.offset_y))
+        Events.Subscribe(Events.GUI.ToggleThemeDevMode, self.reload_theme)
 
         Events.Fire(Events.Application.Ready())
         # Events.Fire(Events.Application.Busy())
@@ -109,9 +216,6 @@ class MainWindow(UIMainWindow):
         self.show()
 
         # self.open_settings()
-
-        Events.Subscribe(Events.Application.OpenSettings,
-                         lambda event: self.open_settings(wait_window=event.wait_window))
         Events.Subscribe(Events.Application.Minimize,
                          lambda event: self.minimize())
         Events.Subscribe(Events.Application.Close, self.handle_close)
@@ -122,13 +226,6 @@ class MainWindow(UIMainWindow):
     def close(self):
         Events.Fire(Events.Application.Ready())
         super().close()
-
-    def open_settings(self, wait_window=False):
-        from gui.windows.settings.settings_window import SettingsWindow
-        # settings = SettingsWindow(self)
-        self.after(10, SettingsWindow, self)
-        # if wait_window:
-        #     self.wait_window(settings)
 
     def show_messagebox(self, event):
         if not self.exists:

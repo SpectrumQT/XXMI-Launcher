@@ -34,3 +34,7 @@ class GUIEvents:
         class HoverImporter:
             importer_id: str
             hover: bool = False
+
+    @dataclass
+    class ToggleThemeDevMode:
+        enabled: bool = False

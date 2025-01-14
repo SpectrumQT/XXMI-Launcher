@@ -319,5 +319,9 @@ Active: Union[gimi_package.GIMIPackageConfig, srmi_package.SRMIPackageConfig,
               wwmi_package.WWMIPackageConfig, zzmi_package.ZZMIPackageConfig]
 
 
-def get_resource_path(element):
-    return Config.theme_path / element.get_resource_path()
+def get_resource_path(element, filename):
+    class_path = element.get_resource_path() / filename
+    resource_path = Config.theme_path / class_path
+    if not resource_path.is_file():
+        return Paths.App.Themes / 'Default' / class_path
+    return resource_path

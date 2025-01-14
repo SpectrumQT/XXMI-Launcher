@@ -33,6 +33,7 @@ class LauncherManagerConfig:
     enabled_importers: list = field(default_factory=lambda: [])
     log_level: str = 'DEBUG'
     config_version: str = ''
+    theme_dev_mode: bool = False
 
 
 @dataclass

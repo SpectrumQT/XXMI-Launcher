@@ -21,6 +21,8 @@ class UIFrame(UIElementBase, CTkFrame):
 
         self.background_image = None
 
+        self._apply_theme()
+
     def update(self):
         # CTkFrame.update(self)
         # self.canvas.configure(width=self.master.winfo_width(), height=self.master.winfo_height())
@@ -34,8 +36,10 @@ class UIFrame(UIElementBase, CTkFrame):
         if image_path is not None:
             width, height = width or self.master.winfo_width(), height or self.master.winfo_height()
             if self.background_image is None:
-                self.background_image = UIImage(master=self, image_path=image_path, x=x, y=y, anchor=anchor,
-                                                width=width, height=height, brightness=brightness, opacity=opacity)
+                self.background_image = self.put(UIImage(
+                    master=self, image_path=image_path, x=x, y=y, anchor=anchor,
+                    width=width, height=height, brightness=brightness, opacity=opacity)
+                )
             else:
                 self.background_image.configure(image_path=image_path, width=width, height=height)
         elif self.background_image is not None:
@@ -58,16 +62,21 @@ class UIFrame(UIElementBase, CTkFrame):
         return f'{resource_path}/{str(self.__class__.__qualname__)}'
 
     def bind(self, *args, **kwargs):
-        self.background_image.bind(*args, **kwargs)
+        if self.background_image is not None:
+            self.background_image.bind(*args, **kwargs)
+        else:
+            super().bind(*args, **kwargs)
 
     def unbind(self, *args, **kwargs):
         self.background_image.unbind(*args, **kwargs)
 
 
 class UITabView(UIElementBase, CTkTabview):
-    def __init__(self, master: Union[CTk, CTkToplevel], **kwargs):
+    def __init__(self, master: Union[CTk, CTkToplevel, CTkFrame], **kwargs):
         UIElementBase.__init__(self, **kwargs)
         CTkTabview.__init__(self, master, **kwargs)
+
+        self._apply_theme()
 
     def rename_tab(self, old_name, new_name, keep_old_key=False):
         self._segmented_button._buttons_dict[old_name].configure(text=new_name)
@@ -85,6 +94,8 @@ class UIScrollableFrame(CTkScrollableFrame, UIElementBase):
         # Scrollbar auto-hiding
         self.hide_scrollbar = hide_scrollbar
         self.height = height
+
+        self._apply_theme()
 
     def update(self):
         CTkScrollableFrame.update(self)
