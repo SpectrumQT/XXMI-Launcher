@@ -1,6 +1,6 @@
 import subprocess
 from pathlib import Path
-from customtkinter import filedialog
+from customtkinter import filedialog, ThemeManager
 from textwrap import dedent
 
 import core.event_manager as Events
@@ -22,52 +22,49 @@ class GeneralSettingsFrame(UIFrame):
         self.grid_rowconfigure(6, weight=100)
 
         # Game Folder
-        self.put(GameFolderLabel(self)).grid(row=0, column=0, padx=(20, 0), pady=(10, 10), sticky='wn')
-        game_folder_error = self.put(GameFolderErrorLabel(self))
-        self.put(GameFolderEntry(self, game_folder_error)).grid(row=0, column=1, padx=(10, 100), pady=(10, 10), sticky='ewn', columnspan=3)
-        self.put(ChangeGameFolderButton(self)).grid(row=0, column=3, padx=(0, 20), pady=(10, 10), sticky='en')
+        self.put(GameFolderLabel(self)).grid(row=0, column=0, padx=(20, 0), pady=(0, 30), sticky='w')
+        self.put(GameFolderFrame(self)).grid(row=0, column=1, padx=(0, 20), pady=(0, 30), sticky='new', columnspan=3)
 
         # Launch Options
-        self.put(LaunchOptionsLabel(self)).grid(row=1, column=0, padx=(20, 10), pady=(10, 10), sticky='w')
-        self.put(LaunchOptionsEntry(self)).grid(row=1, column=1, padx=(10, 20), pady=(10, 10), sticky='ew', columnspan=3)
+        self.put(LaunchOptionsLabel(self)).grid(row=1, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
+        self.put(LaunchOptionsEntry(self)).grid(row=1, column=1, padx=(0, 20), pady=(0, 30), sticky='ew', columnspan=3)
 
         # Process Priority
-        self.put(ProcessPriorityLabel(self)).grid(row=2, column=0, padx=20, pady=(10, 10), sticky='ew')
-        self.put(ProcessPriorityOptionMenu(self)).grid(row=2, column=1, padx=(10, 10), pady=(10, 10), sticky='w')
+        self.put(ProcessPriorityLabel(self)).grid(row=2, column=0, padx=20, pady=(0, 30), sticky='w')
+        self.put(ProcessPriorityOptionMenu(self)).grid(row=2, column=1, padx=(0, 10), pady=(0, 30), sticky='w')
 
         # Auto Config
         if Vars.Launcher.active_importer.get() != 'SRMI':
-            self.put(AutoConfigLabel(self)).grid(row=2, column=1, padx=(210, 10), pady=(10, 10), sticky='w', columnspan=3)
-            self.put(ConfigureGame(self)).grid(row=2, column=1, padx=(320, 10), pady=(10, 10), sticky='w', columnspan=3)
+            self.put(AutoConfigLabel(self)).grid(row=3, column=0, padx=(20), pady=(0, 30), sticky='w', columnspan=3)
+            self.put(ConfigureGame(self)).grid(row=3, column=1, padx=(0, 10), pady=(0, 30), sticky='w', columnspan=3)
 
-        # Tweaks
-        self.put(TweaksLabel(self)).grid(row=3, column=0, padx=(20, 10), pady=(10, 10), sticky='w')
+
         if Vars.Launcher.active_importer.get() != 'ZZMI':
-            self.put(UnlockFPSCheckbox(self)).grid(row=3, column=1, padx=(10, 10), pady=(10, 10), sticky='w')
-        # Window mode for GI FPS Unlocker
-        if Vars.Launcher.active_importer.get() == 'GIMI':
-            self.put(UnlockFPSWindowOptionMenu(self)).grid(row=3, column=1, padx=(150, 10), pady=(10, 10), sticky='w', columnspan=3)
-            self.put(EnableHDR(self)).grid(row=3, column=1, padx=(330, 10), pady=(10, 10), sticky='w', columnspan=3)
-        #  Performance Tweaks
-        if Vars.Launcher.active_importer.get() == 'WWMI':
-            self.put(ApplyTweaksCheckbox(self)).grid(row=3, column=2, padx=(20, 10), pady=(10, 10), sticky='w')
-            self.put(OpenEngineIniButton(self)).grid(row=3, column=3, padx=(10, 20), pady=(10, 10), sticky='e')
-
-        # Auto close
-        self.put(LauncherLabel(self)).grid(row=4, column=0, padx=(20, 10), pady=(10, 10), sticky='w')
-        self.put(AutoCloseCheckbox(self)).grid(row=4, column=1, padx=(10, 10), pady=(10, 10), sticky='w', columnspan=3)
-
-        # Theme
-        self.put(ThemeLabel(self)).grid(row=4, column=1, padx=(240, 10), pady=(10, 10), sticky='w', columnspan=3)
-        self.put(LauncherThemeOptionMenu(self)).grid(row=4, column=1, padx=(310, 10), pady=(10, 10), sticky='w', columnspan=3)
-        self.put(ApplyThemeButton(self)).grid(row=4, column=1, padx=(0, 20), pady=(10, 10), sticky='e', columnspan=3)
+            
+            # Tweaks
+            self.put(TweaksLabel(self)).grid(row=4, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
+    
+            tweaks_frame = UIFrame(self, fg_color=master._fg_color)
+            tweaks_frame.grid(row=4, column=1, padx=(0, 0), pady=(0, 30), sticky='we', columnspan=3)
+            
+            tweaks_frame.put(UnlockFPSCheckbox(tweaks_frame)).grid(row=0, column=0, padx=(0, 10), pady=(0, 0), sticky='w')
+    
+            # Window mode for GI FPS Unlocker
+            if Vars.Launcher.active_importer.get() == 'GIMI':
+                tweaks_frame.put(UnlockFPSWindowOptionMenu(tweaks_frame)).grid(row=0, column=1, padx=(20, 10), pady=(0, 0), sticky='w')
+                tweaks_frame.put(EnableHDR(tweaks_frame)).grid(row=0, column=2, padx=(60, 10), pady=(0, 0), sticky='w')
+    
+            #  Performance Tweaks
+            if Vars.Launcher.active_importer.get() == 'WWMI':
+                tweaks_frame.put(ApplyTweaksCheckbox(tweaks_frame)).grid(row=0, column=1, padx=(20, 10), pady=(0, 0), sticky='w')
+                tweaks_frame.put(OpenEngineIniButton(tweaks_frame)).grid(row=0, column=2, padx=(10, 20), pady=(0, 0), sticky='e')
 
 
 class GameFolderLabel(UILabel):
     def __init__(self, master):
         super().__init__(
             text='Game Folder:',
-            font=('Roboto', 16, 'bold'),
+            font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
 
@@ -77,9 +74,11 @@ class GameFolderEntry(UIEntry):
         super().__init__(
             textvariable=Vars.Active.Importer.game_folder,
             width=200,
-            height=36,
+            height=32,
+            border_width=0,
             font=('Arial', 14),
             master=master)
+        self.normal_border_color = self._border_color
         self.error_label = error_label
         self.configure(validate='all', validatecommand=(master.register(self.validate_game_folder), '%P'))
         self.set_tooltip(self.get_tooltip)
@@ -90,8 +89,10 @@ class GameFolderEntry(UIEntry):
             game_path = Events.Call(Events.ModelImporter.ValidateGameFolder(game_folder=game_folder))
         except Exception as e:
             self.error_label.configure(text=str(e))
-            self.error_label.grid(row=0, column=1, padx=20, pady=(52, 0), sticky='ews', columnspan=2)
+            self.error_label.grid(row=0, column=1, padx=(0, 15), pady=(36, 0), sticky='nwe')
+            self.master.configure(border_color='#db3434')
             return True
+        self.master.configure(border_color=self.normal_border_color)
         self.error_label.grid_forget()
         return True
 
@@ -115,8 +116,8 @@ class GameFolderErrorLabel(UILabel):
     def __init__(self, master):
         super().__init__(
             text='Failed to detect Game Folder!',
-            font=('Roboto', 16, 'bold'),
-            text_color='red',
+            font=('Microsoft YaHei', 14, 'bold'),
+            text_color='#ff3636',
             fg_color='transparent',
             master=master)
 
@@ -124,16 +125,20 @@ class GameFolderErrorLabel(UILabel):
 class ChangeGameFolderButton(UIButton):
     def __init__(self, master):
         super().__init__(
-            text='Change',
+            text='Browse...',
             command=self.change_game_folder,
-            width=70,
-            height=36,
+            width=80,
+            height=32,
+            border_width=0,
             font=('Roboto', 14),
-            fg_color='#eeeeee',
-            text_color='#000000',
-            hover_color='#ffffff',
-            border_width=1,
             master=master)
+        fg_color = ThemeManager.theme["CTkEntry"].get("fg_color", None)
+        self.configure(
+            fg_color=fg_color,
+            hover_color=fg_color,
+            text_color=["#000000", "#aaaaaa"],
+            text_color_hovered=["#000000", "#ffffff"],
+        )
 
     def change_game_folder(self):
         game_folder = filedialog.askdirectory(initialdir=Vars.Active.Importer.game_folder.get())
@@ -142,11 +147,53 @@ class ChangeGameFolderButton(UIButton):
         Vars.Active.Importer.game_folder.set(game_folder)
 
 
+class GameFolderFrame(UIFrame):
+    def __init__(self, master):
+        super().__init__(
+            border_color = ThemeManager.theme["CTkEntry"].get("border_color", None),
+            border_width = ThemeManager.theme["CTkEntry"].get("border_width", None),
+            fg_color = ThemeManager.theme["CTkEntry"].get("fg_color", None),
+            master=master)
+
+        self.grid_columnconfigure(0, weight=100)
+
+        game_folder_error = master.put(GameFolderErrorLabel(master))
+
+        self.put(GameFolderEntry(self, game_folder_error)).grid(row=0, column=0, padx=(4, 2), pady=(2, 0), sticky='new')
+        self.put(ChangeGameFolderButton(self)).grid(row=0, column=1, padx=(0, 4), pady=(2, 2), sticky='ne')
+
+
+class LaunchOptionsLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text='Launch Options:',
+            font=('Microsoft YaHei', 14, 'bold'),
+            fg_color='transparent',
+            master=master)
+
+
+class LaunchOptionsEntry(UIEntry):
+    def __init__(self, master):
+        super().__init__(
+            textvariable=Vars.Active.Importer.launch_options,
+            width=100,
+            height=36,
+            font=('Arial', 14),
+            master=master)
+        self.set_tooltip(self.get_tooltip)
+
+    def get_tooltip(self):
+        msg = 'Command line arguments aka Launch Options to start game exe with.\n'
+        if Config.Launcher.active_importer == 'WWMI':
+            msg += '* Disable intro: -SkipSplash'
+        return msg.strip()
+
+
 class ProcessPriorityLabel(UILabel):
     def __init__(self, master):
         super().__init__(
             text='Process Priority:',
-            font=('Roboto', 16, 'bold'),
+            font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
 
@@ -168,7 +215,7 @@ class AutoConfigLabel(UILabel):
     def __init__(self, master):
         super().__init__(
             text='Auto Config:',
-            font=('Roboto', 16, 'bold'),
+            font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
 
@@ -218,44 +265,14 @@ class ConfigureGame(UICheckbox):
         return msg.strip()
 
 
-class LaunchOptionsLabel(UILabel):
-    def __init__(self, master):
-        super().__init__(
-            text='Launch Options:',
-            font=('Roboto', 16, 'bold'),
-            fg_color='transparent',
-            master=master)
-
-
-class LaunchOptionsEntry(UIEntry):
-    def __init__(self, master):
-        super().__init__(
-            textvariable=Vars.Active.Importer.launch_options,
-            width=100,
-            height=36,
-            font=('Arial', 14),
-            master=master)
-        self.set_tooltip(self.get_tooltip)
-
-    def get_tooltip(self):
-        msg = 'Command line arguments aka Launch Options to start game exe with.\n'
-        if Config.Launcher.active_importer == 'WWMI':
-            msg += '* Disable intro: -SkipSplash'
-        return msg.strip()
-
-
 class OpenEngineIniButton(UIButton):
     def __init__(self, master):
         super().__init__(
-            text='Open Engine.ini',
+            text='🔍 Open Engine.ini',
             command=self.open_engine_ini,
-            width=120,
+            width=140,
             height=36,
             font=('Roboto', 14),
-            fg_color='#eeeeee',
-            text_color='#000000',
-            hover_color='#ffffff',
-            border_width=1,
             master=master)
         self.set_tooltip(f'Open Engine.ini in default text editor file for manual tweaking.')
 
@@ -276,7 +293,7 @@ class TweaksLabel(UILabel):
     def __init__(self, master):
         super().__init__(
             text='Tweaks:',
-            font=('Roboto', 16, 'bold'),
+            font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
 
@@ -363,90 +380,3 @@ class EnableHDR(UICheckbox):
             'Warning! Your monitor must support HDR and `Use HDR` must be enabled in Windows Display settings!\n'
             'Enabled: Turn HDR On. Launcher will create HDR registry record each time before the game launch.\n'
             'Disabled: Turn HDR Off. No extra action required, game auto-removes HDR registry record on launch.')
-
-
-class LauncherLabel(UILabel):
-    def __init__(self, master):
-        super().__init__(
-            text='Launcher:',
-            font=('Roboto', 16, 'bold'),
-            fg_color='transparent',
-            master=master)
-
-
-class AutoCloseCheckbox(UICheckbox):
-    def __init__(self, master):
-        super().__init__(
-            text='Close After Game Start',
-            variable=Vars.Launcher.auto_close,
-            master=master)
-        self.set_tooltip(
-            'Enabled: Launcher will close itself once the game has started and 3dmigoto injection has been confirmed.\n'
-            'Disabled: Launcher will keep itself running.')
-
-
-class ThemeLabel(UILabel):
-    def __init__(self, master):
-        super().__init__(
-            text='Theme:',
-            font=('Roboto', 16, 'bold'),
-            fg_color='transparent',
-            master=master)
-
-
-class LauncherThemeOptionMenu(UIOptionMenu):
-    def __init__(self, master):
-        super().__init__(
-            values=['Default'],
-            variable=Vars.Launcher.gui_theme,
-            width=150,
-            height=36,
-            font=('Arial', 14),
-            dropdown_font=('Arial', 14),
-            master=master)
-        self.set_tooltip('Select launcher GUI theme.\n'
-                         'Warning! `Default` theme will be overwritten by launcher updates!\n'
-                         'To make a custom theme:\n'
-                         '1. Create a duplicate of `Default` folder in `Themes` folder.\n'
-                         '2. Rename the duplicate in a way you want it to be shown in Settings.\n'
-                         '3. Edit or replace any images (valid extensions: webp, jpeg, png, jpg).')
-
-    def update_values(self):
-        values = ['Default']
-        for path in Paths.App.Themes.iterdir():
-            if path.is_dir() and path.name != 'Default':
-                values.append(path.name)
-        self.configure(values=values)
-
-    def _open_dropdown_menu(self):
-        self.update_values()
-        super()._open_dropdown_menu()
-
-
-class ApplyThemeButton(UIButton):
-    def __init__(self, master):
-        super().__init__(
-            text='Apply',
-            command=self.apply_theme,
-            width=100,
-            height=36,
-            font=('Roboto', 14),
-            fg_color='#eeeeee',
-            text_color='#000000',
-            hover_color='#ffffff',
-            border_width=1,
-            master=master)
-
-        self.trace_write(Vars.Launcher.gui_theme, self.handle_write_gui_theme)
-
-        self.hide()
-
-    def apply_theme(self):
-        Events.Fire(Events.Application.CloseSettings(save=True))
-        Events.Fire(Events.Application.Restart(delay=0))
-
-    def handle_write_gui_theme(self, var, val):
-        if val != Config.Config.active_theme:
-            self.show()
-        else:
-            self.hide()

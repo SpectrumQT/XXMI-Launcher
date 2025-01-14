@@ -15,55 +15,40 @@ class AdvancedSettingsFrame(UIFrame):
         self.grid_columnconfigure(2, weight=100)
 
         # Update Policy
-        self.put(UpdatePolicyLabel(self)).grid(row=0, column=0, padx=20, pady=(10, 10), sticky='w')
-        self.put(AutoUpdateCheckbox(self)).grid(row=0, column=1, padx=10, pady=(10, 10), sticky='w')
-        self.put(OverwriteIniCheckbox(self)).grid(row=0, column=2, padx=10, pady=(10, 10), sticky='w')
+        self.put(UpdatePolicyLabel(self)).grid(row=0, column=0, padx=20, pady=(0, 25), sticky='w')
+        self.put(OverwriteIniCheckbox(self)).grid(row=0, column=1, padx=10, pady=(0, 25), sticky='w')
 
         # Security
-        self.put(SecurityLabel(self)).grid(row=0, column=2, padx=(220, 10), pady=(10, 10), sticky='w', columnspan=3)
-        self.put(UnsafeModeCheckbox(self)).grid(row=0, column=2, padx=(310, 10), pady=(10, 10), sticky='w', columnspan=3)
+        self.put(SecurityLabel(self)).grid(row=0, column=2, padx=(220, 10), pady=(0, 25), sticky='w', columnspan=3)
+        self.put(UnsafeModeCheckbox(self)).grid(row=0, column=2, padx=(310, 10), pady=(0, 25), sticky='w', columnspan=3)
 
         # Pre-Launch Command
-        self.put(RunPreLaunchCheckbox(self)).grid(row=3, column=0, padx=(20, 0), pady=(10, 10), sticky='w')
-        self.put(RunPreLaunchEntry(self)).grid(row=3, column=1, padx=(10, 125), pady=(10, 10), sticky='ew', columnspan=4)
-        self.put(RunPreLaunchWaitCheckbox(self)).grid(row=3, column=4, padx=(10, 20), pady=(10, 10), sticky='w')
+        self.put(RunPreLaunchCheckbox(self)).grid(row=3, column=0, padx=(20, 0), pady=(0, 25), sticky='w')
+        self.put(RunPreLaunchEntry(self)).grid(row=3, column=1, padx=(10, 125), pady=(0, 25), sticky='ew', columnspan=4)
+        self.put(RunPreLaunchWaitCheckbox(self)).grid(row=3, column=4, padx=(10, 20), pady=(0, 25), sticky='w')
 
         # Custom Launch Command
-        self.put(CustomLaunchCheckbox(self)).grid(row=4, column=0, padx=(20, 0), pady=(10, 10), sticky='w')
-        self.put(CustomLaunchEntry(self)).grid(row=4, column=1, padx=(10, 125), pady=(10, 10), sticky='ew', columnspan=4)
-        self.put(CustomLaunchInjectModeOptionMenu(self)).grid(row=4, column=4, padx=(10, 20), pady=(10, 10), sticky='w')
+        self.put(CustomLaunchCheckbox(self)).grid(row=4, column=0, padx=(20, 0), pady=(0, 25), sticky='w')
+        self.put(CustomLaunchEntry(self)).grid(row=4, column=1, padx=(10, 125), pady=(0, 25), sticky='ew', columnspan=4)
+        self.put(CustomLaunchInjectModeOptionMenu(self)).grid(row=4, column=4, padx=(10, 20), pady=(0, 25), sticky='w')
 
         # Post-Load Command
-        self.put(RunPostLoadCheckbox(self)).grid(row=5, column=0, padx=(20, 0), pady=(10, 10), sticky='w')
-        self.put(RunPostLoadEntry(self)).grid(row=5, column=1, padx=(10, 125), pady=(10, 10), sticky='ew', columnspan=4)
-        self.put(RunPostLoadWaitCheckbox(self)).grid(row=5, column=4, padx=(10, 20), pady=(10, 10), sticky='w')
+        self.put(RunPostLoadCheckbox(self)).grid(row=5, column=0, padx=(20, 0), pady=(0, 25), sticky='w')
+        self.put(RunPostLoadEntry(self)).grid(row=5, column=1, padx=(10, 125), pady=(0, 25), sticky='ew', columnspan=4)
+        self.put(RunPostLoadWaitCheckbox(self)).grid(row=5, column=4, padx=(10, 20), pady=(0, 25), sticky='w')
 
         # Extra Libraries Injection
-        self.put(InjectLibrariesCheckbox(self)).grid(row=6, column=0, padx=(20, 0), pady=(10, 10), sticky='w')
-        self.put(InjectLibrariesTextbox(self)).grid(row=6, column=1, padx=(10, 20), pady=(10, 10), sticky='ew', columnspan=4)
+        self.put(InjectLibrariesCheckbox(self)).grid(row=6, column=0, padx=(20, 0), pady=(0, 25), sticky='w')
+        self.put(InjectLibrariesTextbox(self)).grid(row=6, column=1, padx=(10, 20), pady=(0, 25), sticky='ew', columnspan=4)
 
 
 class UpdatePolicyLabel(UILabel):
     def __init__(self, master):
         super().__init__(
             text='Update Policy:',
-            font=('Roboto', 16, 'bold'),
+            font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
-
-
-class AutoUpdateCheckbox(UICheckbox):
-    def __init__(self, master):
-        super().__init__(
-            text='Auto Update',
-            variable=Vars.Launcher.auto_update,
-            master=master)
-        self.set_tooltip(self.get_tooltip)
-
-    def get_tooltip(self):
-        msg = f'Enabled: Launcher and {Config.Launcher.active_importer} updates will be Downloaded and Installed automatically.\n'
-        msg += 'Disabled: Use special [▲] button next to [Start] button to Download and Install updates manually.'
-        return msg.strip()
 
 
 class OverwriteIniCheckbox(UICheckbox):
@@ -84,7 +69,7 @@ class SecurityLabel(UILabel):
     def __init__(self, master):
         super().__init__(
             text='Security:',
-            font=('Roboto', 16, 'bold'),
+            font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
 
@@ -106,7 +91,7 @@ class RunPreLaunchCheckbox(UICheckbox):
         super().__init__(
             variable=Vars.Active.Importer.run_pre_launch_enabled,
             text='Run Pre-Launch:',
-            font=('Roboto', 16, 'bold'),
+            font=('Microsoft YaHei', 14, 'bold'),
             master=master)
         self.set_tooltip(
                          'Enabled: Option will have stated effect.\n'
@@ -173,7 +158,7 @@ class CustomLaunchCheckbox(UICheckbox):
         super().__init__(
             variable=Vars.Active.Importer.custom_launch_enabled,
             text='Custom Launch:',
-            font=('Roboto', 16, 'bold'),
+            font=('Microsoft YaHei', 14, 'bold'),
             master=master)
         self.set_tooltip(
                          'Enabled: Option will have stated effect.\n'
@@ -241,7 +226,7 @@ class RunPostLoadCheckbox(UICheckbox):
         super().__init__(
             variable=Vars.Active.Importer.run_post_load_enabled,
             text='Run Post-Load:',
-            font=('Roboto', 16, 'bold'),
+            font=('Microsoft YaHei', 14, 'bold'),
             master=master)
         self.set_tooltip(
                          'Enabled: Option will have stated effect.\n'
@@ -308,7 +293,7 @@ class InjectLibrariesCheckbox(UICheckbox):
         super().__init__(
             variable=Vars.Active.Importer.extra_libraries_enabled,
             text='Inject Libraries:',
-            font=('Roboto', 16, 'bold'),
+            font=('Microsoft YaHei', 14, 'bold'),
             master=master)
         self.set_tooltip(
                          'Enabled: Option will have stated effect.\n'

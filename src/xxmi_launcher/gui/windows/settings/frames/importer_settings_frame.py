@@ -1,4 +1,4 @@
-from customtkinter import filedialog
+from customtkinter import filedialog, ThemeManager
 
 import core.event_manager as Events
 import core.config_manager as Config
@@ -16,31 +16,30 @@ class ModelImporterSettingsFrame(UIFrame):
         self.grid_columnconfigure(4, weight=100)
 
         # Importer Folder
-        self.put(ImporterFolderLabel(self)).grid(row=0, column=0, padx=(20, 0), pady=(20, 20), sticky='w')
-        self.put(ImporterFolderEntry(self)).grid(row=0, column=1, padx=10, pady=(20, 20), columnspan=4, sticky='ew')
-        self.put(ChangeImporterFolderButton(self)).grid(row=0, column=5, padx=(0, 20), pady=(20, 20), sticky='e')
+        self.put(ImporterFolderLabel(self)).grid(row=0, column=0, padx=(20, 0), pady=(0, 30), sticky='w')
+        self.put(ImporterFolderFrame(self)).grid(row=0, column=1, padx=(0, 20), pady=(0, 30), sticky='new', columnspan=4)
 
         # Error Handling
-        self.put(ErrorHandlingLabel(self)).grid(row=1, column=0, padx=(20, 10), pady=(20, 20), sticky='w')
-        self.put(MuteWarningsCheckbox(self)).grid(row=1, column=1, padx=10, pady=(20, 20), sticky='w')
-        self.put(CallsLoggingCheckbox(self)).grid(row=1, column=2, padx=10, pady=(20, 20), sticky='w')
-        self.put(DebugLoggingCheckbox(self)).grid(row=1, column=3, padx=10, pady=(20, 20), sticky='w')
+        self.put(ErrorHandlingLabel(self)).grid(row=1, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
+        self.put(MuteWarningsCheckbox(self)).grid(row=1, column=1, padx=10, pady=(0, 30), sticky='w')
+        self.put(CallsLoggingCheckbox(self)).grid(row=1, column=2, padx=10, pady=(0, 30), sticky='w')
+        self.put(DebugLoggingCheckbox(self)).grid(row=1, column=3, padx=10, pady=(0, 30), sticky='w')
 
         # Shader Hunting
-        self.put(ShaderHuntingLabel(self)).grid(row=2, column=0, padx=(20, 10), pady=(20, 20), sticky='w')
-        self.put(EnableHuntingCheckbox(self)).grid(row=2, column=1, padx=10, pady=(20, 20), sticky='w')
-        self.put(DumpShadersCheckbox(self)).grid(row=2, column=2, padx=10, pady=(20, 20), sticky='w')
+        self.put(ShaderHuntingLabel(self)).grid(row=2, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
+        self.put(EnableHuntingCheckbox(self)).grid(row=2, column=1, padx=10, pady=(0, 30), sticky='w')
+        self.put(DumpShadersCheckbox(self)).grid(row=2, column=2, padx=10, pady=(0, 30), sticky='w')
 
         # Fail-Safe
-        self.put(FailSafeLabel(self)).grid(row=3, column=0, padx=(20, 10), pady=(20, 20), sticky='w')
-        self.put(EnforceRenderingCheckbox(self)).grid(row=3, column=1, padx=10, pady=(20, 20), sticky='w', columnspan=2)
+        self.put(FailSafeLabel(self)).grid(row=3, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
+        self.put(EnforceRenderingCheckbox(self)).grid(row=3, column=1, padx=10, pady=(0, 30), sticky='w', columnspan=2)
 
 
 class ShaderHuntingLabel(UILabel):
     def __init__(self, master):
         super().__init__(
             text='Shader Hunting:',
-            font=('Roboto', 16, 'bold'),
+            font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
 
@@ -75,9 +74,23 @@ class ErrorHandlingLabel(UILabel):
     def __init__(self, master):
         super().__init__(
             text='Error Handling:',
-            font=('Roboto', 16, 'bold'),
+            font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
+
+
+class ImporterFolderFrame(UIFrame):
+    def __init__(self, master):
+        super().__init__(
+            border_color = ThemeManager.theme["CTkEntry"].get("border_color", None),
+            border_width = ThemeManager.theme["CTkEntry"].get("border_width", None),
+            fg_color = ThemeManager.theme["CTkEntry"].get("fg_color", None),
+            master=master)
+
+        self.grid_columnconfigure(0, weight=100)
+
+        self.put(ImporterFolderEntry(self)).grid(row=0, column=0, padx=(4, 2), pady=(2, 0), sticky='new')
+        self.put(ChangeImporterFolderButton(self)).grid(row=0, column=1, padx=(0, 4), pady=(2, 2), sticky='ne')
 
 
 class MuteWarningsCheckbox(UICheckbox):
@@ -123,7 +136,7 @@ class ImporterFolderLabel(UILabel):
     def __init__(self, master):
         super().__init__(
             text='Importer Folder:',
-            font=('Roboto', 16, 'bold'),
+            font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
         self.trace_save(Vars.Settings.Launcher.active_importer, self.handle_active_importer_update)
@@ -137,7 +150,8 @@ class ImporterFolderEntry(UIEntry):
         super().__init__(
             textvariable=Vars.Active.Importer.importer_folder,
             width=200,
-            height=36,
+            height=32,
+            border_width=0,
             font=('Arial', 14),
             master=master)
         self.set_tooltip(self.get_tooltip)
@@ -151,16 +165,20 @@ class ImporterFolderEntry(UIEntry):
 class ChangeImporterFolderButton(UIButton):
     def __init__(self, master):
         super().__init__(
-            text='Change',
+            text='Browse...',
             command=self.change_importer_folder,
-            width=70,
-            height=36,
+            width=80,
+            height=32,
             font=('Roboto', 14),
-            fg_color='#eeeeee',
-            text_color='#000000',
-            hover_color='#ffffff',
-            border_width=1,
+            border_width=0,
             master=master)
+        fg_color = ThemeManager.theme["CTkEntry"].get("fg_color", None)
+        self.configure(
+            fg_color=fg_color,
+            hover_color=fg_color,
+            text_color=["#000000", "#aaaaaa"],
+            text_color_hovered=["#000000", "#ffffff"],
+        )
 
     def change_importer_folder(self):
         importer_folder = filedialog.askdirectory(initialdir=Vars.Active.Importer.importer_folder.get())
@@ -173,7 +191,7 @@ class FailSafeLabel(UILabel):
     def __init__(self, master):
         super().__init__(
             text='Ini Protection:',
-            font=('Roboto', 16, 'bold'),
+            font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
 

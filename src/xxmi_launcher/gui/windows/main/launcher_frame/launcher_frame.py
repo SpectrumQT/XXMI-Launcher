@@ -9,29 +9,24 @@ import gui.vars as Vars
 
 from gui.events import Stage
 from gui.classes.containers import UIFrame
-from gui.classes.widgets import UIButton, UIText, UIProgressBar, UILabel, UIImageButton, UIImage
+from gui.classes.widgets import UIText, UIImageButton
 from gui.windows.main.launcher_frame.top_bar import TopBarFrame
 from gui.windows.main.launcher_frame.bottom_bar import BottomBarFrame
 from gui.windows.main.launcher_frame.tool_bar import ToolBarFrame
+from gui.windows.settings.settings_frame import SettingsFrame
 
 
 class LauncherFrame(UIFrame):
     def __init__(self, master):
         super().__init__(master, width=master.cfg.width, height=master.cfg.height, fg_color='transparent')
 
-        self.current_stage = None
-        self.staged_widgets = {}
-
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
-        # Background
         self.canvas.grid(row=0, column=0)
 
-        def upd_bg(event):
-            self.set_background_image(f'background-image-{event.importer_id.lower()}.jpg', width=master.cfg.width, height=master.cfg.height)
-        upd_bg(Events.Application.LoadImporter(importer_id=Config.Launcher.active_importer))
-        self.subscribe(Events.Application.LoadImporter, upd_bg)
+        # Background
+        self.update_background(Config.Launcher.active_importer)
 
         # Top Panel
         self.put(TopBarFrame(self, self.canvas))
@@ -56,6 +51,9 @@ class LauncherFrame(UIFrame):
         self.put(XXMIVersionText(self))
         self.put(ImporterVersionText(self))
 
+        # Settings Frame
+        self.put(SettingsFrame(self, self.canvas))
+
         # Application Events
         self.subscribe(
             Events.Application.Ready,
@@ -66,6 +64,14 @@ class LauncherFrame(UIFrame):
         self.subscribe(
             Events.Application.Busy,
             lambda event: Events.Fire(Events.GUI.LauncherFrame.StageUpdate(Stage.Busy)))
+        self.subscribe(
+            Events.Application.LoadImporter,
+            lambda event: self.update_background(event.importer_id))
+
+    def update_background(self, importer_id):
+        self.set_background_image(f'background-image-{importer_id.lower()}.jpg',
+                                  width=self.master.cfg.width,
+                                  height=self.master.cfg.height)
 
 
 class SelectGameText(UIText):
@@ -220,7 +226,7 @@ class UpdateButton(MainActionButton):
             button_image_path='button-update.png',
             command=lambda: Events.Fire(Events.Application.Update(force=True)),
             master=master)
-        self.set_tooltip('Update packages to latest versions', delay=0.01, anchor='sw')
+        self.set_tooltip('Update packages to latest versions', delay=0.01)
         self.subscribe(Events.PackageManager.VersionNotification, self.handle_version_notification)
 
     def handle_version_notification(self, event):
@@ -380,7 +386,7 @@ class PackageVersionText(UIImageButton):
         super().__init__(**defaults)
         self.stage = None
         self.package_name = ''
-        self.set_tooltip(self.get_tooltip, delay = 0.1, anchor='sw')
+        self.set_tooltip(self.get_tooltip, delay = 0.1)
         self.subscribe(Events.GUI.LauncherFrame.StageUpdate, self.handle_stage_update)
 
     def handle_stage_update(self, event):
