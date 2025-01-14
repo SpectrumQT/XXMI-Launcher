@@ -104,7 +104,7 @@ class UIElement:
 
     def set_tooltip(self, text='', **kwargs):
         if self.tooltip is None:
-            self.tooltip = UIToolTip(self, msg=text, **kwargs)
+            self.tooltip = UIToolTip(self, engine=self.winfo_toplevel().tooltip_engine, msg=text, **kwargs)
         else:
             self.tooltip.msg = text
 

@@ -7,12 +7,9 @@ import markdown
 
 from textwrap import dedent
 from enum import Enum, auto
-from typing import Any, Callable
-from contextlib import suppress
+from typing import Any, Callable, Union
 from tkinterweb import HtmlLabel
 from mdx_gfm import GithubFlavoredMarkdownExtension
-
-markdown_parser = markdown.Markdown(extensions=[GithubFlavoredMarkdownExtension()])
 
 
 class ToolTipStatus(Enum):
@@ -21,39 +18,29 @@ class ToolTipStatus(Enum):
     VISIBLE = auto()
 
 
-class Binding:
-    def __init__(self, widget: tk.Widget, binding_name: str, functor: Callable) -> None:
-        self._widget = widget
-        self._name: str = binding_name
-        self._id: str = self._widget.bind(binding_name, functor, add="+")
-
-    def unbind(self) -> None:
-        self._widget.unbind(self._name, self._id)
-
-
-class ToolTip(tk.Toplevel):
-    """
-    Creates a ToolTip (pop-up) widget for tkinter
-    """
-
-    DEFAULT_PARENT_KWARGS = {"bg": "black", "padx": 1, "pady": 1}
-    DEFAULT_MESSAGE_KWARGS = {"aspect": 1000}
-    S_TO_MS = 1000
-
+class UIToolTip:
     def __init__(
-        self,
-        widget: tk.Widget,
-        msg: str | list[str] | Callable[[], str | list[str]],
-        delay: float = 0.0,
-        follow: bool = True,
-        refresh: float = 0.0,
-        scaling: float = 1.0,
-        x_offset: int = +10,
-        y_offset: int = +10,
-        style: str = '',
-        parent_kwargs: dict | None = None,
-        anchor: str = 'ne',
-        **message_kwargs: Any,
+            self,
+            widget: tk.Widget,
+            engine: UIToolTipEngine,
+            msg: str | list[str] | Callable[[], str | list[str]],
+            delay: float = 0.5,
+            follow: bool = False,
+            refresh: float = 0.0,
+            x_offset: int = +0,
+            y_offset: int = +10,
+            width: int = 800,
+            height: int = 600,
+            style: str = dedent("""
+                <style>
+                    html { background-color: #eeeeee;}
+                    p { font-family: Asap; margin: 5px;}
+                    ul { margin: 10px 5px;}
+                    li { margin: 10px 5px;}
+                    h1 { font-size: 18px; margin: 10px 5px;}
+                    h2 { font-size: 16px; margin: 10px 5px;}
+                </style>
+            """),
     ):
         """Create a ToolTip. Allows for `**kwargs` to be passed on both
             the parent frame and the ToolTip message
@@ -77,28 +64,11 @@ class ToolTip(tk.Toplevel):
             x-coordinate offset for the ToolTip, by default +10
         y_offset : `int`, optional
             y-coordinate offset for the ToolTip, by default +10
-        parent_kwargs : `dict`, optional
-            Optional kwargs to be passed into the parent frame,
-            by default `{"bg": "black", "padx": 1, "pady": 1}`
-        **message_kwargs : tkinter `**kwargs` passed directly into the ToolTip
         """
-        self.x = 0
-        self.y = 0
-        self.scaling = scaling or 1.0
+        self.engine = engine
         self.widget = widget
-        # ToolTip should have the same parent as the widget unless stated
-        # otherwise in the `parent_kwargs`
-        tk.Toplevel.__init__(self, **(parent_kwargs or self.DEFAULT_PARENT_KWARGS))
-        self.withdraw()  # Hide initially in case there is a delay
-        # Disable ToolTip's title bar
-        self.overrideredirect(True)
 
-        # self.geometry(f'100x50')
-
-        # StringVar instance for msg string|function
-        # self.msg_var = tk.StringVar()
         self.msg = msg
-        # self._update_message()
         self.delay = delay
         self.follow = follow
         self.refresh = refresh
@@ -107,94 +77,42 @@ class ToolTip(tk.Toplevel):
         # visibility status of the ToolTip inside|outside|visible
         self.status = ToolTipStatus.OUTSIDE
         self.last_moved = 0.0
-        # use Message widget to host ToolTip
-        self.message_kwargs: dict = self.DEFAULT_MESSAGE_KWARGS.copy()
-        self.message_kwargs.update(message_kwargs)
         self.style = style
-        self.cursor_anchor = anchor
+        self.width = width
+        self.height = height
+        self.scaling = self.widget._apply_widget_scaling(1.0)
 
-        # self.message_widget = tk.Message(
-        #     self,
-        #     textvariable=self.msg_var,
-        #     **self.message_kwargs,
-        # )
+        self.bindings = self._init_bindings()
 
-        self.message_widget = HtmlLabel(self, messages_enabled=False, height=5)
-
-        # self.message_widget.pack(fill="both", expand=True)
-
-        self.message_widget.grid()
-
-        self.bindigs = self._init_bindings()
-
-    def _init_bindings(self) -> list[Binding]:
-        """Initialize the bindings."""
-        bindings = [
-            Binding(self.widget, "<Enter>", self.on_enter),
-            Binding(self.widget, "<Leave>", self.on_leave),
-            Binding(self.widget, "<ButtonPress>", self.on_leave),
-        ]
-        if self.follow:
-            bindings.append(
-                Binding(self.widget, "<Motion>", self._update_tooltip_coords)
-            )
-        return bindings
-
-    def destroy(self) -> None:
-        """Destroy the ToolTip and unbind all the bindings."""
-        with suppress(tk.TclError):
-            for b in self.bindigs:
-                b.unbind()
-            self.bindigs.clear()
-            super().destroy()
-
-    def on_enter(self, event: tk.Event) -> None:
+    def _on_enter(self, event: tk.Event) -> None:
         """
         Processes motion within the widget including entering and moving.
         """
         self.last_moved = time.perf_counter()
         self.status = ToolTipStatus.INSIDE
-        self._update_tooltip_coords(event)
-        self.after(int(self.delay * self.S_TO_MS), self._show)
+        self._update_message()
+        x = self.widget.winfo_rootx()
+        y = self.widget.winfo_rooty()
+        # x, y = event.x_root, event.y_root
+        self.widget.after(int(self.delay * 1000), self.engine.show, self, x, y)
 
-    def on_leave(self, event: tk.Event | None = None) -> None:
+    def _on_leave(self, event: tk.Event | None = None) -> None:
         """
         Hides the ToolTip.
         """
         self.status = ToolTipStatus.OUTSIDE
-        self.withdraw()
+        self.engine.hide(self)
 
-    def _update_tooltip_coords(self, event: tk.Event) -> None:
+    def _on_motion(self, event: tk.Event) -> None:
         """
-        Updates the ToolTip's position.
+        Follow the mouse cursor.
         """
-        x = event.x_root + int(self.x_offset * self.scaling)
-        y = event.y_root + int(self.y_offset * self.scaling)
-        if self.x == self.y == 0:
-            self.geometry(f"+{self.x}+{self.y}")
-        self.x = x
-        self.y = y
-
-    def place_tooltip(self) -> None:
-        x = self.x
-        y = self.y
-        screen_width = int(self.winfo_screenwidth() * self.scaling)
-        screen_height = int(self.winfo_screenheight() * self.scaling)
-        if self.cursor_anchor == 'sw':
-            y -= self.winfo_height() + int(self.y_offset * self.scaling * 2)
-        # Clamp tooltip to screen area
-        x_offset = x + self.winfo_width() - screen_width + 42
-        if x_offset > 0:
-            x -= x_offset
-        if self.cursor_anchor == 'nw':
-            y_offset = y + self.winfo_height() - screen_height + 42
-            if y_offset > 0:
-                y -= y_offset
-        # Update tooltip coords
-        self.geometry(f"+{x}+{y}")
+        self.engine.move(self, event.x_root, event.y_root)
 
     def _update_message(self) -> None:
-        """Update the message displayed in the tooltip."""
+        """
+        Update the message displayed in the tooltip.
+        """
         if callable(self.msg):
             msg = self.msg()
             if isinstance(msg, list):
@@ -207,57 +125,181 @@ class ToolTip(tk.Toplevel):
             msg = "\n".join(self.msg)
         else:
             msg = str(self.msg)
-        html = markdown_parser.convert(msg)
-        # html += '<br/><br/>' + markdown_parser.convert(f'```\n{html}\n```')
-        self.message_widget.load_html(self.style + html)
+        self.msg = self.engine.markdown_parser.convert(msg)
+        # html += '<br/><br/>' + self.engine.markdown_parser.convert(f'```\n{html}\n```')
 
-    def _show(self) -> None:
+    def _init_bindings(self) -> list[Binding]:
+        """
+        Initialize the bindings.
+        """
+        bindings = [
+            Binding(self.widget, "<Enter>", self._on_enter),
+            Binding(self.widget, "<Leave>", self._on_leave),
+            Binding(self.widget, "<ButtonPress>", self._on_leave),
+        ]
+        if self.follow:
+            bindings.append(
+                Binding(self.widget, "<Motion>", self._on_motion)
+            )
+        return bindings
+
+    # def destroy(self) -> None:
+    #     """Destroy the ToolTip and unbind all the bindings."""
+    #     with suppress(tk.TclError):
+    #         for b in self.bindings:
+    #             b.unbind()
+    #         self.bindings.clear()
+    #         self.widget.destroy()
+
+
+class Binding:
+    def __init__(self, widget: tk.Widget, binding_name: str, functor: Callable) -> None:
+        self._widget = widget
+        self._name: str = binding_name
+        self._id: str = self._widget.bind(binding_name, functor, add="+")
+
+    def unbind(self) -> None:
+        self._widget.unbind(self._name, self._id)
+
+
+class UIToolTipEngine(tk.Toplevel):
+    def __init__(self, parent_kwargs: dict | None = None):
+        # ToolTip should have the same parent as the widget unless stated otherwise in the `parent_kwargs`
+        tk.Toplevel.__init__(self, **(parent_kwargs or {"bg": "black", "padx": 1, "pady": 1}))
+
+        # Hide window until there's tooltip to display
+        self.withdraw()
+        # Hide title bar
+        self.overrideredirect(True)
+        # Hide from taskbar
+        self.wm_attributes("-toolwindow", True)
+
+        self.markdown_parser = markdown.Markdown(extensions=[GithubFlavoredMarkdownExtension()])
+
+        self.tooltip: Union['UIToolTip', None] = None
+
+        self.message_widget = None
+        self.message_text = ''
+
+        self.ready = False
+
+    def clamp_to_root(self, x, y):
+        x += int(self.tooltip.x_offset * self.tooltip.scaling)
+        y += int(self.tooltip.y_offset * self.tooltip.scaling)
+        y += self.tooltip.widget.winfo_height()
+
+        # Clamp tooltip to the root window area
+        master_left_edge = self.master.winfo_x()
+        master_right_edge = master_left_edge + self.master.winfo_width()
+        master_top_edge = self.master.winfo_y()
+        master_bottom_edge = master_top_edge + self.master.winfo_height()
+
+        edge_offset = int(10 * self.tooltip.scaling)
+
+        if x < master_left_edge:
+            # Do not let tooltip touch the left edge of the root window
+            x += master_left_edge - x + edge_offset
+        elif x + self.winfo_width() > master_right_edge:
+            # Do not let tooltip touch the right edge of the root window
+            x -= x + self.winfo_width() - master_right_edge + edge_offset
+
+        tooltip_height = self.winfo_height()
+
+        tooltip_top_edge = y
+        # tooltip_bottom_edge = y + tooltip_height
+
+        # Calculate
+        available_height = master_bottom_edge - edge_offset - tooltip_top_edge
+
+        if tooltip_height <= available_height:
+            # Tooltip fits the space below the widget
+            pass
+        else:
+            # Tooltip doesn't fit the space below the widget
+            # Lets place it above the widget instead
+            y -= tooltip_height + int(self.tooltip.y_offset * self.tooltip.scaling)
+            y -= self.tooltip.widget.winfo_height() + int(self.tooltip.y_offset * self.tooltip.scaling)
+
+        return x, y
+
+    def create_message_widget(self):
+        self.ready = False
+
+        # Unfortunately, HtmlLabel cannot be re-used, as it fails to expand to content width
+        # Once it's shrunk to some width, it can only be forced to container width, but in breaks auto-shrinking
+        # So we'll have to dispose of it and re-create each time
+        if self.message_widget is not None:
+            self.message_widget.destroy()
+            self.message_widget = None
+        self.message_widget = HtmlLabel(self, messages_enabled=False)
+        self.message_widget.html.config(
+            # Set max width for word wrapping
+            width=int(self.tooltip.width * self.tooltip.scaling),
+            # Setting height doesn't seem to have any effect
+            # height=int(self.tooltip.height * self.tooltip.scaling),
+        )
+        self.message_widget.enable_caches(False)
+        self.message_widget.set_fontscale(1.2 * self.tooltip.scaling)
+        self.message_widget.load_html(self.message_text)
+        self.message_widget.pack()
+
+        # Update tkinter metadata to make message_widget dimensions readable
+        self.update()
+
+        self.ready = True
+
+    def show(self, tooltip: 'UIToolTip', x: int, y: int) -> None:
         """
         Displays the ToolTip.
-
-        Recursively queues `_show` in the scheduler every `self.refresh` seconds
         """
-        if (
-            self.status == ToolTipStatus.INSIDE
-            and time.perf_counter() - self.last_moved >= self.delay
-        ):
-            self.status = ToolTipStatus.VISIBLE
+        if tooltip != self.tooltip:
+            if self.tooltip is not None:
+                self.tooltip.status = ToolTipStatus.OUTSIDE
 
-        if self.status == ToolTipStatus.VISIBLE:
-            self._update_message()
+        self.tooltip = tooltip
+
+        if self.tooltip.status == ToolTipStatus.INSIDE and time.perf_counter() - self.tooltip.last_moved >= self.tooltip.delay:
+            self.tooltip.status = ToolTipStatus.VISIBLE
+
+        if self.tooltip.status == ToolTipStatus.VISIBLE:
+            # Window must be deiconified if we want to work with dimensions
+            # Lets make it transparent for a while instead
+            self.wm_attributes('-alpha', 0.0)
             self.deiconify()
-            self.update()
-            self.place_tooltip()
+
+            message_text = self.tooltip.style + self.tooltip.msg
+
+            # Redraw text widget if message is updated
+            if self.message_text != message_text:
+                self.message_text = message_text
+                self.create_message_widget()
+            elif not self.ready:
+                return
+
+            # Move window to target location
+            self.move(self.tooltip, x, y)
+
+            # Window is ready to be displayed
+            self.wm_attributes('-alpha', 1.0)
+
             # Recursively call _show to update ToolTip with the newest value of msg
             # This is a race condition which only exits when upon a binding change
             # that in turn changes the `status` to outside
-            if self.refresh > 0:
-                self.after(int(self.refresh * self.S_TO_MS), self._show)
+            if self.tooltip.refresh > 0:
+                self.after(int(self.tooltip.refresh * 1000), self.show, tooltip, x, y)
 
+    def hide(self, tooltip: 'UIToolTip'):
+        self.after(100, self._hide)
 
-class UIToolTip(ToolTip):
-    def __init__(self, master, **kwargs):
-        default = {
-            'delay': 0.5,
-            'follow': True,
-            'y_offset': 20,
-            'parent_kwargs': {
-                "bg": "black",
-                "padx": 1,
-                "pady": 1
-            },
-            'scaling': master._CTkScalingBaseClass__widget_scaling,
-            'style': dedent("""
-                <style>
-                    p { font-family: Asap; margin: 5px;}
-                    ul { margin: 10px 5px;}
-                    li { margin: 10px 5px;}
-                    h1 { font-size: 18px; margin: 10px 5px;}
-                    h2 { font-size: 16px; margin: 10px 5px;}
-                </style>
-            """)
-        }
-        default.update(kwargs)
+    def _hide(self):
+        if self.tooltip is not None and self.tooltip.status == ToolTipStatus.OUTSIDE:
+            self.withdraw()
 
-        ToolTip.__init__(self, master, **default)
-        self.message_widget.set_fontscale(1.2 * master._CTkScalingBaseClass__widget_scaling)
+    def move(self, tooltip: 'UIToolTip', x: int, y: int) -> None:
+        """
+        Updates the ToolTip's position.
+        """
+        if tooltip != self.tooltip:
+            return
+        x, y = self.clamp_to_root(x, y)
+        self.geometry(f"+{x}+{y}")

@@ -10,6 +10,7 @@ from ctypes import wintypes, windll, pointer
 from customtkinter import CTk, CTkToplevel
 from customtkinter import set_widget_scaling, set_window_scaling, ScalingTracker
 
+from gui.classes.tooltip import UIToolTipEngine
 from gui.classes.element import UIElement
 
 import win32gui
@@ -73,6 +74,7 @@ class UIWindow(UIElement):
         self.exists = True
         self.cfg = cfg
         self.top_levels: List[Union['UIWindow', 'UIToplevel']] = [self]
+        self.tooltip_engine: UIToolTipEngine
 
     def add_top_level(self, top_level: 'UIToplevel'):
         self.top_levels.append(top_level)
@@ -116,6 +118,7 @@ class UIMainWindow(UIWindow, CTk):
         self.overrideredirect(True)
         self.minimized = False
         self.bind("<Map>", self.on_deiconify_main_window)
+        self.tooltip_engine = UIToolTipEngine()
         # self.bind("<Unmap>", self.on_iconify_main_window)
         # self.bind('<FocusIn>', self.on_focus_main_window)
         # self.bind('<FocusOut>', self.on_unfocus_main_window)
@@ -189,6 +192,7 @@ class UIToplevel(UIWindow, CTkToplevel):
         self.protocol('WM_DELETE_WINDOW', self.close)
         self.lock_master = lock_master
         self.hide()
+        self.tooltip_engine = UIToolTipEngine()
 
     def apply_config(self):
         if self.cfg.no_titlebar:
