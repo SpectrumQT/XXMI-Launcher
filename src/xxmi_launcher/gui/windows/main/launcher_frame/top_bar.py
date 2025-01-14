@@ -10,25 +10,23 @@ import gui.vars as Vars
 
 from gui.events import Stage
 from gui.classes.containers import UIFrame
-from gui.classes.widgets import UIButton, UIText, UIProgressBar, UILabel, UIImageButton, UIImage
+from gui.classes.widgets import UIText, UIImageButton
 
 
 class TopBarFrame(UIFrame):
     def __init__(self, master, canvas, **kwargs):
         super().__init__(master=master, canvas=canvas, **kwargs)
 
-        self.set_background_image(image_path='background-image.png', width=1280,
-                                  height=80, opacity=0.65)
+        self.set_background_image(image_path='background-image.png', width=1280, height=80, opacity=0.65)
 
         self._offset_x = 0
         self._offset_y = 0
         self.background_image.bind('<Button-1>', self._handle_button_press)
         self.background_image.bind('<B1-Motion>', self._handle_mouse_move)
 
-        # for index, importer_id in enumerate(Config.Launcher.enabled_importers):
-
         for importer_id in Config.Importers.__dict__.keys():
             self.put(ImporterSelectButton(self, importer_id))
+
         self.put(LoadXXMIButton(self))
 
         self.put(GameBananaButton(self))
@@ -317,7 +315,8 @@ class UnsafeModeText(UIText):
         self.subscribe(
             Events.Application.ConfigUpdate,
             self.handle_config_update)
-        self.set_tooltip(f'Usage of 3-rd party 3dmigoto DLLs is allowed. Make sure to use ones only from a trusted source!')
+        self.set_tooltip(f'Usage of 3-rd party 3dmigoto DLLs is allowed.\n'
+                         f'Make sure to use ones only from a trusted source!')
 
     def handle_config_update(self, event=None):
         self.enabled = Config.Launcher.active_importer != 'XXMI' and Config.Active.Migoto.unsafe_mode

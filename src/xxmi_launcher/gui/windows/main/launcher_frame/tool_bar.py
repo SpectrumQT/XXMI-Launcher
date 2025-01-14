@@ -56,6 +56,8 @@ class ToolBarFrame(UIFrame):
             self.master.master.after(50, self.hide_on_leave)
             return
         for element in self.elements.values():
+            if not isinstance(element, ToolsBarButton):
+                continue
             if element.hovered:
                 self.master.master.after(50, self.hide_on_leave)
                 return
