@@ -74,13 +74,15 @@ class UIToolTip:
         self.refresh = refresh
         self.x_offset = x_offset
         self.y_offset = y_offset
-        # visibility status of the ToolTip inside|outside|visible
-        self.status = ToolTipStatus.OUTSIDE
-        self.last_moved = 0.0
         self.style = style
         self.width = width
         self.height = height
         self.scaling = self.widget._apply_widget_scaling(1.0)
+
+        # Visibility status (inside|outside|visible)
+        self.status = ToolTipStatus.OUTSIDE
+        self.last_moved = 0.0
+        self.text = ''
 
         self.bindings = self._init_bindings()
 
@@ -125,7 +127,7 @@ class UIToolTip:
             msg = "\n".join(self.msg)
         else:
             msg = str(self.msg)
-        self.msg = self.engine.markdown_parser.convert(msg)
+        self.text = self.engine.markdown_parser.convert(msg)
         # html += '<br/><br/>' + self.engine.markdown_parser.convert(f'```\n{html}\n```')
 
     def _init_bindings(self) -> list[Binding]:
@@ -267,7 +269,7 @@ class UIToolTipEngine(tk.Toplevel):
             self.wm_attributes('-alpha', 0.0)
             self.deiconify()
 
-            message_text = self.tooltip.style + self.tooltip.msg
+            message_text = self.tooltip.style + self.tooltip.text
 
             # Redraw text widget if message is updated
             if self.message_text != message_text:
