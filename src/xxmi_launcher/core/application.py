@@ -31,7 +31,6 @@ from core.packages.model_importers.wwmi_package import WWMIPackage
 from core.packages.model_importers.zzmi_package import ZZMIPackage
 
 
-
 @dataclass
 class ApplicationEvents:
 
@@ -183,7 +182,17 @@ class ApplicationEvents:
 
 class Application:
     def __init__(self, gui):
+        # At this point GUI is minimally initialized (just enough to show messages)
         self.gui = gui
+        # Lock state flag, game launch attempts will be ignored while it's True
+        self.is_locked = False
+        # Thread pool for threaded tasks
+        self.threads = []
+        # Queue for thread errors handling
+        self.error_queue = Queue()
+        # App state flag for watchdog thread
+        self.is_alive = True
+        # Wrap further initialization to show errors in less scary message window of our minimal gui
         try:
             self.initialize()
         except BaseException as e:
@@ -196,9 +205,6 @@ class Application:
             ))
 
     def initialize(self):
-        self.is_alive = True
-        self.launching_game = False
-
         # Parse console args
         parser = argparse.ArgumentParser(add_help=False)
         parser.add_argument('-h', '--help', '-help', action='store_true',
@@ -236,9 +242,6 @@ class Application:
 
         logging.getLogger().setLevel(logging.getLevelNamesMapping().get(Config.Launcher.log_level, 'DEBUG'))
 
-        self.threads = []
-        self.error_queue = Queue()
-
         # Async query and log OS and hardware info
         self.run_as_thread(system_info.log_system_info)
 
@@ -266,13 +269,8 @@ class Application:
         # Get active MI from args, use one from config or fallback to XXMI homepage
         active_importer = self.get_active_importer()
 
-        if active_importer != 'XXMI' and active_importer not in Config.Launcher.enabled_importers:
-            Config.Launcher.enabled_importers.append(active_importer)
-
-        Config.Launcher.active_importer = active_importer
-
         # Load packages of active importer and skip update for fast start
-        self.load_importer(Config.Launcher.active_importer, update=False)
+        self.load_importer(active_importer, update=False)
 
         if self.args.update:
             Config.Config.save()
@@ -355,7 +353,7 @@ class Application:
 
     def validate_importer_name(self, importer_name: str) -> str:
         importer_name = importer_name.upper()
-        if importer_name not in Config.Importers.__dict__.keys():
+        if importer_name != 'XXMI' and importer_name not in Config.Importers.__dict__.keys():
             raise ValueError(f'Unknown model importer {importer_name}!')
         return importer_name
 
@@ -409,7 +407,7 @@ class Application:
         if not (Config.Launcher.auto_update or self.args.update):
             return
         # If user is in rush and managed to start the game, lets rather not bother them with update
-        if self.launching_game:
+        if self.is_locked:
             return
         # Install any updates we've managed to find during previous update_packages call
         self.package_manager.update_packages(no_check=True, force=self.args.update, silent=False)
@@ -427,6 +425,9 @@ class Application:
         # Exit early if requested MI is `XXMI` aka dummy id used for homepage
         if importer_id == 'XXMI':
             return
+        # Add MI to the list of enabled one if it's not in it already (i.e. if user manually edited settings file)
+        if importer_id not in Config.Launcher.enabled_importers:
+            Config.Launcher.enabled_importers.append(importer_id)
         # Load MI package
         Config.Active = getattr(Config.Importers, importer_id)
         self.package_manager.load_package(importer_id)
@@ -492,9 +493,9 @@ class Application:
             ))
 
     def launch(self):
-        if self.launching_game:
+        if self.is_locked:
             return
-        self.launching_game = True
+        self.is_locked = True
 
         Events.Fire(Events.Application.Busy())
 
@@ -516,13 +517,13 @@ class Application:
                 if Config.Active.Importer.run_post_load_wait:
                     process.wait()
         except UserWarning:
-            self.launching_game = False
+            self.is_locked = False
             self.gui.after(100, Events.Fire, Events.Application.Ready())
             return
         except Exception as e:
             raise Exception(f'{Config.Launcher.active_importer} Loading Failed:\n{str(e)}') from e
         finally:
-            self.launching_game = False
+            self.is_locked = False
             if not Config.Launcher.auto_close:
                 self.gui.after(100, Events.Fire, Events.Application.Ready())
 
