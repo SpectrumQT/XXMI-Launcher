@@ -151,6 +151,9 @@ class WWMIPackage(ModelImporterPackage):
         if 'Wuthering Waves Game' in [x.name for x in game_path.iterdir() if x.is_dir()]:
             game_path = game_path / 'Wuthering Waves Game'
         # Make sure that game folder contains critical resources
+        exe_path = game_path / 'Wuthering Waves.exe'
+        if not exe_path.is_file():
+            raise ValueError(f'Game folder must contain `Wuthering Waves.exe` and `Client` & `Engine` folders!')
         for dir_name in ['Client', 'Engine']:
             if dir_name not in [x.name for x in game_path.iterdir() if x.is_dir()]:
                 raise ValueError(f'Game folder must contain {dir_name} folder!')
@@ -159,7 +162,7 @@ class WWMIPackage(ModelImporterPackage):
     def validate_game_exe_path(self, game_path: Path) -> Path:
         game_exe_path = game_path / 'Client' / 'Binaries' / 'Win64' / 'Client-Win64-Shipping.exe'
         if not game_exe_path.is_file():
-            raise ValueError(f'Game executable {game_exe_path} does not exist!')
+            raise ValueError(f'Game executable {game_exe_path} not found!')
         return game_exe_path
 
     def get_start_cmd(self, game_path: Path) -> Tuple[Path, List[str], Optional[str]]:

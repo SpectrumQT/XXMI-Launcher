@@ -145,7 +145,7 @@ class GIMIPackage(ModelImporterPackage):
         if not game_exe_path.is_file():
             game_exe_cn_path = game_path / 'YuanShen.exe'
             if not game_exe_cn_path.is_file():
-                raise ValueError(f'Game executable {game_exe_path} or {game_exe_cn_path} does not exist!')
+                raise ValueError(f'Game executable {game_exe_path.name} or {game_exe_cn_path.name} not found!')
             game_exe_path = game_exe_cn_path
         return game_exe_path
 
@@ -171,7 +171,7 @@ class GIMIPackage(ModelImporterPackage):
                 # Set "Dynamic Character Resolution" to "Off"
                 self.update_dcr()
             except Exception as e:
-                raise ValueError(f'Failed to configure in-game settings for ZZMI!\n'
+                raise ValueError(f'Failed to configure in-game settings for GIMI!\n'
                       f"Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:\n"
                       f'* Graphics > `Dynamic Character Resolution` must be `Off`.\n'
                       f'{e}') from e

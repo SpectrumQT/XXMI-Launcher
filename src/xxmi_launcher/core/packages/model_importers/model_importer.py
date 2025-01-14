@@ -186,12 +186,10 @@ class ModelImporterPackage(Package):
 
     def validate_game_path(self, game_folder) -> Path:
         game_path = Path(game_folder)
-        if not game_path.is_absolute():
-            raise ValueError(f'Game folder is not a valid path!')
-        if not game_path.exists():
-            raise ValueError(f'Game folder does not exist!')
-        if not game_path.is_dir():
-            raise ValueError(f'Game folder is not a directory!')
+        if not str(game_folder):
+            raise ValueError(f'Game installation folder is not specified!')
+        if not game_path.is_absolute() or not game_path.is_dir():
+            raise ValueError(f'Specified game installation folder is not found!')
         return game_path
 
     def validate_game_exe_path(self, game_path: Path) -> Path:
@@ -200,7 +198,7 @@ class ModelImporterPackage(Package):
     def load(self):
         self.subscribe(Events.ModelImporter.Install, self.install)
         self.subscribe(Events.ModelImporter.StartGame, self.start_game)
-        self.subscribe(Events.ModelImporter.ValidateGameFolder, lambda event: self.validate_game_path(event.game_folder))
+        self.subscribe(Events.ModelImporter.ValidateGameFolder, lambda event: self.validate_game_folder(event))
         self.subscribe(Events.ModelImporter.CreateShortcut, lambda event: self.create_shortcut())
         super().load()
         if self.get_installed_version() != '' and not Config.Active.Importer.shortcut_deployed:
@@ -209,6 +207,10 @@ class ModelImporterPackage(Package):
     def unload(self):
         self.unsubscribe()
         super().unload()
+
+    def validate_game_folder(self, event):
+        game_path = self.validate_game_path(event.game_folder)
+        self.validate_game_exe_path(game_path)
 
     def validate_game_folders(self, game_folders: List[Path]):
         cache, known_paths = [], []
