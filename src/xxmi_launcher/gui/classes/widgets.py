@@ -9,7 +9,7 @@ import re
 from typing import Union, Tuple, List, Dict, Optional, Callable
 from pathlib import Path
 
-from tkinter import Menu, INSERT
+from tkinter import Menu, INSERT, font
 from customtkinter import CTkBaseClass, CTkButton, CTkImage, CTkLabel, CTkProgressBar, CTkEntry, CTkCheckBox, CTkTextbox, CTkOptionMenu, CTkRadioButton
 from customtkinter import END, CURRENT
 from customtkinter import ThemeManager, CTkFont
@@ -19,7 +19,6 @@ import core.config_manager as Config
 
 from gui.classes.element import UIElementBase
 from gui.classes.windows import UIWindow
-from gui.classes.tooltip import UIToolTip
 
 logging.getLogger('PIL').setLevel(logging.INFO)
 
@@ -31,7 +30,33 @@ class UIWidget(UIElementBase):
         # CTkBaseClass.__init__(self, master=master)
 
 
-class UIText(UIWidget, CTkBaseClass):
+class UICanvasWidget(UIWidget):
+    def winfo_rootx(self):
+        x = self.winfo_x()
+        if self._anchor in ['center', 'n', 's']:
+            return self.canvas.winfo_rootx() + x - int(self.winfo_width() / 2)
+        return self.canvas.winfo_rootx() + x
+
+    def winfo_rooty(self):
+        y = self.winfo_y()
+        if self._anchor in ['center', 'w', 'e']:
+            return self.canvas.winfo_rooty() + y - int(self.winfo_height() / 2)
+        return self.canvas.winfo_rooty() + y
+
+    def winfo_width(self):
+        return self._width
+
+    def winfo_height(self):
+        return self._height
+
+    def winfo_x(self):
+        return self._x
+
+    def winfo_y(self):
+        return self._y
+
+
+class UIText(UICanvasWidget, CTkBaseClass):
     def __init__(self,
                  master: Union[UIWindow, 'UIFrame'],
                  font: str,
@@ -42,9 +67,11 @@ class UIText(UIWidget, CTkBaseClass):
                  state: str = '',
                  tags: str = '',
                  width: int = 0,
+                 text: str = '',
                  x: int = 0,
                  y: int = 0,
                  canvas=None,
+                 anchor=None,
                  **kwargs):
         if 'Asap' in font:
             y -= 1
@@ -55,6 +82,12 @@ class UIText(UIWidget, CTkBaseClass):
         self.fill = fill
         self.activefill = activefill
         self.disabledfill = disabledfill
+        self._x = None
+        self._y = None
+        self._width = None
+        self._height = None
+        self._font_obj = None
+        self._anchor = anchor
 
         if isinstance(font, str):
             font_pattern = re.compile(r'(?P<family>.*)\s(?P<size>\d+)\s*(?P<weight>.*)?')
@@ -68,18 +101,34 @@ class UIText(UIWidget, CTkBaseClass):
                 font = (font['family'], int(font['size']))
 
         self._font = CTkFont() if font is None else self._check_font_type(font)
-        self._font = self._apply_font_scaling(self._font)
-        self._text_id = self.canvas.create_text(0, 0, fill=fill, activefill=activefill, disabledfill=disabledfill,
-                                                     justify=justify, state=state, tags=tags, width=width, font=self._font, **kwargs)
+
+        self._text_id = self.canvas.create_text(0, 0)
+
+        self.configure(fill=fill, activefill=activefill, disabledfill=disabledfill, justify=justify, state=state,
+                       tags=tags, width=width, font=self._font, text=text, anchor=anchor, **kwargs)
+        self.set(text)
+
+        self._apply_theme()
+
         self.move(x, y)
 
+    def configure(self, require_redraw=False, **kwargs):
+        if "font" in kwargs:
+            self._font = self._apply_font_scaling(tuple(kwargs.pop("font")))
+            self._font_obj = font.Font(family=self._font[0], size=self._font[1])
+            self._height = self._font_obj.metrics('linespace')
+            self.canvas.itemconfig(self._text_id, font=self._font)
+
+        self.canvas.itemconfig(self._text_id, **kwargs)
+
     def move(self, x, y):
-        x = int(self._apply_widget_scaling(x))
-        y = int(self._apply_widget_scaling(y))
-        self.canvas.coords(self._text_id, x, y)
+        self._x = int(self._apply_widget_scaling(x))
+        self._y = int(self._apply_widget_scaling(y))
+        self.canvas.coords(self._text_id, self._x, self._y)
 
     def set(self, text: str):
         self.canvas.itemconfigure(self._text_id, text=text)
+        self._width = self._font_obj.measure(text)
 
     def _show(self):
         self.canvas.itemconfigure(self._text_id, state='normal')
@@ -110,7 +159,7 @@ class UIText(UIWidget, CTkBaseClass):
         super().destroy()
 
 
-class UIImage(UIWidget, CTkBaseClass):
+class UIImage(UICanvasWidget, CTkBaseClass):
     def __init__(self,
                  master: Union[UIWindow, 'UIFrame'],
                  canvas=None,
@@ -128,13 +177,13 @@ class UIImage(UIWidget, CTkBaseClass):
         CTkBaseClass.__init__(self, master=master)
         UIWidget.__init__(self, master,  **kwargs)
 
-        self.x = None
-        self.y = None
-        self.width = None
-        self.height = None
+        self._x = None
+        self._y = None
+        self._width = None
+        self._height = None
+        self._anchor = None
         self.opacity = None
         self.brightness = None
-        self.anchor = None
 
         self._image = None
         self.image = None
@@ -153,13 +202,15 @@ class UIImage(UIWidget, CTkBaseClass):
         self.configure(image_path=image_path, x=x, y=y, width=width, height=height, anchor=anchor,
                        opacity=opacity, brightness=brightness, **kwargs)
 
+        self._apply_theme()
+
     def configure(self, **kwargs):
         if self._update_attrs(['image_path'], kwargs):
             path = Path(self.image_path)
             
             # Resolve relative path from active theme
             if not path.is_absolute():
-                path = Config.get_resource_path(self) / path
+                path = Config.get_resource_path(self, path)
 
             # Search for files with same name but different extension to support advanced themes
             if not path.is_file():
@@ -186,7 +237,7 @@ class UIImage(UIWidget, CTkBaseClass):
             #     self._video_frame_time = 1000 / self._video_fps / 1000
             #
             #     if self.image_tag is None:
-            #         self.image_tag = self.canvas.create_image(self.x, self.y, anchor=self.anchor, **kwargs)
+            #         self.image_tag = self.canvas.create_image(self._x, self._y, anchor=self.anchor, **kwargs)
             #
             #     # Start async video renderer
             #     if not self._video_rendering_active:
@@ -203,17 +254,17 @@ class UIImage(UIWidget, CTkBaseClass):
             self._image = Image.open(str(path))
 
         if self._update_attrs(['width', 'height', 'opacity', 'brightness'], kwargs):
-            self.image = self.create_image(self._image, self.width, self.height, self.opacity, self.brightness)
+            self.image = self.create_image(self._image, self._width, self._height, self.opacity, self.brightness)
             if self.image_tag is None:
                 self._update_attrs(['x', 'y', 'anchor'], kwargs)
-                self.image_tag = self.canvas.create_image(self.x, self.y, anchor=self.anchor, **kwargs)
+                self.image_tag = self.canvas.create_image(self._x, self._y, anchor=self._anchor, **kwargs)
             self.set_image(self.image)
 
         if self._update_attrs(['x', 'y'], kwargs):
-            self.move(self.x, self.y)
+            self.move(self._x, self._y)
 
         if self._update_attrs(['anchor'], kwargs):
-            self.canvas.itemconfigure(self.image_tag, anchor=self.anchor)
+            self.canvas.itemconfigure(self.image_tag, anchor=self._anchor)
 
     # def _buffer_frame(self):
     #     if not self._video_rendering_active:
@@ -303,8 +354,11 @@ class UIImage(UIWidget, CTkBaseClass):
             if arg in kwargs:
                 value = kwargs.pop(arg)
                 if arg in ['x', 'y']:
+                    arg = '_' + arg
                     value = int(self._apply_widget_scaling(value))
-                setattr(self, arg,value)
+                if arg in ['width', 'height', 'anchor']:
+                    arg = '_' + arg
+                setattr(self, arg, value)
                 attrs_updated = True
         return attrs_updated
 
@@ -334,9 +388,9 @@ class UIImage(UIWidget, CTkBaseClass):
         return ImageTk.PhotoImage(image)
 
     def move(self, x, y):
-        x = int(self._apply_widget_scaling(x))
-        y = int(self._apply_widget_scaling(y))
-        self.canvas.coords(self.image_tag, x, y)
+        self._x = int(self._apply_widget_scaling(x))
+        self._y = int(self._apply_widget_scaling(y))
+        self.canvas.coords(self.image_tag, self._x, self._y)
 
     def _show(self):
         self.canvas.itemconfigure(self.image_tag, state='normal')
@@ -359,7 +413,7 @@ class UIImage(UIWidget, CTkBaseClass):
         super().destroy()
 
 
-class UIImageButton(UIWidget, CTkBaseClass):
+class UIImageButton(UICanvasWidget, CTkBaseClass):
     def __init__(self,
                  master: Union[UIWindow, 'UIFrame'],
                  x: int = 40,
@@ -448,9 +502,13 @@ class UIImageButton(UIWidget, CTkBaseClass):
                                         x=text_x_offset+x, y=text_y_offset+y, anchor=text_anchor or anchor,
                                         fill=fill, activefill=activefill, disabledfill=disabledfill))
 
+        self.update_dimensions()
+
         self.hovered = False
         self.selected = False
 
+        self._apply_theme()
+        
         self.bind("<ButtonPress-1>", self._handle_button_press)
         self.bind("<ButtonRelease-1>", self._handle_button_release)
         self.bind("<Enter>", self._handle_enter)
@@ -459,15 +517,33 @@ class UIImageButton(UIWidget, CTkBaseClass):
     def move(self, x=None, y=None):
         x = x or self._x
         y = y or self._y
+        self._x = x
+        self._y = y
         if self._bg_image is not None:
             self._bg_image.move(x, y)
         if self._button_image is not None:
             self._button_image.move(self._button_x_offset+x, self._button_y_offset+y)
         if self._text_image is not None:
             self._text_image.move(self._text_x_offset+x, self._text_y_offset+y)
+        self.update_dimensions()
+
+    def update_dimensions(self):
+        x0, y0, x1, y1 = None, None, None, None
+
+        for widget in [self._bg_image, self._button_image, self._text_image]:
+            if widget is None:
+                continue
+            x0 = widget._x if x0 is None else min(x0, widget._x)
+            y0 = widget._y if y0 is None else min(y0, widget._y)
+            x1 = widget._x + widget._width if x1 is None else max(x1, widget._x + widget._width)
+            y1 = widget._y + widget._height if y1 is None else max(y1, widget._y + widget._height)
+
+        self._width = x1 - x0
+        self._height = y1 - y0
 
     def set_text(self, text):
         self._text_image.set(text)
+        self.update_dimensions()
 
     def bind(self, *args, **kwargs):
         for element in self.elements.values():
@@ -556,6 +632,17 @@ class UIImageButton(UIWidget, CTkBaseClass):
     def _hide(self):
         pass
 
+    def winfo_x(self):
+        return int(self._apply_widget_scaling(self._x))
+
+    def winfo_y(self):
+        return int(self._apply_widget_scaling(self._y))
+
+    def winfo_width(self):
+        return int(self._apply_widget_scaling(self._width))
+
+    def winfo_height(self):
+        return int(self._apply_widget_scaling(self._height))
 
 class UILabel(UIWidget, CTkLabel):
     def __init__(self,
@@ -565,55 +652,244 @@ class UILabel(UIWidget, CTkLabel):
         UIWidget.__init__(self, master,  **kwargs)
         self.image: Optional[CTkImage] = None
         if image_path is not None:
-            self.image = CTkImage(Image.open(str(Config.get_resource_path(self) / image_path)))
+            self.image = CTkImage(Image.open(str(Config.get_resource_path(self, image_path))))
         CTkLabel.__init__(self, master, image=self.image, **kwargs)
+
+        self._apply_theme()
 
     def set(self, value):
         self.configure(text=value)
+
+    def configure(self, require_redraw=False, **kwargs):
+        font = kwargs.get('font', None)
+        if font is not None:
+            kwargs['font'] = tuple(font)
+        super().configure(require_redraw, **kwargs)
 
 
 class UIButton(UIWidget, CTkButton):
     def __init__(self,
                  master: Union[UIWindow, 'UIFrame'],
                  image_path: Optional[Path] = None,
+                 select_color: Optional[Union[str, Tuple[str, str]]] = None,
+                 text_color_hovered: Optional[Union[str, Tuple[str, str]]] = None,
+                 text_color_selected: Optional[Union[str, Tuple[str, str]]] = None,
                  **kwargs):
 
         UIWidget.__init__(self, master,  **kwargs)
 
         self.image: Optional[CTkImage] = None
         if image_path is not None:
-            self.image = CTkImage(Image.open(str(Config.get_resource_path(self) / image_path)))
+            self.image = CTkImage(Image.open(str(Config.get_resource_path(self, image_path))))
 
         self.is_hovered = False
+        self.is_selected = False
 
-        self._text_color_hovered =None
-        if 'text_color_hovered' in kwargs:
-            self._text_color_hovered = kwargs.pop('text_color_hovered')
+        self._select_color: Union[str, Tuple[str, str]] = ThemeManager.theme["CTkButton"]["select_color"] if select_color is None else self._check_color_type(select_color)
+        self._text_color_hovered: Union[str, Tuple[str, str]] = ThemeManager.theme["CTkButton"]["text_color_hovered"] if text_color_hovered is None else self._check_color_type(text_color_hovered)
+        self._text_color_selected: Union[str, Tuple[str, str]] = ThemeManager.theme["CTkButton"]["text_color_selected"] if text_color_selected is None else self._check_color_type(text_color_selected)
 
         CTkButton.__init__(self, master, image=self.image, **kwargs)
 
-        if not self._text_color_hovered:
-            self._text_color_hovered = self._text_color
-
+        self._apply_theme()
+        
         self.unbind('<Button-1>')
 
     def configure(self, require_redraw=False, **kwargs):
+        if 'select_color' in kwargs:
+            self._select_color = self._check_color_type(kwargs.pop('select_color'))
+            require_redraw = True
         if 'text_color_hovered' in kwargs:
             self._text_color_hovered = self._check_color_type(kwargs.pop('text_color_hovered'))
             require_redraw = True
+        if 'text_color_selected' in kwargs:
+            self._text_color_selected = self._check_color_type(kwargs.pop('text_color_selected'))
+            require_redraw = True
+
+        font = kwargs.get('font', None)
+        if font is not None:
+            kwargs['font'] = tuple(font)
+
         super().configure(require_redraw, **kwargs)
+
+    def _draw(self, no_color_updates=False):
+        super()._draw(no_color_updates)
+
+        if self._background_corner_colors is not None:
+            self._draw_engine.draw_background_corners(self._apply_widget_scaling(self._current_width),
+                                                      self._apply_widget_scaling(self._current_height))
+            self._canvas.itemconfig("background_corner_top_left",
+                                    fill=self._apply_appearance_mode(self._background_corner_colors[0]))
+            self._canvas.itemconfig("background_corner_top_right",
+                                    fill=self._apply_appearance_mode(self._background_corner_colors[1]))
+            self._canvas.itemconfig("background_corner_bottom_right",
+                                    fill=self._apply_appearance_mode(self._background_corner_colors[2]))
+            self._canvas.itemconfig("background_corner_bottom_left",
+                                    fill=self._apply_appearance_mode(self._background_corner_colors[3]))
+        else:
+            self._canvas.delete("background_parts")
+
+        requires_recoloring = self._draw_engine.draw_rounded_rect_with_border(
+            self._apply_widget_scaling(self._current_width),
+            self._apply_widget_scaling(self._current_height),
+            self._apply_widget_scaling(self._corner_radius),
+            self._apply_widget_scaling(self._border_width))
+
+        if no_color_updates is False or requires_recoloring:
+
+            self._canvas.configure(bg=self._apply_appearance_mode(self._bg_color))
+
+            # set color for the button border parts (outline)
+            self._canvas.itemconfig("border_parts",
+                                    outline=self._apply_appearance_mode(self._border_color),
+                                    fill=self._apply_appearance_mode(self._border_color))
+
+            # set color for inner button parts
+            if self._fg_color == "transparent":
+                self._canvas.itemconfig("inner_parts",
+                                        outline=self._apply_appearance_mode(self._bg_color),
+                                        fill=self._apply_appearance_mode(self._bg_color))
+            else:
+                self._canvas.itemconfig("inner_parts",
+                                        outline=self._apply_appearance_mode(self._fg_color),
+                                        fill=self._apply_appearance_mode(self._fg_color))
+
+        # create text label if text given
+        if self._text is not None and self._text != "":
+
+            if self._text_label is None:
+                self._text_label = tkinter.Label(master=self,
+                                                 font=self._apply_font_scaling(self._font),
+                                                 text=self._text,
+                                                 padx=0,
+                                                 pady=0,
+                                                 borderwidth=1,
+                                                 textvariable=self._textvariable)
+                self._create_grid()
+
+                self._text_label.bind("<Enter>", self._on_enter)
+                self._text_label.bind("<Leave>", self._on_leave)
+                self._text_label.bind("<Button-1>", self._clicked)
+                self._text_label.bind("<Button-1>", self._clicked)
+
+            if no_color_updates is False:
+                # set text_label fg color (text color)
+
+                if self.is_selected:
+                    self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color_selected)))
+                elif self.is_hovered:
+                    self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color_hovered)))
+                elif self._state == tkinter.DISABLED:
+                    self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color_disabled)))
+                else:
+                    self._text_label.configure(fg=self._apply_appearance_mode(self._text_color))
+
+                if self._apply_appearance_mode(self._fg_color) == "transparent":
+                    self._text_label.configure(bg=self._apply_appearance_mode(self._bg_color))
+                else:
+                    self._text_label.configure(bg=self._apply_appearance_mode(self._fg_color))
+
+        else:
+            # delete text_label if no text given
+            if self._text_label is not None:
+                self._text_label.destroy()
+                self._text_label = None
+                self._create_grid()
+
+        # create image label if image given
+        if self._image is not None:
+
+            if self._image_label is None:
+                self._image_label = tkinter.Label(master=self)
+                self._update_image()  # set image
+                self._create_grid()
+
+                self._image_label.bind("<Enter>", self._on_enter)
+                self._image_label.bind("<Leave>", self._on_leave)
+                self._image_label.bind("<Button-1>", self._clicked)
+                self._image_label.bind("<Button-1>", self._clicked)
+
+            if no_color_updates is False:
+                # set image_label bg color (background color of label)
+                if self._apply_appearance_mode(self._fg_color) == "transparent":
+                    self._image_label.configure(bg=self._apply_appearance_mode(self._bg_color))
+                else:
+                    self._image_label.configure(bg=self._apply_appearance_mode(self._fg_color))
+
+        else:
+            # delete text_label if no text given
+            if self._image_label is not None:
+                self._image_label.destroy()
+                self._image_label = None
+                self._create_grid()
 
     def _on_enter(self, event=None):
         self.is_hovered = True
-        super()._on_enter(event)
+
+        if self.is_hovered:
+            self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color_hovered)))
+        elif self._state == tkinter.DISABLED:
+            self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color_disabled)))
+
+        if self._hover is True and self._state == "normal" or self.is_selected:
+            if self.is_selected:
+                inner_parts_color = self._select_color
+                self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color_selected)))
+            else:
+                if self._hover_color is None:
+                    inner_parts_color = self._fg_color
+                else:
+                    inner_parts_color = self._hover_color
+
+                if self._state != tkinter.DISABLED:
+                    self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color_hovered)))
+                else:
+                    self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color_disabled)))
+
+            # set color of inner button parts to hover color
+            self._canvas.itemconfig("inner_parts",
+                                    outline=self._apply_appearance_mode(inner_parts_color),
+                                    fill=self._apply_appearance_mode(inner_parts_color))
+
+            # set text_label bg color to button hover color
+            if self._text_label is not None:
+                self._text_label.configure(bg=self._apply_appearance_mode(inner_parts_color))
+
+            # set image_label bg color to button hover color
+            if self._image_label is not None:
+                self._image_label.configure(bg=self._apply_appearance_mode(inner_parts_color))
+
         self._set_cursor()
-        self._text_label.configure(fg=self._apply_appearance_mode(self._text_color_hovered))
 
     def _on_leave(self, event=None):
         self.is_hovered = False
-        super()._on_leave(event)
+
+        self._click_animation_running = False
+
         self._set_cursor()
-        self._text_label.configure(fg=self._apply_appearance_mode(self._text_color))
+
+        if self.is_selected:
+            return
+
+        if self._fg_color == "transparent":
+            inner_parts_color = self._bg_color
+        else:
+            inner_parts_color = self._fg_color
+
+        # set color of inner button parts
+        self._canvas.itemconfig("inner_parts",
+                                outline=self._apply_appearance_mode(inner_parts_color),
+                                fill=self._apply_appearance_mode(inner_parts_color))
+
+        # set text_label bg color (label color)
+        if self._text_label is not None:
+            self._text_label.configure(bg=self._apply_appearance_mode(inner_parts_color))
+
+        # set image_label bg color (image bg color)
+        if self._image_label is not None:
+            self._image_label.configure(bg=self._apply_appearance_mode(inner_parts_color))
+
+        self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color)))
 
     def _clicked(self, event=None):
         if not self.is_hovered:
@@ -640,6 +916,13 @@ class UIButton(UIWidget, CTkButton):
                 elif sys.platform.startswith("win") and self._command is not None:
                     self.configure(cursor="hand2")
 
+    def set_selected(self, selected: bool = False):
+        self.is_selected = selected
+        if selected:
+            self._on_enter()
+        else:
+            self._on_leave()
+
 
 class UIRadioButton(UIWidget, CTkRadioButton):
     def __init__(self,
@@ -650,6 +933,8 @@ class UIRadioButton(UIWidget, CTkRadioButton):
 
         CTkRadioButton.__init__(self, master, **kwargs)
 
+        self._apply_theme()
+
 
 class UIProgressBar(UIWidget, CTkProgressBar):
     def __init__(self,
@@ -657,6 +942,8 @@ class UIProgressBar(UIWidget, CTkProgressBar):
                  **kwargs):
         UIWidget.__init__(self, master,  **kwargs)
         CTkProgressBar.__init__(self, master, **kwargs)
+
+        self._apply_theme()
 
 
 class UIEntry(CTkEntry, UIWidget):
@@ -685,13 +972,20 @@ class UIEntry(CTkEntry, UIWidget):
         self.context_menu.add_command(label="Copy")
         self.context_menu.add_command(label="Paste")
 
+        self._apply_theme()
+
     def configure(self, require_redraw=False, **kwargs):
         if "state" in kwargs:
             require_redraw = True
+
+        font = kwargs.get('font', None)
+        if font is not None:
+            kwargs['font'] = tuple(font)
+
         super().configure(require_redraw=require_redraw, **kwargs)
 
     def _draw(self, no_color_updates=False):
-        super()._draw(no_color_updates)
+        CTkBaseClass._draw(self, no_color_updates)
 
         requires_recoloring = self._draw_engine.draw_rounded_rect_with_border(self._apply_widget_scaling(self._current_width),
                                                                               self._apply_widget_scaling(self._current_height),
@@ -876,10 +1170,12 @@ class UICheckbox(CTkCheckBox, UIWidget):
         if not self._text_color_hovered:
             self._text_color_hovered = self._text_color
 
+        self._apply_theme()
+
         self.unbind('<Button-1>')
 
     def _draw(self, no_color_updates=False):
-        super()._draw(no_color_updates)
+        CTkBaseClass._draw(self, no_color_updates)
 
         requires_recoloring_1 = self._draw_engine.draw_rounded_rect_with_border(self._apply_widget_scaling(self._checkbox_width),
                                                                                 self._apply_widget_scaling(self._checkbox_height),
@@ -889,7 +1185,7 @@ class UICheckbox(CTkCheckBox, UIWidget):
         if self._check_state is True:
             requires_recoloring_2 = self._draw_engine.draw_checkmark(self._apply_widget_scaling(self._checkbox_width),
                                                                      self._apply_widget_scaling(self._checkbox_height),
-                                                                     self._apply_widget_scaling(self._checkbox_height * 0.58))
+                                                                     self._apply_widget_scaling(self._checkbox_height * 0.5))
         else:
             requires_recoloring_2 = False
             self._canvas.delete("checkmark")
@@ -902,12 +1198,17 @@ class UICheckbox(CTkCheckBox, UIWidget):
                 fg_color = self._fg_color
                 if self._state == tkinter.DISABLED and self._fg_color_disabled:
                     fg_color = self._fg_color_disabled
-                self._canvas.itemconfig("inner_parts",
-                                        outline=self._apply_appearance_mode(fg_color),
-                                        fill=self._apply_appearance_mode(fg_color))
-                self._canvas.itemconfig("border_parts",
-                                        outline=self._apply_appearance_mode(fg_color),
-                                        fill=self._apply_appearance_mode(fg_color))
+                if self.is_hovered:
+                    self._canvas.itemconfig("inner_parts",
+                                            outline=self._apply_appearance_mode(self._hover_color),
+                                            fill=self._apply_appearance_mode(self._hover_color))
+                else:
+                    self._canvas.itemconfig("inner_parts",
+                                            outline=self._apply_appearance_mode(fg_color),
+                                            fill=self._apply_appearance_mode(fg_color))
+                # self._canvas.itemconfig("border_parts",
+                #                         outline=self._apply_appearance_mode(fg_color),
+                #                         fill=self._apply_appearance_mode(fg_color))
 
                 if "create_line" in self._canvas.gettags("checkmark"):
                     self._canvas.itemconfig("checkmark", fill=self._apply_appearance_mode(self._checkmark_color))
@@ -917,9 +1218,10 @@ class UICheckbox(CTkCheckBox, UIWidget):
                 self._canvas.itemconfig("inner_parts",
                                         outline=self._apply_appearance_mode(self._bg_color),
                                         fill=self._apply_appearance_mode(self._bg_color))
-                self._canvas.itemconfig("border_parts",
-                                        outline=self._apply_appearance_mode(self._border_color),
-                                        fill=self._apply_appearance_mode(self._border_color))
+
+            self._canvas.itemconfig("border_parts",
+                                    outline=self._apply_appearance_mode(self._border_color),
+                                    fill=self._apply_appearance_mode(self._border_color))
 
             if self._state == tkinter.DISABLED:
                 self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color_disabled)))
@@ -942,6 +1244,11 @@ class UICheckbox(CTkCheckBox, UIWidget):
         if 'text_color_hovered' in kwargs:
             self._text_color_hovered = self._check_color_type(kwargs.pop('text_color_hovered'))
             require_redraw = True
+
+        font = kwargs.get('font', None)
+        if font is not None:
+            kwargs['font'] = tuple(font)
+
         super().configure(require_redraw, **kwargs)
 
     def _on_enter(self, event=None):
@@ -951,6 +1258,9 @@ class UICheckbox(CTkCheckBox, UIWidget):
             return
         super()._on_enter(event)
         self._text_label.configure(fg=self._apply_appearance_mode(self._text_color_hovered))
+        self._canvas.itemconfig("border_parts",
+                                outline=self._apply_appearance_mode(self._border_color),
+                                fill=self._apply_appearance_mode(self._border_color))
 
     def _on_leave(self, event=None):
         self.is_hovered = False
@@ -959,6 +1269,9 @@ class UICheckbox(CTkCheckBox, UIWidget):
             return
         super()._on_leave(event)
         self._text_label.configure(fg=self._apply_appearance_mode(self._text_color))
+        self._canvas.itemconfig("border_parts",
+                                outline=self._apply_appearance_mode(self._border_color),
+                                fill=self._apply_appearance_mode(self._border_color))
 
     def toggle(self, event=0):
         if not self.is_hovered:
@@ -999,10 +1312,24 @@ class UIOptionMenu(CTkOptionMenu, UIWidget):
                  master: Union[UIWindow, 'UIFrame'],
                  **kwargs):
         UIWidget.__init__(self, master,  **kwargs)
-        CTkOptionMenu.__init__(self, master, **kwargs)
+        self._border_width = ThemeManager.theme["CTkTextbox"].get("border_width", 2)
         self._button_color_disabled = ThemeManager.theme["CTkOptionMenu"].get("button_color_disabled", None)
+        CTkOptionMenu.__init__(self, master, **kwargs)
         self.dropdown_menu_opened = False
         self.dropdown_menu_close_time = 0
+
+        self._apply_theme()
+
+    def configure(self, require_redraw=False, **kwargs):
+        if 'border_width' in kwargs:
+            self._border_width = self._check_color_type(kwargs.pop('border_width'))
+            require_redraw = True
+
+        font = kwargs.get('font', None)
+        if font is not None:
+            kwargs['font'] = tuple(font)
+
+        super().configure(require_redraw, **kwargs)
 
     def _draw(self, no_color_updates=False):
         CTkBaseClass._draw(self, no_color_updates)
@@ -1011,7 +1338,7 @@ class UIOptionMenu(CTkOptionMenu, UIWidget):
         requires_recoloring = self._draw_engine.draw_rounded_rect_with_border_vertical_split(self._apply_widget_scaling(self._current_width),
                                                                                              self._apply_widget_scaling(self._current_height),
                                                                                              self._apply_widget_scaling(self._corner_radius),
-                                                                                             0,
+                                                                                             self._apply_widget_scaling(self._border_width),
                                                                                              self._apply_widget_scaling(left_section_width))
 
         # Drawing Y with CustomTkinter_shapes_font bugs out for some reason, lets hardcode ▼ for now
@@ -1048,6 +1375,9 @@ class UIOptionMenu(CTkOptionMenu, UIWidget):
                 self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color_disabled)))
                 self._canvas.itemconfig("dropdown_arrow",
                                         fill=self._apply_appearance_mode(self._fg_color))
+                self._canvas.itemconfig("border_parts",
+                                        outline=self._apply_appearance_mode(self._button_color_disabled or self._button_color),
+                                        fill=self._apply_appearance_mode(self._button_color_disabled or self._button_color))
             else:
                 self._canvas.itemconfig("inner_parts_right",
                                         outline=self._apply_appearance_mode(self._button_color),
@@ -1055,8 +1385,12 @@ class UIOptionMenu(CTkOptionMenu, UIWidget):
                 self._text_label.configure(fg=self._apply_appearance_mode(self._text_color))
                 self._canvas.itemconfig("dropdown_arrow",
                                         fill=self._apply_appearance_mode(self._fg_color))
+                self._canvas.itemconfig("border_parts",
+                                        outline=self._apply_appearance_mode(self._button_color),
+                                        fill=self._apply_appearance_mode(self._button_color))
 
             self._text_label.configure(bg=self._apply_appearance_mode(self._fg_color))
+
 
         self._canvas.update_idletasks()
 
@@ -1108,11 +1442,11 @@ class UITextbox(CTkTextbox, UIWidget):
 
         self._state = tkinter.NORMAL
 
-        CTkTextbox.__init__(self, master, **kwargs)
-
         self._fg_color_disabled = ThemeManager.theme["CTkTextbox"].get("fg_color_disabled", None)
         self._border_color_disabled = ThemeManager.theme["CTkTextbox"].get("border_color_disabled", None)
         self._text_color_disabled = ThemeManager.theme["CTkTextbox"].get("text_color_disabled", None)
+
+        CTkTextbox.__init__(self, master, **kwargs)
 
         self.context_menu = Menu(self, tearoff=0)
         self.context_menu.config(font=self._apply_font_scaling(('Asap', 14)))
@@ -1121,6 +1455,9 @@ class UITextbox(CTkTextbox, UIWidget):
         self.context_menu.add_command(label="Paste")
 
         self.text_variable = text_variable
+
+        self._apply_theme()
+
         self.trace_write(text_variable, self.handle_text_variable_update)
         self.bind("<Control-KeyPress>", self.handle_key_press)
         self.bind('<KeyRelease>', self.handle_on_widget_change)
@@ -1131,10 +1468,15 @@ class UITextbox(CTkTextbox, UIWidget):
             self._state = kwargs.pop("state")
             self._textbox.configure(state=self._state)
             require_redraw = True
+
+        font = kwargs.get('font', None)
+        if font is not None:
+            kwargs['font'] = tuple(font)
+
         super().configure(require_redraw=require_redraw, **kwargs)
 
     def _draw(self, no_color_updates=False):
-        super()._draw(no_color_updates)
+        CTkBaseClass._draw(self, no_color_updates)
 
         if not self._canvas.winfo_exists():
             return
