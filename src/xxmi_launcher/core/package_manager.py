@@ -467,7 +467,7 @@ class PackageManager:
         if not silent:
             Events.Fire(Events.Application.Busy())
             Events.Fire(Events.PackageManager.StartCheckUpdate())
-            
+
         requirements = []
         if packages:
             for package_name in packages:
@@ -526,14 +526,15 @@ class PackageManager:
         if force_check or package.cfg.update_check_time + 3600 < current_time:
             package.cfg.update_check_time = current_time
             if self.api_connection_refused:
+                self.api_connection_refused_notified = False
                 return False
             try:
                 package.detect_latest_version()
             except ConnectionRefusedError as e:
                 self.api_connection_refused = True
+                self.api_connection_refused_notified = False
                 log.exception(e)
                 return False
-            self.api_connection_refused_notified = False
 
         # Check if installation is pending again, as update check may find new version
         install = not no_install and (package.update_available() or reinstall) and (Config.Launcher.auto_update or force)
