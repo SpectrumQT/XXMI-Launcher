@@ -32,6 +32,21 @@
   4. On the game selection page of **XXMI Launcher Window** click desired **Game Tile** to add **Model Importer Icon** to the top-left corner.
   5. Click **Model Importer Icon** to open Model Importer page and press **[Install]** button to download and install selected Model Importer.
 
+* **Scoop APP** (for **Windows** only)
+  1. Install [scoop](https://scoop.sh)
+  2. Add games bucket
+  ```sh
+  scoop bucket add games
+  ```
+  3. Install XXMI
+  ```sh
+  scoop install games/xxmi
+  ```
+  4. On the game selection page of **XXMI Launcher Window** click desired **Game Tile** to add **Model Importer Icon** to the top-left corner.
+  5. Click **Model Importer Icon** to open Model Importer page and press **[Install]** button to download and install selected Model Importer
+
+  Note: Resources are persisted via scoop, so to uninstall, you have to add an extra `--purge` flag to remove mods installed
+
 * **Portable** (for **Windows** and **Linux** via **WINE 9.22+**)
   1. Download and install [the latest Microsoft Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe).
   2. Download the [latest release](https://github.com/SpectrumQT/XXMI-Launcher/releases/latest) of **XXMI-Launcher-Portable-vX.X.X.zip**.
@@ -46,7 +61,7 @@
 - [ZZMI - Zenless Zone Zero Model Importer GitHub](https://github.com/leotorrez/ZZ-Model-Importer)
 - [SRMI - Honkai: Star Rail Model Importer GitHub](https://github.com/SilentNightSound/SR-Model-Importer)
 - [GIMI - Genshin Impact Model Importer GitHub](https://github.com/SilentNightSound/GI-Model-Importer)
-  
+
 ## License
 
 XXMI Launcher is licensed under the [GPLv3 License](https://github.com/SpectrumQT/WWMI-Launcher/blob/main/LICENSE).
