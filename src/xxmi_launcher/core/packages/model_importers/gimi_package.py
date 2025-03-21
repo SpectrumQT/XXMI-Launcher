@@ -159,22 +159,23 @@ class GIMIPackage(ModelImporterPackage):
         return game_exe_path, [], work_dir_path
 
     def initialize_game_launch(self, game_path: Path):
-        self.disable_duplicate_libraries(Config.Active.Importer.importer_path / 'Core' / 'GIMI' / 'Libraries')
-        self.update_gimi_ini()
+        if Config.Active.Importer.custom_launch_inject_mode != 'Bypass':
+            self.update_gimi_ini()
+            self.disable_duplicate_libraries(Config.Active.Importer.importer_path / 'Core' / 'GIMI' / 'Libraries')
+            if Config.Importers.GIMI.Importer.configure_game:
+                try:
+                    # Set "Dynamic Character Resolution" to "Off"
+                    self.update_dcr()
+                except Exception as e:
+                    raise ValueError(f'Failed to configure in-game settings for GIMI!\n'
+                          f"Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:\n"
+                          f'* Graphics > `Dynamic Character Resolution` must be `Off`.\n'
+                          f'{e}') from e
         if Config.Importers.GIMI.Importer.unlock_fps:
             try:
                 self.configure_fps_unlocker()
             except Exception as e:
                 raise Exception(f'Failed to configure FPS Unlocker!\n\n{str(e)}')
-        if Config.Importers.GIMI.Importer.configure_game:
-            try:
-                # Set "Dynamic Character Resolution" to "Off"
-                self.update_dcr()
-            except Exception as e:
-                raise ValueError(f'Failed to configure in-game settings for GIMI!\n'
-                      f"Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:\n"
-                      f'* Graphics > `Dynamic Character Resolution` must be `Off`.\n'
-                      f'{e}') from e
         if Config.Importers.GIMI.Importer.enable_hdr:
             try:
                 self.enable_hdr()

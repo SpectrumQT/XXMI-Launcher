@@ -142,7 +142,8 @@ class SRMIPackage(ModelImporterPackage):
         return game_exe_path
 
     def initialize_game_launch(self, game_path: Path):
-        self.update_srmi_ini()
+        if Config.Active.Importer.custom_launch_inject_mode != 'Bypass':
+            self.update_srmi_ini()
         if Config.Importers.SRMI.Importer.unlock_fps:
             try:
                 self.unlock_fps()

@@ -141,16 +141,17 @@ class ZZMIPackage(ModelImporterPackage):
         return game_exe_path
 
     def initialize_game_launch(self, game_path: Path):
-        self.update_zzmi_ini()
-        if Config.Importers.ZZMI.Importer.configure_game:
-            try:
-                self.configure_game_settings(game_path)
-            except Exception as e:
-                raise ValueError(f'Failed to configure in-game settings for ZZMI!\n'
-                      f"Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:\n"
-                      f'* Graphics > `Character Quality` must be `High`.\n'
-                      f'* Graphics > `High-Precision Character Animation` must be `Disabled`.\n\n'
-                      f'{e}') from e
+        if Config.Active.Importer.custom_launch_inject_mode != 'Bypass':
+            self.update_zzmi_ini()
+            if Config.Importers.ZZMI.Importer.configure_game:
+                try:
+                    self.configure_game_settings(game_path)
+                except Exception as e:
+                    raise ValueError(f'Failed to configure in-game settings for ZZMI!\n'
+                        f"Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:\n"
+                        f'* Graphics > `Character Quality` must be `High`.\n'
+                        f'* Graphics > `High-Precision Character Animation` must be `Disabled`.\n\n'
+                        f'{e}') from e
 
     def update_zzmi_ini(self):
         Events.Fire(Events.Application.StatusUpdate(status='Updating ZZMI main.ini...'))

@@ -173,8 +173,9 @@ class WWMIPackage(ModelImporterPackage):
         # self.verify_plugins(game_path)
         self.restore_streamline(game_path)
         # self.remove_streamline(game_path)
-        self.update_engine_ini(game_path)
-        self.update_wwmi_ini()
+        if Config.Active.Importer.custom_launch_inject_mode != 'Bypass':
+            self.update_engine_ini(game_path)
+            self.update_wwmi_ini()
         self.configure_settings(game_path)
 
     def configure_settings(self, game_path: Path):
@@ -188,9 +189,10 @@ class WWMIPackage(ModelImporterPackage):
                 # Set internal custom quality flag to True
                 settings_manager.set_setting('IsCustomImageQuality', '"___1B___"')
 
-                if Config.Importers.WWMI.Importer.configure_game:
-                    # Set "Image Quality" to "Quality" - required to force high quality textures mods are made for
-                    settings_manager.set_setting('ImageQuality', '3')
+                if Config.Active.Importer.custom_launch_inject_mode != 'Bypass':
+                    if Config.Importers.WWMI.Importer.configure_game:
+                        # Set "Image Quality" to "Quality" - required to force high quality textures mods are made for
+                        settings_manager.set_setting('ImageQuality', '3')
 
                 if Config.Importers.WWMI.Importer.unlock_fps:
                     # Set "Frame Rate" to "120"
