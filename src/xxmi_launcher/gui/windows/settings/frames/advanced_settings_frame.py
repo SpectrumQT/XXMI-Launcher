@@ -19,8 +19,8 @@ class AdvancedSettingsFrame(UIFrame):
         self.put(OverwriteIniCheckbox(self)).grid(row=0, column=1, padx=10, pady=(0, 25), sticky='w')
 
         # Security
-        self.put(SecurityLabel(self)).grid(row=0, column=2, padx=(220, 10), pady=(0, 25), sticky='w', columnspan=3)
-        self.put(UnsafeModeCheckbox(self)).grid(row=0, column=2, padx=(310, 10), pady=(0, 25), sticky='w', columnspan=3)
+        self.put(SecurityLabel(self)).grid(row=0, column=2, padx=(20, 160), pady=(0, 25), sticky='e', columnspan=3)
+        self.put(UnsafeModeCheckbox(self)).grid(row=0, column=2, padx=(10, 20), pady=(0, 25), sticky='e', columnspan=3)
 
         # Pre-Launch Command
         self.put(RunPreLaunchCheckbox(self)).grid(row=3, column=0, padx=(20, 0), pady=(0, 25), sticky='w')
