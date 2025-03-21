@@ -59,7 +59,7 @@ class LauncherFrame(UIFrame):
             Events.Application.Ready,
             lambda event: Events.Fire(Events.GUI.LauncherFrame.StageUpdate(Stage.Ready)))
         self.subscribe(
-            Events.PackageManager.InitializeDownload,
+            Events.PackageManager.StartDownload,
             lambda event: Events.Fire(Events.GUI.LauncherFrame.StageUpdate(Stage.Download)))
         self.subscribe(
             Events.Application.Busy,

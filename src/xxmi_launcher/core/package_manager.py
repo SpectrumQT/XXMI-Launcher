@@ -80,6 +80,7 @@ class Package:
         self.download_url: str = ''
         self.signature: Union[str, None] = None
         self.manifest = None
+        self.download_in_progress = False
 
         self.package_path = Paths.App.Resources / 'Packages' / self.metadata.package_name
         self.downloaded_asset_path: Union[Path, None] = None
@@ -118,13 +119,26 @@ class Package:
 
         asset_file_name = self.metadata.asset_name_format % self.cfg.latest_version
 
-        Events.Fire(Events.PackageManager.StartDownload(asset_name=asset_file_name))
-
-        return asset_file_name, self.github_client.download_data(
+        data = self.github_client.download_data(
             self.download_url,
             block_size=128*1024,
             update_progress_callback=self.notify_download_progress
         )
+        self.download_in_progress = False
+
+        return asset_file_name, data
+
+    def notify_download_progress(self, downloaded_bytes, total_bytes):
+        if not self.download_in_progress:
+            Events.Fire(Events.PackageManager.StartDownload(
+                asset_name=self.metadata.asset_name_format % self.cfg.latest_version
+            ))
+            self.download_in_progress = True
+
+        Events.Fire(Events.PackageManager.UpdateDownloadProgress(
+            downloaded_bytes=downloaded_bytes,
+            total_bytes=total_bytes,
+        ))
 
     def save_downloaded_data(self, asset_path: Path, data):
 
@@ -222,13 +236,6 @@ class Package:
     def validate_files(self, file_paths: List[Path]):
         for file_path in file_paths:
             self.verify_signature(file_path)
-
-    @staticmethod
-    def notify_download_progress(downloaded_bytes, total_bytes):
-        Events.Fire(Events.PackageManager.UpdateDownloadProgress(
-            downloaded_bytes=downloaded_bytes,
-            total_bytes=total_bytes,
-        ))
 
     def unpack(self, file_path: Path, destination_path: Path):
         Events.Fire(Events.PackageManager.StartUnpack(asset_name=file_path.name))

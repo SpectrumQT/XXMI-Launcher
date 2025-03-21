@@ -49,7 +49,7 @@ class DownloadProgressBar(UIProgressBar):
             Events.PackageManager.UpdateDownloadProgress,
             lambda event: self.update_progress(event.downloaded_bytes, event.total_bytes))
         self.subscribe(
-            Events.PackageManager.InitializeDownload,
+            Events.PackageManager.StartDownload,
             lambda event: self.initialize_download())
 
     def initialize_download(self):
