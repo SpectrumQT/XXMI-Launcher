@@ -173,6 +173,9 @@ class AppConfig:
             # Disable hunting by default
             importer.Migoto.enable_hunting = False
 
+    def run_patch_160(self):
+        importer = self.Importers.__dict__['WWMI']
+        importer.Importer.engine_ini['ConsoleVariables']['r.Streaming.UsingNewKuroStreaming'] = 1
 
     def upgrade(self, old_version, new_version):
         # Save config to file and exit early if old version is empty (aka fresh installation)
@@ -186,6 +189,7 @@ class AppConfig:
         patches = {
             '1.1.0': self.run_patch_110,
             '1.3.3': self.run_patch_133,
+            '1.6.0': self.run_patch_160,
         }
         applied_patches = []
         for patch_version, patch_func in patches.items():
