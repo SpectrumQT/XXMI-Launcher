@@ -39,6 +39,7 @@ class MigotoManagerEvents:
 @dataclass
 class MigotoManagerConfig:
     enforce_rendering: bool = True
+    deploy_nvapi: bool = False
     enable_hunting: bool = False
     dump_shaders: bool = False
     mute_warnings: bool = True
@@ -52,7 +53,7 @@ class MigotoPackage(Package):
     def __init__(self):
         super().__init__(PackageMetadata(
             package_name='XXMI',
-            auto_load=True,
+            auto_load=False,
             github_repo_owner='SpectrumQT',
             github_repo_name='XXMI-Libs-Package',
             asset_version_pattern=r'.*(\d\.\d\.\d).*',
@@ -224,7 +225,22 @@ class MigotoPackage(Package):
             deployed_signature = Config.Active.Importer.deployed_migoto_signatures.get(file_name, '')
 
             deploy_pending = False
-            if force:
+            remove_pending = False
+
+            if file_name == 'nvapi64.dll':
+                if not Config.Active.Migoto.deploy_nvapi:
+                    if deployment_path.is_file():
+                        # nvapi64.dll is found at deployment path, but its deployment is disabled, we must remove it
+                        log.debug(f'Removing {deployment_path}...')
+                        remove_pending = True
+                    else:
+                        # DLL should not be deployed and does not exist, lets exit early
+                        continue
+
+            if deploy_pending or remove_pending:
+                # Some DLL already got special treatment, no further checks required
+                pass
+            elif force:
                 # Forced redeployment requested, lets just redeploy without any extra checks
                 log.debug(f'Forcing re-deploy of {deployment_path}...')
                 deploy_pending = True
@@ -249,7 +265,7 @@ class MigotoPackage(Package):
                     log.debug(f'Re-deploying updated {deployment_path}...')
                     deploy_pending = True
 
-            if deploy_pending:
+            if deploy_pending or remove_pending:
                 Events.Fire(Events.Application.StatusUpdate(status='Ensuring the game is closed...'))
                 result, pid = wait_for_process_exit(process_name=process_name, timeout=5, kill_timeout=0)
                 if result == WaitResult.Timeout:
@@ -258,20 +274,31 @@ class MigotoPackage(Package):
                         message=f'Failed to stop {process_name}!\n\n'
                                 'Please close the game manually and press [OK] to continue.',
                     ))
-                package_file_path = self.package_path / file_name
-                if package_file_path.exists():
-                    shutil.copy2(package_file_path, deployment_path)
-                    if deploy_pending:
-                        Config.Active.Importer.deployed_migoto_signatures[file_name] = self.get_signature(deployment_path)
-                else:
-                    raise ValueError(f'XXMI package is missing critical file: {deployment_path.name}!\n')
+                if remove_pending:
+                    deployment_path.unlink()
+                    continue
+                if deploy_pending:
+                    package_file_path = self.package_path / file_name
+                    if package_file_path.exists():
+                        shutil.copy2(package_file_path, deployment_path)
+                        if deploy_pending:
+                            original_signature = self.get_signature(deployment_path)
+                            Config.Active.Importer.deployed_migoto_signatures[file_name] = original_signature
+                    else:
+                        raise ValueError(f'XXMI package is missing critical file: {deployment_path.name}!\n')
 
     def validate_deployed_files(self):
-        self.validate_files([Config.Active.Importer.importer_path / f for f in ['d3d11.dll', 'd3dcompiler_47.dll', 'nvapi64.dll']])
-        self.validate_files([self.package_path / f for f in ['3dmloader.dll']])
+        package_libs = ['3dmloader.dll']
+        self.validate_files([self.package_path / f for f in package_libs])
+
+        importer_libs = ['d3d11.dll', 'd3dcompiler_47.dll']
+        if Config.Active.Migoto.deploy_nvapi:
+            importer_libs.append('nvapi64.dll')
+        self.validate_files([Config.Active.Importer.importer_path / f for f in importer_libs])
 
     def validate_package_files(self):
-        self.validate_files([self.package_path / f for f in ['3dmloader.dll', 'd3d11.dll', 'd3dcompiler_47.dll', 'nvapi64.dll']])
+        package_libs = ['3dmloader.dll', 'd3d11.dll', 'd3dcompiler_47.dll', 'nvapi64.dll']
+        self.validate_files([self.package_path / f for f in package_libs])
 
     def uninstall(self):
         log.debug(f'Uninstalling package {self.metadata.package_name}...')
