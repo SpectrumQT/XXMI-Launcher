@@ -648,12 +648,23 @@ class UILabel(UIWidget, CTkLabel):
     def __init__(self,
                  master: Union[UIWindow, 'UIFrame'],
                  image_path: Optional[Path] = None,
+                 state: str = tkinter.NORMAL,
+                 text_color_disabled: Optional[Union[str, Tuple[str, str]]] = None,
                  **kwargs):
         UIWidget.__init__(self, master,  **kwargs)
+        self._state = state
         self.image: Optional[CTkImage] = None
         if image_path is not None:
             self.image = CTkImage(Image.open(str(Config.get_resource_path(self, image_path))))
         CTkLabel.__init__(self, master, image=self.image, **kwargs)
+
+        if text_color_disabled is None:
+            if "text_color_disabled" in ThemeManager.theme["CTkLabel"]:
+                self._text_color_disabled = ThemeManager.theme["CTkLabel"]["text_color_disabled"]
+            else:
+                self._text_color_disabled = self._text_color
+        else:
+            self._text_color_disabled = self._check_color_type(text_color_disabled)
 
         self._apply_theme()
 
@@ -664,7 +675,43 @@ class UILabel(UIWidget, CTkLabel):
         font = kwargs.get('font', None)
         if font is not None:
             kwargs['font'] = tuple(font)
+        if "state" in kwargs:
+            self._state = kwargs.pop("state")
+            require_redraw = True
+
         super().configure(require_redraw, **kwargs)
+
+    def _draw(self, no_color_updates=False):
+        CTkBaseClass._draw(self, no_color_updates)
+
+        requires_recoloring = self._draw_engine.draw_rounded_rect_with_border(self._apply_widget_scaling(self._current_width),
+                                                                              self._apply_widget_scaling(self._current_height),
+                                                                              self._apply_widget_scaling(self._corner_radius),
+                                                                              0)
+        if self._state == tkinter.DISABLED:
+            text_color = self._text_color_disabled
+        else:
+            text_color = self._text_color
+
+        if no_color_updates is False or requires_recoloring:
+            if self._apply_appearance_mode(self._fg_color) == "transparent":
+                self._canvas.itemconfig("inner_parts",
+                                        fill=self._apply_appearance_mode(self._bg_color),
+                                        outline=self._apply_appearance_mode(self._bg_color))
+
+                self._label.configure(fg=self._apply_appearance_mode(text_color),
+                                      disabledforeground=self._apply_appearance_mode(self._text_color_disabled),
+                                      bg=self._apply_appearance_mode(self._bg_color))
+            else:
+                self._canvas.itemconfig("inner_parts",
+                                        fill=self._apply_appearance_mode(self._fg_color),
+                                        outline=self._apply_appearance_mode(self._fg_color))
+
+                self._label.configure(fg=self._apply_appearance_mode(text_color),
+                                      disabledforeground=self._apply_appearance_mode(self._text_color_disabled),
+                                      bg=self._apply_appearance_mode(self._fg_color))
+
+            self._canvas.configure(bg=self._apply_appearance_mode(self._bg_color))
 
 
 class UIButton(UIWidget, CTkButton):
@@ -713,7 +760,7 @@ class UIButton(UIWidget, CTkButton):
         super().configure(require_redraw, **kwargs)
 
     def _draw(self, no_color_updates=False):
-        super()._draw(no_color_updates)
+        CTkBaseClass._draw(self, no_color_updates)
 
         if self._background_corner_colors is not None:
             self._draw_engine.draw_background_corners(self._apply_widget_scaling(self._current_width),
@@ -1158,6 +1205,8 @@ class UICheckbox(CTkCheckBox, UIWidget):
         UIWidget.__init__(self, master,  **kwargs)
 
         self._fg_color_disabled = ThemeManager.theme["CTkCheckBox"].get("fg_color_disabled", None)
+        self._checkmark_color_disabled = ThemeManager.theme["CTkCheckBox"].get("checkmark_color_disabled", None)
+        self._border_color_disabled = ThemeManager.theme["CTkCheckBox"].get("border_color_disabled", None)
 
         self.is_hovered = False
 
@@ -1209,9 +1258,8 @@ class UICheckbox(CTkCheckBox, UIWidget):
                 # self._canvas.itemconfig("border_parts",
                 #                         outline=self._apply_appearance_mode(fg_color),
                 #                         fill=self._apply_appearance_mode(fg_color))
-
-                if "create_line" in self._canvas.gettags("checkmark"):
-                    self._canvas.itemconfig("checkmark", fill=self._apply_appearance_mode(self._checkmark_color))
+                if self._state == tkinter.DISABLED:
+                    self._canvas.itemconfig("checkmark", fill=self._apply_appearance_mode(self._checkmark_color_disabled))
                 else:
                     self._canvas.itemconfig("checkmark", fill=self._apply_appearance_mode(self._checkmark_color))
             else:
@@ -1219,9 +1267,13 @@ class UICheckbox(CTkCheckBox, UIWidget):
                                         outline=self._apply_appearance_mode(self._bg_color),
                                         fill=self._apply_appearance_mode(self._bg_color))
 
+            if self._state == tkinter.DISABLED:
+                border_color = self._border_color_disabled
+            else:
+                border_color = self._border_color
             self._canvas.itemconfig("border_parts",
-                                    outline=self._apply_appearance_mode(self._border_color),
-                                    fill=self._apply_appearance_mode(self._border_color))
+                                    outline=self._apply_appearance_mode(border_color),
+                                    fill=self._apply_appearance_mode(border_color))
 
             if self._state == tkinter.DISABLED:
                 self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color_disabled)))

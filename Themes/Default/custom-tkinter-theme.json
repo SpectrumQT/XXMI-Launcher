@@ -1,6 +1,6 @@
 {
   "Metadata": {
-    "theme_api_version": "1.0.0"
+    "theme_api_version": "1.0.1"
   },
   "CTk": {
     "fg_color": ["gray95", "gray10"]
@@ -30,7 +30,8 @@
   "CTkLabel": {
     "corner_radius": 0,
     "fg_color": "transparent",
-    "text_color": ["gray14", "gray74"]
+    "text_color": ["gray14", "gray74"],
+    "text_color_disabled": ["gray60", "#707070"]
   },
   "CTkSwitch": {
     "corner_radius": 1000,
@@ -104,8 +105,10 @@
     "fg_color": ["#666666","#2b2c30"],
     "fg_color_disabled":  ["#999999", "#222326"],
     "border_color": ["#3E454A", "#565B5E"],
+    "border_color_disabled": ["#cccccc", "#313436"],
     "hover_color": ["#888888", "#3b3e40"],
     "checkmark_color": "#ffffff",
+    "checkmark_color_disabled": "#606060",
     "text_color": ["#000000", "#eeeeee"],
     "text_color_disabled": ["gray60", "#909090"]
   },
