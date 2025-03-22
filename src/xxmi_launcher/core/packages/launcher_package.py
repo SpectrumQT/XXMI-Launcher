@@ -17,6 +17,7 @@ import core.config_manager as Config
 
 from core.package_manager import Package, PackageMetadata
 
+from core.utils.proxy import ProxyConfig
 from core.utils.process_tracker import wait_for_process, WaitResult
 
 log = logging.getLogger(__name__)
@@ -34,6 +35,9 @@ class LauncherManagerConfig:
     log_level: str = 'DEBUG'
     config_version: str = ''
     theme_dev_mode: bool = False
+    github_token: str = ''
+    verify_ssl: bool = True
+    proxy: ProxyConfig = field(default_factory=lambda: ProxyConfig())
 
 
 @dataclass

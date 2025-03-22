@@ -1,3 +1,5 @@
+import webbrowser
+
 from pathlib import Path
 from textwrap import dedent
 
@@ -6,13 +8,13 @@ import core.config_manager as Config
 import core.path_manager as Paths
 import gui.vars as Vars
 
-from gui.classes.containers import UIFrame
+from gui.classes.containers import UIFrame, UIScrollableFrame
 from gui.classes.widgets import UILabel, UIButton, UIEntry, UICheckbox,  UIOptionMenu
 
 
-class LauncherSettingsFrame(UIFrame):
+class LauncherSettingsFrame(UIScrollableFrame):
     def __init__(self, master):
-        super().__init__(master)
+        super().__init__(master, height=360)
 
         # Auto close
         self.put(LauncherLabel(self)).grid(row=0, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
@@ -24,9 +26,110 @@ class LauncherSettingsFrame(UIFrame):
 
         # Theme
         self.put(ThemeLabel(self)).grid(row=2, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
-        self.put(LauncherThemeOptionMenu(self)).grid(row=2, column=1, padx=(10, 10), pady=(0, 30), sticky='w')
-        self.put(ApplyThemeButton(self)).grid(row=2, column=2, padx=(10, 20), pady=(0, 30), sticky='w')
-        self.put(EnableDevMode(self)).grid(row=2, column=3, padx=(60, 20), pady=(0, 30), sticky='w', columnspan=2)
+        self.put(ThemeFrame(self)).grid(row=2, column=1, padx=10, pady=(0, 30), sticky='w', columnspan=3)
+
+        # Connection
+        self.put(ConnectionLabel(self)).grid(row=3, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
+        self.put(ConnectionFrame(self)).grid(row=3, column=1, padx=10, pady=(0, 30), sticky='w', columnspan=3)
+
+        # Proxy
+        self.put(ProxyEnableCheckbox(self)).grid(row=4, column=0, padx=(20, 10), pady=(0, 20), sticky='w')
+        self.put(ProxySettingsFrame(self)).grid(row=4, column=1, padx=10, pady=(0, 20), sticky='w', columnspan=3)
+        self.put(ProxyAddressFrame(self)).grid(row=5, column=1, padx=10, pady=(0, 20), sticky='w', columnspan=3)
+        self.put(ProxyCredentialsFrame(self)).grid(row=6, column=1, padx=10, pady=(0, 20), sticky='w', columnspan=3)
+
+
+class ThemeFrame(UIFrame):
+    def __init__(self, master):
+        super().__init__(master)
+        self.configure(fg_color='transparent')
+
+        self.put(LauncherThemeOptionMenu(self)).grid(row=0, column=0, padx=(0, 10), pady=0, sticky='w')
+        self.put(ApplyThemeButton(self)).grid(row=0, column=1, padx=(10, 10), pady=0, sticky='w')
+        self.put(EnableDevMode(self)).grid(row=0, column=2, padx=(20, 20), pady=0, sticky='w')
+
+
+class ConnectionFrame(UIFrame):
+    def __init__(self, master):
+        super().__init__(master)
+        self.configure(fg_color='transparent')
+
+        self.put(GitHubTokenLabel(self)).grid(row=0, column=0, padx=(0, 10), pady=0, sticky='w')
+        self.put(GitHubTokenEntry(self)).grid(row=0, column=1, padx=(0, 10), pady=0, sticky='w')
+
+        self.put(GitHubTokenButton(self)).grid(row=0, column=2, padx=(0, 10), pady=0, sticky='w')
+        self.put(VerifySSLCheckbox(self)).grid(row=0, column=3, padx=20, pady=0, sticky='w')
+
+        self.grab(GitHubTokenLabel).set_tooltip(self.grab(GitHubTokenEntry))
+
+
+class ProxySettingsFrame(UIFrame):
+    def __init__(self, master):
+        super().__init__(master)
+        self.configure(fg_color='transparent')
+
+        self.put(ProxyTypeLabel(self)).grid(row=0, column=0, padx=(0, 10), pady=0, sticky='w')
+        self.put(ProxyTypeOptionMenu(self)).grid(row=0, column=1, padx=(0, 10), pady=0, sticky='w')
+        self.put(ProxyDNSViaSocks5Checkbox(self)).grid(row=0, column=2, padx=20, pady=0, sticky='w')
+
+        self.grab(ProxyTypeLabel).set_tooltip(self.grab(ProxyTypeOptionMenu))
+
+
+class ProxyAddressFrame(UIFrame):
+    def __init__(self, master):
+        super().__init__(master)
+        self.configure(fg_color='transparent')
+
+        self.put(ProxyHostLabel(self)).grid(row=0, column=0, padx=(0, 0), pady=0, sticky='w')
+        self.put(ProxyHostEntry(self)).grid(row=0, column=1, padx=10, pady=0, sticky='w')
+        self.put(ProxyPortLabel(self)).grid(row=0, column=2, padx=(10, 0), pady=0, sticky='w')
+        self.put(ProxyPortEntry(self)).grid(row=0, column=3, padx=10, pady=0, sticky='w')
+        self.put(ProxyUseCredentialsCheckbox(self)).grid(row=0, column=4, padx=20, pady=0, sticky='w')
+
+        self.grab(ProxyHostLabel).set_tooltip(self.grab(ProxyHostEntry))
+        self.grab(ProxyPortLabel).set_tooltip(self.grab(ProxyPortEntry))
+
+        self.trace_write(Vars.Launcher.proxy.enable, self.handle_write_proxy_enable)
+
+    def handle_write_proxy_enable(self, var, val):
+        for element in self.elements.values():
+            if val:
+                element.configure(state='normal')
+            else:
+                element.configure(state='disabled')
+
+
+class ProxyCredentialsFrame(UIFrame):
+    def __init__(self, master):
+        super().__init__(master)
+        self.configure(fg_color='transparent')
+        self.hide()
+
+        self.put(ProxyUserLabel(self)).grid(row=0, column=0, padx=(0, 0), pady=(0, 30), sticky='w')
+        self.put(ProxyUserEntry(self)).grid(row=0, column=1, padx=10, pady=(0, 30), sticky='w')
+        self.grab(ProxyUserLabel).set_tooltip(self.grab(ProxyUserEntry))
+
+
+        self.put(ProxyPasswordLabel(self)).grid(row=0, column=2, padx=(10, 0), pady=(0, 30), sticky='w')
+        self.put(ProxyPasswordEntry(self)).grid(row=0, column=3, padx=10, pady=(0, 30), sticky='w')
+        self.grab(ProxyPasswordLabel).set_tooltip(self.grab(ProxyPasswordEntry))
+
+        self.trace_write(Vars.Launcher.proxy.enable, self.handle_write_proxy_enable)
+        self.trace_write(Vars.Launcher.proxy.use_credentials, self.handle_write_use_credentials)
+
+    def handle_write_proxy_enable(self, var, val):
+        for element in self.elements.values():
+            if val and Vars.Launcher.proxy.use_credentials.get():
+                element.configure(state='normal')
+            else:
+                element.configure(state='disabled')
+
+    def handle_write_use_credentials(self, var, val):
+        for element in self.elements.values():
+            if val and Vars.Launcher.proxy.enable.get():
+                element.configure(state='normal')
+            else:
+                element.configure(state='disabled')
 
 
 class LauncherLabel(UILabel):
@@ -150,3 +253,231 @@ class EnableDevMode(UICheckbox):
     def handle_write_theme_dev_mode(self, var, val):
         Config.Config.Launcher.theme_dev_mode = val
         Events.Fire(Events.GUI.ToggleThemeDevMode(enabled=val))
+
+
+class ConnectionLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text='Connection:',
+            font=('Microsoft YaHei', 14, 'bold'),
+            fg_color='transparent',
+            master=master)
+
+
+class GitHubTokenLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text='GitHub Token:',
+            font=('Microsoft YaHei', 14),
+            fg_color='transparent',
+            master=master)
+
+
+class GitHubTokenEntry(UIEntry):
+    def __init__(self, master):
+        super().__init__(
+            textvariable=Vars.Launcher.github_token,
+            width=300,
+            height=36,
+            font=('Arial', 14),
+            master=master)
+        self.set_tooltip('Your **Personal Access Token** on **GitHub** (i.e. `ghp_f7gy3A4eQ97jfy2983mfZu2Hy93yf2P3d798`).\n'
+                         'Allows to combat `GitHub API Requests Limit` error that usually happens with public proxies.\n'
+                         'It is totally free and only requires GitHub registration.\n'
+                         'To create new token:\n'
+                         '1. Click `[?]` button to open token creation webpage.\n'
+                         '2. Use `Generate new token (classic)` button.')
+
+class GitHubTokenButton(UIButton):
+    def __init__(self, master):
+        super().__init__(
+            text='?',
+            command=lambda: webbrowser.open('https://github.com/settings/tokens'),
+            width=36,
+            height=36,
+            font=('Roboto', 14),
+            master=master)
+
+        self.set_tooltip('Open **GitHub Personal Access Token** creation webpage.')
+
+
+class VerifySSLCheckbox(UICheckbox):
+    def __init__(self, master):
+        super().__init__(
+            text='Verify SSL',
+            variable=Vars.Launcher.verify_ssl,
+            master=master)
+        self.set_tooltip(
+            '<font color="red">⚠ Disable only if you trust your proxy or whatever else that breaks SSL. ⚠</font>\n'
+            '**Enabled**: Validate SLL certificates for GitHub downloads to keep you secure.\n'
+            '**Disabled**: Allow insecure connection vulnerable to man-in-middle attacks.')
+
+
+class ProxyEnableCheckbox(UICheckbox):
+    def __init__(self, master):
+        super().__init__(
+            text='Use Proxy:',
+            font=('Microsoft YaHei', 14, 'bold'),
+            variable=Vars.Launcher.proxy.enable,
+            master=master)
+        self.set_tooltip(
+            'Controls how launcher connects to GitHub to download packages.\n'
+            '**Enabled**: Use specified proxy server to access Internet.\n'
+            '**Disabled**: Use default system Internet connection settings.')
+
+
+class ProxyTypeLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text='Type:',
+            font=('Microsoft YaHei', 14),
+            fg_color='transparent',
+            master=master)
+
+        self.trace_write(Vars.Launcher.proxy.enable, self.handle_write_proxy_enable)
+
+    def handle_write_proxy_enable(self, var, val):
+        if val:
+            self.configure(state='normal')
+        else:
+            self.configure(state='disabled')
+
+
+class ProxyTypeOptionMenu(UIOptionMenu):
+    def __init__(self, master):
+        super().__init__(
+            values=['HTTPS', 'SOCKS5'],
+            variable=Vars.Launcher.proxy.type,
+            width=140,
+            height=36,
+            font=('Arial', 14),
+            dropdown_font=('Arial', 14),
+            master=master)
+        self.set_tooltip(
+            '**HTTPS**: Good old proxy protocol. Offers best security.\n'
+            '**SOCKS5**: Newer and less secure, but excels at bypassing firewalls.')
+
+        self.trace_write(Vars.Launcher.proxy.enable, self.handle_write_proxy_enable)
+
+    def handle_write_proxy_enable(self, var, val):
+        if val:
+            self.configure(state='normal')
+        else:
+            self.configure(state='disabled')
+
+
+class ProxyDNSViaSocks5Checkbox(UICheckbox):
+    def __init__(self, master):
+        super().__init__(
+            text='Proxy DNS Via SOCKS5',
+            variable=Vars.Launcher.proxy.proxy_dns_via_socks5,
+            master=master)
+        self.set_tooltip(
+            '**Enabled**: Use SOCKS5 proxy connection to route DNS requests.\n'
+            '**Disabled**: DNS requests will be routed through your ISP.')
+
+        self.trace_write(Vars.Launcher.proxy.enable, self.handle_write_proxy_enable)
+        self.trace_write(Vars.Launcher.proxy.type, self.handle_write_proxy_type)
+
+    def handle_write_proxy_enable(self, var, val):
+        if val and Vars.Launcher.proxy.type.get() == 'SOCKS5':
+            self.configure(state='normal')
+        else:
+            self.configure(state='disabled')
+
+    def handle_write_proxy_type(self, var, val):
+        if val == 'SOCKS5' and Vars.Launcher.proxy.enable.get():
+            self.configure(state='normal')
+        else:
+            self.configure(state='disabled')
+
+
+class ProxyHostLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text='Host:',
+            font=('Microsoft YaHei', 14),
+            fg_color='transparent',
+            master=master)
+
+
+class ProxyHostEntry(UIEntry):
+    def __init__(self, master):
+        super().__init__(
+            textvariable=Vars.Launcher.proxy.host,
+            width=130,
+            height=36,
+            font=('Arial', 14),
+            master=master)
+        self.set_tooltip('Proxy IP address (i.e. `123.12.1.231`) or domain name (i.e. `proxyprovider.com`).')
+
+
+class ProxyPortLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text='Port:',
+            font=('Microsoft YaHei', 14),
+            fg_color='transparent',
+            master=master)
+
+
+class ProxyPortEntry(UIEntry):
+    def __init__(self, master):
+        super().__init__(
+            textvariable=Vars.Launcher.proxy.port,
+            width=55,
+            height=36,
+            font=('Arial', 14),
+            master=master)
+        self.set_tooltip('Proxy port (i.e. `1080`).')
+
+
+class ProxyUseCredentialsCheckbox(UICheckbox):
+    def __init__(self, master):
+        super().__init__(
+            text='Proxy Requires Password',
+            variable=Vars.Launcher.proxy.use_credentials,
+            master=master)
+        self.set_tooltip(
+            '**Enabled**: Use specified user name and password for the proxy server authentication.\n'
+            '**Disabled**: Do not use any credentials when accessing a proxy server.')
+
+
+class ProxyUserLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text='User:',
+            font=('Microsoft YaHei', 14),
+            fg_color='transparent',
+            master=master)
+
+
+class ProxyUserEntry(UIEntry):
+    def __init__(self, master):
+        super().__init__(
+            textvariable=Vars.Launcher.proxy.user,
+            width=130,
+            height=36,
+            font=('Arial', 14),
+            master=master)
+        self.set_tooltip('User name provided by your proxy service.')
+
+
+class ProxyPasswordLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text='Password:',
+            font=('Microsoft YaHei', 14),
+            fg_color='transparent',
+            master=master)
+
+
+class ProxyPasswordEntry(UIEntry):
+    def __init__(self, master):
+        super().__init__(
+            textvariable=Vars.Launcher.proxy.password,
+            width=250,
+            height=36,
+            font=('Arial', 14),
+            master=master)
+        self.set_tooltip('Password provided by your proxy service.')

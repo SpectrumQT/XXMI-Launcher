@@ -71,7 +71,6 @@ class Package:
         self.signature_pattern = re.compile(self.metadata.signature_pattern, re.MULTILINE)
 
         self.security = Security(public_key=self.metadata.signature_public_key)
-        self.github_client = GitHubClient(owner=self.metadata.github_repo_owner, repo=self.metadata.github_repo_name)
 
         self.manager: Optional[PackageManager] = None
         self.active = False
@@ -97,9 +96,12 @@ class Package:
             raise ValueError(f'Failed to detect installed {self.metadata.package_name} version:\n\n{e}') from e
 
     def get_latest_version(self) -> Tuple[str, str, Union[str, None], str]:
-        version, url, signature, release_notes = self.github_client.fetch_latest_release(self.asset_version_pattern,
-                                                                          self.metadata.asset_name_format,
-                                                                          self.signature_pattern)
+        version, url, signature, release_notes = self.manager.github_client.fetch_latest_release(
+            repo_owner=self.metadata.github_repo_owner,
+            repo_name=self.metadata.github_repo_name,
+            asset_version_pattern=self.asset_version_pattern,
+            asset_name_format=self.metadata.asset_name_format,
+            signature_pattern=self.signature_pattern)
         return version, url, signature, release_notes
 
     def detect_latest_version(self):
@@ -119,7 +121,7 @@ class Package:
 
         asset_file_name = self.metadata.asset_name_format % self.cfg.latest_version
 
-        data = self.github_client.download_data(
+        data = self.manager.github_client.download_data(
             self.download_url,
             block_size=128*1024,
             update_progress_callback=self.notify_download_progress
@@ -386,6 +388,7 @@ class PackageManagerEvents:
 
 class PackageManager:
     def __init__(self, packages: Optional[List[Package]] = None):
+        self.github_client = GitHubClient()
         self.packages: Dict[str, Package] = {}
         if packages is not None:
             for package in packages:
@@ -394,6 +397,14 @@ class PackageManager:
         self.api_connection_refused = False
         self.api_connection_refused_notified = False
         Events.Subscribe(Events.PackageManager.GetPackage, lambda event: self.get_package(event.package_name))
+        Events.Subscribe(Events.Application.ConfigUpdate, self.handle_config_update)
+
+    def handle_config_update(self, event):
+        self.github_client.configure(
+            access_token=Config.Launcher.github_token,
+            verify_ssl=Config.Launcher.verify_ssl,
+            proxy_config=Config.Launcher.proxy
+        )
 
     def register_package(self, package: Package):
         self.packages[package.metadata.package_name] = package
@@ -504,7 +515,9 @@ class PackageManager:
 
             if self.api_connection_refused and not self.api_connection_refused_notified:
                 self.api_connection_refused_notified = True
-                raise ConnectionRefusedError(f'GitHub update requests limit reached!\n\nAttempts will be ignored for an hour.')
+                raise ConnectionRefusedError(f'Unauthorized GitHub API requests limit reached for your IP!\n\n'
+                                             f'GitHub servers will ignore further connection attempts for an hour.\n\n'
+                                             f'Set (another) *Proxy* or *GitHub Token* in *Launcher Settings* for instant access.')
 
         except Exception as e:
             if silent:

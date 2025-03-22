@@ -479,10 +479,15 @@ class Application:
         try:
             self.package_manager.update_packages(no_install=True, force=force)
         except Exception as e:
-            Events.Fire(Events.Application.ShowWarning(
-                message=f'Failed to get latest versions list from GitHub!\n\n{str(e)}',
-                modal=True
-            ))
+            if 'failed to detect latest launcher version' in str(e).lower():
+                # Failed to check launcher package GitHub, and since it's the very first check, there's connection error
+                raise e
+            else:
+                # Failed to check some other package, lets give a warning and still try to go further
+                Events.Fire(Events.Application.ShowWarning(
+                    message=str(e),
+                    modal=True
+                ))
         if self.package_manager.update_available():
             if self.update_scheduled():
                 self.package_manager.update_packages(no_check=True, force=force)

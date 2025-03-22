@@ -1,9 +1,12 @@
 import requests
 
-from typing import List
+from typing import List, Optional
 from dataclasses import dataclass
 
 from dacite import from_dict
+from requests.exceptions import SSLError
+
+from core.utils.proxy import ProxyConfig, ProxyManager
 
 
 @dataclass
@@ -20,19 +23,51 @@ class ResponseRelease:
 
 
 class GitHubClient:
-    def __init__(self, owner, repo):
-        self.owner = owner
-        self.repo = repo
+    def __init__(self):
+        self.proxy_manager = ProxyManager()
+        self.access_token = ''
+        self.verify_ssl = False
 
-    def fetch_latest_release(self, asset_version_pattern, asset_name_format, signature_pattern=None):
+    def configure(self, access_token: Optional[str], verify_ssl: Optional[bool], proxy_config: Optional[ProxyConfig]):
+        if access_token is not None:
+            self.access_token = access_token.strip()
+        if verify_ssl is not None:
+            self.verify_ssl = verify_ssl
+        if proxy_config is not None:
+            self.proxy_manager.configure(proxy_config)
+
+    def fetch_latest_release(self, repo_owner, repo_name,
+                             asset_version_pattern, asset_name_format, signature_pattern=None):
+        headers = {}
+
+        if self.access_token:
+            headers['Authorization'] = f'token {self.access_token}'
+
         try:
-            response = requests.get(f'https://api.github.com/repos/{self.owner}/{self.repo}/releases/latest').json()
+            response = requests.get(
+                url=f'https://api.github.com/repos/{repo_owner}/{repo_name}/releases/latest',
+                headers=headers,
+                proxies=self.proxy_manager.proxies,
+                timeout=10,
+                verify=self.verify_ssl
+            ).json()
+        except SSLError as e:
+            raise ValueError(f'Failed to validate SSL certificate of GitHub HTTPS connection!\n\n'
+                             f'If you trust your proxy, uncheck *Verify SSL* in *Launcher Settings* and try again.') from e
         except Exception as e:
             raise ValueError(f'Failed to establish HTTPS connection to GitHub!\n\n'
                              f'Please check your Antivirus, Firewall, Proxy and VPN settings.') from e
 
-        if 'message' in response and 'API rate limit exceeded' in response['message']:
-            raise ConnectionRefusedError('GitHub API rate limit exceeded!')
+        message, status = response.get('message', None), response.get('status', 0)
+
+        if message is not None:
+            message = message.lower()
+            status = int(status)
+            if 'rate limit' in message:
+                raise ConnectionRefusedError('GitHub API rate limit exceeded!')
+            elif 'bad credentials' in message or status == 401:
+                raise ConnectionError('GitHub Personal Access Token is invalid!\n\n'
+                                      'Please configure correct token in launcher settings.')
 
         try:
             response = from_dict(data_class=ResponseRelease, data=response)
@@ -60,7 +95,19 @@ class GitHubClient:
         raise ValueError(f"Failed to locate asset matching to '{asset_name_format}'!")
 
     def download_data(self, url, block_size=4096, update_progress_callback=None):
-        response = requests.get(url, stream=True)
+        headers = {}
+
+        if self.access_token:
+            headers['Authorization'] = f'token {self.access_token}'
+
+        response = requests.get(
+            url=url,
+            headers=headers,
+            proxies=self.proxy_manager.proxies,
+            verify=self.verify_ssl,
+            timeout=10,
+            stream=True
+        )
 
         downloaded_bytes = 0
         total_bytes = int(response.headers.get("content-length", 0))
