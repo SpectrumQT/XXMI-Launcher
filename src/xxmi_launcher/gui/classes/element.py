@@ -1,4 +1,4 @@
-from typing import Dict, Union, Tuple
+from typing import Dict, Union, Tuple, Callable
 from customtkinter import CTkBaseClass, CTk, CTkToplevel, ThemeManager
 
 import core.event_manager as Events
@@ -19,6 +19,12 @@ class UIElement:
         element._id = f'{element.__class__}_{len(self.elements)}'
         self.elements[element._id] = element
         return element
+
+    def grab(self, cls):
+        for element in self.elements.values():
+            if isinstance(element, cls):
+                return element
+        return None
 
     def subscribe(self, event, callback):
         Events.Subscribe(event, callback, caller_id=self)
@@ -105,11 +111,15 @@ class UIElement:
     def _show(self):
         raise NotImplementedError
 
-    def set_tooltip(self, text='', **kwargs):
+    def set_tooltip(self, msg: str | list[str] | Callable[[], str | list[str]] | UIToolTip | 'UIElement', **kwargs):
+        if isinstance(msg, UIToolTip):
+            msg = msg.msg
+        elif isinstance(msg, UIElement):
+            msg = msg.tooltip.msg if msg.tooltip is not None else ''
         if self.tooltip is None:
-            self.tooltip = UIToolTip(self, engine=self.winfo_toplevel().tooltip_engine, msg=text, **kwargs)
+            self.tooltip = UIToolTip(self, engine=self.winfo_toplevel().tooltip_engine, msg=msg, **kwargs)
         else:
-            self.tooltip.msg = text
+            self.tooltip.msg = msg
 
     def get_resource_path(self, resource_path: str = ''):
         return self.master.get_resource_path()
