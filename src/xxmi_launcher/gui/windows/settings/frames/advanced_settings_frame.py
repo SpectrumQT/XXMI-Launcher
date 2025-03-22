@@ -26,20 +26,24 @@ class AdvancedSettingsFrame(UIFrame):
         self.put(RunPreLaunchCheckbox(self)).grid(row=3, column=0, padx=(20, 0), pady=(0, 25), sticky='w')
         self.put(RunPreLaunchEntry(self)).grid(row=3, column=1, padx=(10, 125), pady=(0, 25), sticky='ew', columnspan=4)
         self.put(RunPreLaunchWaitCheckbox(self)).grid(row=3, column=4, padx=(10, 20), pady=(0, 25), sticky='w')
+        self.grab(RunPreLaunchCheckbox).set_tooltip(self.grab(RunPreLaunchEntry))
 
         # Custom Launch Command
         self.put(CustomLaunchCheckbox(self)).grid(row=4, column=0, padx=(20, 0), pady=(0, 25), sticky='w')
         self.put(CustomLaunchEntry(self)).grid(row=4, column=1, padx=(10, 125), pady=(0, 25), sticky='ew', columnspan=4)
         self.put(CustomLaunchInjectModeOptionMenu(self)).grid(row=4, column=4, padx=(10, 20), pady=(0, 25), sticky='w')
+        self.grab(CustomLaunchCheckbox).set_tooltip(self.grab(CustomLaunchEntry))
 
         # Post-Load Command
         self.put(RunPostLoadCheckbox(self)).grid(row=5, column=0, padx=(20, 0), pady=(0, 25), sticky='w')
         self.put(RunPostLoadEntry(self)).grid(row=5, column=1, padx=(10, 125), pady=(0, 25), sticky='ew', columnspan=4)
         self.put(RunPostLoadWaitCheckbox(self)).grid(row=5, column=4, padx=(10, 20), pady=(0, 25), sticky='w')
+        self.grab(RunPostLoadCheckbox).set_tooltip(self.grab(RunPostLoadEntry))
 
         # Extra Libraries Injection
         self.put(InjectLibrariesCheckbox(self)).grid(row=6, column=0, padx=(20, 0), pady=(0, 25), sticky='w')
         self.put(InjectLibrariesTextbox(self)).grid(row=6, column=1, padx=(10, 20), pady=(0, 25), sticky='ew', columnspan=4)
+        self.grab(InjectLibrariesCheckbox).set_tooltip(self.grab(InjectLibrariesTextbox))
 
 
 class UpdatePolicyLabel(UILabel):
@@ -312,7 +316,7 @@ class InjectLibrariesTextbox(UITextbox):
             'List of additional DLL paths to inject into the game process. 1 path per line.\n'
             'injection will be made via WriteProcessMemory method.\n'
             'Example (inject ReShade dll):\n'
-            '`C:\Games\ReShade\ReShade64.dll`')
+            r'`C:\Games\ReShade\ReShade64.dll`')
 
         self.trace_write(Vars.Active.Importer.extra_libraries_enabled, self.handle_write_extra_libraries_enabled)
 
