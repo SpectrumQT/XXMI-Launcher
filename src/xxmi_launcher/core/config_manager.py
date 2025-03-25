@@ -4,7 +4,7 @@ import json
 
 from pathlib import Path
 from dataclasses import dataclass, field, fields
-from typing import Union, Dict, Any, Optional
+from typing import Union, Dict, Any, Optional, List
 
 from dacite import from_dict
 
@@ -323,9 +323,20 @@ Active: Union[gimi_package.GIMIPackageConfig, srmi_package.SRMIPackageConfig,
               wwmi_package.WWMIPackageConfig, zzmi_package.ZZMIPackageConfig]
 
 
-def get_resource_path(element, filename):
+def get_resource_path(element, filename: Union[str, Path], extensions: Optional[Union[str, List[str]]] = None):
+    filename = Path(filename)
+    search_extensions = [filename.suffix]
+    if extensions is not None:
+        search_extensions += [ext for ext in list(extensions) if ext != filename.suffix]
     class_path = element.get_resource_path() / filename
-    resource_path = Config.theme_path / class_path
+    for extension in search_extensions:
+        resource_path = Config.theme_path / class_path.with_suffix(extension)
+        if resource_path.is_file():
+            return resource_path
+    resource_path = Paths.App.Themes / 'Default' / class_path
     if not resource_path.is_file():
-        return Paths.App.Themes / 'Default' / class_path
+        raise FileNotFoundError(
+            f'Resource not found:\n\n'
+            f'{resource_path}\n\n'
+            f'Hint: You can also use other extensions: {", ".join(extensions)}')
     return resource_path

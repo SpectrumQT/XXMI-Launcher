@@ -190,6 +190,9 @@ class UIImage(UICanvasWidget, CTkBaseClass):
         self.image_path = None
         self.image_tag = None
 
+        # self._supported_extensions = ['.mp4', '.mkv', '.avi', '.gif', '.webp', '.jpeg', '.png', '.jpg']
+        self._supported_extensions = ['.webp', '.jpeg', '.png', '.jpg']
+
         # self._video = None
         # self._video_fps = None
         # self._video_frame_time = None
@@ -207,26 +210,11 @@ class UIImage(UICanvasWidget, CTkBaseClass):
     def configure(self, **kwargs):
         if self._update_attrs(['image_path'], kwargs):
             path = Path(self.image_path)
-            
-            # Resolve relative path from active theme
-            if not path.is_absolute():
-                path = Config.get_resource_path(self, path)
 
-            # Search for files with same name but different extension to support advanced themes
-            if not path.is_file():
-                # supported_extensions = ['.mp4', '.mkv', '.avi', '.gif', '.webp', '.jpeg', '.png', '.jpg']
-                supported_extensions = ['.webp', '.jpeg', '.png', '.jpg']
-                supported_extensions.remove(path.suffix)
-                found = False
-                for extension in supported_extensions:
-                    if path.with_suffix(extension).is_file():
-                        path = path.with_suffix(extension)
-                        found = True
-                        break
-                if not found:
-                    raise ValueError(f'Resource not found:\n\n'
-                                     f'{path}\n\n'
-                                     f'Hint: You can also use other extensions: {", ".join(supported_extensions)}')
+            # Resolve relative path from active theme
+            # Also search for files with same name but different extension to support advanced themes
+            if not path.is_absolute():
+                path = Config.get_resource_path(self, path, self._supported_extensions)
 
             # if path.suffix in ['.mp4', '.gif', '.mkv', '.avi']:
             #     self._update_attrs(list(kwargs.keys()), kwargs)
@@ -644,6 +632,7 @@ class UIImageButton(UICanvasWidget, CTkBaseClass):
     def winfo_height(self):
         return int(self._apply_widget_scaling(self._height))
 
+
 class UILabel(UIWidget, CTkLabel):
     def __init__(self,
                  master: Union[UIWindow, 'UIFrame'],
@@ -655,7 +644,8 @@ class UILabel(UIWidget, CTkLabel):
         self._state = state
         self.image: Optional[CTkImage] = None
         if image_path is not None:
-            self.image = CTkImage(Image.open(str(Config.get_resource_path(self, image_path))))
+            self._supported_extensions = ['.webp', '.jpeg', '.png', '.jpg']
+            self.image = CTkImage(Image.open(str(Config.get_resource_path(self, image_path, self._supported_extensions))))
         CTkLabel.__init__(self, master, image=self.image, **kwargs)
 
         if text_color_disabled is None:
@@ -721,13 +711,18 @@ class UIButton(UIWidget, CTkButton):
                  select_color: Optional[Union[str, Tuple[str, str]]] = None,
                  text_color_hovered: Optional[Union[str, Tuple[str, str]]] = None,
                  text_color_selected: Optional[Union[str, Tuple[str, str]]] = None,
+                 auto_width: bool = False,
+                 padx: int = 12,
                  **kwargs):
 
         UIWidget.__init__(self, master,  **kwargs)
 
+        self._auto_width = auto_width
+        self._padx = padx
         self.image: Optional[CTkImage] = None
         if image_path is not None:
-            self.image = CTkImage(Image.open(str(Config.get_resource_path(self, image_path))))
+            self._supported_extensions = ['.webp', '.jpeg', '.png', '.jpg']
+            self.image = CTkImage(Image.open(str(Config.get_resource_path(self, image_path, self._supported_extensions))))
 
         self.is_hovered = False
         self.is_selected = False
@@ -739,6 +734,9 @@ class UIButton(UIWidget, CTkButton):
         CTkButton.__init__(self, master, image=self.image, **kwargs)
 
         self._apply_theme()
+
+        if self._auto_width:
+            self._set_auto_width()
         
         self.unbind('<Button-1>')
 
@@ -753,11 +751,27 @@ class UIButton(UIWidget, CTkButton):
             self._text_color_selected = self._check_color_type(kwargs.pop('text_color_selected'))
             require_redraw = True
 
+        require_auto_width = False
+
+        if 'padx' in kwargs:
+            self._padx = kwargs.pop('padx')
+            require_auto_width = True
+
+        if self._auto_width:
+            if 'font' in kwargs or 'text' in kwargs:
+                require_auto_width = True
+
         font = kwargs.get('font', None)
         if font is not None:
             kwargs['font'] = tuple(font)
 
         super().configure(require_redraw, **kwargs)
+
+        if require_auto_width:
+            self._set_auto_width()
+
+    def _set_auto_width(self):
+        self.configure(width=self._text_label.winfo_reqwidth()+self._padx*2)
 
     def _draw(self, no_color_updates=False):
         CTkBaseClass._draw(self, no_color_updates)

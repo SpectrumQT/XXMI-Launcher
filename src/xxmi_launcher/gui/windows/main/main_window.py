@@ -70,15 +70,18 @@ class MainWindow(UIMainWindow):
             log.exception(e)
         # Load custom fonts
         fonts_path = theme_path / 'Fonts'
-        for font_path in fonts_path.iterdir():
-            if font_path.suffix != '.ttf':
-                continue
-            try:
-                pyglet.font.add_file(str(font_path))
-            except Exception as e:
-                log.exception(e)
+        if fonts_path.is_dir():
+            for font_path in fonts_path.iterdir():
+                if font_path.suffix != '.ttf':
+                    continue
+                try:
+                    pyglet.font.add_file(str(font_path))
+                except Exception as e:
+                    log.exception(e)
         # Set icon path
-        self.cfg.icon_path = theme_path / 'window-icon.ico'
+        icon_path = theme_path / 'window-icon.ico'
+        if icon_path.is_file():
+            self.cfg.icon_path = icon_path
         # Set theme as active
         self.active_theme = theme
 
@@ -115,7 +118,7 @@ class MainWindow(UIMainWindow):
         except:
             theme_api_version = '0.0.0'
 
-        if theme_api_version <  '1.0.0':
+        if theme_api_version <  '1.0.1':
             default_json_path = Paths.App.Themes / 'Default' / 'custom-tkinter-theme.json'
             set_default_color_theme(str(default_json_path))
             update_dialogue = Events.Application.ShowWarning(
@@ -141,7 +144,7 @@ class MainWindow(UIMainWindow):
                 shutil.copy2(default_json_path, theme_json_path)
                 self.load_theme(theme_name)
 
-        return False
+        return True
 
     def reload_theme(self, last_mod_time=0):
         if not Config.Config.Launcher.theme_dev_mode:

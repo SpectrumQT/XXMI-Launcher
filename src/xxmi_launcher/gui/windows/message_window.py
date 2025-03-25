@@ -27,7 +27,7 @@ class MessageWindow(UIToplevel):
 
         self.cfg.title = title
 
-        self.cfg.icon_path = Paths.App.Themes / Config.Config.active_theme / 'MessageWindow' / icon
+        self.cfg.icon_path = Config.get_resource_path(self, icon)
 
         self.cfg.width = 640
         self.cfg.height = 225
