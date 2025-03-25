@@ -148,7 +148,7 @@ class SRMIPackage(ModelImporterPackage):
             try:
                 self.unlock_fps()
             except Exception as e:
-                raise ValueError(f'Failed to force 120 FPS!\n\n{str(e)}')
+                raise ValueError(f'Failed to force 120 FPS: {str(e)}')
 
     def update_srmi_ini(self):
         Events.Fire(Events.Application.StatusUpdate(status='Updating SRMI main.ini...'))
@@ -174,9 +174,19 @@ class SRMIPackage(ModelImporterPackage):
         try:
             settings_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, 'Software\\Cognosphere\\Star Rail', 0, winreg.KEY_ALL_ACCESS)
         except FileNotFoundError:
-            raise ValueError(f'Failed to locate Star Rail registry key!')
+            raise ValueError(
+                f'Star Rail registry key is not found!\n\n'
+                f'Please start the game without 120 FPS tweak, change FPS to any value to create the record and try again.\n\n'
+                f'Note: Tweak is supported only for the Global HSR client and will not work for CN.'
+            )
         # Read binary Graphics Settings key
-        (settings_bytes, regtype) = winreg.QueryValueEx(settings_key, 'GraphicsSettings_Model_h2986158309')
+        try:
+            (settings_bytes, regtype) = winreg.QueryValueEx(settings_key, 'GraphicsSettings_Model_h2986158309')
+        except FileNotFoundError as e:
+            raise ValueError(
+                f'Graphics Settings record is not found in HSR registry!\n\n'
+                f'Please start the game without 120 FPS tweak, change FPS to any value to create the record and try again.'
+            )
         if regtype != winreg.REG_BINARY:
             raise ValueError(f'Unknown Graphics Settings format: Data type {regtype} is not {winreg.REG_BINARY} of REG_BINARY!')
         # Read bytes till the first null byte as settings ascii string

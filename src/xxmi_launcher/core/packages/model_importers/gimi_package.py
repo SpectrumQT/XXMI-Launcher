@@ -167,10 +167,11 @@ class GIMIPackage(ModelImporterPackage):
                     # Set "Dynamic Character Resolution" to "Off"
                     self.update_dcr()
                 except Exception as e:
-                    raise ValueError(f'Failed to configure in-game settings for GIMI!\n'
-                          f"Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:\n"
-                          f'* Graphics > `Dynamic Character Resolution` must be `Off`.\n'
-                          f'{e}') from e
+                    raise ValueError(f'{e}\n\n'
+                          f"If nothing helps:\n"
+                          f"1. Disable `Configure Game Settings` in launcher's `General Settings`\n"
+                          f"2. Configure in-game `Graphics Settings` manually:\n"
+                          f'* Graphics > `Dynamic Character Resolution` must be `Off`.') from e
         if Config.Importers.GIMI.Importer.unlock_fps:
             try:
                 self.configure_fps_unlocker()
@@ -221,7 +222,10 @@ class GIMIPackage(ModelImporterPackage):
             except FileNotFoundError:
                 continue
         if settings_key is None:
-            raise ValueError(f'Failed to locate Genshin Impact registry key!')
+            raise ValueError(
+                f'Genshin Impact registry key is not found!\n\n'
+                f'Please start the game via original launcher to create the key and try again.'
+        )
 
         # Read binary Graphics Settings key
         try:
@@ -229,7 +233,9 @@ class GIMIPackage(ModelImporterPackage):
             if regtype != winreg.REG_BINARY:
                 raise ValueError(f'Unknown Settings format: Data type {regtype} is not {winreg.REG_BINARY} of REG_BINARY!')
         except FileNotFoundError:
-            raise ValueError('Graphics Settings are not found!\n\nPlease start the game once with official launcher!')
+            raise ValueError(
+                'Graphics Settings record is not found in GI registry!\n\n'
+                'Please start the game via official launcher to create the record and try again.')
 
         # Read bytes till the first null byte as settings ascii string
         null_byte_pos = settings_bytes.find(b'\x00')
@@ -313,10 +319,18 @@ class GIMIPackage(ModelImporterPackage):
             except FileNotFoundError:
                 continue
         if settings_key is None:
-            raise ValueError(f'Failed to locate Genshin Impact registry key!')
+            raise ValueError(
+                f'Genshin Impact registry key is not found!\n\n'
+                f'Please start the game via original launcher to create the key and try again.'
+            )
 
         # Write required key to registry, we need to do it each time, as it's getting removed after the game start
-        winreg.SetValueEx(settings_key, 'WINDOWS_HDR_ON_h3132281285', None, winreg.REG_DWORD, 1)
+        try:
+            winreg.SetValueEx(settings_key, 'WINDOWS_HDR_ON_h3132281285', None, winreg.REG_DWORD, 1)
+        except FileNotFoundError:
+            raise ValueError(
+                'HDR record is not found in GI registry!\n\n'
+                'Please start the game via official launcher to create the record and try again.')
 
     def configure_fps_unlocker(self):
         Events.Fire(Events.Application.StatusUpdate(status='Configuring FPS Unlocker...'))
