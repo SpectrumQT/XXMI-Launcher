@@ -1,4 +1,6 @@
 import subprocess
+import webbrowser
+
 from pathlib import Path
 from customtkinter import filedialog, ThemeManager
 from textwrap import dedent
@@ -26,8 +28,8 @@ class GeneralSettingsFrame(UIFrame):
         self.put(GameFolderFrame(self)).grid(row=0, column=1, padx=(0, 20), pady=(0, 30), sticky='new', columnspan=3)
 
         # Launch Options
-        self.put(LaunchOptionsLabel(self)).grid(row=1, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
-        self.put(LaunchOptionsEntry(self)).grid(row=1, column=1, padx=(0, 20), pady=(0, 30), sticky='ew', columnspan=3)
+        self.put(LaunchOptionsLabel(self)).grid(row=1, column=0, padx=(20, 0), pady=(0, 30), sticky='w')
+        self.put(LaunchOptionsFrame(self)).grid(row=1, column=1, padx=(0, 20), pady=(0, 30), sticky='ew', columnspan=3)
 
         # Process Priority
         self.put(ProcessPriorityLabel(self)).grid(row=2, column=0, padx=20, pady=(0, 30), sticky='w')
@@ -36,8 +38,7 @@ class GeneralSettingsFrame(UIFrame):
         # Auto Config
         if Vars.Launcher.active_importer.get() != 'SRMI':
             self.put(AutoConfigLabel(self)).grid(row=3, column=0, padx=(20), pady=(0, 30), sticky='w', columnspan=3)
-            self.put(ConfigureGame(self)).grid(row=3, column=1, padx=(0, 10), pady=(0, 30), sticky='w', columnspan=3)
-
+            self.put(ConfigureGameCheckbox(self)).grid(row=3, column=1, padx=(0, 10), pady=(0, 30), sticky='w', columnspan=3)
 
         if Vars.Launcher.active_importer.get() != 'ZZMI':
             
@@ -58,6 +59,36 @@ class GeneralSettingsFrame(UIFrame):
             if Vars.Launcher.active_importer.get() == 'WWMI':
                 tweaks_frame.put(ApplyTweaksCheckbox(tweaks_frame)).grid(row=0, column=1, padx=(20, 10), pady=(0, 0), sticky='w')
                 tweaks_frame.put(OpenEngineIniButton(tweaks_frame)).grid(row=0, column=2, padx=(10, 20), pady=(0, 0), sticky='e')
+
+
+class GameFolderFrame(UIFrame):
+    def __init__(self, master):
+        super().__init__(
+            border_color = ThemeManager.theme["CTkEntry"].get("border_color", None),
+            border_width = ThemeManager.theme["CTkEntry"].get("border_width", None),
+            fg_color = ThemeManager.theme["CTkEntry"].get("fg_color", None),
+            master=master)
+
+        self.grid_columnconfigure(0, weight=100)
+
+        game_folder_error = master.put(GameFolderErrorLabel(master))
+
+        self.put(GameFolderEntry(self, game_folder_error)).grid(row=0, column=0, padx=(4, 0), pady=(2, 0), sticky='new')
+        self.put(ChangeGameFolderButton(self)).grid(row=0, column=1, padx=(0, 4), pady=(2, 2), sticky='ne')
+
+
+class LaunchOptionsFrame(UIFrame):
+    def __init__(self, master):
+        super().__init__(
+            border_color = ThemeManager.theme["CTkEntry"].get("border_color", None),
+            border_width = ThemeManager.theme["CTkEntry"].get("border_width", None),
+            fg_color = ThemeManager.theme["CTkEntry"].get("fg_color", None),
+            master=master)
+
+        self.grid_columnconfigure(0, weight=100)
+
+        self.put(LaunchOptionsEntry(self)).grid(row=0, column=0, padx=(4, 0), pady=(2, 2), sticky='ew')
+        self.put(LaunchOptionsButton(self)).grid(row=0, column=1, padx=(0, 4), pady=(2, 2), sticky='e')
 
 
 class GameFolderLabel(UILabel):
@@ -124,21 +155,20 @@ class GameFolderErrorLabel(UILabel):
 
 class ChangeGameFolderButton(UIButton):
     def __init__(self, master):
+        fg_color = ThemeManager.theme["CTkEntry"].get("fg_color", None)
         super().__init__(
             text='Browse...',
             command=self.change_game_folder,
-            width=80,
+            auto_width=True,
+            padx=6,
             height=32,
             border_width=0,
             font=('Roboto', 14),
-            master=master)
-        fg_color = ThemeManager.theme["CTkEntry"].get("fg_color", None)
-        self.configure(
             fg_color=fg_color,
             hover_color=fg_color,
             text_color=["#000000", "#aaaaaa"],
             text_color_hovered=["#000000", "#ffffff"],
-        )
+            master=master)
 
     def change_game_folder(self):
         game_folder = filedialog.askdirectory(initialdir=Vars.Active.Importer.game_folder.get())
@@ -147,20 +177,43 @@ class ChangeGameFolderButton(UIButton):
         Vars.Active.Importer.game_folder.set(game_folder)
 
 
-class GameFolderFrame(UIFrame):
+class LaunchOptionsButton(UIButton):
     def __init__(self, master):
+        fg_color = ThemeManager.theme['CTkEntry'].get('fg_color', None)
+
         super().__init__(
-            border_color = ThemeManager.theme["CTkEntry"].get("border_color", None),
-            border_width = ThemeManager.theme["CTkEntry"].get("border_width", None),
-            fg_color = ThemeManager.theme["CTkEntry"].get("fg_color", None),
+            text='About...',
+            command=self.open_docs,
+            auto_width=True,
+            padx=6,
+            height=32,
+            border_width=0,
+            font=('Roboto', 14),
+            fg_color=fg_color,
+            hover_color=fg_color,
+            text_color=['#000000', '#aaaaaa'],
+            text_color_hovered=['#000000', '#ffffff'],
             master=master)
 
-        self.grid_columnconfigure(0, weight=100)
+        self.set_tooltip(self.get_tooltip)
 
-        game_folder_error = master.put(GameFolderErrorLabel(master))
+    def open_docs(self):
+        if Config.Launcher.active_importer == 'WWMI':
+            webbrowser.open('https://dev.epicgames.com/documentation/en-us/unreal-engine/command-line-arguments?application_version=4.27')
+        elif Config.Launcher.active_importer in ['GIMI', 'SRMI', 'ZZMI']:
+            webbrowser.open('https://docs.unity3d.com/Manual/PlayerCommandLineArguments.html')
 
-        self.put(GameFolderEntry(self, game_folder_error)).grid(row=0, column=0, padx=(4, 2), pady=(2, 0), sticky='new')
-        self.put(ChangeGameFolderButton(self)).grid(row=0, column=1, padx=(0, 4), pady=(2, 2), sticky='ne')
+    def get_tooltip(self):
+        if Config.Launcher.active_importer == 'WWMI':
+            engine = 'UE4'
+        elif Config.Launcher.active_importer in ['GIMI', 'SRMI', 'ZZMI']:
+            engine = 'Unity'
+        else:
+            raise ValueError(f'Game engine is unknown!')
+
+        return (
+            f'Open {engine} command line arguments documentation webpage.\n'
+            f'Note: Game engine is customized by devs and some args may not work.')
 
 
 class LaunchOptionsLabel(UILabel):
@@ -177,7 +230,8 @@ class LaunchOptionsEntry(UIEntry):
         super().__init__(
             textvariable=Vars.Active.Importer.launch_options,
             width=100,
-            height=36,
+            height=32,
+            border_width=0,
             font=('Arial', 14),
             master=master)
         self.set_tooltip(self.get_tooltip)
@@ -220,7 +274,7 @@ class AutoConfigLabel(UILabel):
             master=master)
 
 
-class ConfigureGame(UICheckbox):
+class ConfigureGameCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
             text='Configure Game Settings',
@@ -310,20 +364,21 @@ class UnlockFPSCheckbox(UICheckbox):
         msg = ''
         if Config.Launcher.active_importer == 'WWMI':
             msg = 'This option allows to set FPS limit to 120 even on not officially supported devices.\n'
-            msg += '* Enabled: Sets CustomFrameRate to 3 in LocalStorage.db on game start.\n'
-            msg += '* Disabled: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.'
+            msg += '**Enabled**: Sets CustomFrameRate to 3 in LocalStorage.db on game start.\n'
+            msg += '**Disabled**: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.'
         if Config.Launcher.active_importer == 'SRMI':
             msg = 'This option allows to set FPS limit to 120.\n'
-            msg += '* Enabled: Updates Graphics Settings Windows Registry key with 120 FPS value on game start.\n'
-            msg += '* Disabled: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.\n'
-            msg += 'Note: Edits "FPS" value in "HKEY_CURRENT_USER/SOFTWARE/Cognosphere/Star Rail/GraphicsSettings_Model_h2986158309".'
+            msg += '**Enabled**: Updates Graphics Settings Windows Registry key with 120 FPS value on game start.\n'
+            msg += '**Disabled**: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.\n'
+            msg += '**Warning!** Tweak is supported only for the Global HSR client and will not work for CN.\n'
+            msg += '*Note: Edits `FPS` value in `HKEY_CURRENT_USER/SOFTWARE/Cognosphere/Star Rail/GraphicsSettings_Model_h2986158309`.*'
         if Config.Launcher.active_importer == 'GIMI':
             msg = 'This option allows to force 120 FPS mode.\n'
-            msg += '* Enabled: Launch game via "unlockfps_nc.exe" and let it run in background to continuously apply FPS limit tweak.\n'
-            msg += '* Disabled: Launch game via original "GenshinImpact.exe" or "YuanShen.exe" (CN), has no effect on FPS.\n'
-            msg += 'Hint: If FPS Unlocker package is outdated, you can manually update "unlockfps_nc.exe" from original repository.\n'
-            msg += '* Local Path: Resources/Packages/GI-FPS-Unlocker/unlockfps_nc.exe\n'
-            msg += '* Original Repository: https://github.com/34736384/genshin-fps-unlock'
+            msg += '**Enabled**: Launch game via `unlockfps_nc.exe` and let it run in background to keep FPS tweak applied.\n'
+            msg += '**Disabled**: Launch game via original `.exe` file, has no effect on FPS.\n'
+            msg += '*Hint: If FPS Unlocker package is outdated, you can manually update "unlockfps_nc.exe" from original repository.*\n'
+            msg += '*Local Path*: `Resources/Packages/GI-FPS-Unlocker/unlockfps_nc.exe`\n'
+            msg += '*Original Repository*: `https://github.com/34736384/genshin-fps-unlock`'
         return msg.strip()
 
 
