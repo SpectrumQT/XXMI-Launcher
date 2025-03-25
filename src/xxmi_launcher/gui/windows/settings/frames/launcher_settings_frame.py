@@ -2,6 +2,7 @@ import webbrowser
 
 from pathlib import Path
 from textwrap import dedent
+from customtkinter import ThemeManager
 
 import core.event_manager as Events
 import core.config_manager as Config
@@ -30,7 +31,7 @@ class LauncherSettingsFrame(UIScrollableFrame):
 
         # Connection
         self.put(ConnectionLabel(self)).grid(row=3, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
-        self.put(ConnectionFrame(self)).grid(row=3, column=1, padx=10, pady=(0, 30), sticky='w', columnspan=3)
+        self.put(ConnectionFrame(self)).grid(row=3, column=1, padx=10, pady=(0, 30), sticky='ew', columnspan=3)
 
         # Proxy
         self.put(ProxyEnableCheckbox(self)).grid(row=4, column=0, padx=(20, 10), pady=(0, 20), sticky='w')
@@ -55,12 +56,24 @@ class ConnectionFrame(UIFrame):
         self.configure(fg_color='transparent')
 
         self.put(GitHubTokenLabel(self)).grid(row=0, column=0, padx=(0, 10), pady=0, sticky='w')
-        self.put(GitHubTokenEntry(self)).grid(row=0, column=1, padx=(0, 10), pady=0, sticky='w')
-
-        self.put(GitHubTokenButton(self)).grid(row=0, column=2, padx=(0, 10), pady=0, sticky='w')
-        self.put(VerifySSLCheckbox(self)).grid(row=0, column=3, padx=20, pady=0, sticky='w')
+        self.put(GitHubTokenFrame(self)).grid(row=0, column=1, padx=(0, 10), pady=0, sticky='ew')
+        self.put(VerifySSLCheckbox(self)).grid(row=0, column=2, padx=(20, 20), pady=0, sticky='w')
 
         self.grab(GitHubTokenLabel).set_tooltip(self.grab(GitHubTokenEntry))
+
+
+class GitHubTokenFrame(UIFrame):
+    def __init__(self, master):
+        super().__init__(
+            border_color = ThemeManager.theme["CTkEntry"].get("border_color", None),
+            border_width = ThemeManager.theme["CTkEntry"].get("border_width", None),
+            fg_color = ThemeManager.theme["CTkEntry"].get("fg_color", None),
+            master=master)
+
+        self.grid_columnconfigure(0, weight=100)
+
+        self.put(GitHubTokenEntry(self)).grid(row=0, column=0, padx=(4, 0), pady=(2, 0), sticky='new')
+        self.put(GitHubTokenButton(self)).grid(row=0, column=1, padx=(0, 4), pady=(2, 2), sticky='ne')
 
 
 class ProxySettingsFrame(UIFrame):
@@ -108,7 +121,6 @@ class ProxyCredentialsFrame(UIFrame):
         self.put(ProxyUserLabel(self)).grid(row=0, column=0, padx=(0, 0), pady=(0, 30), sticky='w')
         self.put(ProxyUserEntry(self)).grid(row=0, column=1, padx=10, pady=(0, 30), sticky='w')
         self.grab(ProxyUserLabel).set_tooltip(self.grab(ProxyUserEntry))
-
 
         self.put(ProxyPasswordLabel(self)).grid(row=0, column=2, padx=(10, 0), pady=(0, 30), sticky='w')
         self.put(ProxyPasswordEntry(self)).grid(row=0, column=3, padx=10, pady=(0, 30), sticky='w')
@@ -277,8 +289,9 @@ class GitHubTokenEntry(UIEntry):
     def __init__(self, master):
         super().__init__(
             textvariable=Vars.Launcher.github_token,
-            width=300,
-            height=36,
+            width=280,
+            height=32,
+            border_width=0,
             font=('Arial', 14),
             master=master)
         self.set_tooltip('Your **Personal Access Token** on **GitHub** (i.e. `ghp_f7gy3A4eQ97jfy2983mfZu2Hy93yf2P3d798`).\n'
@@ -288,14 +301,23 @@ class GitHubTokenEntry(UIEntry):
                          '1. Click `[?]` button to open token creation webpage.\n'
                          '2. Use `Generate new token (classic)` button.')
 
+
 class GitHubTokenButton(UIButton):
     def __init__(self, master):
+        fg_color = ThemeManager.theme['CTkEntry'].get('fg_color', None)
         super().__init__(
-            text='?',
+            text='Create...',
             command=lambda: webbrowser.open('https://github.com/settings/tokens'),
+            auto_width=True,
+            padx=6,
             width=36,
-            height=36,
+            height=32,
+            border_width=0,
             font=('Roboto', 14),
+            fg_color=fg_color,
+            hover_color=fg_color,
+            text_color=['#000000', '#aaaaaa'],
+            text_color_hovered=['#000000', '#ffffff'],
             master=master)
 
         self.set_tooltip('Open **GitHub Personal Access Token** creation webpage.')
