@@ -1,7 +1,6 @@
 import time
 import psutil
 import subprocess
-import ctypes
 
 from typing import Tuple
 from enum import Enum
@@ -20,7 +19,7 @@ class ProcessPriority(Enum):
     HIGH_PRIORITY_CLASS = 'High'
     REALTIME_PRIORITY_CLASS = 'Realtime'
 
-    def get_process_flags(self):
+    def get_process_flag(self):
         return getattr(subprocess, self.name)
 
 
