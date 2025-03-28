@@ -1,7 +1,6 @@
 import re
 import os
 import json
-import shutil
 import sqlite3
 import logging
 import ctypes
@@ -79,6 +78,8 @@ class WWMIConfig(ModelImporterConfig):
     })
     apply_perf_tweaks: bool = False
     unlock_fps: bool = False
+    disable_wounded_fx: bool = False
+    disable_wounded_fx_warned: bool = False
     perf_tweaks: Dict[str, Dict[str, Union[str, int, float]]] = field(default_factory=lambda: {
         'SystemSettings': {
             'r.Streaming.HLODStrategy': 2,
@@ -172,7 +173,7 @@ class WWMIPackage(ModelImporterPackage):
 
     def initialize_game_launch(self, game_path: Path):
         # self.verify_plugins(game_path)
-        self.restore_streamline(game_path)
+        # self.restore_streamline(game_path)
         # self.remove_streamline(game_path)
         if Config.Active.Importer.custom_launch_inject_mode != 'Bypass':
             self.update_engine_ini(game_path)
@@ -187,30 +188,57 @@ class WWMIPackage(ModelImporterPackage):
 
         try:
             with SettingsManager(game_path) as settings_manager:
-                # Set internal custom quality flag to True
-                settings_manager.set_setting('IsCustomImageQuality', '"___1B___"')
-
-                if Config.Active.Importer.custom_launch_inject_mode != 'Bypass':
-                    if Config.Importers.WWMI.Importer.configure_game:
-                        # Set "Image Quality" to "Quality" - required to force high quality textures mods are made for
-                        settings_manager.set_setting('ImageQuality', '3')
-
                 if Config.Importers.WWMI.Importer.unlock_fps:
                     # Set "Frame Rate" to "120"
                     # States: 30 / 45 / 60 / 120
                     settings_manager.set_setting('CustomFrameRate', '3')
 
+                if Config.Active.Importer.custom_launch_inject_mode == 'Bypass':
+                    return
+
+                if not Config.Importers.WWMI.Importer.configure_game:
+                    return
+
+                # Set internal custom quality flag to True
+                settings_manager.set_setting('IsCustomImageQuality', '"___1B___"')
+
+                # Set "Image Quality" to "Quality" - required to force high quality textures mods are made for
+                settings_manager.set_setting('ImageQuality', '3')
+
+                if not Config.Importers.WWMI.Importer.disable_wounded_fx_warned:
+                    if settings_manager.get_setting('SkinDamageMode') == '1':
+                        user_dialogue = Events.Application.ShowWarning(
+                            modal=True,
+                            title='Wounded Effect Detected',
+                            confirm_text='Disable',
+                            cancel_text='Keep Enabled',
+                            message=f'Looks like Wounded Effect is enabled in game settings.\n'
+                                    f'It is not supported by most mods and textures will break after few hits taken.\n\n'
+                                    f'Click `Disable` to turn it Off and ensure proper rendering of modded textures.\n'
+                                    f'Click `Keep Enabled` if you never get hit or use Injured Effect Remover tool.',
+                        )
+                        Config.Importers.WWMI.Importer.disable_wounded_fx_warned = True
+                        user_requested_injured_fx_disable = Events.Call(user_dialogue)
+                        if user_requested_injured_fx_disable:
+                            Config.Importers.WWMI.Importer.disable_wounded_fx = True
+
+                if Config.Importers.WWMI.Importer.disable_wounded_fx:
+                    settings_manager.set_setting('SkinDamageMode', '0')
+                else:
+                    settings_manager.set_setting('SkinDamageMode', '1')
+
+
         except Exception as e:
+
+            if Config.Importers.WWMI.Importer.unlock_fps:
+                raise Exception(f'Failed to force 120 FPS!\n'
+                                f"Please disable `Force 120 FPS` in launcher's General Settings.\n\n"
+                                f'{e}') from e
 
             if Config.Importers.WWMI.Importer.configure_game:
                 raise Exception(f'Failed to configure in-game settings for WWMI!\n'
                                 f"Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:\n"
                                 f'* Graphics > `Graphics Quality` must be `Quality`.\n\n'
-                                f'{e}') from e
-
-            if Config.Importers.WWMI.Importer.unlock_fps:
-                raise Exception(f'Failed to force 120 FPS!\n'
-                                f"Please disable `Force 120 FPS` in launcher's General Settings.\n\n"
                                 f'{e}') from e
 
     def update_engine_ini(self, game_path: Path):
@@ -333,6 +361,9 @@ class SettingsManager:
 
     def __exit__(self, exception_type, exception_value, exception_traceback):
         self.db.save()
+
+    def get_setting(self, key: str) -> Union[str, None]:
+        return self.db.get_value(key)
 
     def set_setting(self, key: str, value: Union[int, float, str]):
         value = str(value)
