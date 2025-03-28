@@ -34,6 +34,7 @@ class UIToolTip:
             style: str = dedent("""
                 <style>
                     html { background-color: #eeeeee;}
+                    body { font-size: 14px;}
                     p { font-family: Asap; margin: 5px;}
                     ul { margin: 10px 5px;}
                     li { margin: 10px 5px;}
@@ -233,15 +234,17 @@ class UIToolTipEngine(tk.Toplevel):
         if self.message_widget is not None:
             self.message_widget.destroy()
             self.message_widget = None
-        self.message_widget = HtmlLabel(self, messages_enabled=False)
+        self.message_widget = HtmlLabel(
+            master=self,
+            messages_enabled=False,
+            caches_enabled=False,
+            fontscale=1.2 * self.tooltip.scaling)
         self.message_widget.html.config(
             # Set max width for word wrapping
             width=int(self.tooltip.width * self.tooltip.scaling),
             # Setting height doesn't seem to have any effect
             # height=int(self.tooltip.height * self.tooltip.scaling),
         )
-        self.message_widget.enable_caches(False)
-        self.message_widget.set_fontscale(1.2 * self.tooltip.scaling)
         self.message_widget.load_html(self.message_text)
         self.message_widget.pack()
 
