@@ -761,9 +761,9 @@ class UIButton(UIWidget, CTkButton):
             if 'font' in kwargs or 'text' in kwargs:
                 require_auto_width = True
 
-        font = kwargs.get('font', None)
-        if font is not None:
-            kwargs['font'] = tuple(font)
+        text_font = kwargs.get('font', None)
+        if text_font is not None:
+            kwargs['font'] = tuple(text_font)
 
         super().configure(require_redraw, **kwargs)
 
@@ -771,7 +771,12 @@ class UIButton(UIWidget, CTkButton):
             self._set_auto_width()
 
     def _set_auto_width(self):
-        self.configure(width=self._text_label.winfo_reqwidth()+self._padx*2)
+        scaling = self._apply_widget_scaling(1)
+        offset = self._padx * 2
+        text_width = int(self._text_label.winfo_reqwidth()/scaling)
+        if scaling != 1:
+            offset += self._apply_widget_scaling(2)
+        self.configure(width=text_width+offset)
 
     def _draw(self, no_color_updates=False):
         CTkBaseClass._draw(self, no_color_updates)

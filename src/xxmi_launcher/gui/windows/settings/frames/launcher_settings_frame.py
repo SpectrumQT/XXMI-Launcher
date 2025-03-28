@@ -15,7 +15,7 @@ from gui.classes.widgets import UILabel, UIButton, UIEntry, UICheckbox,  UIOptio
 
 class LauncherSettingsFrame(UIScrollableFrame):
     def __init__(self, master):
-        super().__init__(master, height=360)
+        super().__init__(master, height=360, corner_radius=0, border_width=0)
 
         # Auto close
         self.put(LauncherLabel(self)).grid(row=0, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
@@ -310,7 +310,6 @@ class GitHubTokenButton(UIButton):
             command=lambda: webbrowser.open('https://github.com/settings/tokens'),
             auto_width=True,
             padx=6,
-            width=36,
             height=32,
             border_width=0,
             font=('Roboto', 14),
