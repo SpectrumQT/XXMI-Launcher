@@ -37,8 +37,8 @@ class GeneralSettingsFrame(UIFrame):
 
         # Auto Config
         if Vars.Launcher.active_importer.get() != 'SRMI':
-            self.put(AutoConfigLabel(self)).grid(row=3, column=0, padx=(20), pady=(0, 30), sticky='w', columnspan=3)
-            self.put(ConfigureGameCheckbox(self)).grid(row=3, column=1, padx=(0, 10), pady=(0, 30), sticky='w', columnspan=3)
+            self.put(AutoConfigLabel(self)).grid(row=3, column=0, padx=(20, 0), pady=(0, 30), sticky='w')
+            self.put(AutoConfigFrame(self)).grid(row=3, column=1, padx=(0, 20), pady=(0, 30), sticky='w', columnspan=3)
 
         if Vars.Launcher.active_importer.get() != 'ZZMI':
             
@@ -47,7 +47,6 @@ class GeneralSettingsFrame(UIFrame):
     
             tweaks_frame = UIFrame(self, fg_color=master._fg_color)
             tweaks_frame.grid(row=4, column=1, padx=(0, 0), pady=(0, 30), sticky='we', columnspan=3)
-            
             tweaks_frame.put(UnlockFPSCheckbox(tweaks_frame)).grid(row=0, column=0, padx=(0, 10), pady=(0, 0), sticky='w')
     
             # Window mode for GI FPS Unlocker
@@ -89,6 +88,20 @@ class LaunchOptionsFrame(UIFrame):
 
         self.put(LaunchOptionsEntry(self)).grid(row=0, column=0, padx=(4, 0), pady=(2, 2), sticky='ew')
         self.put(LaunchOptionsButton(self)).grid(row=0, column=1, padx=(0, 4), pady=(2, 2), sticky='e')
+
+
+class AutoConfigFrame(UIFrame):
+    def __init__(self, master):
+        super().__init__(
+            fg_color = 'transparent',
+            master=master)
+
+        self.grid_columnconfigure(0, weight=100)
+
+        self.put(ConfigureGameCheckbox(self)).grid(row=0, column=0, padx=(0, 10), pady=(0, 0), sticky='w')
+        
+        if Vars.Launcher.active_importer.get() == 'WWMI':
+            self.put(DisableWoundedEffectCheckbox(self)).grid(row=0, column=1, padx=(10, 20), pady=(0, 0), sticky='w')
 
 
 class GameFolderLabel(UILabel):
@@ -364,7 +377,8 @@ class UnlockFPSCheckbox(UICheckbox):
         msg = ''
         if Config.Launcher.active_importer == 'WWMI':
             msg = 'This option allows to set FPS limit to 120 even on not officially supported devices.\n'
-            msg += '**Enabled**: Sets CustomFrameRate to 3 in LocalStorage.db on game start.\n'
+            msg += 'Please do note that with some hardware game refuses to go 120 FPS even with this tweak.\n'
+            msg += '**Enabled**: Sets `CustomFrameRate` to `120` in `LocalStorage.db` on game start.\n'
             msg += '**Disabled**: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.'
         if Config.Launcher.active_importer == 'SRMI':
             msg = 'This option allows to set FPS limit to 120.\n'
@@ -372,7 +386,7 @@ class UnlockFPSCheckbox(UICheckbox):
             msg += '**Disabled**: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.\n'
             msg += '**Warning!** Tweak is supported only for the Global HSR client and will not work for CN.\n'
             msg += '*Note: Edits `FPS` value in `HKEY_CURRENT_USER/SOFTWARE/Cognosphere/Star Rail/GraphicsSettings_Model_h2986158309`.*'
-        if Config.Launcher.active_importer == 'GIMI':
+        elif Config.Launcher.active_importer == 'GIMI':
             msg = 'This option allows to force 120 FPS mode.\n'
             msg += '**Enabled**: Launch game via `unlockfps_nc.exe` and let it run in background to keep FPS tweak applied.\n'
             msg += '**Disabled**: Launch game via original `.exe` file, has no effect on FPS.\n'
@@ -409,9 +423,9 @@ class ApplyTweaksCheckbox(UICheckbox):
             variable=Vars.Active.Importer.apply_perf_tweaks,
             master=master)
         self.set_tooltip(
-            'Enabled: Set of performance-tweaking settings will be added to [SystemSettings] section of Engine.ini on game start.\n'
-            "Disabled: Settings will no longer be set on game start, but existing ones won't be removed from Engine.ini.\n\n"
-            'List of tweeaks:\n'
+            '**Enabled**: Add list of performance tweaks to `[SystemSettings]` section of `Engine.ini` on game start.\n'
+            "**Disabled**: Do not add tweaks to `Engine.ini`. Already added ones will have to be removed manually.\n\n"
+            'List of tweaks:\n'
             '* r.Streaming.HLODStrategy = 2\n'
             '* r.Streaming.LimitPoolSizeToVRAM = 1\n'
             '* r.Streaming.PoolSizeForMeshes = -1\n'
@@ -432,6 +446,27 @@ class EnableHDR(UICheckbox):
             variable=Vars.Active.Importer.enable_hdr,
             master=master)
         self.set_tooltip(
-            'Warning! Your monitor must support HDR and `Use HDR` must be enabled in Windows Display settings!\n'
-            'Enabled: Turn HDR On. Launcher will create HDR registry record each time before the game launch.\n'
-            'Disabled: Turn HDR Off. No extra action required, game auto-removes HDR registry record on launch.')
+            '**Warning**! Your monitor must support HDR and `Use HDR` must be enabled in Windows Display settings!\n'
+            '**Enabled**: Turn HDR On. Creates HDR registry record each time before the game launch.\n'
+            '**Disabled**: Turn HDR Off. No extra action required, game auto-removes HDR registry record on launch.')
+
+
+class DisableWoundedEffectCheckbox(UICheckbox):
+    def __init__(self, master):
+        super().__init__(
+            text='Disable Wounded Effect',
+            variable=Vars.Active.Importer.disable_wounded_fx,
+            master=master)
+        self.set_tooltip(
+            'Most mods do not support this effect, so textures usually break after few hits taken.\n'
+            '**Enabled**: Turn the effect `Off`. Ensures proper rendering of modded textures.\n'
+            "**Disabled**: Turn the effect `On`. Select this if you use `Injured Effect Remover` tool."
+        )
+
+        self.trace_write(Vars.Active.Importer.configure_game, self.handle_write_configure_game)
+
+    def handle_write_configure_game(self, var, val):
+        if val:
+            self.configure(state='normal')
+        else:
+            self.configure(state='disabled')
