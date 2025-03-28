@@ -1,8 +1,10 @@
 import sys
 import logging
 import multiprocessing
+import time
 
 from pathlib import Path
+
 
 if __name__ == '__main__':
     # Multiprocessing support for Pyinstaller
@@ -23,10 +25,12 @@ if __name__ == '__main__':
     # bytestring = binascii.unhexlify(''.join(arr))
     # test = bytestring.decode("ascii")
 
+    instance_id = int(time.time() * 1000) % 1000000
+
     logging.basicConfig(filename=root_path / 'XXMI Launcher Log.txt',
                         encoding='utf-8',
                         filemode='a',
-                        format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
+                        format=f'%(asctime)s {instance_id:06} %(name)s %(levelname)s %(message)s',
                         level=logging.DEBUG)
 
     logging.debug(f'App Start')
