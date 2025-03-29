@@ -74,6 +74,13 @@ class WWMIConfig(ModelImporterConfig):
             'r.Kuro.SkeletalMesh.LODDistanceScale': 24,
             'r.Streaming.FullyLoadUsedTextures': 1,
             'r.Streaming.UsingNewKuroStreaming': 1,
+        },
+        '/Script/Engine.RendererRTXSettings': {
+            'r.RayTracing': 0,
+            'r.RayTracing.LimitDevice': 1,
+            'r.RayTracing.EnableInGame': 0,
+            'r.RayTracing.EnableOnDemand': 0,
+            'r.RayTracing.EnableInEditor': 0,
         }
     })
     apply_perf_tweaks: bool = False
@@ -177,6 +184,7 @@ class WWMIPackage(ModelImporterPackage):
         # self.remove_streamline(game_path)
         if Config.Active.Importer.custom_launch_inject_mode != 'Bypass':
             self.update_engine_ini(game_path)
+            self.update_game_user_settings_ini(game_path)
             self.update_wwmi_ini()
         self.configure_settings(game_path)
 
@@ -189,9 +197,11 @@ class WWMIPackage(ModelImporterPackage):
         try:
             with SettingsManager(game_path) as settings_manager:
                 if Config.Importers.WWMI.Importer.unlock_fps:
-                    # Set "Frame Rate" to "120"
-                    # States: 30 / 45 / 60 / 120
-                    settings_manager.set_setting('CustomFrameRate', '3')
+                    # Set frame rate to 120
+                    settings_manager.set_fps_setting(120)
+                else:
+                    # Remove any existing triggers locking the frame rate setting
+                    settings_manager.reset_fps_setting()
 
                 if Config.Active.Importer.custom_launch_inject_mode == 'Bypass':
                     return
@@ -205,6 +215,12 @@ class WWMIPackage(ModelImporterPackage):
                 # Set "Image Quality" to "Quality" - required to force high quality textures mods are made for
                 settings_manager.set_setting('ImageQuality', '3')
 
+                # Force Ray Tracing Off as it doesn't work with DX11 aka WWMI
+                settings_manager.set_setting('RayTracing', '0')
+                settings_manager.set_setting('RayTracedReflection', '0')
+                settings_manager.set_setting('RayTracedGI', '0')
+
+                # Take care of Wounded Effect that 'breaks' modded textures if not handled properly
                 if not Config.Importers.WWMI.Importer.disable_wounded_fx_warned:
                     if settings_manager.get_setting('SkinDamageMode') == '1':
                         user_dialogue = Events.Application.ShowWarning(
@@ -266,6 +282,29 @@ class WWMIPackage(ModelImporterPackage):
 
         if ini.is_modified():
             with open(engine_ini_path, 'w', encoding='utf-8') as f:
+                f.write(ini.to_string())
+
+    def update_game_user_settings_ini(self, game_path: Path):
+        if not Config.Importers.WWMI.Importer.unlock_fps:
+            return
+
+        Events.Fire(Events.Application.StatusUpdate(status='Updating GameUserSettings.ini...'))
+
+        ini_path = game_path / 'Client' / 'Saved' / 'Config' / 'WindowsNoEditor' / 'GameUserSettings.ini'
+
+        if not ini_path.exists():
+            Paths.verify_path(ini_path.parent)
+            with open(ini_path, 'w', encoding='utf-8') as f:
+                f.write('')
+
+        Events.Fire(Events.Application.VerifyFileAccess(path=ini_path, write=True))
+        with open(ini_path, 'r', encoding='utf-8') as f:
+            ini = IniHandler(IniHandlerSettings(option_value_spacing=False, inline_comments=True, add_section_spacing=True), f)
+
+        ini.set_option('/Script/Engine.GameUserSettings', 'FrameRateLimit', 120.000000)
+
+        if ini.is_modified():
+            with open(ini_path, 'w', encoding='utf-8') as f:
                 f.write(ini.to_string())
 
     def verify_plugins(self, game_path: Path):
@@ -365,9 +404,48 @@ class SettingsManager:
     def get_setting(self, key: str) -> Union[str, None]:
         return self.db.get_value(key)
 
-    def set_setting(self, key: str, value: Union[int, float, str]):
+    def set_setting(self, key: str, value: Union[int, float, str], lock: bool = False):
         value = str(value)
         self.db.set_value(key, value)
+        if lock:
+            self.db.set_value_lock_trigger(f'{key}Lock', key, value)
+
+    def set_fps_setting(self, value: int):
+        triggers = self.db.get_all_triggers()
+
+        lock_exist = False
+        for trigger in triggers:
+            # Our trigger already exists, we'll verify its behaviour later
+            if trigger.name == 'CustomFrameRateLock':
+                lock_exist = True
+                continue
+            # Delete 3-rd party triggers for CustomFrameRate
+            if 'CustomFrameRate' in trigger.body:
+                self.db.delete_trigger(trigger.name)
+
+        # Ensure that our trigger is keeping correct fps value
+        if lock_exist:
+            fps = self.db.get_value('CustomFrameRate')
+            if fps != str(value):
+                # FPS value doesn't match our expectations, lets remove potentially corrupted or old trigger
+                self.db.delete_trigger('CustomFrameRateLock')
+            else:
+                return
+
+        # Remove unneeded old entries from the table that are making game to ignore our fps setting
+        self.db.delete_value('MenuData')
+        self.db.delete_value('PlayMenuInfo')
+        self.db.delete_value('IsConvertOldMenuData')
+
+        # Set fps setting and lock it from further changes via trigger
+        self.set_setting('CustomFrameRate', str(value), True)
+
+    def reset_fps_setting(self):
+        triggers = self.db.get_all_triggers()
+        # Delete all triggers for CustomFrameRate
+        for trigger in triggers:
+            if 'CustomFrameRate' in trigger.body:
+                self.db.delete_trigger(trigger.name)
 
     def get_active_db_path(self):
         active_db_path = None
@@ -406,6 +484,13 @@ class SettingsManager:
             journal_path.unlink()
         # Remove DB file
         db_path.unlink()
+
+
+@dataclass
+class SQLiteTrigger:
+    name: str
+    table: str
+    body: str
 
 
 class LocalStorage:
@@ -468,10 +553,55 @@ class LocalStorage:
             return
         if old_value is None:
             self.cursor.execute(f"INSERT INTO LocalStorage VALUES ('{key}', '{value}')")
-            log.debug(f'[{self.path.name}]: Added {key} value: {value}...')
+            log.debug(f'[{self.path.name}]: Added {key} value: {value}')
         else:
             self.cursor.execute(f"UPDATE LocalStorage SET value = '{value}' WHERE key='{key}'")
-            log.debug(f'[{self.path.name}]: Updated {key} value: {old_value} -> {value}...')
+            log.debug(f'[{self.path.name}]: Updated {key} value: {old_value} -> {value}')
+        self.modified = True
+
+    def delete_value(self, key):
+        if self.get_value(key) is None:
+            return
+        self.cursor.execute(f"DELETE FROM LocalStorage WHERE key='{key}'")
+        log.debug(f'[{self.path.name}]: Removed {key} value')
+        self.modified = True
+
+    def get_trigger(self, name) -> Union[SQLiteTrigger, None]:
+        result = self.cursor.execute(f"SELECT * FROM sqlite_master WHERE type='trigger' AND name='{name}'")
+        data = result.fetchone()
+        if data is None:
+            return None
+        else:
+            return SQLiteTrigger(name=data[1], table=data[2], body=data[4])
+
+    def get_all_triggers(self) -> Union[List[SQLiteTrigger], None]:
+        result = self.cursor.execute(f"SELECT * FROM sqlite_master WHERE type='trigger'")
+        data = result.fetchmany()
+        if data is None:
+            return None
+        else:
+            return [SQLiteTrigger(name=t[1], table=t[2], body=t[4]) for t in data]
+
+    def set_value_lock_trigger(self, name, key, value):
+        self.delete_trigger(name)
+        self.cursor.execute(f'''
+            CREATE TRIGGER {name}
+            AFTER UPDATE OF value ON LocalStorage
+            WHEN NEW.key = '{key}'
+            BEGIN
+                UPDATE LocalStorage
+                SET value = {value}
+                WHERE key = '{key}';
+            END;
+        ''')
+        log.debug(f'[{self.path.name}]: Added lock trigger {name} for {key} value: {value}')
+        self.modified = True
+
+    def delete_trigger(self, name):
+        if self.get_trigger(name) is None:
+            return
+        self.cursor.execute(f'DROP TRIGGER IF EXISTS {name}')
+        log.debug(f'[{self.path.name}]: Removed trigger {name}')
         self.modified = True
 
 
