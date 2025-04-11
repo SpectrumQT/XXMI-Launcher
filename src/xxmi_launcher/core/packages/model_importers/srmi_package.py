@@ -106,7 +106,7 @@ class SRMIPackage(ModelImporterPackage):
             return ''
 
     def autodetect_game_folders(self) -> List[Path]:
-        paths = []
+        paths = self.reg_search_game_folders(['StarRail.exe'])
 
         common_pattern = re.compile(r'([a-zA-Z]:[^:\"\']*Rail[^:\"\']*)')
         known_children = ['StarRail_Data']

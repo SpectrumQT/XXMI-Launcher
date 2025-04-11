@@ -2,6 +2,8 @@ import logging
 import os
 import sys
 import shutil
+import winreg
+
 import winshell
 import pythoncom
 import re
@@ -214,7 +216,7 @@ class ModelImporterPackage(Package):
 
     def validate_game_folders(self, game_folders: List[Path]):
         cache, known_paths = [], []
-        for game_folder in game_folders:
+        for game_folder in set(game_folders):
             try:
                 game_path = self.validate_game_path(game_folder)
                 exe_path = self.validate_game_exe_path(game_path)
@@ -230,7 +232,7 @@ class ModelImporterPackage(Package):
 
     def notify_game_folder_detection_failure(self):
         user_requested_settings = Events.Call(Events.Application.ShowError(
-            message=f'Automatic detection of the game installation folder failed!\n\n'
+            message=f'Automatic detection of the game installation failed!\n\n'
                     f'Please configure it manually with Game Folder option of General Settings.',
             confirm_text='Open Settings',
             cancel_text='Cancel',
@@ -244,9 +246,9 @@ class ModelImporterPackage(Package):
         if len(game_folders_index) == 1:
             game_folder_id = 0
             user_confirmed_game_folder = Events.Call(Events.Application.ShowInfo(
-                message=f'Launcher detected the game installation location:\n\n'
+                message=f'Detected game installation:\n\n'
                         f'{game_folders_index[0]}\n\n'
-                        f'It can be changed with Game Folder option of General Settings.',
+                        f'Please check if it is desired Game Folder or change it in General Settings.',
                 confirm_text='Confirm',
                 cancel_text='Open Settings',
                 modal=True,
@@ -255,8 +257,8 @@ class ModelImporterPackage(Package):
                 user_confirmed_game_folder = True
         else:
             (user_confirmed_game_folder, game_folder_id) = Events.Call(Events.Application.ShowWarning(
-                message=f'Multiple game installations detected!\n\n'
-                        f'Select a Game Folder from the list below or set it in General Settings:\n',
+                message=f'Detected game installations:\n\n'
+                        f'Select desired Game Folder from the list below or set it in General Settings:\n',
                 confirm_text='Confirm',
                 cancel_text='Open Settings',
                 radio_options=game_folders_index,
@@ -465,6 +467,37 @@ class ModelImporterPackage(Package):
 
         Events.Fire(Events.MigotoManager.StartAndInject(game_exe_path=game_exe_path, start_exe_path=start_exe_path,
                                                         start_args=start_args, work_dir=work_dir, use_hook=self.use_hook))
+
+    def reg_search_game_folders(self, game_exe_files: List[str]):
+        paths = []
+
+        reg_key_paths = [
+            (winreg.HKEY_CLASSES_ROOT, 'Local Settings\\Software\\Microsoft\\Windows\\Shell\\MuiCache'),
+            (winreg.HKEY_CURRENT_USER, 'SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FeatureUsage\\AppSwitched'),
+            (winreg.HKEY_CURRENT_USER, 'SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FeatureUsage\\ShowJumpView'),
+        ]
+
+        for (key_type, sub_key) in reg_key_paths:
+            try:
+                with winreg.OpenKey(key_type, sub_key, 0, winreg.KEY_READ) as reg_key:
+                    i = 0
+                    while True:
+                        try:
+                            value_name, value_data, value_type = winreg.EnumValue(reg_key, i)
+                            for game_exe in game_exe_files:
+                                if game_exe in value_name:
+                                    parts = value_name.split(game_exe)
+                                    path = Path(parts[0])
+                                    if path not in paths:
+                                        paths.append(path)
+                                    break
+                            i += 1
+                        except OSError:
+                            break
+            except Exception:
+                continue
+
+        return paths
 
     def autodetect_game_folders(self) -> List[Path]:
         raise NotImplementedError

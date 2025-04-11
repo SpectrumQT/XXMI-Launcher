@@ -117,7 +117,7 @@ class GIMIPackage(ModelImporterPackage):
             return ''
 
     def autodetect_game_folders(self) -> List[Path]:
-        paths = []
+        paths = self.reg_search_game_folders(['GenshinImpact.exe', 'YuanShen.exe'])
 
         common_pattern = re.compile(r'([a-zA-Z]:[^:\"\']*Genshin[^:\"\']*)')
         known_children = ['GenshinImpact_Data']
@@ -346,10 +346,13 @@ class GIMIPackage(ModelImporterPackage):
         fps_config_template_path = Paths.App.Resources / 'Packages' / 'GI-FPS-Unlocker' / 'fps_config_template.json'
         fps_config_path = fps_config_template_path.parent / 'fps_config.json'
 
-        if not fps_config_path.is_file():
+        try:
+            with open(fps_config_path, 'r', encoding='utf-8') as f:
+                fps_config = json.load(f)
+        except Exception:
             shutil.copy2(fps_config_template_path, fps_config_path)
-        with open(fps_config_path, 'r', encoding='utf-8') as f:
-            fps_config = json.load(f)
+            with open(fps_config_path, 'r', encoding='utf-8') as f:
+                fps_config = json.load(f)
 
         game_path = self.validate_game_path(Config.Active.Importer.game_folder)
         game_exe_path = self.validate_game_exe_path(game_path)

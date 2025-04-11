@@ -105,7 +105,7 @@ class ZZMIPackage(ModelImporterPackage):
             return ''
 
     def autodetect_game_folders(self) -> List[Path]:
-        paths = []
+        paths = self.reg_search_game_folders(['ZenlessZoneZero.exe'])
 
         common_pattern = re.compile(r'([a-zA-Z]:[^:\"\']*Zenless[^:\"\']*)')
         known_children = ['ZenlessZoneZero_Data']

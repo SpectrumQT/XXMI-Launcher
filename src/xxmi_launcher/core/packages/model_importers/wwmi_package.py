@@ -136,8 +136,19 @@ class WWMIPackage(ModelImporterPackage):
         except Exception as e:
             return ''
 
+    def normalize_game_path(self, path: Path) -> Path:
+        if path.name != 'Wuthering Waves Game':
+            # Go up three levels if specified folder is game exe folder
+            if path.name == 'Win64':
+                path = path.parent.parent.parent
+            elif 'Wuthering Waves Game' in [x.name for x in path.iterdir() if x.is_dir()]:
+                # Go down one level if specified folder is official launcher folder
+                path = path / 'Wuthering Waves Game'
+        return path
+
     def autodetect_game_folders(self) -> List[Path]:
-        game_paths = []
+        paths = self.reg_search_game_folders(['Client-Win64-Shipping.exe'])
+
         kuro_launcher_path = Path(os.getenv('APPDATA')) / 'KRLauncher'
         for root, dirs, files in kuro_launcher_path.walk():
             for file in files:
@@ -148,17 +159,16 @@ class WWMIPackage(ModelImporterPackage):
                     with open(file_path, 'r', encoding='utf-8') as f:
                         path = json.load(f).get('path', None)
                         if path is not None:
-                            game_paths.append(path)
+                            paths.append(path)
                 except:
                     continue
-        return game_paths
+
+        return [self.normalize_game_path(path) for path in paths]
 
     def validate_game_path(self, game_folder):
         Events.Fire(Events.Application.StatusUpdate(status='Validating game path...'))
         game_path = super().validate_game_path(game_folder)
-        # Go down one level if specified folder is official launcher folder
-        if 'Wuthering Waves Game' in [x.name for x in game_path.iterdir() if x.is_dir()]:
-            game_path = game_path / 'Wuthering Waves Game'
+        game_path = self.normalize_game_path(game_path)
         # Make sure that game folder contains critical resources
         exe_path = game_path / 'Wuthering Waves.exe'
         if not exe_path.is_file():
