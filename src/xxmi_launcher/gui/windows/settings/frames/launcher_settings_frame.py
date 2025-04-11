@@ -1,8 +1,10 @@
+import re
 import webbrowser
 
 from pathlib import Path
 from textwrap import dedent
 from customtkinter import ThemeManager
+from urllib.parse import urlparse
 
 import core.event_manager as Events
 import core.config_manager as Config
@@ -23,7 +25,7 @@ class LauncherSettingsFrame(UIScrollableFrame):
 
         # Update Policy
         self.put(UpdatePolicyLabel(self)).grid(row=1, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
-        self.put(AutoUpdateCheckbox(self)).grid(row=1, column=1, padx=10, pady=(0, 30), sticky='w')
+        self.put(UpdatePolicyFrame(self)).grid(row=1, column=1, padx=10, pady=(0, 30), sticky='w', columnspan=3)
 
         # Theme
         self.put(ThemeLabel(self)).grid(row=2, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
@@ -38,6 +40,18 @@ class LauncherSettingsFrame(UIScrollableFrame):
         self.put(ProxySettingsFrame(self)).grid(row=4, column=1, padx=10, pady=(0, 20), sticky='w', columnspan=3)
         self.put(ProxyAddressFrame(self)).grid(row=5, column=1, padx=10, pady=(0, 20), sticky='w', columnspan=3)
         self.put(ProxyCredentialsFrame(self)).grid(row=6, column=1, padx=10, pady=(0, 20), sticky='w', columnspan=3)
+
+
+class UpdatePolicyFrame(UIFrame):
+    def __init__(self, master):
+        super().__init__(master)
+        self.configure(fg_color='transparent')
+
+        self.put(AutoUpdateCheckbox(self)).grid(row=0, column=0, padx=(0, 10), pady=0, sticky='w')
+        self.put(UpdateChannelLabel(self)).grid(row=0, column=1, padx=(20, 10), pady=0, sticky='w')
+        self.put(UpdateChannelOptionMenu(self)).grid(row=0, column=2, padx=(0, 20), pady=0, sticky='w')
+
+        self.grab(UpdateChannelLabel).set_tooltip(self.grab(UpdateChannelOptionMenu))
 
 
 class ThemeFrame(UIFrame):
@@ -59,7 +73,7 @@ class ConnectionFrame(UIFrame):
         self.put(GitHubTokenFrame(self)).grid(row=0, column=1, padx=(0, 10), pady=0, sticky='ew')
         self.put(VerifySSLCheckbox(self)).grid(row=0, column=2, padx=(20, 20), pady=0, sticky='w')
 
-        self.grab(GitHubTokenLabel).set_tooltip(self.grab(GitHubTokenEntry))
+        self.grab(GitHubTokenLabel).set_tooltip(self.grab(GitHubTokenFrame).grab(GitHubTokenEntry))
 
 
 class GitHubTokenFrame(UIFrame):
@@ -185,6 +199,31 @@ class AutoUpdateCheckbox(UICheckbox):
         msg = f'Enabled: Launcher and {Config.Launcher.active_importer} updates will be Downloaded and Installed automatically.\n'
         msg += 'Disabled: Use special [▲] button next to [Start] button to Download and Install updates manually.'
         return msg.strip()
+
+
+class UpdateChannelLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text='Channel:',
+            font=('Microsoft YaHei', 14),
+            fg_color='transparent',
+            master=master)
+
+
+class UpdateChannelOptionMenu(UIOptionMenu):
+    def __init__(self, master):
+        super().__init__(
+            values=['Auto', 'MSI', 'ZIP'],
+            variable=Vars.Launcher.update_channel,
+            width=100,
+            height=36,
+            font=('Arial', 14),
+            dropdown_font=('Arial', 14),
+            master=master)
+        self.set_tooltip(
+            '**Auto**: Detect update installation method automatically.\n'
+            '**MSI**: Use native `.msi` installers to install updates.\n'
+            '**ZIP**: Use portable `.zip` archives to install updates.')
 
 
 class ThemeLabel(UILabel):
@@ -432,6 +471,30 @@ class ProxyHostEntry(UIEntry):
             master=master)
         self.set_tooltip('Proxy IP address (i.e. `123.12.1.231`) or domain name (i.e. `proxyprovider.com`).')
 
+        self.trace_write(Vars.Launcher.proxy.host, self.handle_write_host)
+
+    def handle_write_host(self, var, value):
+        value = value.strip()
+
+        if not value:
+            var.set('')
+            return
+
+        scheme = ''
+        if 'http' not in value:
+            if len(re.compile(r'(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})').findall(value)) == 1:
+                scheme = 'tcp://'
+            else:
+                scheme = 'https://'
+
+        result = urlparse(scheme+value)
+
+        if result.hostname is not None:
+            var.set(result.hostname)
+
+        if result.port is not None:
+            Vars.Launcher.proxy.port.set(result.port)
+
 
 class ProxyPortLabel(UILabel):
     def __init__(self, master):
@@ -451,6 +514,22 @@ class ProxyPortEntry(UIEntry):
             font=('Arial', 14),
             master=master)
         self.set_tooltip('Proxy port (i.e. `1080`).')
+
+        self.trace_write(Vars.Launcher.proxy.port, self.handle_write_port)
+
+    def handle_write_port(self, var, value):
+        value = value.strip()
+        if not value:
+            var.set('')
+            return
+        for part in reversed(value.split(':')):
+            if not part:
+                continue
+            result = re.compile(r'(\d+)').findall(part)
+            if len(result) > 0:
+                var.set(result[-1])
+                return
+        var.set('')
 
 
 class ProxyUseCredentialsCheckbox(UICheckbox):
