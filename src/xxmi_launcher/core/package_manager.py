@@ -514,7 +514,8 @@ class PackageManager:
                     return
 
             if self.api_connection_refused and not self.api_connection_refused_notified:
-                self.api_connection_refused_notified = True
+                if not silent:
+                    self.api_connection_refused_notified = True
                 raise ConnectionRefusedError(f'Unauthorized GitHub API requests limit reached for your IP!\n\n'
                                              f'GitHub servers will ignore further connection attempts for an hour.\n\n'
                                              f'Set (another) *Proxy* or *GitHub Token* in *Launcher Settings* for instant access.')
