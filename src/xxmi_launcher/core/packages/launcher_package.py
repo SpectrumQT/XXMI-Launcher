@@ -26,7 +26,7 @@ log = logging.getLogger(__name__)
 @dataclass
 class LauncherManagerConfig:
     auto_update: bool = True
-    update_channel: str = 'AUTO'
+    update_channel: str = 'Auto'
     auto_close: bool = True
     gui_theme: str = 'Default'
     theme_mode: str = 'System'
@@ -77,6 +77,9 @@ class LauncherPackage(Package):
 
     def get_last_installed_version(self):
         return self.get_installed_version()
+
+    def update_available(self):
+        return self.cfg.latest_version != '' and self.cfg.latest_version > self.get_installed_version()
 
     def install_latest_version(self, clean):
         Events.Fire(Events.PackageManager.InitializeInstallation())
