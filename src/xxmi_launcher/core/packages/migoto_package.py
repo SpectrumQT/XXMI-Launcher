@@ -39,7 +39,6 @@ class MigotoManagerEvents:
 @dataclass
 class MigotoManagerConfig:
     enforce_rendering: bool = True
-    deploy_nvapi: bool = False
     enable_hunting: bool = False
     dump_shaders: bool = False
     mute_warnings: bool = True
@@ -229,14 +228,13 @@ class MigotoPackage(Package):
             remove_pending = False
 
             if file_name == 'nvapi64.dll':
-                if not Config.Active.Migoto.deploy_nvapi:
-                    if deployment_path.is_file():
-                        # nvapi64.dll is found at deployment path, but its deployment is disabled, we must remove it
-                        log.debug(f'Removing {deployment_path}...')
-                        remove_pending = True
-                    else:
-                        # DLL should not be deployed and does not exist, lets exit early
-                        continue
+                if deployment_path.is_file():
+                    # nvapi64.dll is found at deployment path, it's no longer supported and should be removed
+                    log.debug(f'Removing deprecated {deployment_path}...')
+                    remove_pending = True
+                else:
+                    # DLL should not be deployed and does not exist, lets exit early
+                    continue
 
             if deploy_pending or remove_pending:
                 # Some DLL already got special treatment, no further checks required
@@ -293,8 +291,6 @@ class MigotoPackage(Package):
         self.validate_files([self.package_path / f for f in package_libs])
 
         importer_libs = ['d3d11.dll', 'd3dcompiler_47.dll']
-        if Config.Active.Migoto.deploy_nvapi:
-            importer_libs.append('nvapi64.dll')
         self.validate_files([Config.Active.Importer.importer_path / f for f in importer_libs])
 
     def validate_package_files(self):

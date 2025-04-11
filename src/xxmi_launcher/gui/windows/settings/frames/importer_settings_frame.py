@@ -34,10 +34,6 @@ class ModelImporterSettingsFrame(UIFrame):
         self.put(FailSafeLabel(self)).grid(row=3, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
         self.put(EnforceRenderingCheckbox(self)).grid(row=3, column=1, padx=10, pady=(0, 30), sticky='w', columnspan=2)
 
-        # Package
-        self.put(PackageLabel(self)).grid(row=4, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
-        self.put(DeployNvapiCheckbox(self)).grid(row=4, column=1, padx=10, pady=(0, 30), sticky='w', columnspan=2)
-
 
 class ShaderHuntingLabel(UILabel):
     def __init__(self, master):
@@ -212,25 +208,3 @@ class EnforceRenderingCheckbox(UICheckbox):
             f'* [d3dx.ini]: texture_hash = {0 if Config.Launcher.active_importer != "WWMI" else 1}\n'
             f'* [d3dx.ini]: track_texture_updates = {0 if Config.Launcher.active_importer != "WWMI" else 1}\n'
             'Disabled: Settings above will not be forced into d3dx.ini.')
-
-
-class PackageLabel(UILabel):
-    def __init__(self, master):
-        super().__init__(
-            text=f'{Config.Launcher.active_importer} Package:',
-            font=('Microsoft YaHei', 14, 'bold'),
-            fg_color='transparent',
-            master=master)
-
-
-class DeployNvapiCheckbox(UICheckbox):
-    def __init__(self, master):
-        super().__init__(
-            text='Deploy nvapi64.dll',
-            variable=Vars.Active.Migoto.deploy_nvapi,
-            master=master)
-        self.set_tooltip(
-            f"This library is required for some stereoscopic features of 3dmigoto.\n"
-            f"It's **not** needed for {Config.Launcher.active_importer} mods in 99.99% cases.\n"
-            f'**Enabled**: Ensure `nvapi64.dll` is deployed to {Config.Launcher.active_importer} Folder.\n'
-            f'**Disabled**: Do not deploy `nvapi64.dll` to {Config.Launcher.active_importer} Folder and remove one if found. ')
