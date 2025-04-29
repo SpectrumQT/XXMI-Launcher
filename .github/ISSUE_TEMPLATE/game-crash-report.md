@@ -41,8 +41,9 @@ Please follow the steps below carefully. After each step, **restart the game and
 6. **Keep only `main.ini` in `GIMI\Core`**  (`WuWa-Model-Importer.ini` for WWMI)  
    Delete everything else from `GIMI\Core\GIMI` to rule out built-in shaders incompatibility.
 
+> ⚠️ Warning! Don't forget to run **Repair GIMI** again to restore `GIMI\Core` after Step #6.  
+
 > 📝 Note: GIMI used as example. For SRMI / WWMI / ZZMI process is the same.
-> ⚠️ Warning! Don't forget to run **Repair GIMI** again to restore `GIMI\Core` after Step #6.
 
 ---
 
