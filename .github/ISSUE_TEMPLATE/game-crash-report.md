@@ -23,22 +23,22 @@ Please follow the steps below carefully. After each step, **restart the game and
 
 ## 🔍 Crash Isolation Checklist
 
-1. **Reboot your PC**
+1. **Reboot your PC**  
    Lets ensure there are no leftover traces running in the background.
 
-2. **Run game repair via official launcher**
-  This way we'll exclude possibility of game files corruption.
+2. **Run game repair via official launcher**  
+   This way we'll exclude possibility of game files corruption.
 
-3. **Run Model Importer repair via XXMI Launcher** (**3-dots button** next to **Start**)
-  Just to make sure that Model Importer files aren't corrupted or configured wrong.
+3. **Run Model Importer repair via XXMI Launcher** (**3-dots button** next to **Start**)  
+   Just to make sure that Model Importer files aren't corrupted or configured wrong.
 
-4. **Remove all files from `GIMI\ShaderFixes`**
+4. **Remove all files from `GIMI\ShaderFixes`**  
    Here we disable shader tweaks, which are known to easily cause crashes.
 
 5. **Remove all files from `GIMI\Mods`**  
    Ensures the crash isn’t caused by user mods.
 
-6. **Keep only `main.ini` in `GIMI\Core`**  (`WuWa-Model-Importer.ini` for WWMI)
+6. **Keep only `main.ini` in `GIMI\Core`**  (`WuWa-Model-Importer.ini` for WWMI)  
    Delete everything else from `GIMI\Core\GIMI` to rule out built-in shaders incompatibility.
 
 > 📝 Note: GIMI used as example. For SRMI / WWMI / ZZMI process is the same.
