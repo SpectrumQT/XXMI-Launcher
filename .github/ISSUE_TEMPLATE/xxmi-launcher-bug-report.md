@@ -1,5 +1,5 @@
 ---
-name: Bug report
+name: XXMI Launcher Bug Report
 about: Create a report to help us improve
 title: "[BUG]"
 labels: 3dmigoto, bug, launcher
@@ -30,9 +30,9 @@ Please include the **launcher log** — it is essential for understanding your e
 
 - Upload your `XXMI Launcher Log.txt` from the launcher installation folder to [Pastebin](https://pastebin.com), and paste the link here:
   
-  ```
-  Pastebin link:
-  ```
+```
+Pastebin link:
+```
 
 > ⚠️ Reports without logs may be closed without investigation.
 
