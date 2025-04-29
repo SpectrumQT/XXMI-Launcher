@@ -1,6 +1,6 @@
 ---
 name: XXMI Launcher Bug Report
-about: Create a report to help us improve
+about: Report issue that is related to XXMI itself
 title: "[BUG]"
 labels: 3dmigoto, bug, launcher
 assignees: ''

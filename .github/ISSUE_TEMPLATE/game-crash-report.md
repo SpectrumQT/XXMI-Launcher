@@ -1,6 +1,6 @@
 ---
 name: Game Crash Report
-about: Help us with game crash investigation.
+about: Help us with game crash investigation
 title: "[CRASH]"
 labels: crash
 assignees: ''
