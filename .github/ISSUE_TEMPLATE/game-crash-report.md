@@ -42,13 +42,14 @@ Please follow the steps below carefully. After each step, **restart the game and
    Delete everything else from `GIMI\Core\GIMI` to rule out built-in shaders incompatibility.
 
 > 📝 Note: GIMI used as example. For SRMI / WWMI / ZZMI process is the same.
+> ⚠️ Warning! Don't forget to run **Repair GIMI** again to restore `GIMI\Core` after Step #6.
 
 ---
 
 If removing files during one of these steps **stops the crash**, please identify the exact file that caused it.  
 To speed up the process, we recommend using the [Halves Method](https://leotorrez.github.io/modding/guides/troubleshooting#the-halves-method).
 
-Once you've found the cause, please run **Repair GIMI** again to restore `GIMI\Core` and proceed.
+Once you've found the cause (or still crashing) please proceed.
 
 ---
 
