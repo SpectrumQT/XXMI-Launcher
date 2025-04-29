@@ -7,7 +7,8 @@ assignees: ''
 
 ---
 
-⚠️**Crash reports that do not follow the guidelines below will be removed.**⚠️
+⚠️ **Crash reports that do not follow the guidelines below will be removed.** ⚠️
+
 ---
 
 ## 📌 Read Before Reporting a Crash
