@@ -2,7 +2,7 @@
 name: Game Crash Report
 about: Help us with game crash investigation
 title: "[CRASH]"
-labels: crash
+labels: 3dmigoto, bug, crash, launcher
 assignees: ''
 
 ---
@@ -23,27 +23,45 @@ Please follow the steps below carefully. After each step, **restart the game and
 
 ## 🔍 Crash Isolation Checklist
 
-1. **Remove all files from `GIMI\ShaderFixes`**  
-   This disables shader tweaks, which are a common crash source.
+1. **Reboot your PC**
+   Lets ensure there are no leftover traces running in the background.
 
-2. **Remove all files from `GIMI\Mods`**  
+2. **Run game repair via official launcher**
+  This way we'll exclude possibility of game files corruption.
+
+3. **Run Model Importer repair via XXMI Launcher** (**3-dots button** next to **Start**)
+  Just to make sure that Model Importer files aren't corrupted or configured wrong.
+
+4. **Remove all files from `GIMI\ShaderFixes`**
+   Here we disable shader tweaks, which are known to easily cause crashes.
+
+5. **Remove all files from `GIMI\Mods`**  
    Ensures the crash isn’t caused by user mods.
 
-3. **Keep only `main.ini` in `GIMI\Core`**  
-   Delete everything else from `GIMI\Core\GIMI` to rule out bundled shader conflicts from the Model Importer.
+6. **Keep only `main.ini` in `GIMI\Core`**  (`WuWa-Model-Importer.ini` for WWMI)
+   Delete everything else from `GIMI\Core\GIMI` to rule out built-in shaders incompatibility.
+
+> 📝 Note: GIMI used as example. For SRMI / WWMI / ZZMI process is the same.
 
 ---
 
 If removing files during one of these steps **stops the crash**, please identify the exact file that caused it.  
 To speed up the process, we recommend using the [Halves Method](https://leotorrez.github.io/modding/guides/troubleshooting#the-halves-method).
 
+Once you've found the cause, please run **Repair GIMI** again to restore `GIMI\Core` and proceed.
+
 ---
 
 ## 📤 Where to Submit Crash Reports
 
-Once you've found the cause, **report it to the correct Model Importer repository below**.
+> 💡 Most crashes are **game-specific** and not directly related to **XXMI Launcher** or the **XXMI DLL**. Such crash report **will not be accepted as XXMI Launcher issue**, please **report it to the correct Model Importer repository below**.
 
-> 💡 Most crashes are **game-specific** and not directly related to **XXMI Launcher** or the **XXMI DLL**. Such reports **will not be accepted here**.
+### **📄 Provide Logs**
+Please don't forget to include the **launcher log**  — it is essential for understanding your environment (OS, PC specs, versions, and launcher actions performed).
+
+- Upload your `XXMI Launcher Log.txt` from the launcher installation folder to [Pastebin](https://pastebin.com), and provide the link.
+
+> 🕒 Crash reports without logs take way more time to handle.
 
 - **GIMI (Genshin Impact)**  
   https://github.com/SilentNightSound/GIMI-Package/issues
