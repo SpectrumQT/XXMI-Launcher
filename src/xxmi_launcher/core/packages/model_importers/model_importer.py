@@ -51,6 +51,10 @@ class ModelImporterEvents:
     class CreateShortcut:
         pass
 
+    @dataclass
+    class DetectGameFolder:
+        pass
+
 
 @dataclass
 class ModelImporterConfig:
@@ -202,6 +206,7 @@ class ModelImporterPackage(Package):
         self.subscribe(Events.ModelImporter.StartGame, self.start_game)
         self.subscribe(Events.ModelImporter.ValidateGameFolder, lambda event: self.validate_game_folder(event))
         self.subscribe(Events.ModelImporter.CreateShortcut, lambda event: self.create_shortcut())
+        self.subscribe(Events.ModelImporter.DetectGameFolder, lambda event: self.get_game_paths(read_only=True))
         super().load()
         if self.get_installed_version() != '' and not Config.Active.Importer.shortcut_deployed:
             self.create_shortcut()
@@ -278,7 +283,7 @@ class ModelImporterPackage(Package):
         if user_requested_settings:
             Events.Fire(Events.Application.OpenSettings())
 
-    def get_game_paths(self):
+    def get_game_paths(self, read_only=False):
         try:
 
             game_path = self.validate_game_path(Config.Active.Importer.game_folder)
@@ -317,7 +322,8 @@ class ModelImporterPackage(Package):
 
                 # Set folder with selected game_folder_id as game folder
                 game_folder, mod_time, game_path, game_exe_path = game_folders[game_folder_id]
-                Config.Active.Importer.game_folder = str(game_folder)
+                if not read_only:
+                    Config.Active.Importer.game_folder = str(game_folder)
 
                 log.debug(f'Selected game folder: {game_folder} (modified: {datetime.fromtimestamp(mod_time)})')
 
@@ -332,6 +338,8 @@ class ModelImporterPackage(Package):
                 raise UserWarning
 
             except Exception as e:
+                if read_only:
+                    return
                 self.notify_game_folder_not_configured()
                 # User is already notified, lets skip error popup
                 raise UserWarning

@@ -25,7 +25,8 @@ class GeneralSettingsFrame(UIFrame):
 
         # Game Folder
         self.put(GameFolderLabel(self)).grid(row=0, column=0, padx=(20, 0), pady=(0, 30), sticky='w')
-        self.put(GameFolderFrame(self)).grid(row=0, column=1, padx=(0, 20), pady=(0, 30), sticky='new', columnspan=3)
+        self.put(GameFolderFrame(self)).grid(row=0, column=1, padx=(0, 65), pady=(0, 30), sticky='new', columnspan=3)
+        self.put(DetectGameFolderButton(self)).grid(row=0, column=1, padx=(0, 20), pady=(0, 30), sticky='e', columnspan=3)
 
         # Launch Options
         self.put(LaunchOptionsLabel(self)).grid(row=1, column=0, padx=(20, 0), pady=(0, 30), sticky='w')
@@ -188,6 +189,26 @@ class ChangeGameFolderButton(UIButton):
         if game_folder == '':
             return
         Vars.Active.Importer.game_folder.set(game_folder)
+
+
+class DetectGameFolderButton(UIButton):
+    def __init__(self, master):
+        super().__init__(
+            text='⟳',
+            command=self.detect_game_folder,
+            width = 36,
+            height=36,
+            font=('Asap', 18),
+            master=master)
+
+        self.set_tooltip('Try to automatically detect existing installation folders.')
+
+    def detect_game_folder(self):
+        try:
+            game_path, game_exe_path = Events.Call(Events.ModelImporter.DetectGameFolder())
+            Vars.Active.Importer.game_folder.set(game_path)
+        except:
+            pass
 
 
 class LaunchOptionsButton(UIButton):
