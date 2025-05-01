@@ -152,6 +152,9 @@ class AppSettings(Config.AppConfig):
                 pass
             elif isinstance(value, str | int | float | bool):
                 var_value = var.get()
+                # Auto strip text input
+                if isinstance(var_value, str):
+                    var_value = var_value.strip()
                 setattr(dst, dst_field.name, var_value)
                 self.fire_on_save(var, var_value, value)
 
