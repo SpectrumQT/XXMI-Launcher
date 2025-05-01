@@ -304,6 +304,9 @@ class ModelImporterPackage(Package):
                     # User is already notified, lets skip error popup
                     raise UserWarning
 
+                for data in game_folders:
+                    log.debug(f'Selected game folder: {data[0]} (modified: {datetime.fromtimestamp(data[1])})')
+
                 # Notify user if about game folder detection, ask which to use if there are more than 1 folder found
                 game_folders_index = [x[0] for x in game_folders]
                 (user_confirmed_game_folder, game_folder_id) = self.notify_game_folder_detection(game_folders_index)
@@ -315,6 +318,8 @@ class ModelImporterPackage(Package):
                 # Set folder with selected game_folder_id as game folder
                 game_folder, mod_time, game_path, game_exe_path = game_folders[game_folder_id]
                 Config.Active.Importer.game_folder = str(game_folder)
+
+                log.debug(f'Selected game folder: {game_folder} (modified: {datetime.fromtimestamp(mod_time)})')
 
                 # User decided to open Settings
                 if not user_confirmed_game_folder:
@@ -457,6 +462,9 @@ class ModelImporterPackage(Package):
         # Check if game location is properly configured
         game_path, game_exe_path = self.get_game_paths()
 
+        # Check for critical errors in Mods folder structure
+        self.validate_mods_folder()
+
         # Write configured settings to main 3dmigoto ini file
         self.update_d3dx_ini(game_exe_path=game_exe_path)
 
@@ -490,6 +498,7 @@ class ModelImporterPackage(Package):
                                     path = Path(parts[0])
                                     if path not in paths:
                                         paths.append(path)
+                                        log.debug(f'Game folder candidate found in registry: {path}')
                                     break
                             i += 1
                         except OSError:
@@ -593,6 +602,46 @@ class ModelImporterPackage(Package):
                 disabled_ini_path = ini_path.parent / f'DISABLED_{ini_path.stem}_{timestamp}{ini_path.suffix}'
             ini_path.rename(disabled_ini_path)
             time.sleep(0.001)
+
+    def validate_mods_folder(self):
+        log.debug(f'Searching for invalid folders...')
+        mods_path = Config.Active.Importer.importer_path / 'Mods'
+
+        for entry in self.scan_directory(mods_path):
+
+            if entry.is_dir():
+                if entry.name == 'ShaderFixes':
+                    entry = Path(entry)
+                    user_requested_fix = Events.Call(Events.Application.ShowError(
+                        modal=True,
+                        confirm_text='Move Files',
+                        cancel_text='Abort',
+                        message=f'ShaderFixes folder found inside the Mods folder:\n'
+                                f'{entry.relative_to(Config.Active.Importer.importer_path.parent)}\n\n'
+                                f'It is invalid location that may cause glitches and crashes.\n\n'
+                                f'Would you like to move its files to the root {Config.Launcher.active_importer}/ShaderFixes folder?'
+                    ))
+                    if user_requested_fix:
+                        self.move_contents(entry, Config.Active.Importer.importer_path / 'ShaderFixes')
+                    else:
+                        raise ValueError(f'Cannot start with ShaderFixes in Mods folder!')
+
+            elif entry.is_file():
+                if entry.name == 'd3dx.ini':
+                    entry = Path(entry)
+                    user_requested_fix = Events.Call(Events.Application.ShowError(
+                        modal=True,
+                        confirm_text='Delete File',
+                        cancel_text='Abort',
+                        message=f'Global config file d3dx.ini found inside the Mods folder:\n'
+                                f'{entry.relative_to(Config.Active.Importer.importer_path.parent)}\n\n'
+                                f'It is duplicate file that may cause glitches and crashes.\n\n'
+                                f'Would you like to remove it?'
+                    ))
+                    if user_requested_fix:
+                        entry.unlink()
+                    else:
+                        raise ValueError(f'Cannot start with d3dx.ini in Mods folder!')
 
     def index_namespaces(self, folder_path: Path, exclude_patterns):
         log.debug(f'Indexing namespaces for {folder_path}...')
