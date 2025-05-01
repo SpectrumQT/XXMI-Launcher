@@ -295,6 +295,13 @@ class Package:
                 yield from self.scan_directory(entry.path)
             yield entry
 
+    def get_parent_directory(self, path, folder_name):
+        parts = list(path.parts)
+        for i in reversed(range(len(parts))):
+            if parts[i] == folder_name:
+                return Path(*parts[:i + 1])
+        return None
+
     def get_file_version(self, file_path, max_parts=4):
         version_info = GetFileVersionInfo(str(file_path), "\\")
 
