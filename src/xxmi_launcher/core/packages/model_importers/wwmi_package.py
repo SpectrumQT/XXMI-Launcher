@@ -181,7 +181,7 @@ class WWMIPackage(ModelImporterPackage):
     def validate_game_exe_path(self, game_path: Path) -> Path:
         game_exe_path = game_path / 'Client' / 'Binaries' / 'Win64' / 'Client-Win64-Shipping.exe'
         if not game_exe_path.is_file():
-            raise ValueError(f'Game executable {game_exe_path} not found!')
+            raise ValueError(f'Game executable {game_exe_path.name} not found!')
         return game_exe_path
 
     def get_start_cmd(self, game_path: Path) -> Tuple[Path, List[str], Optional[str]]:

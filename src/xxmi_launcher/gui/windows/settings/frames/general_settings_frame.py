@@ -130,7 +130,7 @@ class GameFolderEntry(UIEntry):
 
     def validate_game_folder(self, game_folder):
         try:
-            game_path = Events.Call(Events.ModelImporter.ValidateGameFolder(game_folder=game_folder))
+            game_path = Events.Call(Events.ModelImporter.ValidateGameFolder(game_folder=game_folder.strip()))
         except Exception as e:
             self.error_label.configure(text=str(e))
             self.error_label.grid(row=0, column=1, padx=(0, 15), pady=(36, 0), sticky='nwe')
