@@ -9,6 +9,7 @@ import core.event_manager as Events
 import core.config_manager as Config
 import core.path_manager as Paths
 import gui.vars as Vars
+from core.application import Application
 
 from gui.classes.containers import UIFrame
 from gui.classes.widgets import UILabel, UIButton, UIEntry, UICheckbox,  UIOptionMenu
@@ -205,8 +206,9 @@ class DetectGameFolderButton(UIButton):
 
     def detect_game_folder(self):
         try:
-            game_path, game_exe_path = Events.Call(Events.ModelImporter.DetectGameFolder())
+            game_folder, game_path, game_exe_path = Events.Call(Events.ModelImporter.DetectGameFolder())
             Vars.Active.Importer.game_folder.set(game_path)
+            Config.Active.Importer.game_folder = game_path
         except:
             pass
 
@@ -365,12 +367,8 @@ class OpenEngineIniButton(UIButton):
         self.set_tooltip(f'Open Engine.ini in default text editor file for manual tweaking.')
 
     def open_engine_ini(self):
-        game_folder_path = Path(Vars.Active.Importer.game_folder.get())
-        if 'Wuthering Waves Game' not in str(game_folder_path):
-            game_folder_path = game_folder_path / 'Wuthering Waves Game'
-        if not game_folder_path.is_dir():
-            raise ValueError(f'Game folder does not exist: "{game_folder_path}"!')
-        engine_ini = game_folder_path / 'Client' / 'Saved' / 'Config' / 'WindowsNoEditor' / 'Engine.ini'
+        game_folder = Events.Call(Events.ModelImporter.ValidateGameFolder(Config.Active.Importer.game_folder))
+        engine_ini = game_folder / 'Client' / 'Saved' / 'Config' / 'WindowsNoEditor' / 'Engine.ini'
         if engine_ini.is_file():
             subprocess.Popen([f'{str(engine_ini)}'], shell=True)
         else:
