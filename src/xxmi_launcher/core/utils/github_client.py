@@ -87,12 +87,20 @@ class GitHubClient:
                 raise ValueError('Failed to parse signature!')
             signature = result[0]
 
+        release_notes = self.parse_release_notes(response.body)
+
+        asset_download_url, manifest_download_url = None, None
+
         for asset in response.assets:
             if asset.name == asset_name_format % version:
-                release_notes = self.parse_release_notes(response.body)
-                return version, asset.browser_download_url, signature, release_notes
+                asset_download_url = asset.browser_download_url
+            elif asset.name == 'Manifest.json':
+                manifest_download_url = asset.browser_download_url
 
-        raise ValueError(f"Failed to locate asset matching to '{asset_name_format}'!")
+        if asset_download_url is None:
+            raise ValueError(f"Failed to locate asset matching to '{asset_name_format}'!")
+
+        return version, asset_download_url, signature, release_notes, manifest_download_url
 
     def download_data(self, url, block_size=4096, update_progress_callback=None):
         headers = {}
