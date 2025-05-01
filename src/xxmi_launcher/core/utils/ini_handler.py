@@ -88,6 +88,7 @@ class IniHandler:
         self.sections = None
         self.footer_comments = []
         self.from_file(f)
+        self.modified = False
 
     def from_file(self, f):
         log.debug(f'Parsing ini...')
@@ -141,11 +142,15 @@ class IniHandler:
     def get_section(self, section):
         return self.sections.get(section.lower(), None)
 
+    def remove_section(self, section):
+        del self.sections[section.lower()]
+        self.modified = True
+
     def is_modified(self):
         for section in self.sections.values():
             if section.modified:
                 return True
-        return False
+        return self.modified
 
     def to_string(self):
         result = ''
