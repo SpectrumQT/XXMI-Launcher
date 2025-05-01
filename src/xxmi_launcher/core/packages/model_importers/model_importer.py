@@ -206,7 +206,7 @@ class ModelImporterPackage(Package):
         self.subscribe(Events.ModelImporter.StartGame, self.start_game)
         self.subscribe(Events.ModelImporter.ValidateGameFolder, lambda event: self.validate_game_folder(event))
         self.subscribe(Events.ModelImporter.CreateShortcut, lambda event: self.create_shortcut())
-        self.subscribe(Events.ModelImporter.DetectGameFolder, lambda event: self.get_game_paths(read_only=True))
+        self.subscribe(Events.ModelImporter.DetectGameFolder, lambda event: self.detect_game_paths(supress_errors=True))
         super().load()
         if self.get_installed_version() != '' and not Config.Active.Importer.shortcut_deployed:
             self.create_shortcut()
@@ -218,6 +218,7 @@ class ModelImporterPackage(Package):
     def validate_game_folder(self, event):
         game_path = self.validate_game_path(event.game_folder)
         self.validate_game_exe_path(game_path)
+        return game_path
 
     def validate_game_folders(self, game_folders: List[Path]):
         cache, known_paths = [], []
@@ -283,66 +284,68 @@ class ModelImporterPackage(Package):
         if user_requested_settings:
             Events.Fire(Events.Application.OpenSettings())
 
-    def get_game_paths(self, read_only=False):
+    def detect_game_paths(self, supress_errors=False):
+
         try:
 
-            game_path = self.validate_game_path(Config.Active.Importer.game_folder)
-            game_exe_path = self.validate_game_exe_path(game_path)
+            Events.Fire(Events.Application.StatusUpdate(status='Autodetecting game installation folder...'))
 
-        except:
+            # Try to automatically detect the game folder using search algo dedicated for given game
+            # Those results are inaccurate as algos try to parse as much path-like strings as possible
+            game_folders_candidates = self.autodetect_game_folders()
 
-            try:
+            # Exclude folders not matching the expected file structure
+            # Results are sorted based on game exe last modification time (with latest being at 0 index)
+            game_folders = self.validate_game_folders(game_folders_candidates)
 
-                Events.Fire(Events.Application.StatusUpdate(status='Autodetecting game installation folder...'))
-
-                # Try to automatically detect the game folder using search algo dedicated for given game
-                # Those results are inaccurate as algos try to parse as much path-like strings as possible
-                game_folders_candidates = self.autodetect_game_folders()
-
-                # Exclude folders not matching the expected file structure
-                # Results are sorted based on game exe last modification time (with latest being at 0 index)
-                game_folders = self.validate_game_folders(game_folders_candidates)
-
-                # Notify user if there are no game folders detected
-                if len(game_folders) == 0:
-                    self.notify_game_folder_detection_failure()
-                    # User is already notified, lets skip error popup
-                    raise UserWarning
-
-                for data in game_folders:
-                    log.debug(f'Selected game folder: {data[0]} (modified: {datetime.fromtimestamp(data[1])})')
-
-                # Notify user if about game folder detection, ask which to use if there are more than 1 folder found
-                game_folders_index = [x[0] for x in game_folders]
-                (user_confirmed_game_folder, game_folder_id) = self.notify_game_folder_detection(game_folders_index)
-                if user_confirmed_game_folder is None:
-                    # User neither confirmed detection result nor decided to open settings
-                    # With multiple game installations detected it might end up miserably, lets show them error
-                    raise Exception
-
-                # Set folder with selected game_folder_id as game folder
-                game_folder, mod_time, game_path, game_exe_path = game_folders[game_folder_id]
-                if not read_only:
-                    Config.Active.Importer.game_folder = str(game_folder)
-
-                log.debug(f'Selected game folder: {game_folder} (modified: {datetime.fromtimestamp(mod_time)})')
-
-                # User decided to open Settings
-                if not user_confirmed_game_folder:
-                    Events.Fire(Events.Application.OpenSettings())
-                    # User is already notified, lets skip error popup
-                    raise UserWarning
-
-            except UserWarning:
-                # Upcast UserWarning
-                raise UserWarning
-
-            except Exception as e:
-                if read_only:
-                    return
-                self.notify_game_folder_not_configured()
+            # Notify user if there are no game folders detected
+            if len(game_folders) == 0:
+                self.notify_game_folder_detection_failure()
                 # User is already notified, lets skip error popup
                 raise UserWarning
+
+            for data in game_folders:
+                log.debug(f'Selected game folder: {data[0]} (modified: {datetime.fromtimestamp(data[1])})')
+
+            # Notify user if about game folder detection, ask which to use if there are more than 1 folder found
+            game_folders_index = [x[0] for x in game_folders]
+            (user_confirmed_game_folder, game_folder_id) = self.notify_game_folder_detection(game_folders_index)
+            if user_confirmed_game_folder is None:
+                # User neither confirmed detection result nor decided to open settings
+                # With multiple game installations detected it might end up miserably, lets show them error
+                raise Exception
+
+            # Set folder with selected game_folder_id as game folder
+            game_folder, mod_time, game_path, game_exe_path = game_folders[game_folder_id]
+
+            log.debug(f'Selected game folder: {game_folder} (modified: {datetime.fromtimestamp(mod_time)})')
+
+            # User decided to open Settings
+            if not user_confirmed_game_folder:
+                Events.Fire(Events.Application.OpenSettings())
+                # User is already notified, lets skip error popup
+                raise UserWarning
+
+        except UserWarning:
+            # Upcast UserWarning
+            raise UserWarning
+
+        except Exception as e:
+            if supress_errors:
+                return
+            self.notify_game_folder_not_configured()
+            # User is already notified, lets skip error popup
+            raise UserWarning
+
+        return game_folder, game_path, game_exe_path
+
+    def get_game_paths(self):
+        try:
+            game_path = self.validate_game_path(Config.Active.Importer.game_folder)
+            game_exe_path = self.validate_game_exe_path(game_path)
+        except:
+            game_folder, game_path, game_exe_path = self.detect_game_paths()
+            Config.Active.Importer.game_folder = str(game_folder)
 
         # Skip installation locations check for Linux
         if os.name != 'nt' or any(x in os.environ for x in ['WINE', 'WINEPREFIX', 'WINELOADER']):
