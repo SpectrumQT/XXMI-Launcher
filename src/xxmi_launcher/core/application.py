@@ -104,6 +104,7 @@ class ApplicationEvents:
     @dataclass
     class Update:
         no_install: bool = False
+        no_check: bool = False
         force: bool = False
         reinstall: bool = False
         packages: Union[list, None] = None
@@ -298,13 +299,10 @@ class Application:
 
         Events.Fire(Events.Application.LoadImporter(importer_id=Config.Launcher.active_importer))
 
-        Events.Subscribe(Events.Application.VerifyFileAccess, self.handle_verify_file_access)
+        Events.Subscribe(Events.Application.VerifyFileAccess,
+                         self.handle_verify_file_access)
         Events.Subscribe(Events.Application.Update,
-                         # lambda event: self.run_as_thread(self.package_manager.update_packages, **event.__dict__))
-                         lambda event: self.run_as_thread(self.package_manager.update_packages,
-                                                          no_install=event.no_install, no_check=False, force=event.force,
-                                                          reinstall=event.reinstall, packages=event.packages,
-                                                          silent=event.silent, no_thread=event.no_thread))
+                         lambda event: self.run_as_thread(self.package_manager.update_packages, **event.__dict__))
         Events.Subscribe(Events.Application.CheckForUpdates,
                          lambda event: self.run_as_thread(self.check_for_updates))
         Events.Subscribe(Events.Application.LoadImporter,
