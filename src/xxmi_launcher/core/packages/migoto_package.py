@@ -294,7 +294,7 @@ class MigotoPackage(Package):
         self.validate_files([Config.Active.Importer.importer_path / f for f in importer_libs])
 
     def validate_package_files(self):
-        package_libs = ['3dmloader.dll', 'd3d11.dll', 'd3dcompiler_47.dll', 'nvapi64.dll']
+        package_libs = ['3dmloader.dll', 'd3d11.dll', 'd3dcompiler_47.dll']
         self.validate_files([self.package_path / f for f in package_libs])
 
     def uninstall(self):
