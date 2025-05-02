@@ -231,10 +231,15 @@ class UpdateButton(MainActionButton):
 
     def handle_version_notification(self, event):
         pending_update_message = []
+
         for package_name, package in event.package_states.items():
+            if package_name == Config.Launcher.active_importer and not package.installed_version:
+                pending_update_message = []
+                break
             if package.latest_version != '' and (package.installed_version != package.latest_version):
                 pending_update_message.append(
                     f'* {package_name}: {package.installed_version or 'N/A'} → {package.latest_version}')
+
         if len(pending_update_message) > 0:
             self.enabled = True
             self.set_tooltip(L('action_update_packages', dedent("""
