@@ -480,7 +480,7 @@ class PackageManager:
             package_states={
                 package.metadata.package_name: PackageState(
                     installed_version=package.installed_version,
-                    latest_version=package.cfg.latest_version,
+                    latest_version=package.cfg.latest_version if package.update_available() else package.installed_version,
                     skipped_version=package.cfg.skipped_version,
                 ) for package in self.packages.values() if package.active
             },
