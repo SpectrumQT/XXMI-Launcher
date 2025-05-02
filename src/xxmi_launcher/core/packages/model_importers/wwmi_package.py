@@ -316,7 +316,8 @@ class WWMIPackage(ModelImporterPackage):
             ini = IniHandler(IniHandlerSettings(option_value_spacing=False, inline_comments=True, add_section_spacing=True), f)
 
         if '/Script/Engine.RendererRTXSettings' in Config.Active.Importer.engine_ini.keys():
-            ini.remove_section('/Script/Engine.RendererRTXSettings')
+            if ini.get_section('/Script/Engine.RendererRTXSettings') is not None:
+                ini.remove_section('/Script/Engine.RendererRTXSettings')
             del Config.Active.Importer.engine_ini['/Script/Engine.RendererRTXSettings']
 
         for section_name, section_data in Config.Importers.WWMI.Importer.engine_ini.items():
