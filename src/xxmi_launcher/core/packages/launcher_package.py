@@ -26,6 +26,7 @@ log = logging.getLogger(__name__)
 @dataclass
 class LauncherManagerConfig:
     auto_update: bool = True
+    pre_release: bool = False
     update_channel: str = 'Auto'
     auto_close: bool = True
     gui_theme: str = 'Default'

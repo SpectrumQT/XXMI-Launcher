@@ -102,7 +102,8 @@ class Package:
             repo_name=self.metadata.github_repo_name,
             asset_version_pattern=self.asset_version_pattern,
             asset_name_format=self.metadata.asset_name_format,
-            signature_pattern=self.signature_pattern)
+            signature_pattern=self.signature_pattern,
+            pre_release=Config.Launcher.pre_release)
         return version, url, signature, release_notes, manifest_url
 
     def detect_latest_version(self):
