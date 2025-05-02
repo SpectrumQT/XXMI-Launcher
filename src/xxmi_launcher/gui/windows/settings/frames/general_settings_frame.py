@@ -207,8 +207,8 @@ class DetectGameFolderButton(UIButton):
     def detect_game_folder(self):
         try:
             game_folder, game_path, game_exe_path = Events.Call(Events.ModelImporter.DetectGameFolder())
-            Vars.Active.Importer.game_folder.set(game_path)
-            Config.Active.Importer.game_folder = game_path
+            Vars.Active.Importer.game_folder.set(str(game_path))
+            Config.Active.Importer.game_folder = str(game_path)
         except:
             pass
 
