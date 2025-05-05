@@ -290,10 +290,19 @@ class Package:
         time.sleep(0.001)
         shutil.rmtree(source_path)
 
-    def scan_directory(self, root_dir):
+    @staticmethod
+    def should_exclude(name, exclude_patterns):
+        for exclude_str, exclude_func in exclude_patterns:
+            if exclude_func(name.lower(), exclude_str):
+                return True
+        return False
+
+    def scan_directory(self, root_dir, exclude_patterns):
         for entry in os.scandir(root_dir):
+            if self.should_exclude(entry.name, exclude_patterns):
+                continue
             if entry.is_dir():
-                yield from self.scan_directory(entry.path)
+                yield from self.scan_directory(entry.path, exclude_patterns)
             yield entry
 
     def get_parent_directory(self, path, folder_name):
