@@ -635,18 +635,18 @@ class ModelImporterPackage(Package):
 
             if entry.is_file():
                 path = Path(entry)
-                if entry.name == 'd3dx.ini':
+                if path.name == 'd3dx.ini':
                     user_requested_fix = Events.Call(Events.Application.ShowError(
                         modal=True,
                         confirm_text='Delete File',
                         cancel_text='Abort',
                         message=f'Global config file d3dx.ini found inside the Mods folder:\n'
-                                f'{entry.relative_to(Config.Active.Importer.importer_path.parent)}\n\n'
+                                f'{path.relative_to(Config.Active.Importer.importer_path.parent)}\n\n'
                                 f'It is duplicate file that may cause glitches and crashes.\n\n'
                                 f'Would you like to remove it?'
                     ))
                     if user_requested_fix:
-                        entry.unlink()
+                        path.unlink()
                     else:
                         raise ValueError(f'Cannot start with d3dx.ini in Mods folder!')
                 else:
