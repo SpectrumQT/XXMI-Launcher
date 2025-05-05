@@ -473,11 +473,11 @@ class ModelImporterPackage(Package):
         # Check if game location is properly configured
         game_path, game_exe_path = self.get_game_paths()
 
-        # Check for critical errors in Mods folder structure
-        self.validate_mods_folder()
-
         # Write configured settings to main 3dmigoto ini file
         self.update_d3dx_ini(game_exe_path=game_exe_path)
+
+        # Check for critical errors in Mods folder structure
+        self.validate_mods_folder()
 
         # Execute initialization sequence of implemented importer
         self.initialize_game_launch(game_path)
@@ -565,23 +565,36 @@ class ModelImporterPackage(Package):
             link.icon_location = (str(Config.Config.theme_path / 'Shortcuts' / f'{Config.Launcher.active_importer}.ico'), 0)
         Config.Active.Importer.shortcut_deployed = True
 
-    def disable_duplicate_libraries(self, libs_path: Path):
-        log.debug(f'Searching for duplicate libs...')
-        mods_path = Config.Active.Importer.importer_path / 'Mods'
-
-        exclude_patterns = []
+    def get_ini_exclude_patterns(self):
+        """
+        Limited "support" of GLOB patterns.
+        Supports patterns: `*substr*`, `substr*`, `*substr`, `substr`
+        """
+        result = []
         include_options = self.ini.get_section('Include').options
         for option_name, exclude_pattern, _, _, _ in include_options:
             exclude_pattern = exclude_pattern.lower()
             if option_name.lower() == 'exclude_recursive':
                 if exclude_pattern[-1] == '*':
-                    exclude_patterns.append((exclude_pattern[:-1], lambda x, y: x.startswith(y)))
+                    if exclude_pattern[0] == '*':
+                        # Handles `*substr*` pattern (aka contains)
+                        result.append((exclude_pattern[1:-1], lambda x, y: y in x))
+                    else:
+                        # Handles `substr*` pattern (aka starts with)
+                        result.append((exclude_pattern[:-1], lambda x, y: x.startswith(y)))
                 elif exclude_pattern[0] == '*':
-                    exclude_patterns.append((exclude_pattern[1:], lambda x, y: x.endswith(y)))
+                    # Handles `*substr` pattern (aka ends with)
+                    result.append((exclude_pattern[1:], lambda x, y: x.endswith(y)))
                 else:
-                    exclude_patterns.append((exclude_pattern, lambda x, y: x == y))
+                    # Handles `substr` pattern (aka exact match)
+                    result.append((exclude_pattern, lambda x, y: x == y))
+        return result
 
-        mods_namespaces = self.index_namespaces(mods_path, exclude_patterns)
+    def disable_duplicate_libraries(self, libs_path: Path):
+        log.debug(f'Searching for duplicate libs...')
+        mods_path = Config.Active.Importer.importer_path / 'Mods'
+
+        mods_namespaces = self.index_namespaces(mods_path, self.get_ini_exclude_patterns())
         packaged_namespaces = self.index_namespaces(libs_path, [])
 
         log.debug(f'Deducing duplicate libs...')
@@ -618,7 +631,7 @@ class ModelImporterPackage(Package):
         log.debug(f'Searching for invalid folders...')
         mods_path = Config.Active.Importer.importer_path / 'Mods'
 
-        for entry in self.scan_directory(mods_path):
+        for entry in self.scan_directory(mods_path, self.get_ini_exclude_patterns()):
 
             if entry.is_dir():
                 if entry.name == 'ShaderFixes':
@@ -658,22 +671,16 @@ class ModelImporterPackage(Package):
         log.debug(f'Indexing namespaces for {folder_path}...')
         namespace_pattern = re.compile(r'namespace\s*=\s*(.*)')
         namespaces = {}
-        self.index_namespaces_recursive(folder_path, namespace_pattern, exclude_patterns, namespaces)
-        return namespaces
 
-    def index_namespaces_recursive(self, path: Path, namespace_pattern, exclude_patterns, namespaces):
-        if path.is_dir():
-            for exclude_str, exclude_func in exclude_patterns:
-                if exclude_func(path.name.lower(), exclude_str):
-                    return
-            for sub_path in path.iterdir():
-                self.index_namespaces_recursive(sub_path, namespace_pattern, exclude_patterns, namespaces)
-        else:
+        for path in self.scan_directory(folder_path, exclude_patterns):
+            if not path.is_file():
+                continue
+
+            path = Path(path)
+
             if not path.suffix == '.ini':
-                return
-            for exclude_str, exclude_func in exclude_patterns:
-                if exclude_func(path.name.lower(), exclude_str):
-                    return
+                continue
+
             try:
                 with open(path, 'r', encoding='utf-8') as f:
                     for line_id, line in enumerate(f.readlines()):
@@ -692,6 +699,8 @@ class ModelImporterPackage(Package):
                                 namespaces[namespace] = [path]
             except Exception as e:
                 pass
+
+        return namespaces
 
     def get_paths_from_hoyoplay(self, patterns: Union[re.Pattern, List[re.Pattern]], known_children: List[str] = None):
         hoyoplay_path = Path(os.getenv('APPDATA')).parent / 'Roaming' / 'Cognosphere' / 'HYP'
