@@ -297,9 +297,9 @@ class Package:
                 return True
         return False
 
-    def scan_directory(self, root_dir, exclude_patterns):
+    def scan_directory(self, root_dir, exclude_patterns=None):
         for entry in os.scandir(root_dir):
-            if self.should_exclude(entry.name, exclude_patterns):
+            if exclude_patterns and self.should_exclude(entry.name, exclude_patterns):
                 continue
             if entry.is_dir():
                 yield from self.scan_directory(entry.path, exclude_patterns)
