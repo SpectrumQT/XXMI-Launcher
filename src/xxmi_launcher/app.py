@@ -43,18 +43,22 @@ def verify_msvc_integrity():
     except BaseException as e:
         raise Exception(f'Failed to verify win32api import!') from e
 
+    if not callable(GetFileVersionInfo):
+        raise Exception(f'Failed to verify GetFileVersionInfo being function!')
+    if not callable(HIWORD):
+        raise Exception(f'Failed to verify HIWORD being function!')
+    if not callable(LOWORD):
+        raise Exception(f'Failed to verify LOWORD being function!')
+
     # Create buffer to store path of loaded DLLs
     try:
         dll_path_buffer = ctypes.create_unicode_buffer(1024)
-    except BaseException as e:
-        raise Exception(f'Failed to create unicode buffer!') from e
 
-    # Read DLL versions
-    dll_versions = []
+        # Read DLL versions
+        dll_versions = []
 
-    for (dll, dll_handle) in msvc_dll_handles:
+        for (dll, dll_handle) in msvc_dll_handles:
 
-        try:
             # Read path to loaded DLL from handle
             ctypes.windll.kernel32.GetModuleFileNameW(dll_handle, dll_path_buffer, 1024)
 
@@ -69,10 +73,10 @@ def verify_msvc_integrity():
 
             dll_versions.append(f'{dll}: {".".join(version)}')
 
-        except BaseException as e:
-            raise Exception(f'Failed to verify {dll} version!') from e
+        logging.debug(f'Using MSVC++ DLLs: {str(dll_versions)}')
 
-    logging.debug(f'Using MSVC++ DLLs: {str(dll_versions)}')
+    except BaseException:
+        pass
 
 
 if __name__ == '__main__':
