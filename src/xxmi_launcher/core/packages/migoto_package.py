@@ -148,10 +148,11 @@ class MigotoPackage(Package):
 
                 # Wait until game window appears
                 Events.Fire(Events.Application.WaitForProcess(process_name=process_name))
-                result, pid = wait_for_process(process_name, with_window=True, timeout=30, check_visibility=True)
+                result, pid = wait_for_process(process_name, with_window=True, timeout=Config.Launcher.start_timeout, check_visibility=True)
                 if result == WaitResult.Timeout:
                     if hooked:
                         raise ValueError(f'Failed to detect game process {process_name}!\n\n'
+                                         f'If game window takes more than {Config.Launcher.start_timeout} seconds to appear, adjust Timeout in Launcher Settings.\n\n'
                                          f'If game crashed, try to clear Mods and ShaderFixes folders.')
                     else:
                         raise ValueError(f'Failed to start {process_name}!')
@@ -188,7 +189,7 @@ class MigotoPackage(Package):
                 raise ValueError(f'Failed to inject {dll_names}!')
 
             Events.Fire(Events.Application.WaitForProcess(process_name=process_name))
-            result, pid = wait_for_process(process_name, with_window=True, timeout=30, check_visibility=True)
+            result, pid = wait_for_process(process_name, with_window=True, timeout=Config.Launcher.start_timeout, check_visibility=True)
             if result == WaitResult.Timeout:
                 raise ValueError(f'Failed to detect game process {process_name}!\n\n'
                                  f'If game crashed, try to clear Mods and ShaderFixes folders.')

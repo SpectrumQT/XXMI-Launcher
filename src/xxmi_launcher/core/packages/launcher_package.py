@@ -29,6 +29,7 @@ class LauncherManagerConfig:
     pre_release: bool = False
     update_channel: str = 'Auto'
     auto_close: bool = True
+    start_timeout: int = 30
     gui_theme: str = 'Default'
     theme_mode: str = 'System'
     active_importer: str = 'XXMI'

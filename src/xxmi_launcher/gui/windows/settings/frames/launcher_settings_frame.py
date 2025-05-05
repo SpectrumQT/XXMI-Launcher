@@ -20,8 +20,8 @@ class LauncherSettingsFrame(UIScrollableFrame):
         super().__init__(master, height=360, corner_radius=0, border_width=0)
 
         # Auto close
-        self.put(LauncherLabel(self)).grid(row=0, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
-        self.put(AutoCloseCheckbox(self)).grid(row=0, column=1, padx=(10, 10), pady=(0, 30), sticky='w', columnspan=3)
+        self.put(StartBehaviorLabel(self)).grid(row=0, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
+        self.put(StartBehaviorFrame(self)).grid(row=0, column=1, padx=10, pady=(0, 30), sticky='w', columnspan=3)
 
         # Update Policy
         self.put(UpdatePolicyLabel(self)).grid(row=1, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
@@ -40,6 +40,18 @@ class LauncherSettingsFrame(UIScrollableFrame):
         self.put(ProxySettingsFrame(self)).grid(row=4, column=1, padx=10, pady=(0, 20), sticky='w', columnspan=3)
         self.put(ProxyAddressFrame(self)).grid(row=5, column=1, padx=10, pady=(0, 20), sticky='w', columnspan=3)
         self.put(ProxyCredentialsFrame(self)).grid(row=6, column=1, padx=10, pady=(0, 20), sticky='w', columnspan=3)
+
+
+class StartBehaviorFrame(UIFrame):
+    def __init__(self, master):
+        super().__init__(master)
+        self.configure(fg_color='transparent')
+
+        self.put(AutoCloseCheckbox(self)).grid(row=0, column=0, padx=(0, 10), pady=0, sticky='w')
+        self.put(TimeoutLabel(self)).grid(row=0, column=1, padx=(20, 10), pady=0, sticky='w')
+        self.put(TimeoutEntry(self)).grid(row=0, column=2, padx=(0, 20), pady=0, sticky='w')
+
+        self.grab(TimeoutLabel).set_tooltip(self.grab(TimeoutEntry))
 
 
 class UpdatePolicyFrame(UIFrame):
@@ -158,7 +170,7 @@ class ProxyCredentialsFrame(UIFrame):
                 element.configure(state='disabled')
 
 
-class LauncherLabel(UILabel):
+class StartBehaviorLabel(UILabel):
     def __init__(self, master):
         super().__init__(
             text='Start Behavior:',
@@ -176,6 +188,34 @@ class AutoCloseCheckbox(UICheckbox):
         self.set_tooltip(
             'Enabled: Launcher will close itself once the game has started and 3dmigoto injection has been confirmed.\n'
             'Disabled: Launcher will keep itself running.')
+
+
+class TimeoutLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text='Timeout:',
+            font=('Microsoft YaHei', 14),
+            fg_color='transparent',
+            master=master)
+
+
+class TimeoutEntry(UIEntry):
+    def __init__(self, master):
+        super().__init__(
+            textvariable=Vars.Launcher.start_timeout,
+            width=40,
+            height=36,
+            font=('Arial', 14),
+            master=master)
+        self.set_tooltip('Controls how long launcher should wait for the game to show its window after launch.\n'
+                         'Game process will be considered as crashed once timeout is met.\n'
+                         'Default value is **30**.\n')
+
+        self.configure(validate='key', validatecommand=(master.register(self.validate_input), '%P'))
+
+    @staticmethod
+    def validate_input(value):
+        return value.isdigit()
 
 
 class UpdatePolicyLabel(UILabel):
