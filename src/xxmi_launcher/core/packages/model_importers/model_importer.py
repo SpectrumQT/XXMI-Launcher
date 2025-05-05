@@ -633,26 +633,9 @@ class ModelImporterPackage(Package):
 
         for entry in self.scan_directory(mods_path, self.get_ini_exclude_patterns()):
 
-            if entry.is_dir():
-                if entry.name == 'ShaderFixes':
-                    entry = Path(entry)
-                    user_requested_fix = Events.Call(Events.Application.ShowError(
-                        modal=True,
-                        confirm_text='Move Files',
-                        cancel_text='Abort',
-                        message=f'ShaderFixes folder found inside the Mods folder:\n'
-                                f'{entry.relative_to(Config.Active.Importer.importer_path.parent)}\n\n'
-                                f'It is invalid location that may cause glitches and crashes.\n\n'
-                                f'Would you like to move its files to the root {Config.Launcher.active_importer}/ShaderFixes folder?'
-                    ))
-                    if user_requested_fix:
-                        self.move_contents(entry, Config.Active.Importer.importer_path / 'ShaderFixes')
-                    else:
-                        raise ValueError(f'Cannot start with ShaderFixes in Mods folder!')
-
-            elif entry.is_file():
+            if entry.is_file():
+                path = Path(entry)
                 if entry.name == 'd3dx.ini':
-                    entry = Path(entry)
                     user_requested_fix = Events.Call(Events.Application.ShowError(
                         modal=True,
                         confirm_text='Delete File',
@@ -666,6 +649,15 @@ class ModelImporterPackage(Package):
                         entry.unlink()
                     else:
                         raise ValueError(f'Cannot start with d3dx.ini in Mods folder!')
+                else:
+                    if path.parent.name == 'ShaderFixes' and path.name in ['3dvision2sbs.ini', 'help.ini', 'mouse.ini', 'upscale.ini']:
+                        logging.warning(f'Automatically disabling illegitimate {path}...')
+                        disabled_ini_path = path.parent / f'DISABLED_{path.name}'
+                        if disabled_ini_path.is_file():
+                            timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+                            disabled_ini_path = path.parent / f'DISABLED_{path.stem}_{timestamp}{path.suffix}'
+                        path.rename(disabled_ini_path)
+                        time.sleep(0.001)
 
     def index_namespaces(self, folder_path: Path, exclude_patterns):
         log.debug(f'Indexing namespaces for {folder_path}...')
