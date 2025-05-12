@@ -1,8 +1,8 @@
-
 import core.event_manager as Events
 import core.path_manager as Paths
 import core.config_manager as Config
 import gui.vars as Vars
+from core.i18n_manager import I18n, _
 
 from gui.events import Stage
 from gui.classes.containers import UIFrame
@@ -101,25 +101,25 @@ class LeftStatusText(UIText):
         # Application Events
         self.subscribe_set(
             Events.Application.Launch,
-            lambda event: f'Initializing game launch...')
+            lambda event: _("bottom_bar.initializing_game_launch"))
         self.subscribe_set(
             Events.Application.SetupHook,
-            lambda event: f'Hooking {event.library_name} to {event.process_name}...')
+            lambda event: _("bottom_bar.hooking_library").format(library_name=event.library_name, process_name=event.process_name))
         self.subscribe_set(
             Events.Application.VerifyHook,
-            lambda event: f'Verifying {event.library_name} load into {event.process_name}...')
+            lambda event: _("bottom_bar.verifying_library").format(library_name=event.library_name, process_name=event.process_name))
         self.subscribe_set(
             Events.Application.Inject,
-            lambda event: f'Injecting {event.library_name} to {event.process_name}...')
+            lambda event: _("bottom_bar.injecting_library").format(library_name=event.library_name, process_name=event.process_name))
         self.subscribe_set(
             Events.Application.StartGameExe,
-            lambda event: f'Launching game...')
+            lambda event: _("bottom_bar.launching_game"))
         self.subscribe_set(
             Events.Application.WaitForProcess,
-            lambda event: f'Waiting for {event.process_name} to start...')
+            lambda event: _("bottom_bar.waiting_for_process").format(process_name=event.process_name))
         self.subscribe_set(
             Events.Application.Close,
-            lambda event: f'Closing launcher...')
+            lambda event: _("bottom_bar.closing_launcher"))
         self.subscribe_set(
             Events.Application.StatusUpdate,
             lambda event: event.status)
@@ -127,32 +127,32 @@ class LeftStatusText(UIText):
         # PackageManager Action Events
         self.subscribe_set(
             Events.PackageManager.StartCheckUpdate,
-            lambda event: f'Checking for updates...')
+            lambda event: _("bottom_bar.checking_for_updates"))
 
         # PackageManager Download Events
         self.subscribe_set(
             Events.PackageManager.InitializeDownload,
-            lambda event: f'Connecting to GitHub...')
+            lambda event: _("bottom_bar.connecting_to_github"))
         self.subscribe_set(
             Events.PackageManager.StartDownload,
-            lambda event: f'Downloading {event.asset_name}...')
+            lambda event: _("bottom_bar.downloading_asset").format(asset_name=event.asset_name))
         self.subscribe_set(
             Events.PackageManager.StartIntegrityVerification,
-            lambda event: f'Verifying {event.asset_name} integrity...')
+            lambda event: _("bottom_bar.verifying_asset_integrity").format(asset_name=event.asset_name))
 
         # PackageManager Installation Events
         self.subscribe_set(
             Events.PackageManager.InitializeInstallation,
-            lambda event: f'Initializing update installation...')
+            lambda event: _("bottom_bar.initializing_update_installation"))
         self.subscribe_set(
             Events.PackageManager.StartFileWrite,
-            lambda event: f'Writing {event.asset_name} on disk...')
+            lambda event: _("bottom_bar.writing_asset_on_disk").format(asset_name=event.asset_name))
         self.subscribe_set(
             Events.PackageManager.StartFileMove,
-            lambda event: f'Moving {event.asset_name}...')
+            lambda event: _("bottom_bar.moving_asset").format(asset_name=event.asset_name))
         self.subscribe_set(
             Events.PackageManager.StartUnpack,
-            lambda event: f'Unpacking {event.asset_name}...')
+            lambda event: _("bottom_bar.unpacking_asset").format(asset_name=event.asset_name))
 
 
 class RightStatusText(UIText):
@@ -179,7 +179,7 @@ class RightStatusText(UIText):
 
     @staticmethod
     def format_size(num_bytes):
-        units = ('B', 'KB', 'MB', 'GB', 'TB')
+        units = (_("units.B"), _("units.KB"), _("units.MB"), _("units.GB"), _("units.TB"))
         for power, unit in enumerate(units):
             if num_bytes < 1024 ** (power + 1):
-                return '%.2f%s' % (num_bytes / 1024 ** power, unit)
+                return _("bottom_bar.format_size").format(size=num_bytes / 1024 ** power, unit=unit)

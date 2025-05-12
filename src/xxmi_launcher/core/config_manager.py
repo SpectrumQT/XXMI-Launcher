@@ -36,6 +36,11 @@ class SecurityConfig:
 
 
 @dataclass
+class LauncherConfig:
+    language: str = 'en'
+
+
+@dataclass
 class AppConfig:
     # Config fields
     Launcher: launcher_package.LauncherManagerConfig = field(
@@ -49,6 +54,9 @@ class AppConfig:
     )
     Security: SecurityConfig = field(
         default_factory=lambda: SecurityConfig()
+    )
+    I18n: LauncherConfig = field(
+        default_factory=lambda: LauncherConfig()
     )
     # State fields
     # Active: Optional[WWMIConfig] = field(init=False, default=None)

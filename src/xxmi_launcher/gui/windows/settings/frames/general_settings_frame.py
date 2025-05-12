@@ -8,6 +8,7 @@ from textwrap import dedent
 import core.event_manager as Events
 import core.config_manager as Config
 import core.path_manager as Paths
+import core.i18n_manager as I18n
 import gui.vars as Vars
 from core.application import Application
 
@@ -24,31 +25,35 @@ class GeneralSettingsFrame(UIFrame):
         self.grid_rowconfigure((0, 1, 2, 3), weight=1)
         self.grid_rowconfigure(6, weight=100)
 
+        # Language
+        self.put(LanguageLabel(self)).grid(row=0, column=0, padx=(20, 0), pady=(0, 30), sticky='w')
+        self.put(LanguageOptionMenu(self)).grid(row=0, column=1, padx=(0, 10), pady=(0, 30), sticky='w')
+
         # Game Folder
-        self.put(GameFolderLabel(self)).grid(row=0, column=0, padx=(20, 0), pady=(0, 30), sticky='w')
-        self.put(GameFolderFrame(self)).grid(row=0, column=1, padx=(0, 65), pady=(0, 30), sticky='new', columnspan=3)
-        self.put(DetectGameFolderButton(self)).grid(row=0, column=1, padx=(0, 20), pady=(0, 30), sticky='e', columnspan=3)
+        self.put(GameFolderLabel(self)).grid(row=1, column=0, padx=(20, 0), pady=(0, 30), sticky='w')
+        self.put(GameFolderFrame(self)).grid(row=1, column=1, padx=(0, 65), pady=(0, 30), sticky='new', columnspan=3)
+        self.put(DetectGameFolderButton(self)).grid(row=1, column=1, padx=(0, 20), pady=(0, 30), sticky='e', columnspan=3)
 
         # Launch Options
-        self.put(LaunchOptionsLabel(self)).grid(row=1, column=0, padx=(20, 0), pady=(0, 30), sticky='w')
-        self.put(LaunchOptionsFrame(self)).grid(row=1, column=1, padx=(0, 20), pady=(0, 30), sticky='ew', columnspan=3)
+        self.put(LaunchOptionsLabel(self)).grid(row=2, column=0, padx=(20, 0), pady=(0, 30), sticky='w')
+        self.put(LaunchOptionsFrame(self)).grid(row=2, column=1, padx=(0, 20), pady=(0, 30), sticky='ew', columnspan=3)
 
         # Process Priority
-        self.put(ProcessPriorityLabel(self)).grid(row=2, column=0, padx=20, pady=(0, 30), sticky='w')
-        self.put(ProcessPriorityOptionMenu(self)).grid(row=2, column=1, padx=(0, 10), pady=(0, 30), sticky='w')
+        self.put(ProcessPriorityLabel(self)).grid(row=3, column=0, padx=20, pady=(0, 30), sticky='w')
+        self.put(ProcessPriorityOptionMenu(self)).grid(row=3, column=1, padx=(0, 10), pady=(0, 30), sticky='w')
 
         # Auto Config
         if Vars.Launcher.active_importer.get() != 'SRMI':
-            self.put(AutoConfigLabel(self)).grid(row=3, column=0, padx=(20, 0), pady=(0, 30), sticky='w')
-            self.put(AutoConfigFrame(self)).grid(row=3, column=1, padx=(0, 20), pady=(0, 30), sticky='w', columnspan=3)
+            self.put(AutoConfigLabel(self)).grid(row=4, column=0, padx=(20, 0), pady=(0, 30), sticky='w')
+            self.put(AutoConfigFrame(self)).grid(row=4, column=1, padx=(0, 20), pady=(0, 30), sticky='w', columnspan=3)
 
         if Vars.Launcher.active_importer.get() != 'ZZMI':
             
             # Tweaks
-            self.put(TweaksLabel(self)).grid(row=4, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
+            self.put(TweaksLabel(self)).grid(row=5, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
     
             tweaks_frame = UIFrame(self, fg_color=master._fg_color)
-            tweaks_frame.grid(row=4, column=1, padx=(0, 0), pady=(0, 30), sticky='we', columnspan=3)
+            tweaks_frame.grid(row=5, column=1, padx=(0, 0), pady=(0, 30), sticky='we', columnspan=3)
             tweaks_frame.put(UnlockFPSCheckbox(tweaks_frame)).grid(row=0, column=0, padx=(0, 10), pady=(0, 0), sticky='w')
     
             # Window mode for GI FPS Unlocker
@@ -60,6 +65,46 @@ class GeneralSettingsFrame(UIFrame):
             if Vars.Launcher.active_importer.get() == 'WWMI':
                 tweaks_frame.put(ApplyTweaksCheckbox(tweaks_frame)).grid(row=0, column=1, padx=(20, 10), pady=(0, 0), sticky='w')
                 tweaks_frame.put(OpenEngineIniButton(tweaks_frame)).grid(row=0, column=2, padx=(10, 20), pady=(0, 0), sticky='e')
+
+
+class LanguageLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text=I18n._('settings.language'),
+            font=('Microsoft YaHei', 14, 'bold'),
+            fg_color='transparent',
+            master=master)
+
+
+class LanguageOptionMenu(UIOptionMenu):
+    def __init__(self, master):
+        self.language_options = I18n.I18n.get_language_options()
+        super().__init__(
+            values=list(self.language_options.values()),
+            variable=Vars.I18nSettings.language,
+            width=150,
+            dynamic_resizing=True,
+            command=self.on_language_change,
+            master=master)
+        self.set_tooltip(I18n._('settings.language_tooltip'))
+        
+        # 设置当前语言显示
+        current_lang = Vars.I18nSettings.language.get()
+        if current_lang in self.language_options:
+            self.set(self.language_options[current_lang])
+    
+    def on_language_change(self, value):
+        # 从显示名称获取语言代码
+        for code, name in self.language_options.items():
+            if name == value:
+                Vars.I18nSettings.language.set(code)
+                I18n.I18n.set_language(code)
+                # 显示提示，需要重启应用以完全应用语言更改
+                Events.Fire(Events.Application.ShowInfo(
+                    title=I18n._('settings.language_change'),
+                    message=I18n._('settings.language_change_restart')
+                ))
+                break
 
 
 class GameFolderFrame(UIFrame):
@@ -109,7 +154,7 @@ class AutoConfigFrame(UIFrame):
 class GameFolderLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Game Folder:',
+            text=I18n._('settings.game_folder'),
             font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
@@ -161,7 +206,7 @@ class GameFolderEntry(UIEntry):
 class GameFolderErrorLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Failed to detect Game Folder!',
+            text=I18n._('settings.game_folder_error'),
             font=('Microsoft YaHei', 14, 'bold'),
             text_color='#ff3636',
             fg_color='transparent',
@@ -172,7 +217,7 @@ class ChangeGameFolderButton(UIButton):
     def __init__(self, master):
         fg_color = ThemeManager.theme["CTkEntry"].get("fg_color", None)
         super().__init__(
-            text='Browse...',
+            text=I18n._('buttons.browse'),
             command=self.change_game_folder,
             auto_width=True,
             padx=6,
@@ -195,7 +240,7 @@ class ChangeGameFolderButton(UIButton):
 class DetectGameFolderButton(UIButton):
     def __init__(self, master):
         super().__init__(
-            text='⟳',
+            text=I18n._('buttons.detect'),
             command=self.detect_game_folder,
             width = 36,
             height=36,
@@ -218,7 +263,7 @@ class LaunchOptionsButton(UIButton):
         fg_color = ThemeManager.theme['CTkEntry'].get('fg_color', None)
 
         super().__init__(
-            text='About...',
+            text=I18n._('buttons.about'),
             command=self.open_docs,
             auto_width=True,
             padx=6,
@@ -255,7 +300,7 @@ class LaunchOptionsButton(UIButton):
 class LaunchOptionsLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Launch Options:',
+            text=I18n._('settings.launch_options'),
             font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
@@ -282,7 +327,7 @@ class LaunchOptionsEntry(UIEntry):
 class ProcessPriorityLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Process Priority:',
+            text=I18n._('settings.process_priority'),
             font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
@@ -304,7 +349,7 @@ class ProcessPriorityOptionMenu(UIOptionMenu):
 class AutoConfigLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Auto Config:',
+            text=I18n._('settings.auto_config'),
             font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
@@ -313,7 +358,7 @@ class AutoConfigLabel(UILabel):
 class ConfigureGameCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Configure Game Settings',
+            text=I18n._('settings.configure_game'),
             variable=Vars.Active.Importer.configure_game,
             master=master)
 
@@ -358,7 +403,7 @@ class ConfigureGameCheckbox(UICheckbox):
 class OpenEngineIniButton(UIButton):
     def __init__(self, master):
         super().__init__(
-            text='🔍 Open Engine.ini',
+            text=I18n._('settings.open_engine_ini'),
             command=self.open_engine_ini,
             width=140,
             height=36,
@@ -378,7 +423,7 @@ class OpenEngineIniButton(UIButton):
 class TweaksLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Tweaks:',
+            text=I18n._('settings.tweaks'),
             font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
@@ -387,7 +432,7 @@ class TweaksLabel(UILabel):
 class UnlockFPSCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Force 120 FPS',
+            text=I18n._('settings.force_120_fps'),
             variable=Vars.Active.Importer.unlock_fps,
             master=master)
         self.set_tooltip(self.get_tooltip)
@@ -438,7 +483,7 @@ class UnlockFPSWindowOptionMenu(UIOptionMenu):
 class ApplyTweaksCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Apply Performance Tweaks',
+            text=I18n._('settings.apply_tweaks'),
             variable=Vars.Active.Importer.apply_perf_tweaks,
             master=master)
         self.set_tooltip(
@@ -461,7 +506,7 @@ class ApplyTweaksCheckbox(UICheckbox):
 class EnableHDR(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Enable HDR',
+            text=I18n._('settings.enable_hdr'),
             variable=Vars.Active.Importer.enable_hdr,
             master=master)
         self.set_tooltip(
@@ -473,7 +518,7 @@ class EnableHDR(UICheckbox):
 class DisableWoundedEffectCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Disable Wounded Effect',
+            text=I18n._('settings.disable_wounded'),
             variable=Vars.Active.Importer.disable_wounded_fx,
             master=master)
         self.set_tooltip(

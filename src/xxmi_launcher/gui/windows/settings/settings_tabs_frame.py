@@ -2,6 +2,7 @@ import logging
 
 import core.config_manager as Config
 import core.event_manager as Events
+import core.i18n_manager as I18n
 import gui.vars as Vars
 
 from gui.classes.containers import UIFrame
@@ -34,10 +35,10 @@ class SettingsTabsFrame(UIFrame):
         self.tabs = {}
         self.selected_tab = None
 
-        self.add_tab('GENERAL_TAB', 'General', GeneralSettingsFrame(master=self.tab_content_frame))
-        self.add_tab('LAUNCHER_TAB', 'Launcher', LauncherSettingsFrame(master=self.tab_content_frame))
+        self.add_tab('GENERAL_TAB', I18n._('settings.general_tab'), GeneralSettingsFrame(master=self.tab_content_frame))
+        self.add_tab('LAUNCHER_TAB', I18n._('settings.launcher_tab'), LauncherSettingsFrame(master=self.tab_content_frame))
         self.add_tab('IMPORTER_TAB', 'MI', ModelImporterSettingsFrame(master=self.tab_content_frame))
-        self.add_tab('ADVANCED_TAB', 'Advanced', AdvancedSettingsFrame(master=self.tab_content_frame))
+        self.add_tab('ADVANCED_TAB', I18n._('settings.advanced_tab'), AdvancedSettingsFrame(master=self.tab_content_frame))
 
         self.select_tab(self.tabs['GENERAL_TAB'])
 
@@ -104,7 +105,7 @@ class SettingsTabsListFrame(UIFrame):
 class SettingsLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Settings',
+            text=I18n._('settings.title'),
             font=('Microsoft YaHei', 20),
             fg_color='transparent',
             text_color='#888888',

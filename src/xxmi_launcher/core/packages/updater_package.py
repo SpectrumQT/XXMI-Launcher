@@ -7,7 +7,6 @@ from pathlib import Path
 
 import core.path_manager as Paths
 import core.event_manager as Events
-from core.config_manager import Config as Config
 
 from core.package_manager import Package, PackageMetadata
 
@@ -53,6 +52,8 @@ class UpdaterPackage(Package):
         self.move_contents(self.downloaded_asset_path, self.package_path)
 
     def update_launcher(self):
+        from core.config_manager import Config
+        
         self.manager.update_package(self, force=True)
 
         Events.Fire(Events.PackageManager.InitializeInstallation())

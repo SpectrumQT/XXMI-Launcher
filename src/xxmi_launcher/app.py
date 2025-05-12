@@ -29,7 +29,7 @@ def verify_msvc_integrity():
         try:
             # Load DLL from default path
             win_dll = ctypes.WinDLL(dll)
-            # Cast DLL handle as c_void_p to adjust it to the platform’s bitness (32-bit or 64-bit)
+            # Cast DLL handle as c_void_p to adjust it to the platform's bitness (32-bit or 64-bit)
             dll_handle = ctypes.cast(win_dll._handle, ctypes.c_void_p)
             # Store DLL handle for later version verification
             msvc_dll_handles.append((dll, dll_handle))
@@ -114,6 +114,16 @@ if __name__ == '__main__':
         import core.path_manager as Paths
         Paths.initialize(root_path)
 
+        # 初始化国际化支持
+        import core.i18n_manager as I18n
+        from core.config_manager import Config
+        Config.load()
+        I18n.I18n.initialize()
+        I18n.I18n.set_language(Config.I18n.language)
+        # 如果没有中文翻译，创建一个
+        if "zh" not in I18n.I18n.available_languages:
+            I18n.I18n.create_chinese_translation()
+
         import gui.windows.main.main_window as main_window
         gui = main_window.MainWindow()
 
@@ -124,6 +134,6 @@ if __name__ == '__main__':
         logging.exception(e)
         import traceback
         from tkinter.messagebox import showerror
-        showerror(title='XXMI Launcher - Fatal Error',
+        showerror(title=I18n._('errors.fatal_error'),
                   message=f'{e}\n\n'
                           f'{traceback.format_exc()}')

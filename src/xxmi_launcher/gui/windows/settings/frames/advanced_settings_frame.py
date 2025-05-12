@@ -1,5 +1,6 @@
 import core.event_manager as Events
 import core.config_manager as Config
+import core.i18n_manager as I18n
 import gui.vars as Vars
 
 from customtkinter import END
@@ -49,7 +50,7 @@ class AdvancedSettingsFrame(UIFrame):
 class UpdatePolicyLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Update Policy:',
+            text=I18n._('settings.advanced.update_policy'),
             font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
@@ -58,21 +59,21 @@ class UpdatePolicyLabel(UILabel):
 class OverwriteIniCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Overwrite d3dx.ini',
+            text=I18n._('settings.advanced.overwrite_d3dx'),
             variable=Vars.Active.Importer.overwrite_ini,
             master=master)
         self.set_tooltip(self.get_tooltip)
 
     def get_tooltip(self):
-        msg = f'Enabled: {Config.Launcher.active_importer} updates will overwrite existing d3dx.ini to ensure its up-to-date state.\n'
-        msg += f'Disabled: {Config.Launcher.active_importer} updates will keep existing d3dx.ini untouched.'
-        return msg.strip()
+        return I18n._('tooltip.overwrite_d3dx').format(
+            importer=Config.Launcher.active_importer
+        )
 
 
 class SecurityLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Security:',
+            text=I18n._('settings.advanced.security'),
             font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
@@ -81,26 +82,20 @@ class SecurityLabel(UILabel):
 class UnsafeModeCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Unsafe Mode',
+            text=I18n._('settings.advanced.unsafe_mode'),
             variable=Vars.Active.Migoto.unsafe_mode,
             master=master)
-        self.set_tooltip(
-            'Enabled: Allow 3-rd party 3dmigoto dlls.\n'
-            'Disabled: Disallow 3-rd party 3dmigoto dlls.\n'
-            'Note: If 3-rd party d3d11.dll does not support running from nested directories, it will fail to load.')
+        self.set_tooltip(I18n._('tooltip.unsafe_mode'))
 
 
 class RunPreLaunchCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
             variable=Vars.Active.Importer.run_pre_launch_enabled,
-            text='Run Pre-Launch:',
+            text=I18n._('settings.advanced.run_pre_launch'),
             font=('Microsoft YaHei', 14, 'bold'),
             master=master)
-        self.set_tooltip(
-                         'Enabled: Option will have stated effect.\n'
-                         'Disabled: Option will have no effect.',
-                         delay=0.5,)
+        self.set_tooltip(I18n._('tooltip.option_enabled_effect'), delay=0.5)
 
 
 class RunPreLaunchEntry(UIEntry):
@@ -112,9 +107,7 @@ class RunPreLaunchEntry(UIEntry):
             font=('Arial', 14),
             master=master)
         # self.trace_write(Vars.Active.Migoto.unsafe_mode, self.handle_unsafe_mode_update)
-        self.set_tooltip(
-            'Windows console command to be executed before game exe launch.\n'
-            'Note: If something needs to be done before the game start, do it here.')
+        self.set_tooltip(I18n._('tooltip.run_pre_launch'))
 
         self.trace_write(Vars.Active.Importer.run_pre_launch_enabled, self.handle_write_run_pre_launch_enabled)
 
@@ -134,13 +127,12 @@ class RunPreLaunchEntry(UIEntry):
 class RunPreLaunchWaitCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Wait',
+            text=I18n._('settings.advanced.wait'),
             variable=Vars.Active.Importer.run_pre_launch_wait,
             width=10,
             master=master)
         # self.trace_write(Vars.Active.Migoto.unsafe_mode, self.handle_unsafe_mode_update)
-        self.set_tooltip(
-            'Enabled: Wait for (blocking) command to finish its execution before launching the game exe.')
+        self.set_tooltip(I18n._('tooltip.wait_for_command'))
 
         self.trace_write(Vars.Active.Importer.run_pre_launch_enabled, self.handle_write_run_pre_launch_enabled)
 
@@ -161,13 +153,10 @@ class CustomLaunchCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
             variable=Vars.Active.Importer.custom_launch_enabled,
-            text='Custom Launch:',
+            text=I18n._('settings.advanced.custom_launch'),
             font=('Microsoft YaHei', 14, 'bold'),
             master=master)
-        self.set_tooltip(
-                         'Enabled: Option will have stated effect.\n'
-                         'Disabled: Option will have no effect.',
-                         delay=0.5,)
+        self.set_tooltip(I18n._('tooltip.option_enabled_effect'), delay=0.5)
 
 
 class CustomLaunchEntry(UIEntry):
@@ -189,15 +178,10 @@ class CustomLaunchEntry(UIEntry):
             self.configure(state='disabled')
 
     def get_tooltip(self):
-        message = ''
-        message += 'Windows console command to run when Start button is pressed instead of default game exe launch.\n'
-        message += 'Hint: If you want to change injection method only, just leave this field empty.\n'
-        message += 'Warning! This command also overrides `Launch Options` from General Settings.\n'
+        message = I18n._('tooltip.custom_launch')
         if Config.Launcher.active_importer == 'WWMI':
-            message += 'Warning! Make sure to pass `Client -DisableModule=streamline` argument to Client-Win64-Shipping.exe to force DX11 mode!\n'
-        message += 'Note: If you want to start game exe with another custom exe, do it here.\n'
-        message += 'Example (equivalent for command internally used by launcher to start GI via FPS unlocker):\n'
-        message += r'`start /d "C:\Games\XXMI Launcher\Resources\Packages\GI-FPS-Unlocker" unlockfps_nc.exe`'
+            message += I18n._('tooltip.custom_launch_wwmi')
+        message += I18n._('tooltip.custom_launch_example')
         return message
 
 
@@ -211,10 +195,7 @@ class CustomLaunchInjectModeOptionMenu(UIOptionMenu):
             font=('Arial', 14),
             dropdown_font=('Arial', 14),
             master=master)
-        self.set_tooltip('Defines the way of 3dmigoto injection into the game process started via Custom Launch.\n'
-                         '* Inject: Use WriteProcessMemory, more reliable but requires direct memory access.\n'
-                         '* Hook: Use SetWindowsHookEx, less reliable, but potentially less prominent for anti-cheats.\n'
-                         '* Bypass: Skip 3dmigoto injection and process only Inject Libraries field.')
+        self.set_tooltip(I18n._('tooltip.custom_launch_inject_mode'))
 
         self.trace_write(Vars.Active.Importer.custom_launch_enabled, self.handle_write_custom_launch_enabled)
 
@@ -229,13 +210,10 @@ class RunPostLoadCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
             variable=Vars.Active.Importer.run_post_load_enabled,
-            text='Run Post-Load:',
+            text=I18n._('settings.advanced.run_post_load'),
             font=('Microsoft YaHei', 14, 'bold'),
             master=master)
-        self.set_tooltip(
-                         'Enabled: Option will have stated effect.\n'
-                         'Disabled: Option will have no effect.',
-                         delay=0.5,)
+        self.set_tooltip(I18n._('tooltip.option_enabled_effect'), delay=0.5)
 
 
 class RunPostLoadEntry(UIEntry):
@@ -247,9 +225,7 @@ class RunPostLoadEntry(UIEntry):
             font=('Arial', 14),
             master=master)
         # self.trace_write(Vars.Active.Migoto.unsafe_mode, self.handle_unsafe_mode_update)
-        self.set_tooltip(
-            'Windows console command to be executed after hooking d3d11.dll to launched game exe.\n'
-            'Note: If something needs to be done after 3dmigoto injection, do it here.')
+        self.set_tooltip(I18n._('tooltip.run_post_load'))
 
         self.trace_write(Vars.Active.Importer.run_post_load_enabled, self.handle_write_run_post_load_enabled)
 
@@ -269,13 +245,12 @@ class RunPostLoadEntry(UIEntry):
 class RunPostLoadWaitCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Wait',
+            text=I18n._('settings.advanced.wait'),
             variable=Vars.Active.Importer.run_post_load_wait,
             width=10,
             master=master)
         # self.trace_write(Vars.Active.Migoto.unsafe_mode, self.handle_unsafe_mode_update)
-        self.set_tooltip(
-            'Enabled: Wait for (blocking) command to finish its execution before treating the game launch as complete.')
+        self.set_tooltip(I18n._('tooltip.wait_post_command'))
 
         self.trace_write(Vars.Active.Importer.run_post_load_enabled, self.handle_write_run_post_load_enabled)
 
@@ -296,13 +271,10 @@ class InjectLibrariesCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
             variable=Vars.Active.Importer.extra_libraries_enabled,
-            text='Inject Libraries:',
+            text=I18n._('settings.advanced.inject_libraries'),
             font=('Microsoft YaHei', 14, 'bold'),
             master=master)
-        self.set_tooltip(
-                         'Enabled: Option will have stated effect.\n'
-                         'Disabled: Option will have no effect.',
-                         delay=0.5,)
+        self.set_tooltip(I18n._('tooltip.option_enabled_effect'), delay=0.5)
 
 
 class InjectLibrariesTextbox(UITextbox):
@@ -312,11 +284,7 @@ class InjectLibrariesTextbox(UITextbox):
             height=90,
             undo=True,
             master=master)
-        self.set_tooltip(
-            'List of additional DLL paths to inject into the game process. 1 path per line.\n'
-            'injection will be made via WriteProcessMemory method.\n'
-            'Example (inject ReShade dll):\n'
-            r'`C:\Games\ReShade\ReShade64.dll`')
+        self.set_tooltip(I18n._('tooltip.inject_libraries'))
 
         self.trace_write(Vars.Active.Importer.extra_libraries_enabled, self.handle_write_extra_libraries_enabled)
 

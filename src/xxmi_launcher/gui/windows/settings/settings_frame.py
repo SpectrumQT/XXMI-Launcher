@@ -2,6 +2,7 @@ import logging
 
 import core.config_manager as Config
 import core.event_manager as Events
+import core.i18n_manager as I18n
 import gui.vars as Vars
 
 from gui.classes.containers import UIFrame
@@ -99,7 +100,7 @@ class CloseButton(UIImageButton):
             bg_selected_opacity=0.2,
             command=self.close,
             master=master)
-        self.set_tooltip(f'Close', delay=0.1)
+        self.set_tooltip(I18n._('buttons.close'), delay=0.1)
 
     def close(self):
         self.master.save_and_close()

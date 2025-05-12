@@ -4,6 +4,7 @@ from enum import Enum, auto
 import core.event_manager as Events
 import core.path_manager as Paths
 import core.config_manager as Config
+import core.i18n_manager as I18n
 import gui.vars as Vars
 
 from gui.classes.containers import UIFrame
@@ -123,11 +124,11 @@ class RepairXXMIButton(ToolsBarButton):
         super().__init__(
             y=465,
             button_image_path='button-tool-repair-xxmi.png',
-            text='Repair ZZMI',
+            text=I18n._('buttons.repair'),
             command=lambda: Events.Fire(Events.Application.Update(force=True, reinstall=True, packages=[Config.Launcher.active_importer])),
             master=master)
         self.subscribe(Events.Application.LoadImporter,
-                       lambda event: self.set_text(f'Repair {event.importer_id}'))
+                       lambda event: self.set_text(f'{I18n._("buttons.repair")} {event.importer_id}'))
 
 
 class CheckForUpdatesButton(ToolsBarButton):
@@ -135,7 +136,7 @@ class CheckForUpdatesButton(ToolsBarButton):
         super().__init__(
             y=500,
             button_image_path='button-tool-check-for-updates.png',
-            text='Check For Updates',
+            text=I18n._('buttons.check_for_updates'),
             command=lambda: Events.Fire(Events.Application.CheckForUpdates()),
             master=master)
 
@@ -145,7 +146,7 @@ class CreateShortcutButton(ToolsBarButton):
         super().__init__(
             y=535,
             button_image_path='button-tool-add-shortcut.png',
-            text='Add Desktop Shortcut',
+            text=I18n._('buttons.add_shortcut'),
             command=lambda: Events.Fire(Events.ModelImporter.CreateShortcut()),
             master=master)
 
@@ -155,7 +156,7 @@ class OpenModsFolderButton(ToolsBarButton):
         super().__init__(
             y=570,
             button_image_path='button-tool-mods-folder.png',
-            text='Open Mods Folder',
+            text=I18n._('buttons.open_mods_folder'),
             command=lambda: Events.Fire(Events.MigotoManager.OpenModsFolder()),
             master=master)
         self.subscribe(Events.PackageManager.VersionNotification, self.handle_version_notification)

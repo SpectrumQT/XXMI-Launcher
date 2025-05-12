@@ -17,6 +17,7 @@ from queue import Queue, Empty
 import core.path_manager as Paths
 import core.event_manager as Events
 import core.config_manager as Config
+from core.i18n_manager import I18n, _
 
 import core.utils.system_info as system_info
 
@@ -202,6 +203,8 @@ class Application:
                 modal=True,
                 screen_center=True,
                 lock_master=False,
+                title=_("messages.error_title"),
+                confirm_text=_("buttons.ok"),
                 message=str(e),
             ))
 
@@ -227,7 +230,7 @@ class Application:
                 parser.print_help()
                 return
         except BaseException:
-            raise ValueError(f'Failed to parse args: {sys.argv}')
+            raise ValueError(_("errors.failed_to_parse_args").format(args=sys.argv))
 
         # Load config json
         try:
@@ -238,7 +241,9 @@ class Application:
                 modal=True,
                 screen_center=not self.gui.is_shown(),
                 lock_master=self.gui.is_shown(),
-                message=f'Failed to load configuration! Falling back to defaults.',
+                title=_("messages.error_title"),
+                confirm_text=_("buttons.ok"),
+                message=_("errors.failed_to_load_config"),
             ))
 
         logging.getLogger().setLevel(logging.getLevelNamesMapping().get(Config.Launcher.log_level, 'DEBUG'))
@@ -339,9 +344,10 @@ class Application:
                     modal=True,
                     screen_center=not self.gui.is_shown(),
                     lock_master=self.gui.is_shown(),
-                    confirm_text='Load Backup',
-                    cancel_text='Load Default',
-                    message='Failed to load configuration!',
+                    title=_("messages.error_title"),
+                    confirm_text=_("buttons.load_backup"),
+                    cancel_text=_("buttons.load_default"),
+                    message=_("errors.failed_to_load_config"),
                 )
                 user_requested_backup_load = self.gui.show_messagebox(error_dialogue)
                 if user_requested_backup_load:
@@ -352,7 +358,7 @@ class Application:
     def validate_importer_name(self, importer_name: str) -> str:
         importer_name = importer_name.upper()
         if importer_name != 'XXMI' and importer_name not in Config.Importers.__dict__.keys():
-            raise ValueError(f'Unknown model importer {importer_name}!')
+            raise ValueError(_("errors.unknown_model_importer").format(importer_name=importer_name))
         return importer_name
 
     def get_active_importer(self) -> str:
@@ -364,8 +370,10 @@ class Application:
                 active_importer = self.validate_importer_name(self.args.xxmi)
             except Exception:
                 Events.Fire(Events.Application.ShowWarning(
-                    message=f'Unknown model importer supplied as command line arg `--xxmi={self.args.xxmi}`!')
-                )
+                    title=_("messages.warning_title"),
+                    confirm_text=_("buttons.ok"),
+                    message=_("errors.unknown_model_importer_cmd_arg").format(importer_name=self.args.xxmi)
+                ))
 
         elif Config.Launcher.active_importer:
             # Active model importer override is supplied via `active_importer` setting
@@ -373,8 +381,10 @@ class Application:
                 active_importer = self.validate_importer_name(Config.Launcher.active_importer)
             except Exception:
                 Events.Fire(Events.Application.ShowWarning(
-                    message=f'Unknown model importer `{Config.Launcher.active_importer}` supplied with `active_importer` setting!')
-                )
+                    title=_("messages.warning_title"),
+                    confirm_text=_("buttons.ok"),
+                    message=_("errors.unknown_model_importer_setting").format(importer_name=Config.Launcher.active_importer)
+                ))
 
         if active_importer is None:
             active_importer = 'XXMI'
@@ -396,7 +406,9 @@ class Application:
         except Exception as e:
             if self.args.update:
                 Events.Fire(Events.Application.ShowWarning(
-                    message=f'Failed to get latest versions list from GitHub!\n\n{str(e)}',
+                    title=_("messages.warning_title"),
+                    confirm_text=_("buttons.ok"),
+                    message=_("errors.failed_to_get_versions").format(error=str(e)),
                     modal=True))
         # Exit early if there are no updates available
         if not self.package_manager.update_available():
@@ -459,9 +471,9 @@ class Application:
             screen_center=not self.gui.is_shown(),
             lock_master=self.gui.is_shown(),
             icon='update-icon.ico',
-            title='Update Available',
-            confirm_text='Update',
-            cancel_text='Skip',
+            title=_("updates.available_title"),
+            confirm_text=_("buttons.update"),
+            cancel_text=_("buttons.skip"),
             message='\n'.join(pending_update_message),
         )
 
@@ -483,6 +495,8 @@ class Application:
             else:
                 # Failed to check some other package, lets give a warning and still try to go further
                 Events.Fire(Events.Application.ShowWarning(
+                    title=_("messages.warning_title"),
+                    confirm_text=_("buttons.ok"),
                     message=str(e),
                     modal=True
                 ))
@@ -492,7 +506,8 @@ class Application:
         else:
             Events.Fire(Events.Application.ShowInfo(
                 modal=True,
-                message='No updates available!',
+                title=_("messages.info_title"),
+                message=_("tooltip.no_updates"),
             ))
 
     def launch(self):
@@ -524,7 +539,7 @@ class Application:
             self.gui.after(100, Events.Fire, Events.Application.Ready())
             return
         except Exception as e:
-            raise Exception(f'{Config.Launcher.active_importer} Loading Failed:\n{str(e)}') from e
+            raise Exception(_("errors.loading_failed").format(importer=Config.Launcher.active_importer, error=str(e))) from e
         finally:
             self.is_locked = False
             if not Config.Launcher.auto_close:
@@ -546,16 +561,17 @@ class Application:
                     screen_center=not self.gui.is_shown(),
                     lock_master=self.gui.is_shown(),
                     icon='error-icon.ico',
-                    title='File Read Only Error',
-                    message=f'Failed to write Read Only file {event.path}!\n\n'
-                            f'Press [Confirm] to remove this flag and continue.',
+                    title=_("errors.file_read_only"),
+                    confirm_text=_("buttons.confirm"),
+                    cancel_text=_("buttons.cancel"),
+                    message=_("errors.file_read_only_message").format(path=event.path),
                 ))
                 if user_requested_flag_remove:
                     logging.debug(f'Removing Read-Only flag from {event.path}...')
                     Paths.remove_read_only(event.path)
                     Paths.assert_file_write(event.path)
                 else:
-                    raise ValueError(f'Failed to write critical file: {event.path}!')
+                    raise ValueError(_("errors.failed_to_write_critical_file").format(path=event.path))
         if event.exe:
             Paths.assert_file_read(event.path)
 
@@ -601,6 +617,8 @@ class Application:
             modal=True,
             screen_center=not self.gui.is_shown(),
             lock_master=self.gui.is_shown(),
+            title=_("messages.error_title"),
+            confirm_text=_("buttons.ok"),
             message=str(error),
         ))
         if self.gui.is_shown():

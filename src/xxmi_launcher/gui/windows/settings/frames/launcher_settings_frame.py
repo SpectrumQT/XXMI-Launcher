@@ -9,6 +9,7 @@ from urllib.parse import urlparse
 import core.event_manager as Events
 import core.config_manager as Config
 import core.path_manager as Paths
+import core.i18n_manager as I18n
 import gui.vars as Vars
 
 from gui.classes.containers import UIFrame, UIScrollableFrame
@@ -173,7 +174,7 @@ class ProxyCredentialsFrame(UIFrame):
 class StartBehaviorLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Start Behavior:',
+            text=I18n._('settings.launcher.start_behavior'),
             font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
@@ -182,7 +183,7 @@ class StartBehaviorLabel(UILabel):
 class AutoCloseCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Close Launcher After Game Start',
+            text=I18n._('settings.launcher.close_after_start'),
             variable=Vars.Launcher.auto_close,
             master=master)
         self.set_tooltip(
@@ -193,7 +194,7 @@ class AutoCloseCheckbox(UICheckbox):
 class TimeoutLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Timeout:',
+            text=I18n._('settings.launcher.timeout'),
             font=('Microsoft YaHei', 14),
             fg_color='transparent',
             master=master)
@@ -221,7 +222,7 @@ class TimeoutEntry(UIEntry):
 class UpdatePolicyLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Update Policy:',
+            text=I18n._('settings.launcher.update_policy'),
             font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
@@ -230,7 +231,7 @@ class UpdatePolicyLabel(UILabel):
 class AutoUpdateCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Auto Update',
+            text=I18n._('settings.launcher.auto_update'),
             variable=Vars.Launcher.auto_update,
             master=master)
         self.set_tooltip(self.get_tooltip)
@@ -244,7 +245,7 @@ class AutoUpdateCheckbox(UICheckbox):
 class UpdateChannelLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Channel:',
+            text=I18n._('settings.launcher.channel'),
             font=('Microsoft YaHei', 14),
             fg_color='transparent',
             master=master)
@@ -269,7 +270,7 @@ class UpdateChannelOptionMenu(UIOptionMenu):
 class ThemeLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='UI Theme:',
+            text=I18n._('settings.launcher.ui_theme'),
             font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
@@ -307,7 +308,7 @@ class LauncherThemeOptionMenu(UIOptionMenu):
 class ApplyThemeButton(UIButton):
     def __init__(self, master):
         super().__init__(
-            text='⟲ Apply',
+            text=I18n._('settings.launcher.apply'),
             command=self.apply_theme,
             width=100,
             height=36,
@@ -332,7 +333,7 @@ class ApplyThemeButton(UIButton):
 class EnableDevMode(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Dev Mode',
+            text=I18n._('settings.launcher.dev_mode'),
             variable=Vars.Launcher.theme_dev_mode,
             master=master)
         self.set_tooltip(
@@ -349,7 +350,7 @@ class EnableDevMode(UICheckbox):
 class ConnectionLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Connection:',
+            text=I18n._('settings.launcher.connection'),
             font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
@@ -358,7 +359,7 @@ class ConnectionLabel(UILabel):
 class GitHubTokenLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='GitHub Token:',
+            text=I18n._('settings.launcher.github_token'),
             font=('Microsoft YaHei', 14),
             fg_color='transparent',
             master=master)
@@ -385,7 +386,7 @@ class GitHubTokenButton(UIButton):
     def __init__(self, master):
         fg_color = ThemeManager.theme['CTkEntry'].get('fg_color', None)
         super().__init__(
-            text='Create...',
+            text=I18n._('settings.launcher.create'),
             command=lambda: webbrowser.open('https://github.com/settings/tokens'),
             auto_width=True,
             padx=6,
@@ -404,7 +405,7 @@ class GitHubTokenButton(UIButton):
 class VerifySSLCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Verify SSL',
+            text=I18n._('settings.launcher.verify_ssl'),
             variable=Vars.Launcher.verify_ssl,
             master=master)
         self.set_tooltip(
@@ -416,7 +417,7 @@ class VerifySSLCheckbox(UICheckbox):
 class ProxyEnableCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Use Proxy:',
+            text=I18n._('settings.launcher.use_proxy'),
             font=('Microsoft YaHei', 14, 'bold'),
             variable=Vars.Launcher.proxy.enable,
             master=master)
@@ -429,7 +430,7 @@ class ProxyEnableCheckbox(UICheckbox):
 class ProxyTypeLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Type:',
+            text=I18n._('settings.launcher.proxy_type'),
             font=('Microsoft YaHei', 14),
             fg_color='transparent',
             master=master)
@@ -469,7 +470,7 @@ class ProxyTypeOptionMenu(UIOptionMenu):
 class ProxyDNSViaSocks5Checkbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Proxy DNS Via SOCKS5',
+            text=I18n._('settings.launcher.proxy_dns'),
             variable=Vars.Launcher.proxy.proxy_dns_via_socks5,
             master=master)
         self.set_tooltip(
@@ -495,7 +496,7 @@ class ProxyDNSViaSocks5Checkbox(UICheckbox):
 class ProxyHostLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Host:',
+            text=I18n._('settings.launcher.host'),
             font=('Microsoft YaHei', 14),
             fg_color='transparent',
             master=master)
@@ -539,7 +540,7 @@ class ProxyHostEntry(UIEntry):
 class ProxyPortLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Port:',
+            text=I18n._('settings.launcher.port'),
             font=('Microsoft YaHei', 14),
             fg_color='transparent',
             master=master)
@@ -575,7 +576,7 @@ class ProxyPortEntry(UIEntry):
 class ProxyUseCredentialsCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Proxy Requires Password',
+            text=I18n._('settings.launcher.proxy_auth'),
             variable=Vars.Launcher.proxy.use_credentials,
             master=master)
         self.set_tooltip(
@@ -586,7 +587,7 @@ class ProxyUseCredentialsCheckbox(UICheckbox):
 class ProxyUserLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='User:',
+            text=I18n._('settings.launcher.user'),
             font=('Microsoft YaHei', 14),
             fg_color='transparent',
             master=master)
@@ -606,7 +607,7 @@ class ProxyUserEntry(UIEntry):
 class ProxyPasswordLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Password:',
+            text=I18n._('settings.launcher.password'),
             font=('Microsoft YaHei', 14),
             fg_color='transparent',
             master=master)

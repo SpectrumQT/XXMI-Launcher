@@ -2,6 +2,7 @@ from customtkinter import filedialog, ThemeManager
 
 import core.event_manager as Events
 import core.config_manager as Config
+import core.i18n_manager as I18n
 import gui.vars as Vars
 
 from gui.classes.containers import UIFrame
@@ -38,7 +39,7 @@ class ModelImporterSettingsFrame(UIFrame):
 class ShaderHuntingLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Shader Hunting:',
+            text=I18n._('settings.importer.shader_hunting'),
             font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
@@ -47,33 +48,25 @@ class ShaderHuntingLabel(UILabel):
 class EnableHuntingCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Enable Hunting',
+            text=I18n._('settings.importer.enable_hunting'),
             variable=Vars.Active.Migoto.enable_hunting,
             master=master)
-        self.set_tooltip(
-            'Enabled: Allows to toggle Hunting Mode via Numpad [0] hotkey.\n'
-            '* [d3dx.ini]: hunting = 2\n'
-            'Disabled: Hunting Mode is hard disabled.\n'
-            '* [d3dx.ini]: hunting = 0')
+        self.set_tooltip(I18n._('tooltip.enable_hunting'))
 
 
 class DumpShadersCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Dump Shaders',
+            text=I18n._('settings.importer.dump_shaders'),
             variable=Vars.Active.Migoto.dump_shaders,
             master=master)
-        self.set_tooltip(
-            'Enabled: Hunting Mode [Copy Hash] key also saves selected shader as file in ShaderFixes.\n'
-            '* [d3dx.ini]: marking_actions = clipboard hlsl asm regex\n'
-            'Disabled: Hunting Mode [Copy Hash] only copies hash of selected shader to clipboard.\n'
-            '* [d3dx.ini]: marking_actions = clipboard')
+        self.set_tooltip(I18n._('tooltip.dump_shaders'))
 
 
 class ErrorHandlingLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Error Handling:',
+            text=I18n._('settings.importer.error_handling'),
             font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
@@ -96,53 +89,41 @@ class ImporterFolderFrame(UIFrame):
 class MuteWarningsCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Mute Warnings',
+            text=I18n._('settings.importer.mute_warnings'),
             variable=Vars.Active.Migoto.mute_warnings,
             master=master)
-        self.set_tooltip(
-            'Enabled: No error warnings or beeps whatsoever. Ignorance is bliss.\n'
-            '* [d3dx.ini]: show_warnings = 0\n'
-            'Disabled: Ini parser error warnings and beeps on F10 will haunt poor souls.\n'
-            '* [d3dx.ini]: show_warnings = 1')
+        self.set_tooltip(I18n._('tooltip.mute_warnings'))
 
 
 class CallsLoggingCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Calls Logging',
+            text=I18n._('settings.importer.calls_logging'),
             variable=Vars.Active.Migoto.calls_logging,
             master=master)
-        self.set_tooltip(
-            'Enabled: Log API usage.\n'
-            '* [d3dx.ini]: calls = 1\n'
-            'Disabled: Do not log calls. Maximum performance.\n'
-            '* [d3dx.ini]: calls = 0')
+        self.set_tooltip(I18n._('tooltip.calls_logging'))
 
 
 class DebugLoggingCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Debug Logging',
+            text=I18n._('settings.importer.debug_logging'),
             variable=Vars.Active.Migoto.debug_logging,
             master=master)
-        self.set_tooltip(
-            'Enabled: Super verbose debug logging.\n'
-            '* [d3dx.ini]: debug = 1\n'
-            'Disabled: No debug logging. Maximum performance.\n'
-            '* [d3dx.ini]: debug = 0')
+        self.set_tooltip(I18n._('tooltip.debug_logging'))
 
 
 class ImporterFolderLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Importer Folder:',
+            text=I18n._('settings.importer.importer_folder'),
             font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
         self.trace_save(Vars.Settings.Launcher.active_importer, self.handle_active_importer_update)
 
     def handle_active_importer_update(self, var, val, old_val):
-        self.configure(text=f'{val} Folder:')
+        self.configure(text=f'{val} {I18n._("settings.importer.folder")}')
 
 
 class ImporterFolderEntry(UIEntry):
@@ -157,16 +138,15 @@ class ImporterFolderEntry(UIEntry):
         self.set_tooltip(self.get_tooltip)
 
     def get_tooltip(self):
-        msg = f'path to folder containing `Mods` folder, `d3dx.ini` and other {Config.Launcher.active_importer} resources.\n'
-        msg += f'**Absolute**: Set any arbitrary folder, i.e. `C:/Games/{Config.Launcher.active_importer}/`.' + '\n'
-        msg += f'**Relative**: Set any folder **inside** the Launcher folder, i.e. `{Config.Launcher.active_importer}/` (default).'
-        return msg.strip()
+        return I18n._('tooltip.importer_folder').format(
+            importer=Config.Launcher.active_importer
+        )
 
 
 class ChangeImporterFolderButton(UIButton):
     def __init__(self, master):
         super().__init__(
-            text='Browse...',
+            text=I18n._('buttons.browse'),
             command=self.change_importer_folder,
             width=80,
             height=32,
@@ -191,7 +171,7 @@ class ChangeImporterFolderButton(UIButton):
 class FailSafeLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Ini Protection:',
+            text=I18n._('settings.importer.ini_protection'),
             font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
@@ -200,11 +180,11 @@ class FailSafeLabel(UILabel):
 class EnforceRenderingCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Enforce Rendering Settings',
+            text=I18n._('settings.importer.enforce_rendering'),
             variable=Vars.Active.Migoto.enforce_rendering,
             master=master)
-        self.set_tooltip(
-            f'Enabled: Ensure {Config.Launcher.active_importer}-compatible [Rendering] section settings.\n'
-            f'* [d3dx.ini]: texture_hash = {0 if Config.Launcher.active_importer != "WWMI" else 1}\n'
-            f'* [d3dx.ini]: track_texture_updates = {0 if Config.Launcher.active_importer != "WWMI" else 1}\n'
-            'Disabled: Settings above will not be forced into d3dx.ini.')
+        self.set_tooltip(I18n._('tooltip.enforce_rendering').format(
+            importer=Config.Launcher.active_importer,
+            texture_hash=0 if Config.Launcher.active_importer != "WWMI" else 1,
+            track_texture_updates=0 if Config.Launcher.active_importer != "WWMI" else 1
+        ))

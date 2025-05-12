@@ -1,4 +1,3 @@
-
 import customtkinter
 
 from typing import Union
@@ -6,6 +5,7 @@ from dataclasses import dataclass, field, fields
 
 import core.event_manager as Events
 import core.config_manager as Config
+import core.i18n_manager as I18n
 
 from core import package_manager
 from core.packages import launcher_package
@@ -45,6 +45,8 @@ class AppSettings(Config.AppConfig):
         Importers = self.Importers
         global Active
         Active = self.Active
+        global I18nSettings
+        I18nSettings = self.I18n
 
     def subscribe_on_save(self, var, callback, caller_id=None):
         if var._name not in self.on_save_callbacks:
@@ -179,3 +181,4 @@ Packages: package_manager.PackageManagerConfig
 Importers: Config.ImportersConfig
 Active: Union[wwmi_package.WWMIPackageConfig, zzmi_package.ZZMIPackageConfig,
               srmi_package.SRMIPackageConfig, gimi_package.GIMIPackageConfig]
+I18nSettings: I18n.I18nConfig

@@ -5,6 +5,7 @@ from core.locale_manager import L
 import core.event_manager as Events
 import core.path_manager as Paths
 import core.config_manager as Config
+import core.i18n_manager as I18n
 import gui.vars as Vars
 
 from gui.events import Stage
@@ -78,7 +79,7 @@ class SelectGameText(UIText):
     def __init__(self, master):
         super().__init__(x=30,
                          y=495,
-                         text='Select Games To Mod:',
+                         text=I18n._('main.select_games'),
                          font=('Microsoft YaHei', 24, 'bold'),
                          fill='white',
                          activefill='white',
@@ -226,7 +227,7 @@ class UpdateButton(MainActionButton):
             button_image_path='button-update.png',
             command=lambda: Events.Fire(Events.Application.Update(force=True)),
             master=master)
-        self.set_tooltip('Update packages to latest versions', delay=0.01)
+        self.set_tooltip(I18n._('buttons.update'), delay=0.01)
         self.subscribe(Events.PackageManager.VersionNotification, self.handle_version_notification)
 
     def handle_version_notification(self, event):
@@ -253,7 +254,7 @@ class UpdateButton(MainActionButton):
             self.show(self.stage == Stage.Ready and Config.Launcher.active_importer != 'XXMI')
         else:
             self.enabled = False
-            self.set_tooltip('No updates available!')
+            self.set_tooltip(I18n._('tooltip.no_updates'))
             self.hide()
 
 
@@ -268,7 +269,7 @@ class StartButton(MainActionButton):
             bg_image_path='button-start-background.png',
             bg_width=340,
             bg_height=64,
-            text='Start',
+            text=I18n._('buttons.start'),
             text_x_offset=36,
             text_y_offset=-1,
             font=('Microsoft YaHei', 23, 'bold'),
@@ -317,7 +318,7 @@ class InstallButton(MainActionButton):
             bg_image_path='button-start-background.png',
             bg_width=340,
             bg_height=64,
-            text='Install',
+            text=I18n._('buttons.install'),
             text_x_offset=18,
             text_y_offset=-1,
             font=('Microsoft YaHei', 23, 'bold'),
@@ -409,42 +410,25 @@ class PackageVersionText(UIImageButton):
         installed_release_notes = package.cfg.deployed_release_notes
 
         if package.installed_version == package.cfg.latest_version:
-            package_release_notes = L('package_release_notes_up_to_date', dedent("""
-                # What's new in {package_name} v{new_package_version}:
-                {installed_release_notes}
-            """))
+            package_release_notes = I18n._('tooltip.package_release_notes_up_to_date')
             installed_release_notes = installed_release_notes or package.cfg.latest_release_notes
         else:
-            package_release_notes = L('package_release_notes_update_available', dedent("""
-                # Update {package_name} to v{new_package_version} for:
-                {latest_release_notes}
-            """))
+            package_release_notes = I18n._('tooltip.package_release_notes_update_available')
 
         if not package.cfg.deployed_release_notes and not package.cfg.latest_release_notes:
-            package_release_notes = L('package_release_notes_not_installed', dedent("""
-                Press **Install** button to setup the package.
-            """))
+            package_release_notes = I18n._('tooltip.package_release_notes_not_installed')
 
         if self.package_name == 'Launcher':
-            package_description = L('package_description_launcher', dedent("""
-                *This package is XXMI Launcher App itself and defines its features.*
-            """))
+            package_description = I18n._('tooltip.package_description_launcher')
         elif self.package_name == 'XXMI':
-            package_description = L('package_description_xxmi_libraries', dedent("""
-                *XXMI Libraries package is custom 3dmigoto build fiddling with data between GPU and a game process.*
-            """))
+            package_description = I18n._('tooltip.package_description_xxmi_libraries')
         else:
-            package_description = L('package_description_model_importer', dedent("""
-                *Model Importer package offers a set of API functions required for mods to work in given game.*
-            """))
+            package_description = I18n._('tooltip.package_description_model_importer')
 
-        txt = L('package_release_notes', dedent("""
-            {package_release_notes}
-            
-            <font color="#3366ff">*<u>Left-Click</u> to open {package_name} Package GitHub releases for full changelog.*</font>
-            <font color="#aaaaaa">{package_description}</font>
-        """)).format(
-            package_release_notes=package_release_notes
+        txt = I18n._('tooltip.package_release_notes').format(
+            package_release_notes=package_release_notes,
+            package_name=package.metadata.package_name,
+            package_description=package_description
         )
 
         return txt.format(
