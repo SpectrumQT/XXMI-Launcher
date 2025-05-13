@@ -1,0 +1,51 @@
+{
+    "settings": {
+        "title": "설정",
+        "language": "언어",
+        "language_tooltip": "표시 언어 변경",
+        "game_folder": "게임 폴더:",
+        "launch_options": "실행 옵션:",
+        "process_priority": "프로세스 우선순위:",
+        "auto_config": "자동 설정:",
+        "tweaks": "조정:",
+        "general_tab": "일반",
+        "launcher_tab": "런처",
+        "advanced_tab": "고급",
+        "language_change": "언어가 변경되었습니다",
+        "language_change_restart": "언어 변경을 완전히 적용하려면 애플리케이션을 다시 시작하세요.",
+        "configure_game": "게임 설정 구성",
+        "force_120_fps": "120FPS 강제",
+        "apply_tweaks": "성능 조정 적용",
+        "enable_hdr": "HDR 활성화",
+        "disable_wounded": "부상 효과 비활성화"
+    },
+    "tooltip": {
+        "configure_game_wwmi": "활성화하면 더 나은 MOD 렌더링을 위해 게임 설정을 조정합니다.\n구체적으로 런처는 \"Client\\Config\\UserSettings.ini\"에 다음을 추가합니다:\n - `IsPointLightShadowEnabled=False`\n - `IsScreenSpaceReflectionEnabled=False`\n - `SubsurfaceScatteringQuality=0`",
+        "configure_game_zzmi": "활성화하면 더 나은 MOD 렌더링을 위해 게임 설정을 조정합니다.\n구체적으로 런처는 \"GraphicsSettings.json\"을 수정하여 특정 후처리 효과를 비활성화합니다.",
+        "configure_game_srmi": "활성화하면 더 나은 MOD 렌더링을 위해 게임 설정을 조정합니다.\n구체적으로 런처는 \"AppData\\LocalLow\\Cognosphere\\Star Rail\\Player.ini\"를 수정하여 특정 후처리 효과를 비활성화합니다.",
+        "configure_game_gimi": "활성화하면 더 나은 MOD 렌더링을 위해 게임 설정을 조정합니다.\n구체적으로 런처는 d3dx.ini의 [Constants] 섹션에 다음 명령을 추가합니다:\n - `UseBloom=0`\n - `UseFXAA=0`\n - `UseVignette=0`\n\n비활성화하면 이러한 오버라이드를 제거합니다(수동으로 편집된 경우 변경되지 않음)."
+    },
+    "buttons": {
+        "save": "저장",
+        "cancel": "취소",
+        "close": "닫기",
+        "browse": "찾아보기...",
+        "detect": "⟳",
+        "about": "정보...",
+        "use_default": "기본값 사용",
+        "patch_theme": "테마 패치",
+        "start": "시작",
+        "install": "설치",
+        "update": "최신 버전으로 업데이트",
+        "tools": "도구",
+        "repair": "복구",
+        "check_for_updates": "업데이트 확인",
+        "add_shortcut": "바탕화면 바로가기 추가",
+        "open_mods_folder": "MODs 폴더 열기",
+        "ok": "확인",
+        "confirm": "확인",
+        "load_backup": "백업 불러오기",
+        "load_default": "기본값 불러오기",
+        "skip": "건너뛰기"
+    }
+} 

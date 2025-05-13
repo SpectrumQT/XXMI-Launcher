@@ -47,7 +47,19 @@ class SettingsFrame(UIFrame):
         self.show()
 
     def save_and_close(self, event=None):
+        current_lang = Vars.I18nSettings.language.get()
+        language_codes = {name: code for code, name in I18n.I18n.get_language_options().items()}
+        language_names = {code: name for code, name in I18n.I18n.get_language_options().items()}
+        
+        if current_lang in language_codes:
+            lang_code = language_codes[current_lang]
+        elif current_lang in language_names:
+            lang_code = current_lang
+        else:
+            lang_code = 'en'
+            
         Vars.Settings.save()
+        Config.Config.I18n.language = lang_code
         Config.Config.save()
         self.hide()
 

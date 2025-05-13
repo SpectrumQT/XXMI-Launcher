@@ -1,0 +1,51 @@
+{
+    "settings": {
+        "title": "設定",
+        "language": "言語",
+        "language_tooltip": "表示言語を変更する",
+        "game_folder": "ゲームフォルダ:",
+        "launch_options": "起動オプション:",
+        "process_priority": "プロセス優先度:",
+        "auto_config": "自動設定:",
+        "tweaks": "調整:",
+        "general_tab": "一般",
+        "launcher_tab": "ランチャー",
+        "advanced_tab": "詳細",
+        "language_change": "言語が変更されました",
+        "language_change_restart": "言語の変更を完全に適用するにはアプリケーションを再起動してください。",
+        "configure_game": "ゲーム設定を構成する",
+        "force_120_fps": "120FPSを強制",
+        "apply_tweaks": "パフォーマンス調整を適用",
+        "enable_hdr": "HDRを有効化",
+        "disable_wounded": "負傷エフェクトを無効化"
+    },
+    "tooltip": {
+        "configure_game_wwmi": "有効にすると、より良いMODレンダリングのためにゲーム設定を調整します。\n具体的には、ランチャーは \"Client\\Config\\UserSettings.ini\" に以下を追加します：\n - `IsPointLightShadowEnabled=False`\n - `IsScreenSpaceReflectionEnabled=False`\n - `SubsurfaceScatteringQuality=0`",
+        "configure_game_zzmi": "有効にすると、より良いMODレンダリングのためにゲーム設定を調整します。\n具体的には、ランチャーは \"GraphicsSettings.json\" を修正して特定のポストプロセス効果を無効にします。",
+        "configure_game_srmi": "有効にすると、より良いMODレンダリングのためにゲーム設定を調整します。\n具体的には、ランチャーは \"AppData\\LocalLow\\Cognosphere\\Star Rail\\Player.ini\" を修正して特定のポストプロセス効果を無効にします。",
+        "configure_game_gimi": "有効にすると、より良いMODレンダリングのためにゲーム設定を調整します。\n具体的には、ランチャーはd3dx.iniの[Constants]セクションに以下のコマンドを追加します：\n - `UseBloom=0`\n - `UseFXAA=0`\n - `UseVignette=0`\n\n無効にすると、これらのオーバーライドを削除します（手動で編集された場合は変更されません）。"
+    },
+    "buttons": {
+        "save": "保存",
+        "cancel": "キャンセル",
+        "close": "閉じる",
+        "browse": "参照...",
+        "detect": "⟳",
+        "about": "バージョン情報...",
+        "use_default": "デフォルトを使用",
+        "patch_theme": "テーマを修正",
+        "start": "開始",
+        "install": "インストール",
+        "update": "最新バージョンに更新",
+        "tools": "ツール",
+        "repair": "修復",
+        "check_for_updates": "更新を確認",
+        "add_shortcut": "デスクトップショートカットを追加",
+        "open_mods_folder": "MODsフォルダを開く",
+        "ok": "OK",
+        "confirm": "確認",
+        "load_backup": "バックアップを読み込む",
+        "load_default": "デフォルトを読み込む",
+        "skip": "スキップ"
+    }
+} 

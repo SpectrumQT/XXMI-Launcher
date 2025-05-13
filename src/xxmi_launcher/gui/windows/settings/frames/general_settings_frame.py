@@ -79,6 +79,10 @@ class LanguageLabel(UILabel):
 class LanguageOptionMenu(UIOptionMenu):
     def __init__(self, master):
         self.language_options = I18n.I18n.get_language_options()
+        # 创建双向映射
+        self.language_codes = {name: code for code, name in self.language_options.items()}
+        self.language_names = {code: name for code, name in self.language_options.items()}
+        
         super().__init__(
             values=list(self.language_options.values()),
             variable=Vars.I18nSettings.language,
@@ -87,24 +91,27 @@ class LanguageOptionMenu(UIOptionMenu):
             command=self.on_language_change,
             master=master)
         self.set_tooltip(I18n._('settings.language_tooltip'))
-        
-        # 设置当前语言显示
+
         current_lang = Vars.I18nSettings.language.get()
-        if current_lang in self.language_options:
-            self.set(self.language_options[current_lang])
+        if current_lang in self.language_names:
+            self.set(self.language_names[current_lang])
+        elif current_lang in self.language_codes:
+            lang_code = self.language_codes[current_lang]
+            ars.I18nSettings.language.set(self.language_names[lang_code])
+            self.set(current_lang)
+        else:
+            Vars.I18nSettings.language.set(self.language_names['en'])
+            self.set(self.language_names['en'])
     
     def on_language_change(self, value):
-        # 从显示名称获取语言代码
-        for code, name in self.language_options.items():
-            if name == value:
-                Vars.I18nSettings.language.set(code)
-                I18n.I18n.set_language(code)
-                # 显示提示，需要重启应用以完全应用语言更改
-                Events.Fire(Events.Application.ShowInfo(
-                    title=I18n._('settings.language_change'),
-                    message=I18n._('settings.language_change_restart')
-                ))
-                break
+        if value in self.language_codes:
+            lang_code = self.language_codes[value]
+            Vars.I18nSettings.language.set(value)
+            I18n.I18n.set_language(lang_code)
+            Events.Fire(Events.Application.ShowInfo(
+                title=I18n._('settings.language_change'),
+                message=I18n._('settings.language_change_restart')
+            ))
 
 
 class GameFolderFrame(UIFrame):
@@ -188,19 +195,15 @@ class GameFolderEntry(UIEntry):
         return True
 
     def get_tooltip(self):
-        msg = ''
         if Config.Launcher.active_importer == 'WWMI':
-            msg = 'Path to folder with "Wuthering Waves.exe" and "Client" & "Engine" subfolders.\n'
-            msg += 'Usually this folder is named "Wuthering Waves Game" and located inside WuWa installation folder.'
+            return I18n._('tooltip.game_folder_wwmi')
         if Config.Launcher.active_importer == 'ZZMI':
-            msg = 'Path to folder with "ZenlessZoneZero.exe".\n'
+            return I18n._('tooltip.game_folder_zzmi')
         if Config.Launcher.active_importer == 'SRMI':
-            msg = 'Path to folder with "StarRail.exe".\n'
-            msg += 'Usually this folder is named "Games" and located inside "DATA" folder of HSR installation folder.'
+            return I18n._('tooltip.game_folder_srmi')
         if Config.Launcher.active_importer == 'GIMI':
-            msg = 'Path to folder with "GenshinImpact.exe" or "YuanShen.exe" (CN).\n'
-            msg += 'Usually this folder is named "Genshin Impact Game" and located inside "DATA" folder of GI installation folder.'
-        return msg.strip()
+            return I18n._('tooltip.game_folder_gimi')
+        return ''
 
 
 class GameFolderErrorLabel(UILabel):
@@ -247,7 +250,7 @@ class DetectGameFolderButton(UIButton):
             font=('Asap', 18),
             master=master)
 
-        self.set_tooltip('Try to automatically detect existing installation folders.')
+        self.set_tooltip(I18n._('tooltip.detect_game_folder'))
 
     def detect_game_folder(self):
         try:
@@ -256,45 +259,6 @@ class DetectGameFolderButton(UIButton):
             Config.Active.Importer.game_folder = str(game_path)
         except:
             pass
-
-
-class LaunchOptionsButton(UIButton):
-    def __init__(self, master):
-        fg_color = ThemeManager.theme['CTkEntry'].get('fg_color', None)
-
-        super().__init__(
-            text=I18n._('buttons.about'),
-            command=self.open_docs,
-            auto_width=True,
-            padx=6,
-            height=32,
-            border_width=0,
-            font=('Roboto', 14),
-            fg_color=fg_color,
-            hover_color=fg_color,
-            text_color=['#000000', '#aaaaaa'],
-            text_color_hovered=['#000000', '#ffffff'],
-            master=master)
-
-        self.set_tooltip(self.get_tooltip)
-
-    def open_docs(self):
-        if Config.Launcher.active_importer == 'WWMI':
-            webbrowser.open('https://dev.epicgames.com/documentation/en-us/unreal-engine/command-line-arguments?application_version=4.27')
-        elif Config.Launcher.active_importer in ['GIMI', 'SRMI', 'ZZMI']:
-            webbrowser.open('https://docs.unity3d.com/Manual/PlayerCommandLineArguments.html')
-
-    def get_tooltip(self):
-        if Config.Launcher.active_importer == 'WWMI':
-            engine = 'UE4'
-        elif Config.Launcher.active_importer in ['GIMI', 'SRMI', 'ZZMI']:
-            engine = 'Unity'
-        else:
-            raise ValueError(f'Game engine is unknown!')
-
-        return (
-            f'Open {engine} command line arguments documentation webpage.\n'
-            f'Note: Game engine is customized by devs and some args may not work.')
 
 
 class LaunchOptionsLabel(UILabel):
@@ -310,18 +274,38 @@ class LaunchOptionsEntry(UIEntry):
     def __init__(self, master):
         super().__init__(
             textvariable=Vars.Active.Importer.launch_options,
-            width=100,
+            width=200,
             height=32,
             border_width=0,
             font=('Arial', 14),
             master=master)
-        self.set_tooltip(self.get_tooltip)
+        self.set_tooltip(I18n._('tooltip.launch_options_tooltip'))
 
-    def get_tooltip(self):
-        msg = 'Command line arguments aka Launch Options to start game exe with.\n'
+
+class LaunchOptionsButton(UIButton):
+    def __init__(self, master):
+        fg_color = ThemeManager.theme["CTkEntry"].get("fg_color", None)
+        super().__init__(
+            text="?",
+            command=self.open_docs,
+            auto_width=True,
+            padx=6,
+            height=32,
+            border_width=0,
+            font=('Roboto', 14),
+            fg_color=fg_color,
+            hover_color=fg_color,
+            text_color=["#000000", "#aaaaaa"],
+            text_color_hovered=["#000000", "#ffffff"],
+            master=master)
+        
+        self.set_tooltip(I18n._('tooltip.launch_options_docs'))
+
+    def open_docs(self):
         if Config.Launcher.active_importer == 'WWMI':
-            msg += '* Disable intro: -SkipSplash'
-        return msg.strip()
+            webbrowser.open('https://dev.epicgames.com/documentation/en-us/unreal-engine/command-line-arguments?application_version=4.27')
+        elif Config.Launcher.active_importer in ['GIMI', 'SRMI', 'ZZMI']:
+            webbrowser.open('https://docs.unity3d.com/Manual/PlayerCommandLineArguments.html')
 
 
 class ProcessPriorityLabel(UILabel):
@@ -336,14 +320,12 @@ class ProcessPriorityLabel(UILabel):
 class ProcessPriorityOptionMenu(UIOptionMenu):
     def __init__(self, master):
         super().__init__(
-            values=['Low', 'Below Normal', 'Normal', 'Above Normal', 'High', 'Realtime'],
+            values=['Normal', 'Above Normal', 'High'],
             variable=Vars.Active.Importer.process_priority,
-            width=140,
-            height=36,
-            font=('Arial', 14),
-            dropdown_font=('Arial', 14),
+            width=150,
+            dynamic_resizing=True,
             master=master)
-        self.set_tooltip('Set process priority for the game exe.')
+        self.set_tooltip(I18n._('tooltip.process_priority'))
 
 
 class AutoConfigLabel(UILabel):
@@ -361,43 +343,23 @@ class ConfigureGameCheckbox(UICheckbox):
             text=I18n._('settings.configure_game'),
             variable=Vars.Active.Importer.configure_game,
             master=master)
-
+        
         self.set_tooltip(self.get_tooltip)
 
     def get_tooltip(self):
-        msg = ''
-        if Config.Launcher.active_importer == 'GIMI':
-            msg = dedent("""
-                **Enabled**: Ensure GIMI-compatible in-game **Graphics Settings** before game start:
-
-                - `Dynamic Character Resolution: Off`
-
-                **Disabled**: In-game settings will not be affected.
-
-                <font color="red">⚠ Mods will not work with wrong settings! ⚠</font>
-            """)
         if Config.Launcher.active_importer == 'WWMI':
-            msg = dedent("""
-                **Enabled**: Ensure WWMI-compatible in-game **Graphics Settings** before game start:
-
-                - `Graphics Quality: Quality`
-
-                **Disabled**: In-game settings will not be affected.
-
-                <font color="red">⚠ Mods will not work with wrong settings! ⚠</font>
-            """)
+            return I18n._('tooltip.configure_game_wwmi')
+        
         if Config.Launcher.active_importer == 'ZZMI':
-            msg = dedent("""
-                **Enabled**: Ensure ZZMI-compatible in-game **Graphics Settings** before game start:
-
-                - `Character Quality: High`
-                - `High-Precision Character Animation: Disabled`
-
-                **Disabled**: In-game settings will not be affected.
-
-                <font color="red">⚠ Mods will not work with wrong settings! ⚠</font>
-            """)
-        return msg.strip()
+            return I18n._('tooltip.configure_game_zzmi')
+        
+        if Config.Launcher.active_importer == 'SRMI':
+            return I18n._('tooltip.configure_game_srmi')
+        
+        if Config.Launcher.active_importer == 'GIMI':
+            return I18n._('tooltip.configure_game_gimi')
+        
+        return ''
 
 
 class OpenEngineIniButton(UIButton):
@@ -405,19 +367,22 @@ class OpenEngineIniButton(UIButton):
         super().__init__(
             text=I18n._('settings.open_engine_ini'),
             command=self.open_engine_ini,
-            width=140,
+            width = 150,
             height=36,
-            font=('Roboto', 14),
+            font=('Asap', 14),
             master=master)
-        self.set_tooltip(f'Open Engine.ini in default text editor file for manual tweaking.')
 
     def open_engine_ini(self):
-        game_folder = Events.Call(Events.ModelImporter.ValidateGameFolder(Config.Active.Importer.game_folder))
-        engine_ini = game_folder / 'Client' / 'Saved' / 'Config' / 'WindowsNoEditor' / 'Engine.ini'
-        if engine_ini.is_file():
-            subprocess.Popen([f'{str(engine_ini)}'], shell=True)
-        else:
-            raise ValueError(f'File does not exist: "{engine_ini}"!')
+        game_folder = Vars.Active.Importer.game_folder.get()
+        engine_ini = f"{game_folder}\\Engine\\Config\\Engine.ini"
+        
+        try:
+            engine_ini_path = Path(engine_ini)
+            if not engine_ini_path.exists():
+                return
+            subprocess.run(f'explorer /select,"{engine_ini_path.absolute()}"', check=True)
+        except Exception as e:
+            print(e)
 
 
 class TweaksLabel(UILabel):
@@ -436,43 +401,33 @@ class UnlockFPSCheckbox(UICheckbox):
             variable=Vars.Active.Importer.unlock_fps,
             master=master)
         self.set_tooltip(self.get_tooltip)
-
+    
     def get_tooltip(self):
-        msg = ''
         if Config.Launcher.active_importer == 'WWMI':
-            msg = 'This option allows to set FPS limit to 120 even on not officially supported devices.\n'
-            msg += 'Please do note that with some hardware game refuses to go 120 FPS even with this tweak.\n'
-            msg += '**Enabled**: Sets `CustomFrameRate` to `120` in `LocalStorage.db` on game start.\n'
-            msg += '**Disabled**: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.'
+            return I18n._('tooltip.unlock_fps_wwmi')
+        
         if Config.Launcher.active_importer == 'SRMI':
-            msg = 'This option allows to set FPS limit to 120.\n'
-            msg += '**Enabled**: Updates Graphics Settings Windows Registry key with 120 FPS value on game start.\n'
-            msg += '**Disabled**: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.\n'
-            msg += '**Warning!** Tweak is supported only for the Global HSR client and will not work for CN.\n'
-            msg += '*Note: Edits `FPS` value in `HKEY_CURRENT_USER/SOFTWARE/Cognosphere/Star Rail/GraphicsSettings_Model_h2986158309`.*'
-        elif Config.Launcher.active_importer == 'GIMI':
-            msg = 'This option allows to force 120 FPS mode.\n'
-            msg += '**Enabled**: Launch game via `unlockfps_nc.exe` and let it run in background to keep FPS tweak applied.\n'
-            msg += '**Disabled**: Launch game via original `.exe` file, has no effect on FPS.\n'
-            msg += '*Hint: If FPS Unlocker package is outdated, you can manually update "unlockfps_nc.exe" from original repository.*\n'
-            msg += '*Local Path*: `Resources/Packages/GI-FPS-Unlocker/unlockfps_nc.exe`\n'
-            msg += '*Original Repository*: `https://github.com/34736384/genshin-fps-unlock`'
-        return msg.strip()
+            return I18n._('tooltip.unlock_fps_srmi')
+        
+        if Config.Launcher.active_importer == 'GIMI':
+            return I18n._('tooltip.unlock_fps_gimi')
+        
+        return ""
 
 
 class UnlockFPSWindowOptionMenu(UIOptionMenu):
     def __init__(self, master):
         super().__init__(
-            values=['Windowed', 'Borderless', 'Fullscreen', 'Exclusive Fullscreen'],
+            values=['Fullscreen', 'Borderless', 'Window'],
             variable=Vars.Active.Importer.window_mode,
-            width=140,
-            height=36,
-            font=('Arial', 14),
-            dropdown_font=('Arial', 14),
+            width=150,
+            dynamic_resizing=True,
             master=master)
-        self.set_tooltip('Game window mode when started with FPS Unlocker.')
+        
+        self.set_tooltip(I18n._('tooltip.unlock_fps_window_mode'))
+        
         self.trace_write(Vars.Active.Importer.unlock_fps, self.handle_write_unlock_fps)
-
+        
     def handle_write_unlock_fps(self, var, val):
         if val:
             self.configure(state='normal')
@@ -486,21 +441,8 @@ class ApplyTweaksCheckbox(UICheckbox):
             text=I18n._('settings.apply_tweaks'),
             variable=Vars.Active.Importer.apply_perf_tweaks,
             master=master)
-        self.set_tooltip(
-            '**Enabled**: Add list of performance tweaks to `[SystemSettings]` section of `Engine.ini` on game start.\n'
-            "**Disabled**: Do not add tweaks to `Engine.ini`. Already added ones will have to be removed manually.\n\n"
-            'List of tweaks:\n'
-            '* r.Streaming.HLODStrategy = 2\n'
-            '* r.Streaming.LimitPoolSizeToVRAM = 1\n'
-            '* r.Streaming.PoolSizeForMeshes = -1\n'
-            '* r.XGEShaderCompile = 0\n'
-            '* FX.BatchAsync = 1\n'
-            '* FX.EarlyScheduleAsync = 1\n'
-            '* fx.Niagara.ForceAutoPooling = 1\n'
-            '* wp.Runtime.KuroRuntimeStreamingRangeOverallScale = 0.5\n'
-            '* tick.AllowAsyncTickCleanup = 1\n'
-            '* tick.AllowAsyncTickDispatch = 1'
-        )
+        
+        self.set_tooltip(I18n._('tooltip.apply_tweaks'))
 
 
 class EnableHDR(UICheckbox):
@@ -509,10 +451,8 @@ class EnableHDR(UICheckbox):
             text=I18n._('settings.enable_hdr'),
             variable=Vars.Active.Importer.enable_hdr,
             master=master)
-        self.set_tooltip(
-            '**Warning**! Your monitor must support HDR and `Use HDR` must be enabled in Windows Display settings!\n'
-            '**Enabled**: Turn HDR On. Creates HDR registry record each time before the game launch.\n'
-            '**Disabled**: Turn HDR Off. No extra action required, game auto-removes HDR registry record on launch.')
+        
+        self.set_tooltip(I18n._('tooltip.enable_hdr'))
 
 
 class DisableWoundedEffectCheckbox(UICheckbox):
@@ -521,14 +461,11 @@ class DisableWoundedEffectCheckbox(UICheckbox):
             text=I18n._('settings.disable_wounded'),
             variable=Vars.Active.Importer.disable_wounded_fx,
             master=master)
-        self.set_tooltip(
-            'Most mods do not support this effect, so textures usually break after few hits taken.\n'
-            '**Enabled**: Turn the effect `Off`. Ensures proper rendering of modded textures.\n'
-            "**Disabled**: Turn the effect `On`. Select this if you use `Injured Effect Remover` tool."
-        )
-
+        
+        self.set_tooltip(I18n._('tooltip.disable_wounded_effect'))
+        
         self.trace_write(Vars.Active.Importer.configure_game, self.handle_write_configure_game)
-
+    
     def handle_write_configure_game(self, var, val):
         if val:
             self.configure(state='normal')

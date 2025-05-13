@@ -186,9 +186,7 @@ class AutoCloseCheckbox(UICheckbox):
             text=I18n._('settings.launcher.close_after_start'),
             variable=Vars.Launcher.auto_close,
             master=master)
-        self.set_tooltip(
-            'Enabled: Launcher will close itself once the game has started and 3dmigoto injection has been confirmed.\n'
-            'Disabled: Launcher will keep itself running.')
+        self.set_tooltip(I18n._('tooltip.auto_close'))
 
 
 class TimeoutLabel(UILabel):
@@ -208,9 +206,7 @@ class TimeoutEntry(UIEntry):
             height=36,
             font=('Arial', 14),
             master=master)
-        self.set_tooltip('Controls how long launcher should wait for the game to show its window after launch.\n'
-                         'Game process will be considered as crashed once timeout is met.\n'
-                         'Default value is **30**.\n')
+        self.set_tooltip(I18n._('tooltip.timeout'))
 
         self.configure(validate='key', validatecommand=(master.register(self.validate_input), '%P'))
 
@@ -237,9 +233,7 @@ class AutoUpdateCheckbox(UICheckbox):
         self.set_tooltip(self.get_tooltip)
 
     def get_tooltip(self):
-        msg = f'Enabled: Launcher and {Config.Launcher.active_importer} updates will be Downloaded and Installed automatically.\n'
-        msg += 'Disabled: Use special [▲] button next to [Start] button to Download and Install updates manually.'
-        return msg.strip()
+        return I18n._('tooltip.auto_update').format(importer=Config.Launcher.active_importer)
 
 
 class UpdateChannelLabel(UILabel):
@@ -261,10 +255,7 @@ class UpdateChannelOptionMenu(UIOptionMenu):
             font=('Arial', 14),
             dropdown_font=('Arial', 14),
             master=master)
-        self.set_tooltip(
-            '**Auto**: Detect update installation method automatically.\n'
-            '**MSI**: Use native `.msi` installers to install updates.\n'
-            '**ZIP**: Use portable `.zip` archives to install updates.')
+        self.set_tooltip(I18n._('tooltip.update_channel'))
 
 
 class ThemeLabel(UILabel):
@@ -286,12 +277,7 @@ class LauncherThemeOptionMenu(UIOptionMenu):
             font=('Arial', 14),
             dropdown_font=('Arial', 14),
             master=master)
-        self.set_tooltip('Select launcher GUI theme.\n'
-                         'Warning! `Default` theme will be overwritten by launcher updates!\n'
-                         'To make a custom theme:\n'
-                         '1. Create a duplicate of `Default` folder in `Themes` folder.\n'
-                         '2. Rename the duplicate in a way you want it to be shown in Settings.\n'
-                         '3. Edit or replace any images (valid extensions: webp, jpeg, png, jpg).')
+        self.set_tooltip(I18n._('tooltip.launcher_theme'))
 
     def update_values(self):
         values = ['Default']
@@ -336,9 +322,7 @@ class EnableDevMode(UICheckbox):
             text=I18n._('settings.launcher.dev_mode'),
             variable=Vars.Launcher.theme_dev_mode,
             master=master)
-        self.set_tooltip(
-            'Enabled: Launcher will track changes in `custom-tkinter-theme.json` and apply them on the fly.\n'
-            'Disabled: Theme changes will not be tracked.')
+        self.set_tooltip(I18n._('tooltip.dev_mode'))
 
         self.trace_write(Vars.Launcher.theme_dev_mode, self.handle_write_theme_dev_mode)
 
@@ -374,12 +358,7 @@ class GitHubTokenEntry(UIEntry):
             border_width=0,
             font=('Arial', 14),
             master=master)
-        self.set_tooltip('Your **Personal Access Token** on **GitHub** (i.e. `ghp_f7gy3A4eQ97jfy2983mfZu2Hy93yf2P3d798`).\n'
-                         'Allows to combat `GitHub API Requests Limit` error that usually happens with public proxies.\n'
-                         'It is totally free and only requires GitHub registration.\n'
-                         'To create new token:\n'
-                         '1. Click `[?]` button to open token creation webpage.\n'
-                         '2. Use `Generate new token (classic)` button.')
+        self.set_tooltip(I18n._('tooltip.github_token'))
 
 
 class GitHubTokenButton(UIButton):
@@ -399,7 +378,7 @@ class GitHubTokenButton(UIButton):
             text_color_hovered=['#000000', '#ffffff'],
             master=master)
 
-        self.set_tooltip('Open **GitHub Personal Access Token** creation webpage.')
+        self.set_tooltip(I18n._('tooltip.github_token_button'))
 
 
 class VerifySSLCheckbox(UICheckbox):
@@ -408,10 +387,7 @@ class VerifySSLCheckbox(UICheckbox):
             text=I18n._('settings.launcher.verify_ssl'),
             variable=Vars.Launcher.verify_ssl,
             master=master)
-        self.set_tooltip(
-            '<font color="red">⚠ Disable only if you trust your proxy or whatever else that breaks SSL. ⚠</font>\n'
-            '**Enabled**: Validate SLL certificates for GitHub downloads to keep you secure.\n'
-            '**Disabled**: Allow insecure connection vulnerable to man-in-middle attacks.')
+        self.set_tooltip(I18n._('tooltip.verify_ssl'))
 
 
 class ProxyEnableCheckbox(UICheckbox):
@@ -421,10 +397,7 @@ class ProxyEnableCheckbox(UICheckbox):
             font=('Microsoft YaHei', 14, 'bold'),
             variable=Vars.Launcher.proxy.enable,
             master=master)
-        self.set_tooltip(
-            'Controls how launcher connects to GitHub to download packages.\n'
-            '**Enabled**: Use specified proxy server to access Internet.\n'
-            '**Disabled**: Use default system Internet connection settings.')
+        self.set_tooltip(I18n._('tooltip.proxy_enable'))
 
 
 class ProxyTypeLabel(UILabel):
@@ -454,9 +427,7 @@ class ProxyTypeOptionMenu(UIOptionMenu):
             font=('Arial', 14),
             dropdown_font=('Arial', 14),
             master=master)
-        self.set_tooltip(
-            '**HTTPS**: Good old proxy protocol. Offers best security.\n'
-            '**SOCKS5**: Newer and less secure, but excels at bypassing firewalls.')
+        self.set_tooltip(I18n._('tooltip.proxy_type'))
 
         self.trace_write(Vars.Launcher.proxy.enable, self.handle_write_proxy_enable)
 
@@ -473,9 +444,7 @@ class ProxyDNSViaSocks5Checkbox(UICheckbox):
             text=I18n._('settings.launcher.proxy_dns'),
             variable=Vars.Launcher.proxy.proxy_dns_via_socks5,
             master=master)
-        self.set_tooltip(
-            '**Enabled**: Use SOCKS5 proxy connection to route DNS requests.\n'
-            '**Disabled**: DNS requests will be routed through your ISP.')
+        self.set_tooltip(I18n._('tooltip.proxy_dns'))
 
         self.trace_write(Vars.Launcher.proxy.enable, self.handle_write_proxy_enable)
         self.trace_write(Vars.Launcher.proxy.type, self.handle_write_proxy_type)
@@ -510,7 +479,7 @@ class ProxyHostEntry(UIEntry):
             height=36,
             font=('Arial', 14),
             master=master)
-        self.set_tooltip('Proxy IP address (i.e. `123.12.1.231`) or domain name (i.e. `proxyprovider.com`).')
+        self.set_tooltip(I18n._('tooltip.proxy_host'))
 
         self.trace_write(Vars.Launcher.proxy.host, self.handle_write_host)
 
@@ -554,7 +523,7 @@ class ProxyPortEntry(UIEntry):
             height=36,
             font=('Arial', 14),
             master=master)
-        self.set_tooltip('Proxy port (i.e. `1080`).')
+        self.set_tooltip(I18n._('tooltip.proxy_port'))
 
         self.trace_write(Vars.Launcher.proxy.port, self.handle_write_port)
 
@@ -579,9 +548,7 @@ class ProxyUseCredentialsCheckbox(UICheckbox):
             text=I18n._('settings.launcher.proxy_auth'),
             variable=Vars.Launcher.proxy.use_credentials,
             master=master)
-        self.set_tooltip(
-            '**Enabled**: Use specified user name and password for the proxy server authentication.\n'
-            '**Disabled**: Do not use any credentials when accessing a proxy server.')
+        self.set_tooltip(I18n._('tooltip.proxy_auth'))
 
 
 class ProxyUserLabel(UILabel):
@@ -601,7 +568,7 @@ class ProxyUserEntry(UIEntry):
             height=36,
             font=('Arial', 14),
             master=master)
-        self.set_tooltip('User name provided by your proxy service.')
+        self.set_tooltip(I18n._('tooltip.proxy_user'))
 
 
 class ProxyPasswordLabel(UILabel):
@@ -621,4 +588,4 @@ class ProxyPasswordEntry(UIEntry):
             height=36,
             font=('Arial', 14),
             master=master)
-        self.set_tooltip('Password provided by your proxy service.')
+        self.set_tooltip(I18n._('tooltip.proxy_password'))
