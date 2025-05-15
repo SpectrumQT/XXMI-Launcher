@@ -9,6 +9,8 @@ from typing import List
 from pathlib import Path
 from pyinjector import inject
 
+from core.i18n_manager import I18n, _
+
 
 class DllInjector:
     def __init__(self, injector_lib_path):
@@ -21,12 +23,12 @@ class DllInjector:
     @staticmethod
     def load(injector_lib_path):
         if not injector_lib_path.exists():
-            raise ValueError(f'Injector file not found: {injector_lib_path}!')
+            raise ValueError(_("errors.injector.not_found").format(injector_lib_path=injector_lib_path))
 
         try:
             lib = ct.cdll.LoadLibrary(str(injector_lib_path))
         except Exception as e:
-            raise ValueError(f'Failed to load injector library!') from e
+            raise ValueError(_("errors.injector.load_failed")) from e
 
         try:
             lib.HookLibrary.argtypes = (wt.LPCWSTR, ct.POINTER(wt.HHOOK), ct.POINTER(wt.HANDLE))
@@ -38,7 +40,7 @@ class DllInjector:
             lib.UnhookLibrary.argtypes = (ct.POINTER(wt.HHOOK), ct.POINTER(wt.HANDLE))
             lib.UnhookLibrary.restype = ct.c_int
         except Exception as e:
-            raise ValueError(f'Failed to setup injector library!') from e
+            raise ValueError(_("errors.injector.setup_failed")) from e
 
         return lib
 
@@ -50,13 +52,13 @@ class DllInjector:
         # Explicitly unload injector dll
         result = kernel32.FreeLibrary(self.lib._handle)
         if result == 0:
-            raise ValueError(f'Failed to unload injector library!')
+            raise ValueError(_("errors.injector.unload_failed"))
 
     def hook_library(self, dll_path: Path, target_process: str):
         if self.hook is not None:
             dll_path = self.dll_path
             self.unhook_library()
-            raise ValueError(f'Invalid injector usage: {str(dll_path)} was not unhooked!')
+            raise ValueError(_("errors.injector.not_unhooked").format(dll_path=dll_path))
 
         self.dll_path = wt.LPCWSTR(str(dll_path.resolve()))
         self.target_process = wt.LPCWSTR(target_process)
@@ -66,25 +68,25 @@ class DllInjector:
         result = self.lib.HookLibrary(self.dll_path, ct.byref(self.hook), ct.byref(self.mutex))
 
         if result == 100:
-            raise ValueError(f'Another instance of 3DMigotoLoader is running!')
+            raise ValueError(_("errors.injector.another_instance"))
         elif result == 200:
-            raise ValueError(f'Failed to load {str(dll_path)}!')
+            raise ValueError(_("errors.injector.load_dll_failed").format(dll_path=dll_path))
         elif result == 300:
-            raise ValueError(f'Library {str(dll_path)} is missing expected entry point!')
+            raise ValueError(_("errors.injector.missing_entry").format(dll_path=dll_path))
         elif result == 400:
-            raise ValueError(f'Failed to setup windows hook for {str(dll_path)}!')
+            raise ValueError(_("errors.injector.hook_failed").format(dll_path=dll_path))
         elif result != 0:
-            raise ValueError(f'Unknown error while hooking {str(dll_path)}!')
+            raise ValueError(_("errors.injector.unknown_error").format(dll_path=dll_path))
         if not bool(self.hook):
-            raise ValueError(f'Hook is NULL for {str(dll_path)}!')
+            raise ValueError(_("errors.injector.null_hook").format(dll_path=dll_path))
 
     def wait_for_injection(self, timeout: int = 15) -> bool:
         if self.dll_path is None:
-            raise ValueError(f'Invalid injector usage: dll path is not defined!')
+            raise ValueError(_("errors.injector.no_dll"))
         if self.target_process is None:
-            raise ValueError(f'Invalid injector usage: target process is not defined!')
+            raise ValueError(_("errors.injector.no_process"))
         if self.hook is None:
-            raise ValueError(f'Invalid injector usage: dll is not hooked!')
+            raise ValueError(_("errors.injector.not_hooked"))
 
         result = self.lib.WaitForInjection(self.dll_path, self.target_process, ct.c_int(timeout))
 
@@ -111,7 +113,7 @@ def direct_inject(dll_paths: List[Path], process_name: str = None, pid: int = No
         try:
             str(dll_path).encode('ascii')
         except Exception as e:
-            raise ValueError(f'Please rename all folders from the path using only English letters:\n{dll_path}') from e
+            raise ValueError(_("errors.injector.path_english").format(dll_path=dll_path)) from e
 
     if start_cmd:
         subprocess.Popen(start_cmd, cwd=work_dir, creationflags=creationflags, shell=use_shell)
@@ -133,7 +135,7 @@ def direct_inject(dll_paths: List[Path], process_name: str = None, pid: int = No
                         try:
                             inject(process.pid, str(dll_path))
                         except Exception as e:
-                            raise ValueError(f'Failed to inject extra library {dll_path}:\n{str(e)}!\nPlease check Advanced Settings -> Inject Libraries.') from e
+                            raise ValueError(_("errors.injector.extra_lib").format(dll_path=dll_path, e=e)) from e
                     return process.pid
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 pass

@@ -14,6 +14,7 @@ from typing import Optional
 import core.path_manager as Paths
 import core.event_manager as Events
 import core.config_manager as Config
+import core.i18n_manager as I18n
 
 from core.package_manager import Package, PackageMetadata
 
@@ -96,8 +97,7 @@ class LauncherPackage(Package):
 
         result, pid = wait_for_process(installer_process_name, with_window=True, timeout=15)
         if result == WaitResult.Timeout:
-            raise ValueError(f'Failed to start {self.downloaded_asset_path.name}!\n\n'
-                             f'Was it blocked by Antivirus software or security settings?')
+            raise ValueError(I18n._('errors.packages.launcher.failed_to_start_installer').format(asset_name=self.downloaded_asset_path.name))
 
         time.sleep(1)
 

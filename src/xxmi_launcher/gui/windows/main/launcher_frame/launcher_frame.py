@@ -156,6 +156,15 @@ class GameTileButton(UIImageButton):
         except ValueError:
             self.set_selected(False)
 
+        tooltips = {
+            'XXMI': I18n._('tooltip.manage_importers'),
+            'WWMI': I18n._('tooltip.wwmi'),
+            'ZZMI': I18n._('tooltip.zzmi'),
+            'SRMI': I18n._('tooltip.srmi'),
+            'GIMI': I18n._('tooltip.gimi'),
+        }
+        self.set_tooltip(tooltips[importer_id], delay=0.5)
+
     def handle_load_importer(self, event):
         self.show(self.stage == Stage.Ready and event.importer_id == 'XXMI')
 

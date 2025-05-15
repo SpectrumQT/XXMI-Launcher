@@ -69,18 +69,15 @@
         }
     },
     "buttons": {
-        "save": "保存",
         "cancel": "取消",
         "close": "关闭",
         "browse": "浏览...",
         "detect": "⟳",
-        "about": "关于...",
         "use_default": "使用默认",
         "patch_theme": "修补主题",
         "start": "启动",
         "install": "安装",
         "update": "更新到最新版本",
-        "tools": "工具",
         "repair": "修复",
         "check_for_updates": "检查更新",
         "add_shortcut": "添加桌面快捷方式",
@@ -89,11 +86,13 @@
         "confirm": "确认",
         "load_backup": "加载备份",
         "load_default": "加载默认",
-        "skip": "跳过"
+        "skip": "跳过",
+        "reset": "重置",
+        "keep": "保留",
+        "restore": "恢复"
     },
     "errors": {
         "fatal_error": "XXMI启动器 - 严重错误",
-        "msvc_redistributable": "MSVC++运行库已损坏或未安装！\n\n请从以下地址重新安装：https://aka.ms/vs/17/release/vc_redist.x64.exe\n\n错误: {0}",
         "failed_to_parse_args": "解析参数失败: {args}",
         "failed_to_load_config": "加载配置失败！回退到默认设置。",
         "unknown_model_importer": "未知的模型导入器 {importer_name}！",
@@ -103,7 +102,165 @@
         "loading_failed": "{importer} 加载失败：\n{error}",
         "file_read_only": "文件只读错误",
         "file_read_only_message": "无法写入只读文件 {path}！\n\n按下[确认]移除此标志并继续。",
-        "failed_to_write_critical_file": "无法写入关键文件：{path}！"
+        "failed_to_write_critical_file": "无法写入关键文件：{path}！",
+        "resource_not_found": "找不到资源：\n\n{resource_path}\n\n提示：您还可以使用其他扩展名：{extensions}",
+        "github": {
+            "ssl_verify": "无法验证GitHub HTTPS连接的SSL证书！\n\n如果您信任您的代理，请在启动器设置中取消选中验证SSL并重试。\n\n{error}",
+            "connection": "无法建立到GitHub的HTTPS连接！\n\n请检查您的防病毒软件、防火墙、代理和VPN设置。\n\n{error}",
+            "response": "无法解析GitHub响应！",
+            "version": "无法解析最新版本！",
+            "signature": "无法解析签名！",
+            "asset": "无法找到匹配 '{asset_name_format}' 的资源！",
+            "api_limit": "您的IP已达到GitHub API请求限制！\n\nGitHub服务器将在一小时内忽略进一步的连接尝试。\n\n在启动器设置中设置（其他）*代理*或*GitHub令牌*以立即访问。",
+            "bad_credentials": "GitHub个人访问令牌无效！\n\n请在启动器设置中配置正确的令牌。",
+            "invalid_release_notes": "<font color=\"red\">⚠ 错误！发布说明格式无效！⚠</font>",
+            "unsigned_release": "<font color=\"red\">☢ 错误！发布未签名！☢</font>"
+        },
+        "path": {
+            "not_absolute": "目录路径 '{directory_path}' 不是绝对路径！",
+            "no_read": "无法读取 '{directory_path}' 文件夹！",
+            "no_write": "无法写入 '{directory_path}' 文件夹！",
+            "no_execute": "无法在 '{directory_path}' 文件夹中运行.exe！",
+            "no_access": "无法访问 '{directory_path}' 文件夹！",
+            "not_folder": "路径 '{directory_path}' 不是文件夹！",
+            "absolute_root": "无法为绝对路径 \"{path}\" 设置根目录 \"{root_path}\"！",
+            "file_not_found": "文件 '{file_path}' 不存在！",
+            "not_file": "文件 '{file_path}' 不是文件！",
+            "file_read_only": "无法写入 '{file_path}'：文件为只读！",
+            "curly_brackets": "启动器初始化失败！\n\n路径中不支持花括号 { 和 }：\n{root_path}\n\n请将启动器重新安装到其他位置。\n"
+        },
+        "injector": {
+            "not_found": "未找到注入器文件：{injector_lib_path}！",
+            "load_failed": "无法加载注入器库！",
+            "setup_failed": "无法设置注入器库！",
+            "unload_failed": "无法卸载注入器库！",
+            "not_unhooked": "注入器使用无效：{str(dll_path)} 未被取消钩子！",
+            "another_instance": "3DMigotoLoader的另一个实例正在运行！",
+            "load_dll_failed": "无法加载 {str(dll_path)}！",
+            "missing_entry": "库 {str(dll_path)} 缺少预期的入口点！",
+            "hook_failed": "无法为 {str(dll_path)} 设置Windows钩子！",
+            "unknown_error": "钩接 {str(dll_path)} 时出现未知错误！",
+            "null_hook": "{str(dll_path)} 的钩子为NULL！",
+            "no_dll": "注入器使用无效：未定义dll路径！",
+            "no_process": "注入器使用无效：未定义目标进程！",
+            "not_hooked": "注入器使用无效：dll未被钩接！",
+            "path_english": "请将路径中的所有文件夹重命名为仅使用英文字母：\n{dll_path}",
+            "extra_lib": "无法注入额外库 {dll_path}：\n{str(e)}！\n请检查高级设置 -> 注入库。"
+        },
+        "package": {
+            "detect_installed": "无法检测已安装的 {package_name} 版本：\n\n{error}",
+            "detect_latest": "无法检测最新的 {package_name} 版本：\n\n{error}",
+            "verify_download": "下载数据完整性验证失败！\n{error}",
+            "verify_asset": "{asset_name} 数据完整性验证失败！\n{error}",
+            "missing_manifest": "{package_name} 包缺少清单文件！",
+            "parse_manifest": "无法解析 {package_name} 清单文件！",
+            "missing_file": "{package_name} 包缺少关键文件：{file_name}！",
+            "invalid_signature": "文件 {file_name} 签名无效！",
+            "missing_signature": "{package_name} 清单文件缺少 {file_name} 的签名！",
+            "download_failed": "无法下载 {package_name} 包的 {version} 更新：\n{error}",
+            "install_failed": "无法安装 {package_name} 包的 {version} 更新！\n请重启启动器或电脑后重试。\n\n{error}"
+        },
+        "msvc": {
+            "verify_ctypes": "无法验证ctypes导入！",
+            "verify_dll": "无法验证 {dll}！",
+            "verify_win32api": "无法验证win32api导入！",
+            "verify_get_version": "无法验证GetFileVersionInfo是否为函数！",
+            "verify_hiword": "无法验证HIWORD是否为函数！",
+            "verify_loword": "无法验证LOWORD是否为函数！",
+            "redistributable": "MSVC++运行库已损坏或未安装！\n\n请从以下地址重新安装：https://aka.ms/vs/17/release/vc_redist.x64.exe\n\n错误：{error}"
+        },
+        "proxy": {
+            "no_host": "未指定代理主机！",
+            "no_port": "未指定代理端口！",
+            "invalid_port": "代理端口必须是数字值！"
+        },
+        "sleepy": {
+            "eof": "已到达流的末尾",
+            "bad_7bit_format": "7位编码整数格式错误",
+            "invalid_header": "[Sleepy::LogAssertInfo] BinaryFormatter头在流位置：{pos:x}处无效。期望对象枚举：{expected}，但获取：{actual}！",
+            "unsupported_data_type": "不支持的数据类型",
+            "invalid_indent": "缩进选项{indent}具有不支持的类型{type}！",
+            "unsupported_value_type": "值{value}具有不支持的类型{type}！"
+        },
+        "packages": {
+            "migoto": {
+                "installation_damaged": "XXMI安装已损坏！\n\n详情：{details}\n\n您想要自动恢复XXMI吗？",
+                "failed_to_inject_extra": "无法注入 {dll_paths}！",
+                "failed_to_detect_process": "无法检测到游戏进程 {process_name}！\n\n如果游戏窗口出现需要超过 {timeout} 秒，请在启动器设置中调整超时时间。\n\n如果游戏崩溃，请尝试清除Mods和ShaderFixes文件夹。",
+                "failed_to_start_process": "无法启动 {process_name}！",
+                "failed_to_inject": "无法注入 {dll_names}！",
+                "failed_to_stop_process": "无法停止 {process_name}！\n\n请手动关闭游戏并按[确定]继续。",
+                "missing_critical_file": "XXMI包缺少关键文件：{file_name}！"
+            },
+            "launcher": {
+                "failed_to_start_installer": "无法启动 {asset_name}！\n\n是否被杀毒软件或安全设置阻止？"
+            },
+            "updater": {
+                "failed_to_start_updater": "无法启动 XXMI Updater.exe！\n\n是否被杀毒软件或安全设置阻止？"
+            },
+            "model_importers": {
+                "common": {
+                    "failed_to_inject_extra_library": "无法注入额外库 {dll_path}：\n文件未找到！\n请检查高级设置 -> 注入库。",
+                    "unknown_command": "未知命令 {name}！",
+                    "failed_to_execute_command": "无法执行 `{name} = {value}` 命令（auto_update.xcmd）！：\n{error}",
+                    "file_removal_restriction": "文件或文件夹删除只允许从 Core 或 ShaderFixes 文件夹进行！",
+                    "folder_removal_restriction": "不允许明确删除整个 Core 或 ShaderFixes 文件夹！",
+                    "game_folder_not_specified": "未指定游戏安装文件夹！",
+                    "game_folder_not_found": "找不到指定的游戏安装文件夹！",
+                    "installation_failed": "{importer} 安装失败：\n{error}",
+                    "missing_setting": "配置缺少 {setting_name} 设置！",
+                    "missing_config_value": "配置缺少部分 `{section}` 选项 `{option}` 键 `{key}` 的值",
+                    "failed_to_set_option": "无法设置部分 {section} 选项 {option} 为 {value}：{error}",
+                    "missing_critical_file": "缺少关键文件：{ini_path}！",
+                    "d3dx_ini_in_mods": "Mods 文件夹中不能有 d3dx.ini！"
+                },
+                "wwmi": {
+                    "path_not_absolute": "无法规范化路径 {game_path}：路径不是绝对路径！",
+                    "exe_not_found": "无法规范化路径 {game_path_original}：找不到 Wuthering Waves.exe！",
+                    "invalid_folder_structure": "游戏文件夹必须包含 `Wuthering Waves.exe` 以及 `Client` 和 `Engine` 文件夹！",
+                    "steam_repair_required": "必须通过 Steam 修复游戏安装！",
+                    "missing_folder": "游戏文件夹必须包含 {dir_name} 文件夹！",
+                    "executable_not_found": "找不到游戏可执行文件 {process_name}！",
+                    "ini_not_found": "无法找到 Core/WWMI/WuWa-Model-Importer.ini！",
+                    "malformed_version": "WWMI 版本格式错误！",
+                    "version_not_found": "无法找到 WWMI 版本！",
+                    "force_fps_failed": "无法强制 120 FPS！\n请在启动器的常规设置中禁用 `强制 120 帧`。\n\n{error}",
+                    "configure_settings_failed": "无法为 WWMI 配置游戏内设置！\n请在启动器的常规设置中禁用 `配置游戏设置` 并检查游戏内设置：\n* 图形 > `图形质量` 必须是 `质量`。\n\n{error}",
+                    "installation_damaged": "鸣潮安装已损坏！\n\n删除 NVIDIA 插件不再是必需的，可能会导致崩溃！\n\n请使用官方启动器修复游戏（右上角的扳手按钮）。"
+                },
+                "zzmi": {
+                    "executable_not_found": "找不到游戏可执行文件 {process_name}！",
+                    "configure_settings_failed": "无法为 ZZMI 配置游戏内设置！\n\n{error}",
+                    "ini_not_found": "无法找到 Core/ZZMI/main.ini！",
+                    "unknown_settings_format": "未知的系统设置条目格式：{setting}！",
+                    "malformed_version": "ZZMI 版本格式错误！",
+                    "version_not_found": "无法找到 ZZMI 版本！"
+                },
+                "srmi": {
+                    "executable_not_found": "找不到游戏可执行文件 {process_name}！",
+                    "force_fps_failed": "无法强制 120 FPS：{error}",
+                    "ini_not_found": "无法找到 Core/SRMI/main.ini！",
+                    "registry_key_not_found": "星穹铁道注册表项未找到！\n\n请先不使用 120 帧补丁启动游戏，更改任意帧率值以创建记录后再试。\n\n注意：此补丁仅支持国际服客户端，不适用于国服。",
+                    "unknown_graphics_settings_format": "未知的图形设置格式：数据类型 {regtype} 不是 {reg_binary} 的 REG_BINARY！",
+                    "fps_key_not_found": "未知的图形设置格式：找不到 \"FPS\" 键！",
+                    "malformed_version": "SRMI 版本格式错误！",
+                    "version_not_found": "无法找到 SRMI 版本！"
+                },
+                "gimi": {
+                    "executable_not_found": "找不到游戏可执行文件 {process_name} 或 {cn_process_name}！",
+                    "fps_unlocker_config_failed": "无法配置帧率解锁器：\n\n{error}\n\n请在启动器的常规设置中禁用 `强制 120 帧`。",
+                    "ini_not_found": "无法找到 Core/GIMI/main.ini！",
+                    "registry_key_not_found": "找不到原神注册表项！\n\n请通过原始启动器启动游戏以创建该键，然后重试。",
+                    "unknown_settings_format": "未知的设置格式：数据类型 {regtype} 不是 {reg_binary} 的 REG_BINARY！",
+                    "graphicsdata_key_not_found": "未知的图形设置格式：找不到 \"graphicsData\" 键！",
+                    "globalPerfData_key_not_found": "未知的图形设置格式：找不到 \"globalPerfData\" 键！",
+                    "hdr_record_not_found": "在原神注册表中找不到 HDR 记录！\n\n请通过官方启动器启动游戏以创建记录，然后重试。",
+                    "malformed_version": "GIMI 版本格式错误！",
+                    "version_not_found": "无法找到 GIMI 版本！",
+                    "terminate_fps_unlocker_failed": "无法终止帧率解锁器！\n\n请手动关闭它并按 [确定] 继续。"
+                }
+            }
+        }
     },
     "main": {
         "title": "XXMI启动器",
@@ -123,6 +280,11 @@
         "minimize": "最小化",
         "close": "关闭",
         "unsafe_mode_warning": "允许使用第三方3dmigoto DLL。\n请确保只使用来自可信来源的文件！",
+        "manage_importers": "管理模型导入器",
+        "wwmi": "鸣潮模型导入器",
+        "zzmi": "绝区零模型导入器",
+        "srmi": "崩坏：星穹铁道模型导入器",
+        "gimi": "原神模型导入器",
         "package_release_notes_up_to_date": "# {package_name} v{new_package_version}的新功能：\n{installed_release_notes}",
         "package_release_notes_update_available": "# 更新{package_name}到v{new_package_version}获取：\n{latest_release_notes}",
         "package_release_notes_not_installed": "点击**安装**按钮设置软件包。",
@@ -199,25 +361,36 @@
         "downloading_asset": "正在下载 {asset_name}...",
         "verifying_asset_integrity": "正在验证 {asset_name} 完整性...",
         "initializing_update_installation": "正在初始化更新安装...",
-        "writing_asset_on_disk": "正在将 {asset_name} 写入磁盘...",
+        "writing_asset_on_disk": "正在写入 {asset_name} 到磁盘...",
         "moving_asset": "正在移动 {asset_name}...",
         "unpacking_asset": "正在解压 {asset_name}...",
-        "format_size": "{size:.2f}{unit}"
+        "format_size": "{size:.2f} {unit}"
     },
     "messages": {
         "default_title": "消息",
         "error_title": "错误",
         "warning_title": "警告",
-        "info_title": "信息"
+        "info_title": "信息",
+        "wounded_effect_title": "检测到受伤效果",
+        "wounded_effect_message": "看起来游戏设置中启用了受伤效果。\n大多数模组不支持此效果，受到几次伤害后纹理将会损坏。\n\n点击`禁用`关闭它以确保正确渲染模组纹理。\n如果您从不受伤或使用受伤效果移除工具，请点击`保持启用`。",
+        "invalid_ww_installation": "检测到无效的鸣潮安装（Steam）：\n{game_path}\n\n包含 {exe_name} 的 {folder_name} 文件夹必须直接放在：\n{common_folder}\n\n请通过 Steam 运行游戏文件修复或手动修复。"
     },
     "updates": {
         "available_title": "更新可用"
     },
-    "units": {
-        "B": "字节",
-        "KB": "KB",
-        "MB": "MB",
-        "GB": "GB",
-        "TB": "TB"
+    "security": {
+        "validation_failed": "无法验证不安全设置！\n\n{msg}\n"
+    },
+    "status": {
+        "ensuring_game_closed": "确保游戏已关闭...",
+        "configuring_in_game_settings": "正在配置游戏内设置...",
+        "updating_engine_ini": "正在更新 Engine.ini...",
+        "updating_game_user_settings_ini": "正在更新 GameUserSettings.ini...",
+        "updating_wwmi_ini": "正在更新 WuWa-Model-Importer.ini...",
+        "updating_gimi_ini": "正在更新 main.ini...",
+        "checking_engine_plugins": "正在检查引擎插件完整性...",
+        "disabling_streamline_plugin": "正在禁用 Streamline 插件...",
+        "restoring_streamline_plugin": "正在恢复 Streamline 插件...",
+        "configuring_fps_unlocker": "正在配置帧率解锁器..."
     }
 } 

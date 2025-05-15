@@ -1,6 +1,8 @@
 from enum import Enum
 from dataclasses import dataclass, field
 
+from core.i18n_manager import I18n, _
+
 
 class ProxyType(Enum):
     HTTPS = 'HTTPS'
@@ -20,11 +22,11 @@ class ProxyConfig:
 
     def verify(self):
         if not self.host:
-            raise ValueError('Proxy host is not specified!')
+            raise ValueError(_("errors.proxy.no_host"))
         if not self.port:
-            raise ValueError('Proxy port is not specified!')
+            raise ValueError(_("errors.proxy.no_port"))
         if not self.port.isnumeric():
-            raise ValueError('Proxy port must be numeric value!')
+            raise ValueError(_("errors.proxy.invalid_port"))
 
 
 class ProxyManager:

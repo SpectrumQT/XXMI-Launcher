@@ -6,23 +6,27 @@ from customtkinter import IntVar
 
 import core.path_manager as Paths
 import core.config_manager as Config
+import core.i18n_manager as I18n
 
 from gui.classes.windows import UIToplevel
 from gui.classes.containers import UIScrollableFrame
 from gui.classes.widgets import UILabel, UIButton, UIRadioButton
 
+
 log = logging.getLogger(__name__)
 
 
 class MessageWindow(UIToplevel):
-    def __init__(self, master, icon='info-icon.ico', title='Message', message='< Text >',
-                 confirm_text='OK', confirm_command=None, cancel_text='', cancel_command=None,
+    def __init__(self, master, icon='info-icon.ico', title=None, message='', 
+                 confirm_text=None, confirm_command=None, cancel_text=None, cancel_command=None,
                  radio_options: Optional[List[str]] = None, lock_master=True, screen_center=False):
         super().__init__(master, lock_master=lock_master)
 
         self.radio_var = None
         self.response = None
 
+        if title is None:
+            title = I18n._('messages.default_title')
         self.title(title)
 
         self.cfg.title = title
@@ -63,6 +67,11 @@ class MessageWindow(UIToplevel):
 
         self.put(MessageScrollableFrame(self)).pack(pady=(20, 20))
 
+        if confirm_text is None:
+            confirm_text = I18n._('buttons.ok')
+        if cancel_text is None:
+            cancel_text = I18n._('buttons.cancel')
+
         if confirm_text and cancel_text:
             self.put(CancelButton(self, cancel_text, cancel_command)).pack(padx=(60, 20), pady=(0, 15), side='left')
             self.put(ConfirmButton(self, confirm_text, confirm_command)).pack(padx=(20, 60), pady=(0, 15), side='right')
@@ -77,7 +86,6 @@ class MessageWindow(UIToplevel):
 
     def close(self):
         log.debug('Messagebox window closed')
-
         super().close()
 
 

@@ -7,6 +7,7 @@ from pathlib import Path
 
 import core.path_manager as Paths
 import core.event_manager as Events
+import core.i18n_manager as I18n
 
 from core.package_manager import Package, PackageMetadata
 
@@ -64,7 +65,6 @@ class UpdaterPackage(Package):
 
         result, pid = wait_for_process(self.exe_path.name, with_window=True, timeout=15)
         if result == WaitResult.Timeout:
-            raise ValueError('Failed to start XXMI Updater.exe!\n\n'
-                             'Was it blocked by Antivirus software or security settings?')
+            raise ValueError(I18n._('errors.packages.updater.failed_to_start_updater'))
 
         time.sleep(1)

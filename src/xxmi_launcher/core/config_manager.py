@@ -10,6 +10,8 @@ from dacite import from_dict
 
 import core.path_manager as Paths
 import core.event_manager as Events
+import core.i18n_manager as I18n
+from core.i18n_manager import _
 
 from core.utils.security import Security
 from core import package_manager
@@ -288,10 +290,9 @@ class AppConfigSecurity:
                 modal=True,
                 lock_master=False,
                 screen_center=True,
-                confirm_text='Reset',
-                cancel_text='Keep',
-                message=f'Failed to validate unsecure settings!\n\n'
-                        f'{msg}\n'
+                confirm_text=_('buttons.reset'),
+                cancel_text=_('buttons.keep'),
+                message=_('security.validation_failed').format(msg=msg)
             ))
             if user_requested_reset:
                 if 'Unsafe Mode' in wrong_signatures:
@@ -350,7 +351,9 @@ def get_resource_path(element, filename: Union[str, Path], extensions: Optional[
     resource_path = Paths.App.Themes / 'Default' / class_path
     if not resource_path.is_file():
         raise FileNotFoundError(
-            f'Resource not found:\n\n'
-            f'{resource_path}\n\n'
-            f'Hint: You can also use other extensions: {", ".join(extensions)}')
+            _('errors.resource_not_found').format(
+                resource_path=resource_path,
+                extensions=", ".join(extensions)
+            )
+        )
     return resource_path

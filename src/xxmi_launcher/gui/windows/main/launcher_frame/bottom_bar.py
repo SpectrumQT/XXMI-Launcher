@@ -179,7 +179,7 @@ class RightStatusText(UIText):
 
     @staticmethod
     def format_size(num_bytes):
-        units = (_("units.B"), _("units.KB"), _("units.MB"), _("units.GB"), _("units.TB"))
+        units = ('B', 'KB', 'MB', 'GB', 'TB')
         for power, unit in enumerate(units):
             if num_bytes < 1024 ** (power + 1):
-                return _("bottom_bar.format_size").format(size=num_bytes / 1024 ** power, unit=unit)
+                return '%.2f%s' % (num_bytes / 1024 ** power, unit)

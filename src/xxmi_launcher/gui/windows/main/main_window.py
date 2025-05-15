@@ -9,6 +9,7 @@ from pathlib import Path
 import core.path_manager as Paths
 import core.event_manager as Events
 import core.config_manager as Config
+import core.i18n_manager as I18n
 
 from customtkinter import set_appearance_mode, set_default_color_theme
 
@@ -96,8 +97,7 @@ class MainWindow(UIMainWindow):
             Config.Launcher.gui_theme = 'Default'
             self.load_theme('Default')
             Events.Fire(Events.Application.ShowWarning(
-                message=f'Failed to load {theme_name} theme:\n\n'
-                        f'Theme folder does not exist!'
+                message=I18n._('main.theme_folder_missing').format(theme_name)
             ))
             return False
 
@@ -106,8 +106,7 @@ class MainWindow(UIMainWindow):
             Config.Launcher.gui_theme = 'Default'
             self.load_theme('Default')
             Events.Fire(Events.Application.ShowWarning(
-                message=f'Failed to load {theme_name} theme:\n\n'
-                        f'Theme file `custom-tkinter-theme.json` does not exist!'
+                message=I18n._('main.theme_file_missing').format(theme_name)
             ))
             return False
 
@@ -126,12 +125,10 @@ class MainWindow(UIMainWindow):
                 screen_center=not self.is_shown(),
                 lock_master=self.is_shown(),
                 icon='update-icon.ico',
-                title='Theme Update Required',
-                confirm_text='Use Default',
-                cancel_text='Patch Theme',
-                message=f'Selected {theme_name} theme cannot be loaded!\n\n'
-                        f'Click `Use Default` to use default theme instead (ensures proper visuals).\n'
-                        f'Click `Patch Theme` to replace `custom-tkinter-theme.json` with new one.',
+                title=I18n._('main.theme_update_required'),
+                confirm_text=I18n._('buttons.use_default'),
+                cancel_text=I18n._('buttons.patch_theme'),
+                message=I18n._('main.theme_update_message').format(theme_name),
             )
             user_requested_default_theme = self.show_messagebox(update_dialogue)
             if user_requested_default_theme:
@@ -192,7 +189,7 @@ class MainWindow(UIMainWindow):
 
         self.load_theme(Config.Config.active_theme)
 
-        self.cfg.title = 'XXMI Launcher'
+        self.cfg.title = I18n._('main.title')
 
         self.cfg.width = 1280
         self.cfg.height = 720

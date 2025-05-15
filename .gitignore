@@ -20,3 +20,4 @@ __pycache__/
 打包.py
 Resources/Security/private_key.der
 Resources/Security/public_key.der
+/Tools

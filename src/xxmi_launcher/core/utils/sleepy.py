@@ -5,6 +5,8 @@ from pathlib import Path
 from enum import Enum
 from typing import List, Tuple, Union
 
+from core.i18n_manager import I18n, _
+
 
 # https: // github.com / dotnet / runtime / blob / a7efcd9ca9255dc9faa8b4a2761cdfdb62619610 / src / libraries / System.Runtime.Serialization.Formatters / src / System / Runtime / Serialization / Formatters / Binary / BinaryEnums.cs  # L7C1-L32C6
 class BinaryHeaderEnum(Enum):
@@ -72,13 +74,13 @@ class BinaryReader:
     def read_byte(self):
         byte = self.stream.read(1)
         if not byte:
-            raise EOFError("End of stream reached")
+            raise EOFError(_("errors.sleepy.eof"))
         return byte[0]
 
     def read_int32(self):
         bytes_read = self.stream.read(4)
         if len(bytes_read) < 4:
-            raise EOFError("End of stream reached")
+            raise EOFError(_("errors.sleepy.eof"))
         return struct.unpack('<i', bytes_read)[0]
 
     def read_7_bit_encoded_int(self):
@@ -95,7 +97,7 @@ class BinaryReader:
         # Read the 5th byte
         byte_read_just_now = self.read_byte()
         if byte_read_just_now > 0b1111:
-            raise ValueError("Bad 7-bit encoded integer format")
+            raise ValueError(_("errors.sleepy.bad_7bit_format"))
 
         result |= byte_read_just_now << (max_bytes_without_overflow * 7)
         return result
@@ -115,8 +117,11 @@ class BinaryReader:
             compared_enum_casted = BinaryHeaderEnum(current_int)
             compared_header_enum_value_name = compared_enum_casted.name
             raise ValueError(
-                f"[Sleepy::LogAssertInfo] BinaryFormatter header is not valid at stream pos: {self.stream.tell():x}. "
-                f"Expecting object enum: {assert_header_enum_value_name} but getting: {compared_header_enum_value_name} instead!")
+                _("errors.sleepy.invalid_header").format(
+                    pos=self.stream.tell(),
+                    expected=assert_header_enum_value_name,
+                    actual=compared_header_enum_value_name
+                ))
 
     def get_binary_formatter_data_length(self) -> int:
         return self.read_7_bit_encoded_int()
@@ -159,7 +164,7 @@ class BinaryWriter:
         elif isinstance(data, bytearray):
             self.stream.write(data)
         else:
-            raise ValueError("Unsupported data type")
+            raise ValueError(_("errors.sleepy.unsupported_data_type"))
 
     def write_enum_as_byte(self, header_enum):
         enum_value = header_enum.value
@@ -201,7 +206,7 @@ class JsonSerializer:
         elif indent is None:
             self.indent = ''
         else:
-            raise ValueError(f'Indent option {indent} has unsupported type {type(indent)}!')
+            raise ValueError(_("errors.sleepy.invalid_indent").format(indent=indent, type=type(indent)))
         self.item_separator = separators[0]
         self.key_separator = separators[1]
         self.newline = newline
@@ -225,7 +230,7 @@ class JsonSerializer:
         elif isinstance(value, dict):
             return self.dump_dict(value, level + 1)
         else:
-            raise ValueError(f'Value {value} has unsupported type {type(value)}!')
+            raise ValueError(_("errors.sleepy.unsupported_value_type").format(value=value, type=type(value)))
 
     def dump_list(self, src_list: list, level: int) -> str:
         result = '[' + self.newline

@@ -11,6 +11,7 @@ from pathlib import Path
 import core.path_manager as Paths
 import core.event_manager as Events
 import core.config_manager as Config
+import core.i18n_manager as I18n
 
 from core.package_manager import Package, PackageMetadata
 
@@ -139,7 +140,7 @@ class MigotoPackage(Package):
                     pid = direct_inject(dll_paths=extra_dll_paths, process_name=process_name, start_cmd=launch_cmd,
                                         work_dir=launch_work_dir, creationflags=launch_flags, use_shell=use_shell)
                     if pid == -1:
-                        raise ValueError(f'Failed to inject {str(extra_dll_paths)}!')
+                        raise ValueError(I18n._('errors.packages.migoto.failed_to_inject_extra').format(dll_paths=str(extra_dll_paths)))
 
                 # Early DLL injection verification
                 hooked = injector.wait_for_injection(5)
@@ -151,11 +152,12 @@ class MigotoPackage(Package):
                 result, pid = wait_for_process(process_name, with_window=True, timeout=Config.Launcher.start_timeout, check_visibility=True)
                 if result == WaitResult.Timeout:
                     if hooked:
-                        raise ValueError(f'Failed to detect game process {process_name}!\n\n'
-                                         f'If game window takes more than {Config.Launcher.start_timeout} seconds to appear, adjust Timeout in Launcher Settings.\n\n'
-                                         f'If game crashed, try to clear Mods and ShaderFixes folders.')
+                        raise ValueError(I18n._('errors.packages.migoto.failed_to_detect_process').format(
+                            process_name=process_name,
+                            timeout=Config.Launcher.start_timeout
+                        ))
                     else:
-                        raise ValueError(f'Failed to start {process_name}!')
+                        raise ValueError(I18n._('errors.packages.migoto.failed_to_start_process').format(process_name=process_name))
 
                 # Late DLL injection verification
                 Events.Fire(Events.Application.VerifyHook(library_name=dll_path.name, process_name=process_name))
@@ -186,13 +188,15 @@ class MigotoPackage(Package):
             pid = direct_inject(dll_paths=dll_paths, process_name=process_name, start_cmd=launch_cmd,
                                 work_dir=launch_work_dir, creationflags=launch_flags, use_shell=use_shell)
             if pid == -1:
-                raise ValueError(f'Failed to inject {dll_names}!')
+                raise ValueError(I18n._('errors.packages.migoto.failed_to_inject').format(dll_names=dll_names))
 
             Events.Fire(Events.Application.WaitForProcess(process_name=process_name))
             result, pid = wait_for_process(process_name, with_window=True, timeout=Config.Launcher.start_timeout, check_visibility=True)
             if result == WaitResult.Timeout:
-                raise ValueError(f'Failed to detect game process {process_name}!\n\n'
-                                 f'If game crashed, try to clear Mods and ShaderFixes folders.')
+                raise ValueError(I18n._('errors.packages.migoto.failed_to_detect_process').format(
+                    process_name=process_name,
+                    timeout=Config.Launcher.start_timeout
+                ))
 
         # Wait a bit more for window to maximize
         time.sleep(1)
@@ -200,11 +204,9 @@ class MigotoPackage(Package):
     def restore_package_files(self, e: Exception, process_name: str, validate=False):
         user_requested_restore = Events.Call(Events.Application.ShowError(
             modal=True,
-            confirm_text='Restore',
-            cancel_text='Cancel',
-            message=f'XXMI installation is damaged!\n\n'
-                    f'Details: {str(e).strip()}\n\n'
-                    f'Would you like to restore XXMI automatically?',
+            confirm_text=I18n._('buttons.restore'),
+            cancel_text=I18n._('buttons.cancel'),
+            message=I18n._('errors.packages.migoto.installation_damaged').format(details=str(e).strip()),
         ))
 
         if not user_requested_restore:
@@ -266,13 +268,12 @@ class MigotoPackage(Package):
                     deploy_pending = True
 
             if deploy_pending or remove_pending:
-                Events.Fire(Events.Application.StatusUpdate(status='Ensuring the game is closed...'))
+                Events.Fire(Events.Application.StatusUpdate(status=I18n._('status.ensuring_game_closed')))
                 result, pid = wait_for_process_exit(process_name=process_name, timeout=5, kill_timeout=0)
                 if result == WaitResult.Timeout:
                     Events.Fire(Events.Application.ShowError(
                         modal=True,
-                        message=f'Failed to stop {process_name}!\n\n'
-                                'Please close the game manually and press [OK] to continue.',
+                        message=I18n._('errors.packages.migoto.failed_to_stop_process').format(process_name=process_name),
                     ))
                 if remove_pending:
                     deployment_path.unlink()
@@ -285,7 +286,7 @@ class MigotoPackage(Package):
                             original_signature = self.get_signature(deployment_path)
                             Config.Active.Importer.deployed_migoto_signatures[file_name] = original_signature
                     else:
-                        raise ValueError(f'XXMI package is missing critical file: {deployment_path.name}!\n')
+                        raise ValueError(I18n._('errors.packages.migoto.missing_critical_file').format(file_name=deployment_path.name))
 
     def validate_deployed_files(self):
         package_libs = ['3dmloader.dll']

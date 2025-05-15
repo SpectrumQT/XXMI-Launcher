@@ -14,7 +14,7 @@ def verify_msvc_integrity():
     try:
         import ctypes
     except BaseException as e:
-        raise Exception(f'Failed to verify ctypes import!') from e
+        raise Exception(I18n._('errors.msvc.verify_ctypes')) from e
 
     msvc_dlls = [
         'msvcp140.dll',  # Common VC++ 2015-2022 DLL
@@ -34,21 +34,21 @@ def verify_msvc_integrity():
             # Store DLL handle for later version verification
             msvc_dll_handles.append((dll, dll_handle))
         except BaseException as e:
-            raise Exception(f'Failed to verify {dll}!') from e
+            raise Exception(I18n._('errors.msvc.verify_dll').format(dll=dll)) from e
 
     # Try to load GetFileVersionInfo from win32api package
     # It's a good way to check MSVC++ by itself, as win32api requires it to function
     try:
         from win32api import GetFileVersionInfo, HIWORD, LOWORD
     except BaseException as e:
-        raise Exception(f'Failed to verify win32api import!') from e
+        raise Exception(I18n._('errors.msvc.verify_win32api')) from e
 
     if not callable(GetFileVersionInfo):
-        raise Exception(f'Failed to verify GetFileVersionInfo being function!')
+        raise Exception(I18n._('errors.msvc.verify_get_version'))
     if not callable(HIWORD):
-        raise Exception(f'Failed to verify HIWORD being function!')
+        raise Exception(I18n._('errors.msvc.verify_hiword'))
     if not callable(LOWORD):
-        raise Exception(f'Failed to verify LOWORD being function!')
+        raise Exception(I18n._('errors.msvc.verify_loword'))
 
     # Create buffer to store path of loaded DLLs
     try:
@@ -107,9 +107,7 @@ if __name__ == '__main__':
         try:
             verify_msvc_integrity()
         except Exception as e:
-            raise Exception(f'MSVC++ Redistributable is damaged or not installed!\n\n'
-                            f'Please reintall it from https://aka.ms/vs/17/release/vc_redist.x64.exe\n\n'
-                            f'ERROR: {e}') from e
+            raise Exception(I18n._('errors.msvc.redistributable').format(error=e)) from e
 
         import core.path_manager as Paths
         Paths.initialize(root_path)

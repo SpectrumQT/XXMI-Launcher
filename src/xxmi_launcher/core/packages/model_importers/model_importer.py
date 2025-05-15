@@ -18,6 +18,7 @@ from enum import Enum
 import core.path_manager as Paths
 import core.event_manager as Events
 import core.config_manager as Config
+import core.i18n_manager as I18n
 
 from core.package_manager import Package, PackageMetadata
 
@@ -106,7 +107,7 @@ class ModelImporterConfig:
             if dll_path.is_file():
                 dll_paths.append(dll_path)
             else:
-                raise ValueError(f'Failed to inject extra library {dll_path}:\nFile not found!\nPlease check Advanced Settings -> Inject Libraries.')
+                raise ValueError(I18n._('errors.packages.model_importers.common.failed_to_inject_extra_library').format(dll_path=dll_path))
         return dll_paths
 
 
@@ -145,11 +146,11 @@ class ModelImporterCommandFileHandler:
         for (name, value, flag_modified, comments, inline_comment) in section.options:
             command_handler = supported_commands.get(name, None)
             if command_handler is None:
-                raise ValueError(f'Unknown command {name}!')
+                raise ValueError(I18n._('errors.packages.model_importers.common.unknown_command').format(name=name))
             try:
                 command_handler(value)
             except Exception as e:
-                raise ValueError(f'Failed to execute `{name} = {value}` of auto_update.xcmd!:\n{str(e)}') from e
+                raise ValueError(I18n._('errors.packages.model_importers.common.failed_to_execute_command').format(name=name, value=value, error=str(e))) from e
 
     @staticmethod
     def cmd_delete(path: str):
@@ -165,11 +166,11 @@ class ModelImporterCommandFileHandler:
         valid_roots = ['Core', 'ShaderFixes']
         path_root = non_dots_parts[0]
         if path_root.lower() not in [x.lower() for x in valid_roots]:
-            raise ValueError(f'File or folder removal is allowed only from Core or ShaderFixes folder!')
+            raise ValueError(I18n._('errors.packages.model_importers.common.file_removal_restriction'))
 
         # Forbid removal of entire Core or ShaderFixes folder for security reasons
         if len(non_dots_parts) == 1:
-            raise ValueError(f'Explicit removal of entire Core or ShaderFixes folder is not allowed!')
+            raise ValueError(I18n._('errors.packages.model_importers.common.folder_removal_restriction'))
 
         # Execute removal for given path
         path = Config.Active.Importer.importer_path.joinpath(path)
@@ -193,9 +194,9 @@ class ModelImporterPackage(Package):
     def validate_game_path(self, game_folder) -> Path:
         game_path = Path(game_folder)
         if not str(game_folder):
-            raise ValueError(f'Game installation folder is not specified!')
+            raise ValueError(I18n._('errors.packages.model_importers.common.game_folder_not_specified'))
         if not game_path.is_absolute() or not game_path.is_dir():
-            raise ValueError(f'Specified game installation folder is not found!')
+            raise ValueError(I18n._('errors.packages.model_importers.common.game_folder_not_found'))
         return game_path
 
     def validate_game_exe_path(self, game_path: Path) -> Path:
@@ -238,8 +239,7 @@ class ModelImporterPackage(Package):
 
     def notify_game_folder_detection_failure(self):
         user_requested_settings = Events.Call(Events.Application.ShowError(
-            message=f'Automatic detection of the game installation failed!\n\n'
-                    f'Please configure it manually with Game Folder option of General Settings.',
+            message=I18n._('errors.packages.model_importers.common.game_folder_detection_failed'),
             confirm_text='Open Settings',
             cancel_text='Cancel',
             modal=True,
@@ -274,8 +274,7 @@ class ModelImporterPackage(Package):
 
     def notify_game_folder_not_configured(self):
         user_requested_settings = Events.Call(Events.Application.ShowError(
-            message=f'Game installation folder is not configured!\n\n'
-                    f'Please set it with Game Folder option of General Settings.',
+            message=I18n._('errors.packages.model_importers.common.game_folder_not_configured'),
             confirm_text='Open Settings',
             cancel_text='Cancel',
             modal=True,
@@ -393,7 +392,7 @@ class ModelImporterPackage(Package):
         except UserWarning:
             return
         except Exception as e:
-            raise ValueError(f'{Config.Launcher.active_importer} Installation Failed:\n{e}') from e
+            raise ValueError(I18n._('errors.packages.model_importers.common.installation_failed').format(importer=Config.Launcher.active_importer, error=str(e))) from e
         # Install importer package and its requirements
         Events.Fire(Events.Application.Update(packages=[Config.Launcher.active_importer], force=True, reinstall=True))
 
@@ -435,7 +434,7 @@ class ModelImporterPackage(Package):
     def set_default_ini_values(self, ini: IniHandler, setting_name: str, setting_type: SettingType, setting_value=None):
         settings = Config.Active.Importer.d3dx_ini.get(setting_name, None)
         if settings is None:
-            raise ValueError(f'Config is missing {setting_name} setting!')
+            raise ValueError(I18n._('errors.packages.model_importers.common.missing_setting').format(setting_name=setting_name))
         for section, options in settings.items():
             for option, values in options.items():
 
@@ -451,12 +450,12 @@ class ModelImporterPackage(Package):
                     value = values[key]
 
                 if value is None:
-                    raise ValueError(f'Config is missing value for section `{section}` option `{option}` key `{key}')
+                    raise ValueError(I18n._('errors.packages.model_importers.common.missing_config_value').format(section=section, option=option, key=key))
 
                 try:
                     ini.set_option(section, option, value)
                 except Exception as e:
-                    raise ValueError(f'Failed to set section {section} option {option} to {value}: {str(e)}') from e
+                    raise ValueError(I18n._('errors.packages.model_importers.common.failed_to_set_option').format(section=section, option=option, value=value, error=str(e))) from e
 
     def get_start_cmd(self, game_path: Path) -> Tuple[Path, List[str], Optional[str]]:
         game_exe_path = self.validate_game_exe_path(game_path)
@@ -529,13 +528,11 @@ class ModelImporterPackage(Package):
                 modal=True,
                 confirm_text='Restore',
                 cancel_text='Cancel',
-                message=f'{Config.Launcher.active_importer} installation is damaged!\n'
-                        f'Details: Missing critical file: {ini_path.name}!\n'
-                        f'Would you like to restore {Config.Launcher.active_importer} automatically?',
+                message=I18n._('errors.packages.model_importers.common.missing_critical_file').format(ini_path=ini_path),
             ))
 
             if not user_requested_restore:
-                raise ValueError(f'Missing critical file: {ini_path.name}!')
+                raise ValueError(I18n._('errors.packages.model_importers.common.missing_critical_file').format(ini_path=ini_path))
 
             Events.Fire(Events.Application.Update(no_thread=True, force=True, reinstall=True, packages=[self.metadata.package_name]))
 
@@ -648,7 +645,7 @@ class ModelImporterPackage(Package):
                     if user_requested_fix:
                         path.unlink()
                     else:
-                        raise ValueError(f'Cannot start with d3dx.ini in Mods folder!')
+                        raise ValueError(I18n._('errors.packages.model_importers.common.d3dx_ini_in_mods'))
                 else:
                     if path.parent.name == 'ShaderFixes' and path.name in ['3dvision2sbs.ini', 'help.ini', 'mouse.ini', 'upscale.ini']:
                         logging.warning(f'Automatically disabling illegitimate {path}...')
