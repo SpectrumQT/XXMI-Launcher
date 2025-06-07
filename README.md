@@ -5,7 +5,8 @@
 <p align="center">
   <a href="#features">Features</a> •
   <a href="#installation">Installation</a> •
-  <a href="#supported-model-importers">Supported Model Importers</a> •
+  <a href="#included-model-importers">Model Importers</a> •
+  <a href="#support-this-project">Support This Project</a> •
   <a href="#license">License</a>
 </p>
 
@@ -40,13 +41,31 @@
   5. On the game selection page of **XXMI Launcher Window** click desired **Game Tile** to add **Model Importer Icon** to the top-left corner.
   6. Click **Model Importer Icon** to open Model Importer page and press **[Install]** button to download and install selected Model Importer.
 
-## Supported Model Importers
+## Included Model Importers
 
-- [WWMI - Wuthering Waves Model Importer GitHub](https://github.com/SpectrumQT/WWMI)
-- [ZZMI - Zenless Zone Zero Model Importer GitHub](https://github.com/leotorrez/ZZ-Model-Importer)
+- [WWMI - Wuthering Waves Model Importer GitHub](https://github.com/SpectrumQT/WWMI-Package)
+- [ZZMI - Zenless Zone Zero Model Importer GitHub](https://github.com/leotorrez/ZZMI-Package)
 - [SRMI - Honkai: Star Rail Model Importer GitHub](https://github.com/SilentNightSound/SR-Model-Importer)
 - [GIMI - Genshin Impact Model Importer GitHub](https://github.com/SilentNightSound/GI-Model-Importer)
   
+## Support This Project
+
+**XXMI Project** is result of collaboration. Please consider to support respective developers:
+
+### XXMI Launcher:
+- **Creator & Maintainer**: [SpectrumQT](https://github.com/SpectrumQT) ([Patreon](https://patreon.com/SpectrumQT))
+### GIMI:
+- **Creator**: [SilentNightSound](https://github.com/SilentNightSound) ([Ko-Fi](https://ko-fi.com/silentnightsound))
+- **Maintainers**: [LeoTorrez](https://github.com/leotorrez) ([Ko-Fi](https://ko-fi.com/leotorrez)), [Gustav0](https://github.com/Seris0) ([Ko-Fi](https://ko-fi.com/gustav0_)), [SinsOfSeven](github.com/SinsOfSeven) ([Ko-Fi](https://ko-fi.com/sinsofseven))
+### SRMI:
+- **Creator**: [SilentNightSound](https://github.com/SilentNightSound) ([Ko-Fi](https://ko-fi.com/silentnightsound))
+- **Maintainers**: [Scyll](https://gamebanana.com/members/2644630), [Gustav0](https://github.com/Seris0) ([Ko-Fi](https://ko-fi.com/gustav0_)), [SinsOfSeven](github.com/SinsOfSeven) ([Ko-Fi](https://ko-fi.com/sinsofseven))
+### WWMI:
+- **Creator & Maintainer**: [SpectrumQT](https://github.com/SpectrumQT) ([Patreon](https://patreon.com/SpectrumQT))
+### ZZMI: 
+- **Creator**: [LeoTorrez](https://github.com/leotorrez) ([Ko-Fi](https://ko-fi.com/leotorrez))
+- **Maintainers**: [LeoTorrez](https://github.com/leotorrez) ([Ko-Fi](https://ko-fi.com/leotorrez)), [Satan1c](https://gamebanana.com/members/2789093)
+
 ## License
 
 XXMI Launcher is licensed under the [GPLv3 License](https://github.com/SpectrumQT/WWMI-Launcher/blob/main/LICENSE).
