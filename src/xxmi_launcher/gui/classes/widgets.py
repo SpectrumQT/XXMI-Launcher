@@ -116,7 +116,7 @@ class UIText(UICanvasWidget, CTkBaseClass):
         if "font" in kwargs:
             self._font = self._apply_font_scaling(tuple(kwargs.pop("font")))
             self._font_obj = font.Font(family=self._font[0], size=self._font[1])
-            self._height = self._font_obj.metrics('linespace')
+            self._height = int(self._font_obj.metrics('linespace') / self._apply_widget_scaling(1))
             self.canvas.itemconfig(self._text_id, font=self._font)
 
         self.canvas.itemconfig(self._text_id, **kwargs)
@@ -128,7 +128,7 @@ class UIText(UICanvasWidget, CTkBaseClass):
 
     def set(self, text: str):
         self.canvas.itemconfigure(self._text_id, text=text)
-        self._width = self._font_obj.measure(text)
+        self._width = int(self._font_obj.measure(text) / self._apply_widget_scaling(1))
 
     def _show(self):
         self.canvas.itemconfigure(self._text_id, state='normal')
