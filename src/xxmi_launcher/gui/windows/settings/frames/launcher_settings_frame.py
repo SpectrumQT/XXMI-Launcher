@@ -211,11 +211,12 @@ class TimeoutEntry(UIEntry):
                          'Game process will be considered as crashed once timeout is met.\n'
                          'Default value is **30**.\n')
 
-        self.configure(validate='key', validatecommand=(master.register(self.validate_input), '%P'))
+        self.trace_write(Vars.Launcher.start_timeout, self.handle_write_start_timeout)
 
-    @staticmethod
-    def validate_input(value):
-        return value.isdigit()
+    def handle_write_start_timeout(self, var, val):
+        if val <= 0:
+            Vars.Launcher.start_timeout.set(30)
+            self.icursor('end')
 
 
 class UpdatePolicyLabel(UILabel):
