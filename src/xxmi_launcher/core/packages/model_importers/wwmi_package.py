@@ -74,13 +74,6 @@ class WWMIConfig(ModelImporterConfig):
             'r.Kuro.SkeletalMesh.LODDistanceScale': 24,
             'r.Streaming.FullyLoadUsedTextures': 1,
             'r.Streaming.UsingNewKuroStreaming': 1,
-        },
-        '/Script/Engine.RendererRTXSettings': {
-            'r.RayTracing': 0,
-            'r.RayTracing.LimitDevice': 1,
-            'r.RayTracing.EnableInGame': 0,
-            'r.RayTracing.EnableOnDemand': 0,
-            'r.RayTracing.EnableInEditor': 0,
         }
     })
     apply_perf_tweaks: bool = False
