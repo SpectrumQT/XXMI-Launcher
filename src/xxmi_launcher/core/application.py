@@ -25,6 +25,7 @@ from core.package_manager import PackageManager
 from core.packages.launcher_package import LauncherPackage
 from core.packages.migoto_package import MigotoPackage
 from core.packages.genshin_fps_unlock_package import GenshinFpsUnlockerPackage
+from core.packages.model_importers.model_importer import ModelImporterPackage
 from core.packages.model_importers.gimi_package import GIMIPackage
 from core.packages.model_importers.srmi_package import SRMIPackage
 from core.packages.model_importers.wwmi_package import WWMIPackage
@@ -208,6 +209,7 @@ class Application:
     def initialize(self):
         # Parse console args
         parser = argparse.ArgumentParser(add_help=False)
+        parser.add_argument('exe_path', nargs='?', default='', help='Path to game .exe file.')
         parser.add_argument('-h', '--help', '-help', action='store_true',
                             help='Show this help message and exit.')
         parser.add_argument('-x', '--xxmi', type=str,
@@ -221,7 +223,8 @@ class Application:
         parser.add_argument('-un', '--uninstall', action='store_true',
                             help='Remove downloaded packages from the Resources folder.')
         try:
-            self.args = parser.parse_args()
+            args = [arg for arg in sys.argv[1:] if arg != '&&']  # Filter out shell operator '&&'
+            self.args = parser.parse_args(args)
             logging.debug(f'Arguments: {self.args}')
             if self.args.help:
                 parser.print_help()
@@ -355,8 +358,38 @@ class Application:
             raise ValueError(f'Unknown model importer {importer_name}!')
         return importer_name
 
+    def get_importer_from_path(self, path: Path):
+        if path.is_file() or path.suffix == '.exe':
+            game_folder = Path(path).parent
+        else:
+            game_folder = path
+
+        for package_name in ['WWMI', 'ZZMI', 'SRMI', 'GIMI']:
+            package = self.package_manager.get_package(package_name)
+            if not isinstance(package, ModelImporterPackage):
+                raise ValueError(f'Package {package.metadata.package_name} is not ModelImporterPackage!')
+            try:
+                game_path = package.validate_game_path(game_folder)
+                game_exe_path = package.validate_game_exe_path(game_path)
+            except Exception:
+                continue
+            return package.metadata.package_name, game_path, game_exe_path
+
+        raise ValueError(f'Failed to auto-select importer for `{path}`!\n\n'
+                         f'Try to add `--nogui --xxmi WWMI` args (or GIMI, SRMI, ZZMI).')
+
     def get_active_importer(self) -> str:
         active_importer = None
+
+        if not self.args.xxmi and self.args.exe_path:
+            exe_path = Path(self.args.exe_path)
+
+            importer_name, game_path, game_exe_path = self.get_importer_from_path(exe_path)
+            logging.debug(f'Detected {importer_name} start request for {game_exe_path}.')
+
+            self.args.nogui = True
+            self.args.xxmi = importer_name
+            Config.Importers.__dict__[importer_name].Importer.game_folder = str(game_path)
 
         if self.args.xxmi:
             # Active model importer override is supplied via command line arg `--xxmi`
