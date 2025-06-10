@@ -34,8 +34,8 @@ class GeneralSettingsFrame(UIFrame):
         self.put(LaunchOptionsFrame(self)).grid(row=1, column=1, padx=(0, 20), pady=(0, 30), sticky='ew', columnspan=3)
 
         # Process Priority
-        self.put(ProcessPriorityLabel(self)).grid(row=2, column=0, padx=20, pady=(0, 30), sticky='w')
-        self.put(ProcessPriorityOptionMenu(self)).grid(row=2, column=1, padx=(0, 10), pady=(0, 30), sticky='w')
+        self.put(StartMethodLabel(self)).grid(row=2, column=0, padx=20, pady=(0, 30), sticky='w')
+        self.put(ProcessOptionsFrame(self)).grid(row=2, column=1, padx=(0, 20), pady=(0, 30), sticky='w', columnspan=3)
 
         # Auto Config
         if Vars.Launcher.active_importer.get() != 'SRMI':
@@ -90,6 +90,19 @@ class LaunchOptionsFrame(UIFrame):
 
         self.put(LaunchOptionsEntry(self)).grid(row=0, column=0, padx=(4, 0), pady=(2, 2), sticky='ew')
         self.put(LaunchOptionsButton(self)).grid(row=0, column=1, padx=(0, 4), pady=(2, 2), sticky='e')
+
+
+class ProcessOptionsFrame(UIFrame):
+    def __init__(self, master):
+        super().__init__(
+            fg_color = 'transparent',
+            master=master)
+
+        self.grid_columnconfigure(0, weight=100)
+
+        self.put(StartMethodOptionMenu(self)).grid(row=0, column=0, padx=(0, 10), pady=(0, 0), sticky='w')
+        self.put(ProcessPriorityLabel(self)).grid(row=0, column=1, padx=20, pady=(0, 0), sticky='w')
+        self.put(ProcessPriorityOptionMenu(self)).grid(row=0, column=2, padx=(0, 10), pady=(0, 0), sticky='w')
 
 
 class AutoConfigFrame(UIFrame):
@@ -279,6 +292,29 @@ class LaunchOptionsEntry(UIEntry):
         return msg.strip()
 
 
+class StartMethodLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text='Start Method:',
+            font=('Microsoft YaHei', 14, 'bold'),
+            fg_color='transparent',
+            master=master)
+
+
+class StartMethodOptionMenu(UIOptionMenu):
+    def __init__(self, master):
+        super().__init__(
+            values=['Native', 'Shell'],
+            variable=Vars.Active.Importer.process_start_method,
+            width=140,
+            height=36,
+            font=('Arial', 14),
+            dropdown_font=('Arial', 14),
+            master=master)
+        self.set_tooltip(f'**Native**: Use native Python call to start game process (`subprocess.popen`).\n'
+                         f'**Shell**: Use external library C++ call to start game process (`ShellExecute`)')
+
+
 class ProcessPriorityLabel(UILabel):
     def __init__(self, master):
         super().__init__(
@@ -286,6 +322,14 @@ class ProcessPriorityLabel(UILabel):
             font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
+
+        self.trace_write(Vars.Active.Importer.process_start_method, self.handle_write_process_start_method)
+
+    def handle_write_process_start_method(self, var, val):
+        if val == 'Native':
+            self.configure(state='normal')
+        else:
+            self.configure(state='disabled')
 
 
 class ProcessPriorityOptionMenu(UIOptionMenu):
@@ -298,7 +342,16 @@ class ProcessPriorityOptionMenu(UIOptionMenu):
             font=('Arial', 14),
             dropdown_font=('Arial', 14),
             master=master)
-        self.set_tooltip('Set process priority for the game exe.')
+        self.set_tooltip('Set process priority for the game exe.\n'
+                         '**Warning!** **Shell** start method does not support process priority!')
+
+        self.trace_write(Vars.Active.Importer.process_start_method, self.handle_write_process_start_method)
+
+    def handle_write_process_start_method(self, var, val):
+        if val == 'Native':
+            self.configure(state='normal')
+        else:
+            self.configure(state='disabled')
 
 
 class AutoConfigLabel(UILabel):
