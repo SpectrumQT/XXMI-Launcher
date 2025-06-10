@@ -32,6 +32,7 @@ log = logging.getLogger(__name__)
 class GIMIConfig(ModelImporterConfig):
     importer_folder: str = 'GIMI/'
     launch_options: str = ''
+    process_start_method: str = 'Shell'
     d3dx_ini: Dict[
         str, Dict[str, Dict[str, Union[str, int, float, Dict[str, Union[str, int, float]]]]]
     ] = field(default_factory=lambda: {
