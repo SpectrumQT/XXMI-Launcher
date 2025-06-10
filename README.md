@@ -56,15 +56,15 @@
 - **Creator & Maintainer**: [SpectrumQT](https://github.com/SpectrumQT) ([Patreon](https://patreon.com/SpectrumQT))
 ### GIMI:
 - **Creator**: [SilentNightSound](https://github.com/SilentNightSound) ([Ko-Fi](https://ko-fi.com/silentnightsound))
-- **Maintainers**: [LeoTorrez](https://github.com/leotorrez) ([Ko-Fi](https://ko-fi.com/leotorrez)), [Gustav0](https://github.com/Seris0) ([Ko-Fi](https://ko-fi.com/gustav0_)), [SinsOfSeven](github.com/SinsOfSeven) ([Ko-Fi](https://ko-fi.com/sinsofseven))
+- **Maintainers**: [LeoTorrez](https://github.com/leotorrez) ([Ko-Fi](https://ko-fi.com/leotorrez)), [SinsOfSeven](https://github.com/SinsOfSeven) ([Ko-Fi](https://ko-fi.com/sinsofseven)), [Gustav0](https://github.com/Seris0) ([Ko-Fi](https://ko-fi.com/gustav0_)), [Nurarihyon](https://github.com/NurarihyonMaou) ([Ko-Fi](https://ko-fi.com/nurarihyonmaou))
 ### SRMI:
 - **Creator**: [SilentNightSound](https://github.com/SilentNightSound) ([Ko-Fi](https://ko-fi.com/silentnightsound))
-- **Maintainers**: [Scyll](https://gamebanana.com/members/2644630), [Gustav0](https://github.com/Seris0) ([Ko-Fi](https://ko-fi.com/gustav0_)), [SinsOfSeven](github.com/SinsOfSeven) ([Ko-Fi](https://ko-fi.com/sinsofseven))
+- **Maintainers**: [SinsOfSeven](https://github.com/SinsOfSeven) ([Ko-Fi](https://ko-fi.com/sinsofseven)), [LeoTorrez](https://github.com/leotorrez) ([Ko-Fi](https://ko-fi.com/leotorrez)), [Scyll](https://gamebanana.com/members/2644630) ([Ripe](https://gamebanana.com/members/2644630)), [Gustav0](https://github.com/Seris0) ([Ko-Fi](https://ko-fi.com/gustav0_))
 ### WWMI:
 - **Creator & Maintainer**: [SpectrumQT](https://github.com/SpectrumQT) ([Patreon](https://patreon.com/SpectrumQT))
 ### ZZMI: 
-- **Creator**: [LeoTorrez](https://github.com/leotorrez) ([Ko-Fi](https://ko-fi.com/leotorrez))
-- **Maintainers**: [LeoTorrez](https://github.com/leotorrez) ([Ko-Fi](https://ko-fi.com/leotorrez)), [Satan1c](https://gamebanana.com/members/2789093)
+- **Creator**: [LeoTorrez](https://github.com/leotorrez) ([Ko-Fi](https://ko-fi.com/leotorrez)), [Scyll](https://gamebanana.com/members/2644630) ([Ripe](https://gamebanana.com/members/2644630)), [SilentNightSound](https://github.com/SilentNightSound) ([Ko-Fi](https://ko-fi.com/silentnightsound))
+- **Maintainers**: [SinsOfSeven](https://github.com/SinsOfSeven) ([Ko-Fi](https://ko-fi.com/sinsofseven)), [LeoTorrez](https://github.com/leotorrez) ([Ko-Fi](https://ko-fi.com/leotorrez)), [Gustav0](https://github.com/Seris0) ([Ko-Fi](https://ko-fi.com/gustav0_)), [Scyll](https://gamebanana.com/members/2644630) ([Ripe](https://gamebanana.com/members/2644630)), [Satan1c](https://gamebanana.com/members/2789093) ([Patreon](https://patreon.com/Satan1cL))
 
 ## License
 
