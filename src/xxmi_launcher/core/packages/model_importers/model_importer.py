@@ -85,6 +85,7 @@ class ModelImporterConfig:
         str, Dict[str, Dict[str, Union[str, int, float, Dict[str, Union[str, int, float]]]]]
     ] = field(default_factory=lambda: {})
     configure_game: bool = True
+    launch_count: int = -1
 
     @property
     def importer_path(self) -> Path:

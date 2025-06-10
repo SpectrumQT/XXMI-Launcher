@@ -54,6 +54,9 @@ class LauncherFrame(UIFrame):
         # Settings Frame
         self.put(SettingsFrame(self, self.canvas))
 
+        # Donate Frame
+        self.subscribe(Events.Application.OpenDonationCenter, self.handle_open_donation_center)
+
         # Application Events
         self.subscribe(
             Events.Application.Ready,
@@ -72,6 +75,12 @@ class LauncherFrame(UIFrame):
         self.set_background_image(f'background-image-{importer_id.lower()}.jpg',
                                   width=self.master.cfg.width,
                                   height=self.master.cfg.height)
+
+    def handle_open_donation_center(self, event: Events.Application.OpenDonationCenter):
+        from gui.windows.main.donate_frame.donate_frame import DonateFrame
+        donate_frame = self.put(DonateFrame(self, self.canvas))
+        donate_frame.set_content(mode=event.mode, model_importer=event.model_importer, num_sessions=event.launch_count)
+        donate_frame.show()
 
 
 class SelectGameText(UIText):

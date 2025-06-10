@@ -181,6 +181,12 @@ class ApplicationEvents:
         write: bool = False
         exe: bool = False
 
+    @dataclass
+    class OpenDonationCenter:
+        mode: str = 'NORMAL'
+        model_importer: str = ''
+        launch_count: int = 0
+
 
 class Application:
     def __init__(self, gui):
@@ -320,6 +326,8 @@ class Application:
         self.package_manager.notify_package_versions(detect_installed=True)
 
         self.gui.after(100, self.run_as_thread, self.auto_update)
+
+        self.handle_stats()
 
         self.check_threads()
 
@@ -528,6 +536,106 @@ class Application:
                 message='No updates available!',
             ))
 
+    def get_launch_counters_from_log(self, exclude_failed = True):
+        with (open(Paths.App.Root / 'XXMI Launcher Log.txt', 'r', encoding='utf-8') as f):
+            launch_counters = { 'GIMI': 0, 'SRMI': 0,  'WWMI': 0, 'ZZMI': 0 }
+
+            def parse_active_package(line):
+                if 'Loaded package:' in line:
+                    for package in launch_counters.keys():
+                        if package in line:
+                            return package
+                return ''
+            def parse_launch(line):
+                return line.endswith('ApplicationEvents.Launch()')
+            def parse_warning(line):
+                return 'ApplicationEvents.ShowWarning' in line
+            def parse_error(line):
+                return 'ApplicationEvents.ShowError' in line
+            def parse_state_ready(line):
+                return line.endswith('ApplicationEvents.Ready()')
+
+            active_package = ''
+            launch_in_progress = False
+
+            for line_id, line in enumerate(map(str.strip, f.readlines())):
+                # Detect which model importer is used for launch event
+                package = parse_active_package(line)
+                if package:
+                    active_package = package
+                    launch_in_progress = False  # Reset launch event state to handle possible malformed logs
+                    continue
+                # Skip all lines 'till model importer package load
+                if not active_package:
+                    continue
+                # Detect launch event
+                if parse_launch(line):
+                    launch_in_progress = True
+                    continue
+                # Detect result of launch event
+                if launch_in_progress:
+                    # Abort launch event parsing on warning or error
+                    if exclude_failed and (parse_warning(line) or parse_error(line)):
+                        launch_in_progress = False
+                        continue
+                    # Detect launch event finish
+                    if parse_state_ready(line):
+                        launch_counters[active_package] += 1
+                        launch_in_progress = False
+                        continue
+
+            return launch_counters
+
+    def get_launch_counters(self):
+        launch_counters = {}
+        # Fetch launch stats from config
+        for package_name, importer in Config.Importers.__dict__.items():
+            launch_counters[package_name] = importer.Importer.launch_count
+        # Parse launch stats from log
+        if -1 in launch_counters.values():
+            try:
+                logged_launch_count = self.get_launch_counters_from_log()
+                for importer, count in launch_counters.items():
+                    if count == -1:
+                        launch_counters[importer] = logged_launch_count.get(importer, 0)
+                        Config.Importers.__dict__[importer].Importer.launch_count = launch_counters[importer]
+                        logging.debug(f'Parsed {importer} launch count from log: {launch_counters[importer]}')
+            except Exception as e:
+                logging.debug(f'Failed to parse launch counts from log: {e}')
+        return launch_counters
+
+    def handle_stats(self):
+        # Show 1-time credits notification for the first model importer that reaches 100 launches
+        if not Config.Launcher.credits_shown:
+            # Check flag file to handle possible config reset
+            flag_path = Paths.App.Resources / 'Security' / 'Credits.lock'
+            if flag_path.is_file():
+                Config.Launcher.credits_shown = True
+                return
+
+            launch_counters = self.get_launch_counters()
+
+            most_launched_model_importer = max(launch_counters, key=launch_counters.get)
+            max_launch_count = launch_counters[most_launched_model_importer]
+
+            if max_launch_count >= 100 and most_launched_model_importer == Config.Launcher.active_importer:
+                # Set flag in config to avoid excessive FS calls
+                Config.Launcher.credits_shown = True
+                # Create flag file to prevent notification spam on config reset
+                try:
+                    flag_path.touch()
+                except Exception as e:
+                    logging.debug(f'Failed to create Credits.lock: {e}')
+                # Show credits notification
+                try:
+                    Events.Fire(Events.Application.OpenDonationCenter(
+                        mode='POPUP',
+                        model_importer=most_launched_model_importer,
+                        launch_count=max_launch_count
+                    ))
+                except Exception as e:
+                    logging.debug(f'Failed to show credits notification: {e}')
+
     def launch(self):
         if self.is_locked:
             return
@@ -562,6 +670,9 @@ class Application:
             self.is_locked = False
             if not Config.Launcher.auto_close:
                 self.gui.after(100, Events.Fire, Events.Application.Ready())
+
+        # Track launch stats
+        Config.Active.Importer.launch_count += 1
 
         # Close the launcher or reset its UI state
         if Config.Launcher.auto_close:

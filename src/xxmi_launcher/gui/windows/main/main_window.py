@@ -218,7 +218,6 @@ class MainWindow(UIMainWindow):
 
         self.show()
 
-        # self.open_settings()
         Events.Subscribe(Events.Application.Minimize,
                          lambda event: self.minimize())
         Events.Subscribe(Events.Application.Close, self.handle_close)

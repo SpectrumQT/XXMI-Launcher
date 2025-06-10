@@ -29,6 +29,7 @@ class TopBarFrame(UIFrame):
 
         self.put(LoadXXMIButton(self))
 
+        self.put(DonateButton(self))
         self.put(GameBananaButton(self))
         self.put(DiscordButton(self))
         self.put(GitHubButton(self))
@@ -183,11 +184,11 @@ class WebResourceButton(UIImageButton):
             bg_selected_opacity=0.35)
         super().__init__(**kwargs)
 
-
+    
 class GameBananaButton(WebResourceButton):
     def __init__(self, master):
         super().__init__(
-            x=860,
+            x=790,
             button_image_path='button-resource-gamebanana.png',
             command=self.open_link,
             master=master)
@@ -214,7 +215,7 @@ class GameBananaButton(WebResourceButton):
 class DiscordButton(WebResourceButton):
     def __init__(self, master):
         super().__init__(
-            x=930,
+            x=860,
             button_image_path='button-resource-discord.png',
             command=lambda: webbrowser.open('https://discord.com/invite/agmg'),
             master=master)
@@ -224,11 +225,33 @@ class DiscordButton(WebResourceButton):
 class GitHubButton(WebResourceButton):
     def __init__(self, master):
         super().__init__(
-            x=1000,
+            x=930,
             button_image_path='button-resource-github.png',
             command=lambda: webbrowser.open('https://github.com/SpectrumQT/XXMI-Launcher'),
             master=master)
         self.set_tooltip(f'XXMI Launcher GitHub', delay=0.01)
+
+
+class DonateButton(WebResourceButton):
+    def __init__(self, master):
+        super().__init__(
+            x=1000,
+            button_image_path='button-resource-donate.png',
+            command=self.open_link,
+            master=master)
+        self.subscribe(Events.Application.LoadImporter, self.handle_load_importer)
+        self.set_tooltip(self.get_tooltip, delay=0.01)
+
+    def handle_load_importer(self, event):
+        self.show(event.importer_id != 'XXMI')
+
+    def open_link(self):
+        Events.Fire(Events.Application.OpenDonationCenter(model_importer=Config.Launcher.active_importer))
+
+    def get_tooltip(self):
+        return f'Support {Config.Launcher.active_importer}'
+
+
 
 # endregion
 

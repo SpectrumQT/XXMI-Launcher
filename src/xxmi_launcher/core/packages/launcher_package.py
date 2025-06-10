@@ -40,6 +40,7 @@ class LauncherManagerConfig:
     github_token: str = ''
     verify_ssl: bool = True
     proxy: ProxyConfig = field(default_factory=lambda: ProxyConfig())
+    credits_shown: bool = False
 
 
 @dataclass
