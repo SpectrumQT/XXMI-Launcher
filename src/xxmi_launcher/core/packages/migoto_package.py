@@ -14,7 +14,7 @@ import core.config_manager as Config
 
 from core.package_manager import Package, PackageMetadata
 
-from core.utils.dll_injector import DllInjector, direct_inject
+from core.utils.dll_injector import DllInjector
 from core.utils.process_tracker import wait_for_process, WaitResult, ProcessPriority, wait_for_process_exit
 
 log = logging.getLogger(__name__)
@@ -104,28 +104,25 @@ class MigotoPackage(Package):
         Events.Fire(Events.Application.Busy())
 
         dll_path = Config.Active.Importer.importer_path / 'd3d11.dll'
-        launch_cmd = [str(event.start_exe_path)] + event.start_args + Config.Active.Importer.launch_options.split()
-        launch_work_dir = event.work_dir
-        launch_flags = subprocess.CREATE_NEW_CONSOLE | subprocess.CREATE_DEFAULT_ERROR_MODE
-        launch_flags |= ProcessPriority(Config.Active.Importer.process_priority).get_process_flag()
-        use_hook = event.use_hook
-        use_shell = False
 
+        process_flags = subprocess.CREATE_NEW_CONSOLE | subprocess.CREATE_DEFAULT_ERROR_MODE
+        process_flags |= ProcessPriority(Config.Active.Importer.process_priority).get_process_flag()
+
+        use_hook = event.use_hook
+
+        custom_launch_cmd = None
         if Config.Active.Importer.custom_launch_enabled:
             use_hook = Config.Active.Importer.custom_launch_inject_mode == 'Hook'
-            custom_launch_cmd = Config.Active.Importer.custom_launch.strip()
-            if custom_launch_cmd:
-                launch_cmd = custom_launch_cmd
-                launch_work_dir = None
-                use_shell = True
+            custom_launch_cmd = Config.Active.Importer.custom_launch.strip() or None
 
         extra_dll_paths = []
         if Config.Active.Importer.extra_libraries_enabled:
             extra_dll_paths += Config.Active.Importer.extra_dll_paths
 
+        injector = DllInjector(self.package_path / '3dmloader.dll')
+
         if use_hook:
             # Use SetWindowsHookEx injection method
-            injector = DllInjector(self.package_path / '3dmloader.dll')
             try:
                 # Setup global windows hook for 3dmigoto dll
                 Events.Fire(Events.Application.SetupHook(library_name=dll_path.name, process_name=process_name))
@@ -133,13 +130,17 @@ class MigotoPackage(Package):
 
                 # Start game's exe
                 Events.Fire(Events.Application.StartGameExe(process_name=process_name))
-                if len(extra_dll_paths) == 0:
-                    subprocess.Popen(launch_cmd, creationflags=launch_flags, cwd=launch_work_dir, shell=use_shell)
-                else:
-                    pid = direct_inject(dll_paths=extra_dll_paths, process_name=process_name, start_cmd=launch_cmd,
-                                        work_dir=launch_work_dir, creationflags=launch_flags, use_shell=use_shell)
-                    if pid == -1:
-                        raise ValueError(f'Failed to inject {str(extra_dll_paths)}!')
+
+                injector.open_process(
+                    start_method = Config.Active.Importer.process_start_method,
+                    exe_path = str(event.start_exe_path),
+                    work_dir = event.work_dir,
+                    start_args = event.start_args + Config.Active.Importer.launch_options.split(),
+                    process_flags = process_flags,
+                    process_name = process_name,
+                    dll_paths = extra_dll_paths,
+                    cmd = custom_launch_cmd
+                )
 
                 # Early DLL injection verification
                 hooked = injector.wait_for_injection(5)
@@ -183,10 +184,16 @@ class MigotoPackage(Package):
 
             Events.Fire(Events.Application.Inject(library_name=dll_names, process_name=process_name))
 
-            pid = direct_inject(dll_paths=dll_paths, process_name=process_name, start_cmd=launch_cmd,
-                                work_dir=launch_work_dir, creationflags=launch_flags, use_shell=use_shell)
-            if pid == -1:
-                raise ValueError(f'Failed to inject {dll_names}!')
+            injector.open_process(
+                start_method=Config.Active.Importer.process_start_method,
+                exe_path=str(event.start_exe_path),
+                work_dir=event.work_dir,
+                start_args=event.start_args + Config.Active.Importer.launch_options.split(),
+                process_flags=process_flags,
+                process_name=process_name,
+                dll_paths=dll_paths,
+                cmd=custom_launch_cmd
+            )
 
             Events.Fire(Events.Application.WaitForProcess(process_name=process_name))
             result, pid = wait_for_process(process_name, with_window=True, timeout=Config.Launcher.start_timeout, check_visibility=True)

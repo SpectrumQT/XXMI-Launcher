@@ -62,6 +62,7 @@ class ModelImporterConfig:
     importer_folder: str = ''
     game_folder: str = ''
     overwrite_ini: bool = True
+    process_start_method: str = 'Native'
     process_priority: str = 'Normal'
     window_mode: str = 'Borderless'
     run_pre_launch_enabled: bool = False
