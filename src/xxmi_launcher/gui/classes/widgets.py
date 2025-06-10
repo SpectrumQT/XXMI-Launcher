@@ -10,7 +10,7 @@ from typing import Union, Tuple, List, Dict, Optional, Callable
 from pathlib import Path
 
 from tkinter import Menu, INSERT, font
-from customtkinter import CTkBaseClass, CTkButton, CTkImage, CTkLabel, CTkProgressBar, CTkEntry, CTkCheckBox, CTkTextbox, CTkOptionMenu, CTkRadioButton
+from customtkinter import CTkBaseClass, CTkButton, CTkImage, CTkLabel, CTkProgressBar, CTkEntry, CTkCheckBox, CTkTextbox, CTkOptionMenu, CTkRadioButton, StringVar
 from customtkinter import END, CURRENT
 from customtkinter import ThemeManager, CTkFont
 from PIL import Image, ImageTk
@@ -1016,11 +1016,29 @@ class UIEntry(CTkEntry, UIWidget):
     def __init__(self,
                  master: Union[UIWindow, 'UIFrame'],
                  **kwargs):
+
+        # Original tkEntry fails with empty string for IntVar and behaves poorly with input filtering overall
+        # Here we solve it via creating proxy StringVar and updating original IntVar with filtered input (r'-*\d*')
+        # TODO: Refactor
+        # TODO: Add float support
+        self._original_textvariable = None
+        textvariable = kwargs.get('textvariable', None)
+        if textvariable is not None:
+            value = textvariable.get()
+            if isinstance(value, int):
+                self._original_textvariable = textvariable
+                proxy_var = StringVar(master=master, value=f'{value}')
+                proxy_var.trace_add('write', self.handle_proxy_var_update)
+                kwargs['textvariable'] = proxy_var
+
         UIWidget.__init__(self, master,  **kwargs)
         self._fg_color_disabled = ThemeManager.theme["CTkEntry"].get("fg_color_disabled", None)
         self._border_color_disabled = ThemeManager.theme["CTkEntry"].get("border_color_disabled", None)
         self._text_color_disabled = ThemeManager.theme["CTkEntry"].get("text_color_disabled", None)
         CTkEntry.__init__(self, master, **kwargs)
+
+        if self._original_textvariable is not None:
+            self.trace_write(self._original_textvariable, self.handle_original_var_update)
 
         self.state_log = [('', 0)]
         self.state_id = -1
@@ -1031,6 +1049,7 @@ class UIEntry(CTkEntry, UIWidget):
         self.bind("<<Cut>>", lambda event: self.after(200, self.add_state))
         self.bind("<Button-3>", self.handle_button3)
         self.bind("<<Paste>>", self.paste_to_selection)
+        self.bind("<Return>", self.handle_return)
 
         self.context_menu = Menu(self, tearoff=0)
         self.context_menu.config(font=self._apply_font_scaling(('Asap', 14)))
@@ -1039,6 +1058,32 @@ class UIEntry(CTkEntry, UIWidget):
         self.context_menu.add_command(label="Paste")
 
         self._apply_theme()
+
+    def handle_original_var_update(self, var, val):
+        if self._textvariable.get() != str(val):
+            self._textvariable.set(str(val))
+
+    def handle_proxy_var_update(self, varname=None, index=None, mode=None):
+        value = self._textvariable.get().strip()
+        if value == '' or value == '-':
+            return
+        result = re.search(r'-?\d+', value)
+        if result:
+            filtered_value = result.group()
+            if filtered_value == '' or filtered_value == '-':
+                if filtered_value != value:
+                    self.set(filtered_value)
+                return
+            self._original_textvariable.set(int(filtered_value))
+            if filtered_value != value:
+                self.set(filtered_value)
+        else:
+            self.set('')
+
+    def _entry_focus_out(self, event=None):
+        if self._original_textvariable is not None and self._textvariable.get().strip() == '':
+            self.set('0')
+        super()._entry_focus_out(event)
 
     def configure(self, require_redraw=False, **kwargs):
         if "state" in kwargs:
@@ -1135,6 +1180,9 @@ class UIEntry(CTkEntry, UIWidget):
         self.initialize_state_log()
         self.show_context_menu(event)
 
+    def handle_return(self, event):
+        self.master.focus_set()
+        
     def initialize_state_log(self, event=None):
         if len(self.state_log) == 1:
             self.state_log[0] = (self.get(), self.index(INSERT))
