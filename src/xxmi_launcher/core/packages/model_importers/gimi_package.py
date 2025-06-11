@@ -1,17 +1,13 @@
 import re
 import os
 import logging
-import ctypes
 import shutil
 import winreg
 import json
 
-from dataclasses import field
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import Dict, Union, Tuple, Optional, List
-
-from datetime import datetime
-from dataclasses import dataclass
 from pathlib import Path
 
 import core.path_manager as Paths
@@ -193,19 +189,13 @@ class GIMIPackage(ModelImporterPackage):
 
         Events.Fire(Events.Application.VerifyFileAccess(path=gimi_ini_path, write=True))
 
-        log.debug(f'Reading main.ini...')
-        with open(gimi_ini_path, 'r', encoding='utf-8') as f:
-            ini = IniHandler(IniHandlerSettings(option_value_spacing=True, ignore_comments=False), f)
-
-        log.debug(f'Reading monitor resolution...')
-        screen_width, screen_height = ctypes.windll.user32.GetSystemMetrics(0), ctypes.windll.user32.GetSystemMetrics(1)
-        ini.set_option('Constants', 'global $window_width', screen_width)
-        ini.set_option('Constants', 'global $window_height', screen_height)
-
-        if ini.is_modified():
-            log.debug(f'Writing main.ini...')
-            with open(gimi_ini_path, 'w', encoding='utf-8') as f:
-                f.write(ini.to_string())
+        # with open(gimi_ini_path, 'r', encoding='utf-8') as f:
+        #     ini = IniHandler(IniHandlerSettings(option_value_spacing=True, ignore_comments=False), f)
+        #
+        # if ini.is_modified():
+        #     log.debug(f'Writing main.ini...')
+        #     with open(gimi_ini_path, 'w', encoding='utf-8') as f:
+        #         f.write(ini.to_string())
 
     def update_dcr(self):
         log.debug(f'Checking DCR...')

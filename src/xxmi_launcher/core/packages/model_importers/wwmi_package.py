@@ -3,13 +3,9 @@ import os
 import json
 import sqlite3
 import logging
-import ctypes
 
-from dataclasses import field
+from dataclasses import dataclass, field
 from typing import Dict, Union, Optional, Tuple, List
-
-from datetime import datetime
-from dataclasses import dataclass
 from pathlib import Path
 
 import core.path_manager as Paths
@@ -402,16 +398,13 @@ class WWMIPackage(ModelImporterPackage):
             raise ValueError('Failed to locate Core/WWMI/WuWa-Model-Importer.ini!')
 
         Events.Fire(Events.Application.VerifyFileAccess(path=wwmi_ini_path, write=True))
-        with open(wwmi_ini_path, 'r', encoding='utf-8') as f:
-            ini = IniHandler(IniHandlerSettings(option_value_spacing=True, ignore_comments=False), f)
 
-        screen_width, screen_height = ctypes.windll.user32.GetSystemMetrics(0), ctypes.windll.user32.GetSystemMetrics(1)
-        ini.set_option('Constants', 'global $window_width', screen_width)
-        ini.set_option('Constants', 'global $window_height', screen_height)
-
-        if ini.is_modified():
-            with open(wwmi_ini_path, 'w', encoding='utf-8') as f:
-                f.write(ini.to_string())
+        # with open(wwmi_ini_path, 'r', encoding='utf-8') as f:
+        #     ini = IniHandler(IniHandlerSettings(option_value_spacing=True, ignore_comments=False), f)
+        #
+        # if ini.is_modified():
+        #     with open(wwmi_ini_path, 'w', encoding='utf-8') as f:
+        #         f.write(ini.to_string())
 
 
 class SettingsManager:
