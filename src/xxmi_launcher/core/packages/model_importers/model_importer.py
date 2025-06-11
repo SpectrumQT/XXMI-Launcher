@@ -3,7 +3,7 @@ import os
 import sys
 import shutil
 import winreg
-
+import ctypes
 import winshell
 import pythoncom
 import re
@@ -426,6 +426,10 @@ class ModelImporterPackage(Package):
         self.set_default_ini_values(ini, 'mute_warnings', SettingType.Bool, Config.Active.Migoto.mute_warnings)
         self.set_default_ini_values(ini, 'enable_hunting', SettingType.Bool, Config.Active.Migoto.enable_hunting)
         self.set_default_ini_values(ini, 'dump_shaders', SettingType.Bool, Config.Active.Migoto.dump_shaders)
+
+        screen_width, screen_height = ctypes.windll.user32.GetSystemMetrics(0), ctypes.windll.user32.GetSystemMetrics(1)
+        ini.set_option('System', 'screen_width', screen_width)
+        ini.set_option('System', 'screen_height', screen_height)
 
         if ini.is_modified():
             log.debug(f'Writing d3dx.ini...')
