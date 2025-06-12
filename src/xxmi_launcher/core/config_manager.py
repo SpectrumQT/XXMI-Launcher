@@ -182,7 +182,7 @@ class AppConfig:
         new_config = type(importer)()
         importer.Importer.engine_ini.update(new_config.Importer.engine_ini)
 
-    def run_patch_183(self):
+    def run_patch_184(self):
         for package_name, importer in self.Importers.__dict__.items():
             # Detect existing System > dll_initialization_delay
             dll_initialization_delay = 0
@@ -194,7 +194,10 @@ class AppConfig:
                     ini = IniHandler(IniHandlerSettings(ignore_comments=True), f)
                     dll_initialization_delay = ini.get_section('System').get_option('dll_initialization_delay')
                     if dll_initialization_delay is not None:
+                        dll_initialization_delay = int(dll_initialization_delay)
                         log.debug(f'Detected existing dll_initialization_delay in for {package_name}: {dll_initialization_delay}')
+                    else:
+                        dll_initialization_delay = 0
             except Exception as e:
                 log.debug(f'Failed to detect existing dll_initialization_delay in for {package_name}: {e}')
 
@@ -202,9 +205,13 @@ class AppConfig:
             if package_name == 'WWMI':
                 importer.Migoto.unsafe_mode = False
                 importer.Migoto.unsafe_mode_signature = ''
+                if dll_initialization_delay == 0:
+                    dll_initialization_delay = 500
 
             # Keep existing dll_initialization_delay
-            importer.Importer.xxmi_dll_init_delay = dll_initialization_delay or 0
+            importer.Importer.xxmi_dll_init_delay = dll_initialization_delay
+
+            log.debug(f'Set xxmi_dll_init_delay for {package_name} to {dll_initialization_delay}')
 
     def upgrade(self, old_version, new_version):
         # Save config to file and exit early if old version is empty (aka fresh installation)
@@ -220,7 +227,7 @@ class AppConfig:
             '1.3.3': self.run_patch_133,
             '1.6.0': self.run_patch_160,
             '1.6.3': self.run_patch_163,
-            '1.8.3': self.run_patch_183,
+            '1.8.4': self.run_patch_184,
         }
         applied_patches = []
         for patch_version, patch_func in patches.items():
