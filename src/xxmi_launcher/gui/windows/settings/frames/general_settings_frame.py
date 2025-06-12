@@ -101,8 +101,10 @@ class ProcessOptionsFrame(UIFrame):
         self.grid_columnconfigure(0, weight=100)
 
         self.put(StartMethodOptionMenu(self)).grid(row=0, column=0, padx=(0, 10), pady=(0, 0), sticky='w')
-        self.put(ProcessPriorityLabel(self)).grid(row=0, column=1, padx=20, pady=(0, 0), sticky='w')
-        self.put(ProcessPriorityOptionMenu(self)).grid(row=0, column=2, padx=(0, 10), pady=(0, 0), sticky='w')
+        self.put(MigotoInitDelayLabel(self)).grid(row=0, column=1, padx=20, pady=(0, 0), sticky='w')
+        self.put(MigotoInitDelayEntry(self)).grid(row=0, column=2, padx=(0, 10), pady=(0, 0), sticky='w')
+        self.put(ProcessPriorityLabel(self)).grid(row=0, column=3, padx=20, pady=(0, 0), sticky='w')
+        self.put(ProcessPriorityOptionMenu(self)).grid(row=0, column=4, padx=(0, 10), pady=(0, 0), sticky='w')
 
 
 class AutoConfigFrame(UIFrame):
@@ -180,6 +182,9 @@ class GameFolderErrorLabel(UILabel):
             fg_color='transparent',
             master=master)
 
+    def _show(self):
+        if self.winfo_manager():
+            super()._show()
 
 class ChangeGameFolderButton(UIButton):
     def __init__(self, master):
@@ -313,6 +318,44 @@ class StartMethodOptionMenu(UIOptionMenu):
             master=master)
         self.set_tooltip(f'**Native**: Use native Python call to start game process (`subprocess.popen`).\n'
                          f'**Shell**: Use external library C++ call to start game process (`ShellExecute`)')
+
+
+class MigotoInitDelayLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text='XXMI Delay:',
+            font=('Microsoft YaHei', 14, 'bold'),
+            fg_color='transparent',
+            master=master)
+
+
+class MigotoInitDelayEntry(UIEntry):
+    def __init__(self, master):
+        super().__init__(
+            textvariable=Vars.Active.Importer.xxmi_dll_init_delay,
+            width=50,
+            height=36,
+            font=('Arial', 14),
+            master=master)
+
+        self.set_tooltip(self.get_tooltip)
+
+    def get_tooltip(self):
+        msg = 'Delay in milliseconds for how long injected XXMI DLL (3dmigoto) must wait before initialization.\n'
+        if Config.Launcher.active_importer == 'WWMI':
+            msg += dedent("""
+                <font color="red">⚠ Wuthering Waves crashes on launch with wrong delay! ⚠</font>
+                <font color="#8B8000">⚠ If default value fails, try to increase or decrease it until WuWa stops crashing. ⚠</font>
+                ## Known values for Wuthering Waves 2.4:
+                - **500**: Default, works for most users.
+                - **150**: Minimal known value to work along with ReShade.
+                - **50**: Minimal known value to work.
+                - **1000+**: Some users need really huge delays.
+            """)
+        else:
+            msg += 'If game crashes with no mods, try to increase it. Start with steps of 50 and increase them as you go.'
+
+        return msg
 
 
 class ProcessPriorityLabel(UILabel):

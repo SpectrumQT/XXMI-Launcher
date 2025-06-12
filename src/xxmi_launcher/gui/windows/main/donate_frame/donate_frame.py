@@ -112,7 +112,7 @@ class DonateFrame(UIFrame):
                 },
                 'Satan1c': {
                     'Home': 'https://gamebanana.com/members/2789093',
-                    'Tips': 'patreon.com/Satan1cL'
+                    'Tips': 'https://patreon.com/Satan1cL'
                 },
                 'Scyll': {
                     'Home': 'https://gamebanana.com/members/2644630',
