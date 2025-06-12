@@ -20,6 +20,7 @@ from core.utils.ini_handler import IniHandler, IniHandlerSettings
 from core.utils.process_tracker import wait_for_process_exit, WaitResult, ProcessPriority
 from core.packages.model_importers.model_importer import ModelImporterPackage, ModelImporterConfig
 from core.packages.migoto_package import MigotoManagerConfig
+from core.locale_manager import T, L
 
 log = logging.getLogger(__name__)
 
@@ -142,7 +143,7 @@ class GIMIPackage(ModelImporterPackage):
         if not game_exe_path.is_file():
             game_exe_cn_path = game_path / 'YuanShen.exe'
             if not game_exe_cn_path.is_file():
-                raise ValueError(f'Game executable {game_exe_path.name} or {game_exe_cn_path.name} not found!')
+                raise ValueError(T('gimi_game_exe_not_found', 'Game executable {} or {} not found!').format(game_exe_path.name, game_exe_cn_path.name))
             game_exe_path = game_exe_cn_path
         return game_exe_path
 
@@ -164,37 +165,38 @@ class GIMIPackage(ModelImporterPackage):
                     # Set "Dynamic Character Resolution" to "Off"
                     self.update_dcr()
                 except Exception as e:
-                    raise ValueError(f'{e}\n\n'
-                          f"If nothing helps:\n"
-                          f"1. Disable `Configure Game Settings` in launcher's `General Settings`\n"
-                          f"2. Configure in-game `Graphics Settings` manually:\n"
-                          f'* Graphics > `Dynamic Character Resolution` must be `Off`.') from e
+                    raise ValueError(T('gimi_dcr_config_failed',
+                          '{}\n\n'
+                          'If nothing helps:\n'
+                          '1. Disable `Configure Game Settings` in launcher\'s `General Settings`\n'
+                          '2. Configure in-game `Graphics Settings` manually:\n'
+                          '* Graphics > `Dynamic Character Resolution` must be `Off`.').format(e)) from e
         if Config.Importers.GIMI.Importer.unlock_fps:
             try:
                 self.configure_fps_unlocker()
             except Exception as e:
-                raise Exception(f'Failed to configure FPS Unlocker!\n\n{str(e)}')
+                raise Exception(T('gimi_fps_unlocker_config_failed', 'Failed to configure FPS Unlocker!\n\n{}').format(str(e)))
         if Config.Importers.GIMI.Importer.enable_hdr:
             try:
                 self.enable_hdr()
             except Exception as e:
-                raise Exception(f'Failed to enable HDR!\n\n{str(e)}')
+                raise Exception(T('gimi_hdr_enable_failed', 'Failed to enable HDR!\n\n{}').format(str(e)))
 
     def update_gimi_ini(self):
-        Events.Fire(Events.Application.StatusUpdate(status='Updating GIMI main.ini...'))
+        Events.Fire(Events.Application.StatusUpdate(status=L('gimi_updating_ini', 'Updating GIMI main.ini...')))
 
         gimi_ini_path = Config.Importers.GIMI.Importer.importer_path / 'Core' / 'GIMI' / 'main.ini'
         if not gimi_ini_path.exists():
-            raise ValueError('Failed to locate Core/GIMI/main.ini!')
+            raise ValueError(T('gimi_ini_not_found', 'Failed to locate Core/GIMI/main.ini!'))
 
         Events.Fire(Events.Application.VerifyFileAccess(path=gimi_ini_path, write=True))
 
-        # with open(gimi_ini_path, 'r', encoding='utf-8') as f:
+        # with open(gimi_ini_path, 'r', encoding='utf-8') as f:Add commentMore actions
         #     ini = IniHandler(IniHandlerSettings(option_value_spacing=True, ignore_comments=False), f)
         #
         # if ini.is_modified():
         #     log.debug(f'Writing main.ini...')
-        #     with open(gimi_ini_path, 'w', encoding='utf-8') as f:
+        #     with open(gimi_ini_path, 'w', encoding='utf-8') as f:Add commentMore actions
         #         f.write(ini.to_string())
 
     def update_dcr(self):
@@ -214,19 +216,21 @@ class GIMIPackage(ModelImporterPackage):
                 continue
         if settings_key is None:
             raise ValueError(
-                f'Genshin Impact registry key is not found!\n\n'
-                f'Please start the game via original launcher to create the key and try again.'
+                T('gimi_registry_key_not_found',
+                  'Genshin Impact registry key is not found!\n\n'
+                  'Please start the game via original launcher to create the key and try again.')
         )
 
         # Read binary Graphics Settings key
         try:
             (settings_bytes, regtype) = winreg.QueryValueEx(settings_key, 'GENERAL_DATA_h2389025596')
             if regtype != winreg.REG_BINARY:
-                raise ValueError(f'Unknown Settings format: Data type {regtype} is not {winreg.REG_BINARY} of REG_BINARY!')
+                raise ValueError(T('gimi_unknown_settings_format', 'Unknown Settings format: Data type {} is not {} of REG_BINARY!').format(regtype, winreg.REG_BINARY))
         except FileNotFoundError:
             raise ValueError(
-                'Graphics Settings record is not found in GI registry!\n\n'
-                'Please start the game via official launcher to create the record and try again.')
+                T('gimi_graphics_settings_not_found',
+                  'Graphics Settings record is not found in GI registry!\n\n'
+                  'Please start the game via official launcher to create the record and try again.'))
 
         # Read bytes till the first null byte as settings ascii string
         null_byte_pos = settings_bytes.find(b'\x00')
@@ -241,9 +245,9 @@ class GIMIPackage(ModelImporterPackage):
 
         # Ensure settings dict has known keys
         if 'graphicsData' not in settings_dict:
-            raise ValueError('Unknown Graphics Settings format: "graphicsData" key not found!')
+            raise ValueError(T('gimi_graphics_data_key_not_found', 'Unknown Graphics Settings format: "graphicsData" key not found!'))
         if 'globalPerfData' not in settings_dict:
-            raise ValueError('Unknown Graphics Settings format: "globalPerfData" key not found!')
+            raise ValueError(T('gimi_global_perf_data_key_not_found', 'Unknown Graphics Settings format: "globalPerfData" key not found!'))
 
         # Set new settings
         settings_updated = False
@@ -311,8 +315,9 @@ class GIMIPackage(ModelImporterPackage):
                 continue
         if settings_key is None:
             raise ValueError(
-                f'Genshin Impact registry key is not found!\n\n'
-                f'Please start the game via original launcher to create the key and try again.'
+                T('gimi_registry_key_not_found',
+                  'Genshin Impact registry key is not found!\n\n'
+                  'Please start the game via original launcher to create the key and try again.')
             )
 
         # Write required key to registry, we need to do it each time, as it's getting removed after the game start
@@ -320,18 +325,20 @@ class GIMIPackage(ModelImporterPackage):
             winreg.SetValueEx(settings_key, 'WINDOWS_HDR_ON_h3132281285', None, winreg.REG_DWORD, 1)
         except FileNotFoundError:
             raise ValueError(
-                'HDR record is not found in GI registry!\n\n'
-                'Please start the game via official launcher to create the record and try again.')
+                T('gimi_hdr_record_not_found',
+                  'HDR record is not found in GI registry!\n\n'
+                  'Please start the game via official launcher to create the record and try again.'))
 
     def configure_fps_unlocker(self):
-        Events.Fire(Events.Application.StatusUpdate(status='Configuring FPS Unlocker...'))
+        Events.Fire(Events.Application.StatusUpdate(status=L('gimi_configuring_fps_unlocker', 'Configuring FPS Unlocker...')))
 
         result, pid = wait_for_process_exit('unlockfps_nc.exe', timeout=10, kill_timeout=5)
         if result == WaitResult.Timeout:
             Events.Fire(Events.Application.ShowError(
                 modal=True,
-                message='Failed to terminate FPS Unlocker!\n\n'
-                        'Please close it manually and press [OK] to continue.',
+                message=T('gimi_fps_unlocker_terminate_failed',
+                         'Failed to terminate FPS Unlocker!\n\n'
+                         'Please close it manually and press [OK] to continue.'),
             ))
 
         fps_config_template_path = Paths.App.Resources / 'Packages' / 'GI-FPS-Unlocker' / 'fps_config_template.json'
@@ -441,13 +448,13 @@ class Version:
                     result.append(0)
 
                 if len(result) != 3:
-                    raise ValueError(f'Malformed GIMI version!')
+                    raise ValueError(T('gimi_malformed_version', 'Malformed GIMI version!'))
 
                 self.version = result
 
                 return
 
-        raise ValueError(f'Failed to locate GIMI version!')
+        raise ValueError(T('gimi_version_not_found', 'Failed to locate GIMI version!'))
 
     def __str__(self) -> str:
         return f'{self.version[0]}.{self.version[1]}.{self.version[2]}'

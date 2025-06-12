@@ -8,6 +8,7 @@ from pathlib import Path
 import core.path_manager as Paths
 import core.event_manager as Events
 from core.config_manager import Config as Config
+from core.locale_manager import T
 
 from core.package_manager import Package, PackageMetadata
 
@@ -63,7 +64,7 @@ class UpdaterPackage(Package):
 
         result, pid = wait_for_process(self.exe_path.name, with_window=True, timeout=15)
         if result == WaitResult.Timeout:
-            raise ValueError('Failed to start XXMI Updater.exe!\n\n'
-                             'Was it blocked by Antivirus software or security settings?')
+            raise ValueError(T('updater_start_failed', 'Failed to start XXMI Updater.exe!\n\n'
+                             'Was it blocked by Antivirus software or security settings?'))
 
         time.sleep(1)

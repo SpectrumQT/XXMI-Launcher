@@ -5,6 +5,8 @@ import json
 
 from dataclasses import dataclass, field
 from typing import Dict, Union, List
+
+from core.locale_manager import T, L
 from pathlib import Path
 
 import core.path_manager as Paths
@@ -132,7 +134,7 @@ class ZZMIPackage(ModelImporterPackage):
     def validate_game_exe_path(self, game_path: Path) -> Path:
         game_exe_path = game_path / 'ZenlessZoneZero.exe'
         if not game_exe_path.is_file():
-            raise ValueError(f'Game executable {game_exe_path.name} not found!')
+            raise ValueError(T('zzmi_game_exe_not_found', 'Game executable {} not found!').format(game_exe_path.name))
         return game_exe_path
 
     def initialize_game_launch(self, game_path: Path):
@@ -142,22 +144,22 @@ class ZZMIPackage(ModelImporterPackage):
                 try:
                     self.configure_game_settings(game_path)
                 except Exception as e:
-                    raise ValueError(f'Failed to configure in-game settings for ZZMI!\n'
-                        f"Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:\n"
-                        f'* Graphics > `Character Quality` must be `High`.\n'
-                        f'* Graphics > `High-Precision Character Animation` must be `Disabled`.\n\n'
-                        f'{e}') from e
+                    raise ValueError(T('zzmi_game_config_failed',
+                        'Failed to configure in-game settings for ZZMI!\n'
+                        'Please disable `Configure Game Settings` in launcher\'s General Settings and check in-game settings:\n'
+                        '* Graphics > `Character Quality` must be `High`.\n'
+                        '* Graphics > `High-Precision Character Animation` must be `Disabled`.\n\n'
+                        '{}').format(e)) from e
 
     def update_zzmi_ini(self):
-        Events.Fire(Events.Application.StatusUpdate(status='Updating ZZMI main.ini...'))
+        Events.Fire(Events.Application.StatusUpdate(status=L('zzmi_updating_ini', 'Updating ZZMI main.ini...')))
 
         zzmi_ini_path = Config.Importers.ZZMI.Importer.importer_path / 'Core' / 'ZZMI' / 'main.ini'
         if not zzmi_ini_path.exists():
-            raise ValueError('Failed to locate Core/ZZMI/main.ini!')
+            raise ValueError(T('zzmi_ini_not_found', 'Failed to locate Core/ZZMI/main.ini!'))
 
         Events.Fire(Events.Application.VerifyFileAccess(path=zzmi_ini_path, write=True))
-
-        # with open(zzmi_ini_path, 'r', encoding='utf-8') as f:
+        # with open(zzmi_ini_path, 'r', encoding='utf-8') as f:Add commentMore actions
         #     ini = IniHandler(IniHandlerSettings(option_value_spacing=True, ignore_comments=False), f)
         #
         # if ini.is_modified():
@@ -165,7 +167,7 @@ class ZZMIPackage(ModelImporterPackage):
         #         f.write(ini.to_string())
 
     def configure_game_settings(self, game_path: Path):
-        Events.Fire(Events.Application.StatusUpdate(status='Configuring in-game settings...'))
+        Events.Fire(Events.Application.StatusUpdate(status=L('zzmi_configuring_settings', 'Configuring in-game settings...')))
 
         config_path = game_path / 'ZenlessZoneZero_Data' / 'Persistent' / 'LocalStorage' / 'GENERAL_DATA.bin'
 
@@ -225,7 +227,7 @@ class SettingsManager:
         else:
             old_value = setting.get('Data', None)
             if old_value is None:
-                raise ValueError(f'Unknown system settings entry format: {setting}!')
+                raise ValueError(T('zzmi_unknown_settings_format', 'Unknown system settings entry format: {}!').format(setting))
             if old_value == new_value:
                 log.debug(f'Setting {setting_id} is already set to {old_value}')
                 return
@@ -259,13 +261,13 @@ class Version:
                     result.append(0)
 
                 if len(result) != 3:
-                    raise ValueError(f'Malformed ZZMI version!')
+                    raise ValueError(T('zzmi_malformed_version', 'Malformed ZZMI version!'))
 
                 self.version = result
 
                 return
 
-        raise ValueError(f'Failed to locate ZZMI version!')
+        raise ValueError(T('zzmi_version_not_found', 'Failed to locate ZZMI version!'))
 
     def __str__(self) -> str:
         return f'{self.version[0]}.{self.version[1]}.{self.version[2]}'

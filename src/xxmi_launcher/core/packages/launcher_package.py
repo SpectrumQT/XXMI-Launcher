@@ -14,6 +14,7 @@ from typing import Optional
 import core.path_manager as Paths
 import core.event_manager as Events
 import core.config_manager as Config
+from core.locale_manager import T, L
 
 from core.package_manager import Package, PackageMetadata
 
@@ -41,6 +42,7 @@ class LauncherManagerConfig:
     verify_ssl: bool = True
     proxy: ProxyConfig = field(default_factory=lambda: ProxyConfig())
     credits_shown: bool = False
+    language: str = 'English'
 
 
 @dataclass
@@ -93,12 +95,12 @@ class LauncherPackage(Package):
 
         installer_process_name = 'EnhancedUI.exe'
 
-        Events.Fire(Events.Application.StatusUpdate(status='Waiting for installer to start...'))
+        Events.Fire(Events.Application.StatusUpdate(status=L('launcher_waiting_installer', 'Waiting for installer to start...')))
 
         result, pid = wait_for_process(installer_process_name, with_window=True, timeout=15)
         if result == WaitResult.Timeout:
-            raise ValueError(f'Failed to start {self.downloaded_asset_path.name}!\n\n'
-                             f'Was it blocked by Antivirus software or security settings?')
+            raise ValueError(T('launcher_installer_start_failed', f'Failed to start {self.downloaded_asset_path.name}!\n\n'
+                             f'Was it blocked by Antivirus software or security settings?'))
 
         time.sleep(1)
 
@@ -164,7 +166,7 @@ class LauncherPackage(Package):
         if old_version < '0.9.7':
             old_exe_path = Paths.App.Root / 'XXMI Launcher.exe'
             if old_exe_path.is_file():
-                Events.Fire(Events.Application.StatusUpdate(status='Removing old files...'))
+                Events.Fire(Events.Application.StatusUpdate(status=L('launcher_removing_old_files', 'Removing old files...')))
                 # Remove pre-nuitka files and folders from `XXMI Launcher/Resources`
                 for path in Paths.App.Resources.iterdir():
                     if path.name in ['Bin', 'Packages', 'Security']:
@@ -182,23 +184,23 @@ class LauncherPackage(Package):
                 old_exe_path.unlink()
                 # Notify user about new exe path
                 msg = ''
-                msg += f'Launcher .exe file location was changed to:\n\n'
+                msg += L('launcher_exe_location_changed', f'Launcher .exe file location was changed to:\n\n')
                 msg += f'{Paths.App.Resources / "Bin" / "XXMI Launcher.exe"}\n\n'
-                msg += f'Desktop shortcut was updated automatically. Sorry for bothering!'
-                Events.Fire(Events.Application.ShowInfo(title='Update Notification', message=msg))
+                msg += L('launcher_shortcut_updated', f'Desktop shortcut was updated automatically. Sorry for bothering!')
+                Events.Fire(Events.Application.ShowInfo(title=L('launcher_update_notification_title', 'Update Notification'), message=msg))
 
     def create_shortcut(self):
         pythoncom.CoInitialize()
 
         with winshell.shortcut(str(Path(winshell.desktop()) / f'XXMI Launcher.lnk')) as link:
             link.path = str(Path(sys.executable))
-            link.description = f'Shortcut to XXMI Launcher'
+            link.description = L('launcher_shortcut_description', f'Shortcut to XXMI Launcher')
             link.working_directory = str(Paths.App.Resources / 'Bin')
             link.icon_location = (str(Paths.App.Themes / 'Default' / 'window-icon.ico'), 0)
 
         with winshell.shortcut(str(Paths.App.Root / f'XXMI Launcher.lnk')) as link:
             link.path = str(Path(sys.executable))
-            link.description = f'Shortcut to XXMI Launcher'
+            link.description = L('launcher_shortcut_description', f'Shortcut to XXMI Launcher')
             link.working_directory = str(Paths.App.Resources / 'Bin')
             link.icon_location = (str(Paths.App.Themes / 'Default' / 'window-icon.ico'), 0)
 

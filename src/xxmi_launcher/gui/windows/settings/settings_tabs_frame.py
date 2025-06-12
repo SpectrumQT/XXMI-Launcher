@@ -3,6 +3,7 @@ import logging
 import core.config_manager as Config
 import core.event_manager as Events
 import gui.vars as Vars
+from core.locale_manager import L
 
 from gui.classes.containers import UIFrame
 from gui.classes.widgets import UIButton, UILabel
@@ -34,10 +35,10 @@ class SettingsTabsFrame(UIFrame):
         self.tabs = {}
         self.selected_tab = None
 
-        self.add_tab('GENERAL_TAB', 'General', GeneralSettingsFrame(master=self.tab_content_frame))
-        self.add_tab('LAUNCHER_TAB', 'Launcher', LauncherSettingsFrame(master=self.tab_content_frame))
-        self.add_tab('IMPORTER_TAB', 'MI', ModelImporterSettingsFrame(master=self.tab_content_frame))
-        self.add_tab('ADVANCED_TAB', 'Advanced', AdvancedSettingsFrame(master=self.tab_content_frame))
+        self.add_tab('GENERAL_TAB', str(L('settings_tab_general', 'General')), GeneralSettingsFrame(master=self.tab_content_frame))
+        self.add_tab('LAUNCHER_TAB', str(L('settings_tab_launcher', 'Launcher')), LauncherSettingsFrame(master=self.tab_content_frame))
+        self.add_tab('IMPORTER_TAB', str(L('settings_tab_importer', 'MI')), ModelImporterSettingsFrame(master=self.tab_content_frame))
+        self.add_tab('ADVANCED_TAB', str(L('settings_tab_advanced', 'Advanced')), AdvancedSettingsFrame(master=self.tab_content_frame))
 
         self.select_tab(self.tabs['GENERAL_TAB'])
 
@@ -104,7 +105,7 @@ class SettingsTabsListFrame(UIFrame):
 class SettingsLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Settings',
+            text=str(L('settings_title', 'Settings')),
             font=('Microsoft YaHei', 20),
             fg_color='transparent',
             text_color='#888888',

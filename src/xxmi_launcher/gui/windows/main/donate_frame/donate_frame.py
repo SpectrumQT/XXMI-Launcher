@@ -7,6 +7,7 @@ from textwrap import dedent
 import core.config_manager as Config
 import core.event_manager as Events
 import gui.vars as Vars
+from core.locale_manager import T, L
 
 from gui.classes.containers import UIFrame
 from gui.classes.widgets import UIText, UIImageButton
@@ -54,45 +55,51 @@ class DonateFrame(UIFrame):
         self.close_button.disable_timeout = 5 if mode == 'POPUP' else 0
 
         if mode == 'POPUP':
-            self.introduction.set(dedent(f"""
-                Hey there — just a quick moment, I promise I won’t interrupt again!\n
-                I’m SpectrumQT, the developer behind XXMI Launcher{' and WWMI' if model_importer == 'WWMI' else ''}.
-                Looks like you’ve already enjoyed {num_sessions} {model_importer} sessions — awesome!
-            """).strip())
+            importer_info = str(L('donate_and_wwmi', ' and WWMI')) if model_importer == 'WWMI' else ''
+            self.introduction.set(dedent(str(L('donate_popup_introduction', """
+                Hey there — just a quick moment, I promise I won't interrupt again!
+                
+                I'm SpectrumQT, the developer behind XXMI Launcher{importer_info}.
+                Looks like you've already enjoyed {num_sessions} {model_importer} sessions — awesome!
+            """).format(
+                importer_info=importer_info,
+                num_sessions=num_sessions,
+                model_importer=model_importer
+            ))).strip())
         else:
             if model_importer == 'WWMI':
-                self.introduction.set(dedent(f"""
+                self.introduction.set(dedent(str(L('donate_wwmi_introduction', """
                     Hello! Thank you for visiting WWMI Appreciation Corner!
                     
                     This page is a bit unique, since I can't list many names here.
                     Simply because I'm soloing WWMI and XXMI Launcher development.
-                """).strip())
+                """))).strip())
             else:
-                self.introduction.set(dedent(f"""
+                self.introduction.set(dedent(str(L('donate_other_introduction', """
                     Hello! Thank you for visiting {model_importer} Appreciation Corner!
                     
                     Here you can see the dev team fighting for {model_importer} behind the scenes.
                     It's a tough battle — but shader hackers prevail!
-                """).strip())
+                """).format(model_importer=model_importer))).strip())
 
         if model_importer == 'WWMI':
             self.subject.move(260, 345)
             self.subject.configure(anchor='nw', justify='left')
-            self.subject.set("If you’ve been finding it useful, consider checking out")
+            self.subject.set(str(L('donate_wwmi_useful_check', "If you've been finding it useful, consider checking out")))
 
             self.my_patreon_button._text_image.configure(anchor='nw', justify='left')
-            self.my_patreon_button._text_image.set('my Patreon campaign.')
+            self.my_patreon_button._text_image.set(str(L('donate_my_patreon_campaign', 'my Patreon campaign.')))
             offset_x = 260 + self.subject._width + 10
             self.my_patreon_button.move(offset_x, 345)
 
             self.subject_creators.set('')
             self.subject_maintainers.set('')
 
-            self.subject_footer.set(dedent("""
-                It’s all about building better tools for the entire WWMI community.
+            self.subject_footer.set(dedent(str(L('donate_wwmi_footer', """
+                It's all about building better tools for the entire WWMI community.
                 
                 Who knows — maybe your few bucks could help shape the next big feature!
-            """).strip())
+            """))).strip())
             self.subject_footer.configure(anchor='n', justify='center')
             self.subject_footer.move(640, 375)
 
@@ -162,7 +169,7 @@ class DonateFrame(UIFrame):
             self.introduction.move(390, 180)
 
             self.subject.configure(anchor='n', justify='center')
-            self.subject.set(dedent(f"Please consider supporting those who work hard every day to make {model_importer} possible!"))
+            self.subject.set(dedent(str(L('donate_support_message', "Please consider supporting those who work hard every day to make {model_importer} possible!").format(model_importer=model_importer))))
             self.subject.move(640, 320)
 
             def get_devs_data(devs_list):
@@ -185,7 +192,8 @@ class DonateFrame(UIFrame):
             if len(maintainers_data) == 4:
                 extra_offset_x = +80
 
-            self.subject_creators.set(f"• Creator{'s' if len(creators) > 1 else ''}: ")
+            creator_label = str(L('donate_creators_single', '• Creator: ')) if len(creators) == 1 else str(L('donate_creators_multiple', '• Creators: '))
+            self.subject_creators.set(creator_label)
             self.subject_creators.move(290+extra_offset_x, 355)
 
             offset_x = 405 + extra_offset_x
@@ -202,7 +210,8 @@ class DonateFrame(UIFrame):
             if len(maintainers_data) >= 4:
                 maintainers_offset_y = 15
 
-            self.subject_maintainers.set(f"• Maintainer{'s' if len(maintainers) > 1 else ''}:")
+            maintainer_label = str(L('donate_maintainers_single', '• Maintainer:')) if len(maintainers) == 1 else str(L('donate_maintainers_multiple', '• Maintainers:'))
+            self.subject_maintainers.set(maintainer_label)
             self.subject_maintainers.move(290+extra_offset_x, 390 + maintainers_offset_y)
 
             offset_x = 440 + extra_offset_x
@@ -216,12 +225,12 @@ class DonateFrame(UIFrame):
                 tips_button = self.put(LinkButton(self, x=offset_x, y=391+offset_y, text=f'({platform})', link=link))
                 offset_x += 20 + tips_button._text_image._width
 
-            self.subject_footer.set('Also, if the launcher has been handy, I’d appreciate you joining')
+            self.subject_footer.set(str(L('donate_launcher_handy', "Also, if the launcher has been handy, I'd appreciate you joining")))
             self.subject_footer.move(270, 427+maintainers_offset_y*2)
 
             offset_x = 325 + self.subject_footer._width + 10
 
-            self.my_patreon_button._text_image.set('my Patreon.')
+            self.my_patreon_button._text_image.set(str(L('donate_my_patreon_short', 'my Patreon.')))
             self.my_patreon_button.move(offset_x, 427+maintainers_offset_y*2)
 
             self.close_button.move(640, 520+maintainers_offset_y)
@@ -238,7 +247,7 @@ class CloseButton(UIImageButton):
             y=515,
             width=225,
             height=40,
-            text='Close',
+            text=str(L('donate_close_button', 'Close')),
             # text_x_offset=36,
             text_y_offset=-1,
             text_anchor='center',
@@ -269,12 +278,12 @@ class CloseButton(UIImageButton):
             self.disable_time = time.time()
         time_left = self.disable_time + timeout - time.time()
         if time_left > 0:
-            self.set_text(f'Close ({int(time_left)})')
+            self.set_text(str(L('donate_close_countdown', 'Close ({time_left})').format(time_left=int(time_left))))
             self.after(1000, self.auto_enable)
             return
         self.disable_time = 0
         self.set_disabled(False)
-        self.set_text(f'Close')
+        self.set_text(str(L('donate_close_button', 'Close')))
 
 
 class DevAvatarButton(UIImageButton):
@@ -396,15 +405,15 @@ class MyPatreonButton(LinkButton):
 #
 #         <img src='file:///{Config.get_resource_path(self, 'button_dev_avatar.png')}' width='128'> <br>
 #
-#         Hey there — just a quick moment, I promise I won’t interrupt again!
+#         Hey there — just a quick moment, I promise I won't interrupt again!
 #         <br><br>
-#         I’m SpectrumQT, the developer behind XXMI Launcher and WWMI.
+#         I'm SpectrumQT, the developer behind XXMI Launcher and WWMI.
 #         <br>
-#         Looks like you’ve already enjoyed 123 WWMI sessions — awesome!
+#         Looks like you've already enjoyed 123 WWMI sessions — awesome!
 #         <br><br>
-#         If you’ve been finding it useful, consider checking out my Patreon campaign.
+#         If you've been finding it useful, consider checking out my Patreon campaign.
 #         <br>
-#         It’s all about building better tools for the entire WWMI community.
+#         It's all about building better tools for the entire WWMI community.
 #         <br><br>
 #         Who knows — maybe your few bucks could help shape the next big feature!
 #         </body>

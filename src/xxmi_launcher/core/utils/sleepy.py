@@ -5,6 +5,8 @@ from pathlib import Path
 from enum import Enum
 from typing import List, Tuple, Union
 
+from core.locale_manager import T
+
 
 # https: // github.com / dotnet / runtime / blob / a7efcd9ca9255dc9faa8b4a2761cdfdb62619610 / src / libraries / System.Runtime.Serialization.Formatters / src / System / Runtime / Serialization / Formatters / Binary / BinaryEnums.cs  # L7C1-L32C6
 class BinaryHeaderEnum(Enum):
@@ -95,7 +97,7 @@ class BinaryReader:
         # Read the 5th byte
         byte_read_just_now = self.read_byte()
         if byte_read_just_now > 0b1111:
-            raise ValueError("Bad 7-bit encoded integer format")
+            raise ValueError(T('sleepy_bad_7bit_format', "Bad 7-bit encoded integer format"))
 
         result |= byte_read_just_now << (max_bytes_without_overflow * 7)
         return result
@@ -114,9 +116,10 @@ class BinaryReader:
             assert_header_enum_value_name = assert_header_enum.name
             compared_enum_casted = BinaryHeaderEnum(current_int)
             compared_header_enum_value_name = compared_enum_casted.name
-            raise ValueError(
-                f"[Sleepy::LogAssertInfo] BinaryFormatter header is not valid at stream pos: {self.stream.tell():x}. "
-                f"Expecting object enum: {assert_header_enum_value_name} but getting: {compared_header_enum_value_name} instead!")
+            raise ValueError(T('sleepy_invalid_binary_header',
+                "[Sleepy::LogAssertInfo] BinaryFormatter header is not valid at stream pos: {}. "
+                "Expecting object enum: {} but getting: {} instead!").format(
+                    hex(self.stream.tell()), assert_header_enum_value_name, compared_header_enum_value_name))
 
     def get_binary_formatter_data_length(self) -> int:
         return self.read_7_bit_encoded_int()
@@ -159,7 +162,7 @@ class BinaryWriter:
         elif isinstance(data, bytearray):
             self.stream.write(data)
         else:
-            raise ValueError("Unsupported data type")
+            raise ValueError(T('sleepy_unsupported_data_type', "Unsupported data type"))
 
     def write_enum_as_byte(self, header_enum):
         enum_value = header_enum.value
@@ -201,7 +204,7 @@ class JsonSerializer:
         elif indent is None:
             self.indent = ''
         else:
-            raise ValueError(f'Indent option {indent} has unsupported type {type(indent)}!')
+            raise ValueError(T('sleepy_unsupported_indent_type', 'Indent option {} has unsupported type {}!').format(indent, type(indent)))
         self.item_separator = separators[0]
         self.key_separator = separators[1]
         self.newline = newline
@@ -225,7 +228,7 @@ class JsonSerializer:
         elif isinstance(value, dict):
             return self.dump_dict(value, level + 1)
         else:
-            raise ValueError(f'Value {value} has unsupported type {type(value)}!')
+            raise ValueError(T('sleepy_unsupported_value_type', 'Value {} has unsupported type {}!').format(value, type(value)))
 
     def dump_list(self, src_list: list, level: int) -> str:
         result = '[' + self.newline
@@ -342,7 +345,7 @@ class Sleepy:
     def read_string(self, stream: io.BytesIO, magic: bytes) -> str:
         # Assert stream
         if not stream.readable():
-            raise ValueError("[Sleepy::ReadString] Stream must be readable!")
+            raise ValueError(T('sleepy_stream_not_readable', "[Sleepy::ReadString] Stream must be readable!"))
 
         cnt = ['{:02x}'.format(x) for x in stream.read()]
         stream.seek(0)
@@ -375,11 +378,11 @@ class Sleepy:
     def write_string(self, stream: io.BytesIO, content: str, magic: bytes):
         # Stream assertion
         if not stream.writable():
-            raise ValueError("[Sleepy::WriteString] Stream must be writable!")
+            raise ValueError(T('sleepy_stream_not_writable', "[Sleepy::WriteString] Stream must be writable!"))
 
         # Magic assertion
         if len(magic) == 0:
-            raise ValueError("[Sleepy::WriteString] Magic cannot be empty!")
+            raise ValueError(T('sleepy_magic_cannot_be_empty', "[Sleepy::WriteString] Magic cannot be empty!"))
 
         # Assign the writer
         writer = BinaryWriter(stream)

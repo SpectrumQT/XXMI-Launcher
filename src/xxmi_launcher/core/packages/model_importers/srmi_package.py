@@ -6,6 +6,8 @@ import json
 
 from dataclasses import dataclass, field
 from typing import Dict, Union, List
+
+from core.locale_manager import T, L
 from pathlib import Path
 
 import core.path_manager as Paths
@@ -133,7 +135,7 @@ class SRMIPackage(ModelImporterPackage):
     def validate_game_exe_path(self, game_path: Path) -> Path:
         game_exe_path = game_path / 'StarRail.exe'
         if not game_exe_path.is_file():
-            raise ValueError(f'Game executable {game_exe_path.name} not found!')
+            raise ValueError(T('srmi_game_exe_not_found', 'Game executable {} not found!').format(game_exe_path.name))
         return game_exe_path
 
     def initialize_game_launch(self, game_path: Path):
@@ -143,21 +145,20 @@ class SRMIPackage(ModelImporterPackage):
             try:
                 self.unlock_fps()
             except Exception as e:
-                raise ValueError(f'Failed to force 120 FPS: {str(e)}')
+                raise ValueError(T('srmi_fps_unlock_failed', 'Failed to force 120 FPS: {}').format(str(e)))
 
     def update_srmi_ini(self):
-        Events.Fire(Events.Application.StatusUpdate(status='Updating SRMI main.ini...'))
+        Events.Fire(Events.Application.StatusUpdate(status=L('srmi_updating_ini', 'Updating SRMI main.ini...')))
 
         srmi_ini_path = Config.Importers.SRMI.Importer.importer_path / 'Core' / 'SRMI' / 'main.ini'
         if not srmi_ini_path.exists():
-            raise ValueError('Failed to locate Core/SRMI/main.ini!')
+            raise ValueError(T('srmi_ini_not_found', 'Failed to locate Core/SRMI/main.ini!'))
 
         Events.Fire(Events.Application.VerifyFileAccess(path=srmi_ini_path, write=True))
-
-        # with open(srmi_ini_path, 'r', encoding='utf-8') as f:
+        # with open(srmi_ini_path, 'r', encoding='utf-8') as f:Add commentMore actions
         #     ini = IniHandler(IniHandlerSettings(option_value_spacing=True, ignore_comments=False), f)
         #
-        # if ini.is_modified():
+        # if ini.is_modified():Add commentMore actions
         #     with open(srmi_ini_path, 'w', encoding='utf-8') as f:
         #         f.write(ini.to_string())
 
@@ -167,20 +168,22 @@ class SRMIPackage(ModelImporterPackage):
             settings_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, 'Software\\Cognosphere\\Star Rail', 0, winreg.KEY_ALL_ACCESS)
         except FileNotFoundError:
             raise ValueError(
-                f'Star Rail registry key is not found!\n\n'
-                f'Please start the game without 120 FPS tweak, change FPS to any value to create the record and try again.\n\n'
-                f'Note: Tweak is supported only for the Global HSR client and will not work for CN.'
+                T('srmi_registry_key_not_found',
+                  'Star Rail registry key is not found!\n\n'
+                  'Please start the game without 120 FPS tweak, change FPS to any value to create the record and try again.\n\n'
+                  'Note: Tweak is supported only for the Global HSR client and will not work for CN.')
             )
         # Read binary Graphics Settings key
         try:
             (settings_bytes, regtype) = winreg.QueryValueEx(settings_key, 'GraphicsSettings_Model_h2986158309')
         except FileNotFoundError as e:
             raise ValueError(
-                f'Graphics Settings record is not found in HSR registry!\n\n'
-                f'Please start the game without 120 FPS tweak, change FPS to any value to create the record and try again.'
+                T('srmi_graphics_settings_not_found',
+                  'Graphics Settings record is not found in HSR registry!\n\n'
+                  'Please start the game without 120 FPS tweak, change FPS to any value to create the record and try again.')
             )
         if regtype != winreg.REG_BINARY:
-            raise ValueError(f'Unknown Graphics Settings format: Data type {regtype} is not {winreg.REG_BINARY} of REG_BINARY!')
+            raise ValueError(T('srmi_unknown_graphics_format', 'Unknown Graphics Settings format: Data type {} is not {} of REG_BINARY!').format(regtype, winreg.REG_BINARY))
         # Read bytes till the first null byte as settings ascii string
         null_byte_pos = settings_bytes.find(b'\x00')
         if null_byte_pos != -1:
@@ -192,7 +195,7 @@ class SRMIPackage(ModelImporterPackage):
         settings_dict = json.loads(settings_str)
         # Ensure settings dict has known keys
         if 'FPS' not in settings_dict:
-            raise ValueError('Unknown Graphics Settings format: "FPS" key no found!')
+            raise ValueError(T('srmi_fps_key_not_found', 'Unknown Graphics Settings format: "FPS" key no found!'))
         # Exit early if FPS is already set to 120
         if settings_dict['FPS'] == 120:
             return
@@ -230,13 +233,13 @@ class Version:
                     result.append(0)
 
                 if len(result) != 3:
-                    raise ValueError(f'Malformed SRMI version!')
+                    raise ValueError(T('srmi_malformed_version', 'Malformed SRMI version!'))
 
                 self.version = result
 
                 return
 
-        raise ValueError(f'Failed to locate SRMI version!')
+        raise ValueError(T('srmi_version_not_found', 'Failed to locate SRMI version!'))
 
     def __str__(self) -> str:
         return f'{self.version[0]}.{self.version[1]}.{self.version[2]}'

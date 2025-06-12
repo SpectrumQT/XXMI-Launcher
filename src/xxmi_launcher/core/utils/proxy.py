@@ -1,6 +1,8 @@
 from enum import Enum
 from dataclasses import dataclass, field
 
+from core.locale_manager import T
+
 
 class ProxyType(Enum):
     HTTPS = 'HTTPS'
@@ -20,11 +22,11 @@ class ProxyConfig:
 
     def verify(self):
         if not self.host:
-            raise ValueError('Proxy host is not specified!')
+            raise ValueError(T('proxy_host_not_specified', 'Proxy host is not specified!'))
         if not self.port:
-            raise ValueError('Proxy port is not specified!')
+            raise ValueError(T('proxy_port_not_specified', 'Proxy port is not specified!'))
         if not self.port.isnumeric():
-            raise ValueError('Proxy port must be numeric value!')
+            raise ValueError(T('proxy_port_must_be_numeric', 'Proxy port must be numeric value!'))
 
 
 class ProxyManager:

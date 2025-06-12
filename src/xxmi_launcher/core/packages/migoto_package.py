@@ -11,6 +11,7 @@ from pathlib import Path
 import core.path_manager as Paths
 import core.event_manager as Events
 import core.config_manager as Config
+from core.locale_manager import T, L
 
 from core.package_manager import Package, PackageMetadata
 
@@ -152,11 +153,12 @@ class MigotoPackage(Package):
                 result, pid = wait_for_process(process_name, with_window=True, timeout=Config.Launcher.start_timeout, check_visibility=True)
                 if result == WaitResult.Timeout:
                     if hooked:
-                        raise ValueError(f'Failed to detect game process {process_name}!\n\n'
+                        raise ValueError(T('migoto_game_detection_timeout', 
+                                         f'Failed to detect game process {process_name}!\n\n'
                                          f'If game window takes more than {Config.Launcher.start_timeout} seconds to appear, adjust Timeout in Launcher Settings.\n\n'
-                                         f'If game crashed, try to clear Mods and ShaderFixes folders.')
+                                         f'If game crashed, try to clear Mods and ShaderFixes folders.'))
                     else:
-                        raise ValueError(f'Failed to start {process_name}!')
+                        raise ValueError(T('migoto_game_start_failed', f'Failed to start {process_name}!'))
 
                 # Late DLL injection verification
                 Events.Fire(Events.Application.VerifyHook(library_name=dll_path.name, process_name=process_name))
@@ -198,8 +200,9 @@ class MigotoPackage(Package):
             Events.Fire(Events.Application.WaitForProcess(process_name=process_name))
             result, pid = wait_for_process(process_name, with_window=True, timeout=Config.Launcher.start_timeout, check_visibility=True)
             if result == WaitResult.Timeout:
-                raise ValueError(f'Failed to detect game process {process_name}!\n\n'
-                                 f'If game crashed, try to clear Mods and ShaderFixes folders.')
+                raise ValueError(T('migoto_game_detection_timeout_simple', 
+                               f'Failed to detect game process {process_name}!\n\n'
+                               f'If game crashed, try to clear Mods and ShaderFixes folders.'))
 
         # Wait a bit more for window to maximize
         time.sleep(1)
@@ -207,11 +210,12 @@ class MigotoPackage(Package):
     def restore_package_files(self, e: Exception, process_name: str, validate=False):
         user_requested_restore = Events.Call(Events.Application.ShowError(
             modal=True,
-            confirm_text='Restore',
-            cancel_text='Cancel',
-            message=f'XXMI installation is damaged!\n\n'
-                    f'Details: {str(e).strip()}\n\n'
-                    f'Would you like to restore XXMI automatically?',
+            confirm_text=L('migoto_restore_button', 'Restore'),
+            cancel_text=L('migoto_cancel_button', 'Cancel'),
+            message=T('migoto_installation_damaged',
+                     f'XXMI installation is damaged!\n\n'
+                     f'Details: {str(e).strip()}\n\n'
+                     f'Would you like to restore XXMI automatically?'),
         ))
 
         if not user_requested_restore:
@@ -273,13 +277,14 @@ class MigotoPackage(Package):
                     deploy_pending = True
 
             if deploy_pending or remove_pending:
-                Events.Fire(Events.Application.StatusUpdate(status='Ensuring the game is closed...'))
+                Events.Fire(Events.Application.StatusUpdate(status=L('migoto_ensuring_game_closed', 'Ensuring the game is closed...')))
                 result, pid = wait_for_process_exit(process_name=process_name, timeout=5, kill_timeout=0)
                 if result == WaitResult.Timeout:
                     Events.Fire(Events.Application.ShowError(
                         modal=True,
-                        message=f'Failed to stop {process_name}!\n\n'
-                                'Please close the game manually and press [OK] to continue.',
+                        message=T('migoto_failed_stop_game', 
+                                f'Failed to stop {process_name}!\n\n'
+                                'Please close the game manually and press [OK] to continue.'),
                     ))
                 if remove_pending:
                     deployment_path.unlink()
@@ -292,7 +297,7 @@ class MigotoPackage(Package):
                             original_signature = self.get_signature(deployment_path)
                             Config.Active.Importer.deployed_migoto_signatures[file_name] = original_signature
                     else:
-                        raise ValueError(f'XXMI package is missing critical file: {deployment_path.name}!\n')
+                        raise ValueError(T('migoto_missing_critical_file', f'XXMI package is missing critical file: {deployment_path.name}!\n'))
 
     def validate_deployed_files(self):
         package_libs = ['3dmloader.dll']
