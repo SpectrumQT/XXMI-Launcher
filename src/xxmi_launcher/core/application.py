@@ -537,7 +537,7 @@ class Application:
             ))
 
     def get_launch_counters_from_log(self, exclude_failed = True):
-        with (open(Paths.App.Root / 'XXMI Launcher Log.txt', 'r', encoding='utf-8') as f):
+        with (open(Paths.App.Root / 'XXMI Launcher Log.txt', 'r', encoding='utf-8', errors='ignore') as f):
             launch_counters = { 'GIMI': 0, 'SRMI': 0,  'WWMI': 0, 'ZZMI': 0 }
 
             def parse_active_package(line):
