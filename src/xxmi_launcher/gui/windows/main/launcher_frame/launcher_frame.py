@@ -394,7 +394,7 @@ class PackageVersionText(UIImageButton):
             fill='#999999',
             activefill='white',
             anchor='nw',
-            command=self.open_link,
+            command=self.open_dev_blog_link,
         )
         defaults.update(kwargs)
         super().__init__(**defaults)
@@ -402,12 +402,31 @@ class PackageVersionText(UIImageButton):
         self.package_name = ''
         self.set_tooltip(self.get_tooltip, delay = 0.1)
         self.subscribe(Events.GUI.LauncherFrame.StageUpdate, self.handle_stage_update)
+        self.package_aliases = {
+            'Launcher': 'XXMI Launcher',
+            'XXMI': 'XXMI DLL',
+        }
+        self.dev_blog_links = {
+            'XXMI-Launcher': 'https://www.patreon.com/collection/1552149',
+            'XXMI-Libs-Package': 'https://www.patreon.com/collection/1552154',
+            'WWMI-Package': 'https://www.patreon.com/collection/1552139',
+        }
+        self.bind("<ButtonRelease-3>", self.open_changelog_link)
 
     def handle_stage_update(self, event):
         self.stage = event.stage
         self.show(self.stage == Stage.Ready and Config.Launcher.active_importer != 'XXMI')
 
-    def open_link(self):
+    def open_dev_blog_link(self):
+        package = Events.Call(Events.PackageManager.GetPackage(self.package_name))
+        metadata = package.metadata
+        dev_blog_link = self.dev_blog_links.get(metadata.github_repo_name, None)
+        if dev_blog_link is not None:
+            webbrowser.open(dev_blog_link)
+        else:
+            webbrowser.open(f'https://github.com/{metadata.github_repo_owner}/{metadata.github_repo_name}/releases')
+
+    def open_changelog_link(self, event):
         package = Events.Call(Events.PackageManager.GetPackage(self.package_name))
         metadata = package.metadata
         webbrowser.open(f'https://github.com/{metadata.github_repo_owner}/{metadata.github_repo_name}/releases')
@@ -446,24 +465,34 @@ class PackageVersionText(UIImageButton):
             package_description = L('package_description_model_importer', dedent("""
                 *Model Importer package offers a set of API functions required for mods to work in given game.*
             """))
+        if self.package_name in ['Launcher', 'XXMI', 'WWMI']:
+            actions_tooltip = L('package_description_tooltip_open_github_changelog', dedent("""
+                <font color="#3366ff">*<u>Left-Click</u> to open {package_name} Dev Blog on Patreon.*</font>
+                <font color="#3366ff">*<u>Right-Click</u> to open {package_name} GitHub releases for full changelog.*</font>
+            """))
+        else:
+            actions_tooltip = L('package_description_tooltip_open_dev_blog', dedent("""
+                <font color="#3366ff">*<u>Left-Click</u> to open {package_name} GitHub releases for full changelog.*</font>
+            """))
 
         txt = L('package_release_notes', dedent("""
             {package_release_notes}
             
-            <font color="#3366ff">*<u>Left-Click</u> to open {package_name} Package GitHub releases for full changelog.*</font>
+            {actions_tooltip}
             <font color="#aaaaaa">{package_description}</font>
         """)).format(
-            package_release_notes=package_release_notes
+            package_release_notes=package_release_notes,
+            actions_tooltip=actions_tooltip
         )
 
         return txt.format(
-           package_name=package.metadata.package_name,
-           package_description=package_description,
-           active_importer=Config.Launcher.active_importer,
-           installed_package_version=package.installed_version,
-           new_package_version=package.cfg.latest_version,
-           latest_release_notes=package.cfg.latest_release_notes,
-           installed_release_notes=installed_release_notes
+            package_name=self.package_aliases.get(package.metadata.package_name, package.metadata.package_name),
+            package_description=package_description,
+            active_importer=Config.Launcher.active_importer,
+            installed_package_version=package.installed_version,
+            new_package_version=package.cfg.latest_version,
+            latest_release_notes=package.cfg.latest_release_notes,
+            installed_release_notes=installed_release_notes
         )
 
 
