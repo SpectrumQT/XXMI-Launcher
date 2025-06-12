@@ -10,6 +10,8 @@ from typing import List, Optional
 from pathlib import Path
 from pyinjector import inject
 
+from core.locale_manager import T
+
 
 log = logging.getLogger(__name__)
 
@@ -25,12 +27,12 @@ class DllInjector:
     @staticmethod
     def load(injector_lib_path):
         if not injector_lib_path.exists():
-            raise ValueError(f'Injector file not found: {injector_lib_path}!')
+            raise ValueError(T('dll_injector_file_not_found', 'Injector file not found: {}!').format(injector_lib_path))
 
         try:
             lib = ct.cdll.LoadLibrary(str(injector_lib_path))
         except Exception as e:
-            raise ValueError(f'Failed to load injector library!') from e
+            raise ValueError(T('dll_injector_load_failed', 'Failed to load injector library!')) from e
 
         try:
             lib.HookLibrary.argtypes = (wt.LPCWSTR, ct.POINTER(wt.HHOOK), ct.POINTER(wt.HANDLE))
@@ -42,7 +44,7 @@ class DllInjector:
             lib.UnhookLibrary.argtypes = (ct.POINTER(wt.HHOOK), ct.POINTER(wt.HANDLE))
             lib.UnhookLibrary.restype = ct.c_int
         except Exception as e:
-            raise ValueError(f'Failed to setup injector library!') from e
+            raise ValueError(T('dll_injector_setup_failed', 'Failed to setup injector library!')) from e
 
         return lib
 
@@ -54,7 +56,7 @@ class DllInjector:
         # Explicitly unload injector dll
         result = kernel32.FreeLibrary(self.lib._handle)
         if result == 0:
-            raise ValueError(f'Failed to unload injector library!')
+            raise ValueError(T('dll_injector_unload_failed', 'Failed to unload injector library!'))
 
     def start_process(self, exe_path: str, work_dir: Optional[str] = None, start_args: str = ''):
         if work_dir is None:
@@ -77,8 +79,8 @@ class DllInjector:
                 31:	'No application is associated with the file',
                 32:	'File association is incomplete',
             }
-            error_text = codes.get(result, f'Unknown ShellExecute error code {result}')
-            raise ValueError(f'Failed to start {exe_path.name}: {error_text}!')
+            error_text = codes.get(result, T('dll_injector_unknown_shell_error', 'Unknown ShellExecute error code {}').format(result))
+            raise ValueError(T('dll_injector_failed_to_start', 'Failed to start {}: {}!').format(exe_path.name, error_text))
 
     def open_process(self,
                      start_method: str,
@@ -100,7 +102,7 @@ class DllInjector:
                 try:
                     str(dll_path).encode('ascii')
                 except Exception as e:
-                    raise ValueError(f'Please rename all folders from the path using only English letters:\n{dll_path}') from e
+                    raise ValueError(T('dll_injector_non_ascii_path', 'Please rename all folders from the path using only English letters:\n{}').format(dll_path)) from e
 
         if start_method == 'NATIVE':
             if cmd is None:
@@ -118,19 +120,19 @@ class DllInjector:
                 self.start_process('cmd.exe', None, f'/C "{cmd}"')
 
         else:
-            raise ValueError(f'Unknown process start method `{start_method}`!')
+            raise ValueError(T('dll_injector_unknown_start_method', 'Unknown process start method `{}`!').format(start_method))
 
         if dll_paths:
             pid = self.inject_libraries(dll_paths, process_name)
             if pid == -1:
-                raise ValueError(f'Failed to inject {str(dll_paths)}!')
+                raise ValueError(T('dll_injector_injection_failed', 'Failed to inject {}!').format(str(dll_paths)))
 
 
     def hook_library(self, dll_path: Path, target_process: str):
         if self.hook is not None:
             dll_path = self.dll_path
             self.unhook_library()
-            raise ValueError(f'Invalid injector usage: {str(dll_path)} was not unhooked!')
+            raise ValueError(T('dll_injector_not_unhooked', 'Invalid injector usage: {} was not unhooked!').format(str(dll_path)))
 
         self.dll_path = wt.LPCWSTR(str(dll_path.resolve()))
         self.target_process = wt.LPCWSTR(target_process)
@@ -140,25 +142,25 @@ class DllInjector:
         result = self.lib.HookLibrary(self.dll_path, ct.byref(self.hook), ct.byref(self.mutex))
 
         if result == 100:
-            raise ValueError(f'Another instance of 3DMigotoLoader is running!')
+            raise ValueError(T('dll_injector_another_instance', 'Another instance of 3DMigotoLoader is running!'))
         elif result == 200:
-            raise ValueError(f'Failed to load {str(dll_path)}!')
+            raise ValueError(T('dll_injector_failed_to_load_dll', 'Failed to load {}!').format(str(dll_path)))
         elif result == 300:
-            raise ValueError(f'Library {str(dll_path)} is missing expected entry point!')
+            raise ValueError(T('dll_injector_missing_entry_point', 'Library {} is missing expected entry point!').format(str(dll_path)))
         elif result == 400:
-            raise ValueError(f'Failed to setup windows hook for {str(dll_path)}!')
+            raise ValueError(T('dll_injector_hook_setup_failed', 'Failed to setup windows hook for {}!').format(str(dll_path)))
         elif result != 0:
-            raise ValueError(f'Unknown error while hooking {str(dll_path)}!')
+            raise ValueError(T('dll_injector_unknown_hook_error', 'Unknown error while hooking {}!').format(str(dll_path)))
         if not bool(self.hook):
-            raise ValueError(f'Hook is NULL for {str(dll_path)}!')
+            raise ValueError(T('dll_injector_hook_is_null', 'Hook is NULL for {}!').format(str(dll_path)))
 
     def wait_for_injection(self, timeout: int = 15) -> bool:
         if self.dll_path is None:
-            raise ValueError(f'Invalid injector usage: dll path is not defined!')
+            raise ValueError(T('dll_injector_path_not_defined', 'Invalid injector usage: dll path is not defined!'))
         if self.target_process is None:
-            raise ValueError(f'Invalid injector usage: target process is not defined!')
+            raise ValueError(T('dll_injector_process_not_defined', 'Invalid injector usage: target process is not defined!'))
         if self.hook is None:
-            raise ValueError(f'Invalid injector usage: dll is not hooked!')
+            raise ValueError(T('dll_injector_not_hooked', 'Invalid injector usage: dll is not hooked!'))
 
         result = self.lib.WaitForInjection(self.dll_path, self.target_process, ct.c_int(timeout))
 
@@ -197,7 +199,7 @@ class DllInjector:
                             try:
                                 inject(process.pid, str(dll_path))
                             except Exception as e:
-                                raise ValueError(f'Failed to inject extra library {dll_path}:\n{str(e)}!\nPlease check Advanced Settings -> Inject Libraries.') from e
+                                raise ValueError(T('dll_injector_extra_library_failed', 'Failed to inject extra library {}:\n{}!\nPlease check Advanced Settings -> Inject Libraries.').format(dll_path, str(e))) from e
                         return process.pid
                 except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                     pass

@@ -9,6 +9,7 @@ from pathlib import Path
 import core.path_manager as Paths
 import core.event_manager as Events
 import core.config_manager as Config
+from core.locale_manager import L
 
 from customtkinter import set_appearance_mode, set_default_color_theme
 
@@ -96,8 +97,7 @@ class MainWindow(UIMainWindow):
             Config.Launcher.gui_theme = 'Default'
             self.load_theme('Default')
             Events.Fire(Events.Application.ShowWarning(
-                message=f'Failed to load {theme_name} theme:\n\n'
-                        f'Theme folder does not exist!'
+                message=str(L('main_window_theme_load_failed_no_folder', 'Failed to load {theme} theme:\n\nTheme folder does not exist!').format(theme=theme_name))
             ))
             return False
 
@@ -106,8 +106,7 @@ class MainWindow(UIMainWindow):
             Config.Launcher.gui_theme = 'Default'
             self.load_theme('Default')
             Events.Fire(Events.Application.ShowWarning(
-                message=f'Failed to load {theme_name} theme:\n\n'
-                        f'Theme file `custom-tkinter-theme.json` does not exist!'
+                message=str(L('main_window_theme_load_failed_no_file', 'Failed to load {theme} theme:\n\nTheme file `custom-tkinter-theme.json` does not exist!').format(theme=theme_name))
             ))
             return False
 
@@ -126,12 +125,10 @@ class MainWindow(UIMainWindow):
                 screen_center=not self.is_shown(),
                 lock_master=self.is_shown(),
                 icon='update-icon.ico',
-                title='Theme Update Required',
-                confirm_text='Use Default',
-                cancel_text='Patch Theme',
-                message=f'Selected {theme_name} theme cannot be loaded!\n\n'
-                        f'Click `Use Default` to use default theme instead (ensures proper visuals).\n'
-                        f'Click `Patch Theme` to replace `custom-tkinter-theme.json` with new one.',
+                title=str(L('main_window_theme_update_required_title', 'Theme Update Required')),
+                confirm_text=str(L('main_window_theme_use_default_button', 'Use Default')),
+                cancel_text=str(L('main_window_theme_patch_button', 'Patch Theme')),
+                message=str(L('main_window_theme_update_required_message', 'Selected {theme} theme cannot be loaded!\n\nClick `Use Default` to use default theme instead (ensures proper visuals).\nClick `Patch Theme` to replace `custom-tkinter-theme.json` with new one.').format(theme=theme_name)),
             )
             user_requested_default_theme = self.show_messagebox(update_dialogue)
             if user_requested_default_theme:

@@ -1,4 +1,5 @@
 
+from core.locale_manager import L, T
 import core.event_manager as Events
 import core.path_manager as Paths
 import core.config_manager as Config
@@ -101,25 +102,25 @@ class LeftStatusText(UIText):
         # Application Events
         self.subscribe_set(
             Events.Application.Launch,
-            lambda event: f'Initializing game launch...')
+            lambda event: str(L('bottom_bar_initializing_launch', 'Initializing game launch...')))
         self.subscribe_set(
             Events.Application.SetupHook,
-            lambda event: f'Hooking {event.library_name} to {event.process_name}...')
+            lambda event: str(L('bottom_bar_hooking', 'Hooking {library} to {process}...').format(library=event.library_name, process=event.process_name)))
         self.subscribe_set(
             Events.Application.VerifyHook,
-            lambda event: f'Verifying {event.library_name} load into {event.process_name}...')
+            lambda event: str(L('bottom_bar_verifying_hook', 'Verifying {library} load into {process}...').format(library=event.library_name, process=event.process_name)))
         self.subscribe_set(
             Events.Application.Inject,
-            lambda event: f'Injecting {event.library_name} to {event.process_name}...')
+            lambda event: str(L('bottom_bar_injecting', 'Injecting {library} to {process}...').format(library=event.library_name, process=event.process_name)))
         self.subscribe_set(
             Events.Application.StartGameExe,
-            lambda event: f'Launching game...')
+            lambda event: str(L('bottom_bar_launching_game', 'Launching game...')))
         self.subscribe_set(
             Events.Application.WaitForProcess,
-            lambda event: f'Waiting for {event.process_name} to start...')
+            lambda event: str(L('bottom_bar_waiting_process', 'Waiting for {process} to start...').format(process=event.process_name)))
         self.subscribe_set(
             Events.Application.Close,
-            lambda event: f'Closing launcher...')
+            lambda event: str(L('bottom_bar_closing_launcher', 'Closing launcher...')))
         self.subscribe_set(
             Events.Application.StatusUpdate,
             lambda event: event.status)
@@ -127,32 +128,32 @@ class LeftStatusText(UIText):
         # PackageManager Action Events
         self.subscribe_set(
             Events.PackageManager.StartCheckUpdate,
-            lambda event: f'Checking for updates...')
+            lambda event: str(L('bottom_bar_checking_updates', 'Checking for updates...')))
 
         # PackageManager Download Events
         self.subscribe_set(
             Events.PackageManager.InitializeDownload,
-            lambda event: f'Connecting to GitHub...')
+            lambda event: str(L('bottom_bar_connecting_github', 'Connecting to GitHub...')))
         self.subscribe_set(
             Events.PackageManager.StartDownload,
-            lambda event: f'Downloading {event.asset_name}...')
+            lambda event: str(L('bottom_bar_downloading', 'Downloading {asset}...').format(asset=event.asset_name)))
         self.subscribe_set(
             Events.PackageManager.StartIntegrityVerification,
-            lambda event: f'Verifying {event.asset_name} integrity...')
+            lambda event: str(L('bottom_bar_verifying_integrity', 'Verifying {asset} integrity...').format(asset=event.asset_name)))
 
         # PackageManager Installation Events
         self.subscribe_set(
             Events.PackageManager.InitializeInstallation,
-            lambda event: f'Initializing update installation...')
+            lambda event: str(L('bottom_bar_initializing_installation', 'Initializing update installation...')))
         self.subscribe_set(
             Events.PackageManager.StartFileWrite,
-            lambda event: f'Writing {event.asset_name} on disk...')
+            lambda event: str(L('bottom_bar_writing_file', 'Writing {asset} on disk...').format(asset=event.asset_name)))
         self.subscribe_set(
             Events.PackageManager.StartFileMove,
-            lambda event: f'Moving {event.asset_name}...')
+            lambda event: str(L('bottom_bar_moving_file', 'Moving {asset}...').format(asset=event.asset_name)))
         self.subscribe_set(
             Events.PackageManager.StartUnpack,
-            lambda event: f'Unpacking {event.asset_name}...')
+            lambda event: str(L('bottom_bar_unpacking', 'Unpacking {asset}...').format(asset=event.asset_name)))
 
 
 class RightStatusText(UIText):

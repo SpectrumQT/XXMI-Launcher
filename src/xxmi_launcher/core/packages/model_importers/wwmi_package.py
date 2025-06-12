@@ -6,6 +6,8 @@ import logging
 
 from dataclasses import dataclass, field
 from typing import Dict, Union, Optional, Tuple, List
+
+from core.locale_manager import T, L
 from pathlib import Path
 
 import core.path_manager as Paths
@@ -127,7 +129,7 @@ class WWMIPackage(ModelImporterPackage):
 
     def normalize_game_path(self, game_path: Path) -> Path:
         if not game_path.is_absolute():
-            raise ValueError(f'Failed to normalize path {game_path}: Path is not absolute!')
+            raise ValueError(T('wwmi_path_not_absolute', 'Failed to normalize path {}: Path is not absolute!').format(game_path))
 
         if (game_path / 'Wuthering Waves.exe').is_file():
             return game_path
@@ -144,7 +146,7 @@ class WWMIPackage(ModelImporterPackage):
                 if path.is_file() and path.name == 'Wuthering Waves.exe':
                     return Path(path).parent
 
-        raise ValueError(f'Failed to normalize path {game_path_original}: Wuthering Waves.exe not found!')
+        raise ValueError(T('wwmi_wuthering_waves_exe_not_found', 'Failed to normalize path {}: Wuthering Waves.exe not found!').format(game_path_original))
 
     def autodetect_game_folders(self) -> List[Path]:
         paths = self.reg_search_game_folders(['Client-Win64-Shipping.exe'])
@@ -174,13 +176,13 @@ class WWMIPackage(ModelImporterPackage):
         return result
 
     def validate_game_path(self, game_folder):
-        Events.Fire(Events.Application.StatusUpdate(status='Validating game path...'))
+        Events.Fire(Events.Application.StatusUpdate(status=L('wwmi_validating_game_path', 'Validating game path...')))
         game_path = super().validate_game_path(game_folder)
         game_path = self.normalize_game_path(game_path)
         # Make sure that game folder contains critical resources
         exe_path = game_path / 'Wuthering Waves.exe'
         if not exe_path.is_file():
-            raise ValueError(f'Game folder must contain `Wuthering Waves.exe` and `Client` & `Engine` folders!')
+            raise ValueError(T('wwmi_game_folder_missing_files', 'Game folder must contain `Wuthering Waves.exe` and `Client` & `Engine` folders!'))
         else:
             common_folder = self.get_parent_directory(game_path, 'common')
             if common_folder is not None and common_folder.parent.name == 'steamapps':
@@ -189,22 +191,24 @@ class WWMIPackage(ModelImporterPackage):
                     # Invalid file structure, most likely caused by manual folder relocation
                     Events.Fire(Events.Application.ShowError(
                         modal=True,
-                        confirm_text='Ok',
-                        message=f'Invalid Wuthering Waves installation detected for Steam:\n'
-                                f'{game_path}\n\n'
-                                f'{game_path.name} folder with {exe_path.name} must be directly placed in:\n{common_folder}\n\n'
-                                f'Please run game file repair via Steam or fix it manually.'
+                        confirm_text=L('ok', 'Ok'),
+                        message=T('wwmi_invalid_steam_installation',
+                                'Invalid Wuthering Waves installation detected for Steam:\n'
+                                '{}\n\n'
+                                '{} folder with {} must be directly placed in:\n{}\n\n'
+                                'Please run game file repair via Steam or fix it manually.').format(
+                                game_path, game_path.name, exe_path.name, common_folder)
                     ))
-                    raise ValueError(f'Game installation must be repaired via Steam!')
+                    raise ValueError(T('wwmi_steam_repair_required', 'Game installation must be repaired via Steam!'))
         for dir_name in ['Client', 'Engine']:
             if dir_name not in [x.name for x in game_path.iterdir() if x.is_dir()]:
-                raise ValueError(f'Game folder must contain {dir_name} folder!')
+                raise ValueError(T('wwmi_missing_folder', 'Game folder must contain {} folder!').format(dir_name))
         return game_path
 
     def validate_game_exe_path(self, game_path: Path) -> Path:
         game_exe_path = game_path / 'Client' / 'Binaries' / 'Win64' / 'Client-Win64-Shipping.exe'
         if not game_exe_path.is_file():
-            raise ValueError(f'Game executable {game_exe_path.name} not found!')
+            raise ValueError(T('wwmi_game_exe_not_found', 'Game executable {} not found!').format(game_exe_path.name))
         return game_exe_path
 
     def get_start_cmd(self, game_path: Path) -> Tuple[Path, List[str], Optional[str]]:
@@ -225,7 +229,7 @@ class WWMIPackage(ModelImporterPackage):
         if not any([Config.Importers.WWMI.Importer.configure_game, Config.Importers.WWMI.Importer.unlock_fps]):
             return
 
-        Events.Fire(Events.Application.StatusUpdate(status='Configuring in-game settings...'))
+        Events.Fire(Events.Application.StatusUpdate(status=L('wwmi_configuring_settings', 'Configuring in-game settings...')))
 
         try:
             with SettingsManager(game_path) as settings_manager:
@@ -258,13 +262,14 @@ class WWMIPackage(ModelImporterPackage):
                     if settings_manager.get_setting('SkinDamageMode') == '1':
                         user_dialogue = Events.Application.ShowWarning(
                             modal=True,
-                            title='Wounded Effect Detected',
-                            confirm_text='Disable',
-                            cancel_text='Keep Enabled',
-                            message=f'Looks like Wounded Effect is enabled in game settings.\n'
-                                    f'It is not supported by most mods and textures will break after few hits taken.\n\n'
-                                    f'Click `Disable` to turn it Off and ensure proper rendering of modded textures.\n'
-                                    f'Click `Keep Enabled` if you never get hit or use Injured Effect Remover tool.',
+                            title=L('wwmi_wounded_effect_detected_title', 'Wounded Effect Detected'),
+                            confirm_text=L('disable', 'Disable'),
+                            cancel_text=L('keep_enabled', 'Keep Enabled'),
+                            message=T('wwmi_wounded_effect_detected_message',
+                                    'Looks like Wounded Effect is enabled in game settings.\n'
+                                    'It is not supported by most mods and textures will break after few hits taken.\n\n'
+                                    'Click `Disable` to turn it Off and ensure proper rendering of modded textures.\n'
+                                    'Click `Keep Enabled` if you never get hit or use Injured Effect Remover tool.'),
                         )
                         Config.Importers.WWMI.Importer.disable_wounded_fx_warned = True
                         user_requested_injured_fx_disable = Events.Call(user_dialogue)
@@ -280,18 +285,20 @@ class WWMIPackage(ModelImporterPackage):
         except Exception as e:
 
             if Config.Importers.WWMI.Importer.unlock_fps:
-                raise Exception(f'Failed to force 120 FPS!\n'
-                                f"Please disable `Force 120 FPS` in launcher's General Settings.\n\n"
-                                f'{e}') from e
+                raise Exception(T('wwmi_fps_unlock_failed',
+                                'Failed to force 120 FPS!\n'
+                                'Please disable `Force 120 FPS` in launcher\'s General Settings.\n\n'
+                                '{}').format(e)) from e
 
             if Config.Importers.WWMI.Importer.configure_game:
-                raise Exception(f'Failed to configure in-game settings for WWMI!\n'
-                                f"Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:\n"
-                                f'* Graphics > `Graphics Quality` must be `Quality`.\n\n'
-                                f'{e}') from e
+                raise Exception(T('wwmi_game_config_failed',
+                                'Failed to configure in-game settings for WWMI!\n'
+                                'Please disable `Configure Game Settings` in launcher\'s General Settings and check in-game settings:\n'
+                                '* Graphics > `Graphics Quality` must be `Quality`.\n\n'
+                                '{}').format(e)) from e
 
     def update_engine_ini(self, game_path: Path):
-        Events.Fire(Events.Application.StatusUpdate(status='Updating Engine.ini...'))
+        Events.Fire(Events.Application.StatusUpdate(status=L('wwmi_updating_engine_ini', 'Updating Engine.ini...')))
 
         engine_ini_path = game_path / 'Client' / 'Saved' / 'Config' / 'WindowsNoEditor' / 'Engine.ini'
 
@@ -326,7 +333,7 @@ class WWMIPackage(ModelImporterPackage):
         if not Config.Importers.WWMI.Importer.unlock_fps:
             return
 
-        Events.Fire(Events.Application.StatusUpdate(status='Updating GameUserSettings.ini...'))
+        Events.Fire(Events.Application.StatusUpdate(status=L('wwmi_updating_game_user_settings', 'Updating GameUserSettings.ini...')))
 
         ini_path = game_path / 'Client' / 'Saved' / 'Config' / 'WindowsNoEditor' / 'GameUserSettings.ini'
 
@@ -346,7 +353,7 @@ class WWMIPackage(ModelImporterPackage):
                 f.write(ini.to_string())
 
     def verify_plugins(self, game_path: Path):
-        Events.Fire(Events.Application.StatusUpdate(status='Checking engine plugins integrity...'))
+        Events.Fire(Events.Application.StatusUpdate(status=L('wwmi_checking_plugins', 'Checking engine plugins integrity...')))
 
         plugins_path = game_path / 'Engine' / 'Plugins' / 'Runtime' / 'Nvidia'
         plugin_paths = [
@@ -359,9 +366,10 @@ class WWMIPackage(ModelImporterPackage):
             if not path.is_dir() or len([x for x in path.iterdir() if x.suffix == '.dll']) == 0:
                 Events.Fire(Events.Application.ShowWarning(
                     modal=True,
-                    message=f'Wuthering Waves installation is damaged!\n\n'
-                            f'Removal of NVIDIA plugins is no longer required and may cause crashes!\n\n'
-                            f'Please use official launcher to fix the game (wrench button in top-right corner).'
+                    message=T('wwmi_plugins_damaged',
+                            'Wuthering Waves installation is damaged!\n\n'
+                            'Removal of NVIDIA plugins is no longer required and may cause crashes!\n\n'
+                            'Please use official launcher to fix the game (wrench button in top-right corner).')
                 ))
                 break
 
@@ -373,7 +381,7 @@ class WWMIPackage(ModelImporterPackage):
         interposer_path = streamline_path / 'Binaries' / 'ThirdParty' / 'Win64' / 'sl.interposer.dll'
 
         if interposer_path.is_file():
-            Events.Fire(Events.Application.StatusUpdate(status='Disabling Streamline plugin...'))
+            Events.Fire(Events.Application.StatusUpdate(status=L('wwmi_disabling_streamline', 'Disabling Streamline plugin...')))
             plugin_backups_path = Paths.App.Backups / 'Plugins' / 'Streamline_Old'
             plugin_backups_path.mkdir(parents=True, exist_ok=True)
             self.move(interposer_path, plugin_backups_path / interposer_path.name)
@@ -382,7 +390,7 @@ class WWMIPackage(ModelImporterPackage):
         interposer_backup_path = Paths.App.Backups / 'Plugins' / 'Streamline_Old' / 'sl.interposer.dll'
         if not interposer_backup_path.is_file():
             return
-        Events.Fire(Events.Application.StatusUpdate(status='Restoring Streamline plugin...'))
+        Events.Fire(Events.Application.StatusUpdate(status=L('wwmi_restoring_streamline', 'Restoring Streamline plugin...')))
         streamline_path = game_path / 'Engine' / 'Plugins' / 'Runtime' / 'Nvidia' / 'Streamline_Old'
         interposer_path = streamline_path / 'Binaries' / 'ThirdParty' / 'Win64' / 'sl.interposer.dll'
         if interposer_path.is_file():
@@ -391,19 +399,18 @@ class WWMIPackage(ModelImporterPackage):
             self.move(interposer_backup_path, interposer_path)
 
     def update_wwmi_ini(self):
-        Events.Fire(Events.Application.StatusUpdate(status='Updating WuWa-Model-Importer.ini...'))
+        Events.Fire(Events.Application.StatusUpdate(status=L('wwmi_updating_ini', 'Updating WuWa-Model-Importer.ini...')))
 
         wwmi_ini_path = Config.Importers.WWMI.Importer.importer_path / 'Core' / 'WWMI' / 'WuWa-Model-Importer.ini'
         if not wwmi_ini_path.exists():
-            raise ValueError('Failed to locate Core/WWMI/WuWa-Model-Importer.ini!')
+            raise ValueError(T('wwmi_ini_not_found', 'Failed to locate Core/WWMI/WuWa-Model-Importer.ini!'))
 
         Events.Fire(Events.Application.VerifyFileAccess(path=wwmi_ini_path, write=True))
-
-        # with open(wwmi_ini_path, 'r', encoding='utf-8') as f:
+        # with open(wwmi_ini_path, 'r', encoding='utf-8') as f:Add commentMore actions
         #     ini = IniHandler(IniHandlerSettings(option_value_spacing=True, ignore_comments=False), f)
         #
         # if ini.is_modified():
-        #     with open(wwmi_ini_path, 'w', encoding='utf-8') as f:
+        #     with open(wwmi_ini_path, 'w', encoding='utf-8') as f:Add commentMore actions
         #         f.write(ini.to_string())
 
 
@@ -597,7 +604,7 @@ class LocalStorage:
                 self.cursor.executemany(f"INSERT INTO LocalStorage VALUES (?,?)", data)
         except Exception as e:
             self.disconnect()
-            raise Exception(f'Failed to initialize LocalStorage: {e}')
+            raise Exception(T('wwmi_localstorage_init_failed', 'Failed to initialize LocalStorage: {}').format(e))
 
     def save(self):
         if not self.modified:
@@ -698,13 +705,13 @@ class Version:
                     result.append(0)
 
                 if len(result) != 3:
-                    raise ValueError(f'Malformed WWMI version!')
+                    raise ValueError(T('wwmi_malformed_version', 'Malformed WWMI version!'))
 
                 self.version = result
 
                 return
 
-        raise ValueError(f'Failed to locate WWMI version!')
+        raise ValueError(T('wwmi_version_not_found', 'Failed to locate WWMI version!'))
 
     def __str__(self) -> str:
         return f'{self.version[0]}.{self.version[1]}.{self.version[2]}'

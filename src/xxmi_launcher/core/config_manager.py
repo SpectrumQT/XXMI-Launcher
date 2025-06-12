@@ -8,6 +8,7 @@ from typing import Union, Dict, Any, Optional, List
 
 from dacite import from_dict
 
+from core.locale_manager import T
 import core.path_manager as Paths
 import core.event_manager as Events
 
@@ -280,10 +281,9 @@ class AppConfigSecurity:
                 modal=True,
                 lock_master=False,
                 screen_center=True,
-                confirm_text='Reset',
-                cancel_text='Keep',
-                message=f'Failed to validate unsecure settings!\n\n'
-                        f'{msg}\n'
+                confirm_text=T('config_manager_reset', 'Reset'),
+                cancel_text=T('config_manager_keep', 'Keep'),
+                message=T('config_manager_validate_unsecure_failed', 'Failed to validate unsecure settings!\n\n{}').format(msg)
             ))
             if user_requested_reset:
                 if 'Unsafe Mode' in wrong_signatures:
@@ -341,8 +341,8 @@ def get_resource_path(element, filename: Union[str, Path], extensions: Optional[
             return resource_path
     resource_path = Paths.App.Themes / 'Default' / class_path
     if not resource_path.is_file():
-        raise FileNotFoundError(
-            f'Resource not found:\n\n'
-            f'{resource_path}\n\n'
-            f'Hint: You can also use other extensions: {", ".join(extensions)}')
+        raise FileNotFoundError(T('config_manager_resource_not_found',
+            'Resource not found:\n\n'
+            '{}\n\n'
+            'Hint: You can also use other extensions: {}').format(resource_path, ", ".join(extensions)))
     return resource_path

@@ -3,6 +3,7 @@ import logging
 import time
 import tkinter
 import re
+from core.locale_manager import T
 # import cv2
 # import math
 
@@ -93,7 +94,7 @@ class UIText(UICanvasWidget, CTkBaseClass):
             font_pattern = re.compile(r'(?P<family>.*)\s(?P<size>\d+)\s*(?P<weight>.*)?')
             result = list(re.finditer(font_pattern, font))
             if len(result) != 1:
-                raise ValueError(f'Failed to parse font from {font}!')
+                raise ValueError(T('widgets_failed_set_checkbox_value', 'Failed to set checkbox to unknown value {}!').format(value))
             font = result[0].groupdict()
             if font['weight']:
                 font = (font['family'], int(font['size']), font['weight'])
@@ -1355,7 +1356,7 @@ class UICheckbox(CTkCheckBox, UIWidget):
         elif value == self._offvalue:
             self.deselect()
         else:
-            raise ValueError(f'Failed to set checkbox to unknown value {value}!')
+            raise ValueError(T('widgets_failed_set_checkbox_value', 'Failed to set checkbox to unknown value {}!').format(value))
 
         self.unbind('<Button-1>')
 

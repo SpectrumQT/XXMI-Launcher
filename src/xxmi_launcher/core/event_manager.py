@@ -1,5 +1,6 @@
 import logging
 
+from core.locale_manager import T
 from core import application
 from core import package_manager
 from core.packages import updater_package
@@ -29,9 +30,9 @@ def Call(event_data, **kw):
             (event, callback, caller_id) = list(callbacks.values())[0]
             return callback(event_data, **kw)
         else:
-            raise ValueError(f'Failed to call {str(event_data)}: 1 callback expected, {len(callbacks)} found!')
+            raise ValueError(T('event_manager_callback_count_error', 'Failed to call {}: 1 callback expected, {} found!').format(str(event_data), len(callbacks)))
     else:
-        raise ValueError(f'Failed to call {str(event_data)}: no callbacks found!')
+        raise ValueError(T('event_manager_no_callbacks_found', 'Failed to call {}: no callbacks found!').format(str(event_data)))
 
 
 def Fire(event_data, **kw):

@@ -3,6 +3,7 @@ import webbrowser
 from dataclasses import dataclass
 from enum import Enum, auto
 
+from core.locale_manager import L, T
 import core.event_manager as Events
 import core.path_manager as Paths
 import core.config_manager as Config
@@ -102,11 +103,11 @@ class ImporterSelectButton(UIImageButton):
         self.subscribe(Events.GUI.LauncherFrame.HoverImporter, self.handle_hover_importer)
 
         tooltips = {
-            'XXMI': f'Manage Model Importers',
-            'WWMI': f'Wuthering Waves Model Importer',
-            'ZZMI': f'Zenless Zone Zero Model Importer',
-            'SRMI': f'Honkai: Star Rail Model Importer',
-            'GIMI': f'Genshin Impact Model Importer',
+            'XXMI': str(L('top_bar_xxmi_tooltip', 'Manage Model Importers')),
+            'WWMI': str(L('top_bar_wwmi_tooltip', 'Wuthering Waves Model Importer')),
+            'ZZMI': str(L('top_bar_zzmi_tooltip', 'Zenless Zone Zero Model Importer')),
+            'SRMI': str(L('top_bar_srmi_tooltip', 'Honkai: Star Rail Model Importer')),
+            'GIMI': str(L('top_bar_gimi_tooltip', 'Genshin Impact Model Importer')),
         }
         self.set_tooltip(tooltips[importer_id], delay=0.5)
 
@@ -209,7 +210,7 @@ class GameBananaButton(WebResourceButton):
             webbrowser.open('https://gamebanana.com/tools/10093'),
 
     def get_tooltip(self):
-        return f'{Config.Launcher.active_importer} GameBanana'
+        return str(L('top_bar_gamebanana_tooltip', '{importer} GameBanana').format(importer=Config.Launcher.active_importer))
 
 
 class DiscordButton(WebResourceButton):
@@ -219,7 +220,7 @@ class DiscordButton(WebResourceButton):
             button_image_path='button-resource-discord.png',
             command=lambda: webbrowser.open('https://discord.com/invite/agmg'),
             master=master)
-        self.set_tooltip(f'AGMG Modding Community Discord', delay=0.01)
+        self.set_tooltip(str(L('top_bar_discord_tooltip', 'AGMG Modding Community Discord')), delay=0.01)
 
 
 class GitHubButton(WebResourceButton):
@@ -229,7 +230,7 @@ class GitHubButton(WebResourceButton):
             button_image_path='button-resource-github.png',
             command=lambda: webbrowser.open('https://github.com/SpectrumQT/XXMI-Launcher'),
             master=master)
-        self.set_tooltip(f'XXMI Launcher GitHub', delay=0.01)
+        self.set_tooltip(str(L('top_bar_github_tooltip', 'XXMI Launcher GitHub')), delay=0.01)
 
 
 class DonateButton(WebResourceButton):
@@ -249,7 +250,7 @@ class DonateButton(WebResourceButton):
         Events.Fire(Events.Application.OpenDonationCenter(model_importer=Config.Launcher.active_importer))
 
     def get_tooltip(self):
-        return f'Support {Config.Launcher.active_importer}'
+        return str(L('top_bar_donate_tooltip', 'Support {importer}').format(importer=Config.Launcher.active_importer))
 
 
 
@@ -288,7 +289,7 @@ class SettingsButton(ControlButton):
             command=lambda: Events.Fire((Events.Application.OpenSettings())),
             master=master)
         self.stage = None
-        self.set_tooltip(f'Open Settings', delay=0.1)
+        self.set_tooltip(str(L('top_bar_settings_tooltip', 'Open Settings')), delay=0.1)
         self.subscribe(Events.Application.LoadImporter, self.handle_load_importer)
         self.subscribe(Events.GUI.LauncherFrame.StageUpdate, self.handle_stage_update)
 
@@ -307,7 +308,7 @@ class MinimizeButton(ControlButton):
             button_image_path='button-system-minimize.png',
             command=lambda: Events.Fire((Events.Application.Minimize())),
             master=master)
-        self.set_tooltip(f'Minimize', delay=0.1)
+        self.set_tooltip(str(L('top_bar_minimize_tooltip', 'Minimize')), delay=0.1)
 
 
 class CloseButton(ControlButton):
@@ -317,7 +318,7 @@ class CloseButton(ControlButton):
             button_image_path='button-system-close.png',
             command=lambda: Events.Fire((Events.Application.Close())),
             master=master)
-        self.set_tooltip(f'Close', delay=0.1)
+        self.set_tooltip(str(L('top_bar_close_tooltip', 'Close')), delay=0.1)
 
 # endregion
 
@@ -326,7 +327,7 @@ class UnsafeModeText(UIText):
     def __init__(self, master):
         super().__init__(x=640,
                          y=25,
-                         text='Unsafe Mode',
+                         text=str(L('top_bar_unsafe_mode_text', 'Unsafe Mode')),
                          font=('Asap', 20),
                          fill='#ff2929',
                          activefill='#ff4040',
@@ -338,8 +339,7 @@ class UnsafeModeText(UIText):
         self.subscribe(
             Events.Application.ConfigUpdate,
             self.handle_config_update)
-        self.set_tooltip(f'Usage of 3-rd party 3dmigoto DLLs is allowed.\n'
-                         f'Make sure to use ones only from a trusted source!')
+        self.set_tooltip(str(L('top_bar_unsafe_mode_tooltip', 'Usage of 3-rd party 3dmigoto DLLs is allowed.\nMake sure to use ones only from a trusted source!')))
 
     def handle_config_update(self, event=None):
         self.enabled = Config.Launcher.active_importer != 'XXMI' and Config.Active.Migoto.unsafe_mode

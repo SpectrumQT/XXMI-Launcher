@@ -33,7 +33,8 @@ class LocaleEngine:
 
     def load_locale(self, locale: str, tag: str = 'loc'):
         self.strings = {}
-
+        if locale == '中文':
+            locale = 'Chinese'
         locale_path = self.locales_path / locale
 
         try:
@@ -156,3 +157,7 @@ class LocaleManager:
 Locale = LocaleManager()
 
 L = Locale.get_string
+
+# Used for scenarios where a plain string is required (such as exception messages)
+def T(key: str, string: str) -> str:
+    return str(Locale.get_string(key, string))

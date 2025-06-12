@@ -153,25 +153,58 @@ class ApplicationEvents:
         lock_master: bool = None
         screen_center: bool = None
 
+        def __post_init__(self):
+            from core.locale_manager import L
+            if self.title == 'Message':
+                self.title = L('application_message_title', 'Message')
+            if self.confirm_text == 'OK':
+                self.confirm_text = L('application_ok_button', 'OK')
+
     @dataclass
     class ShowError(ShowMessage):
         icon: str = 'error-icon.ico'
         title: str = 'Error'
+
+        def __post_init__(self):
+            from core.locale_manager import L
+            if self.title == 'Error':
+                self.title = L('application_error_title', 'Error')
+            super().__post_init__()
 
     @dataclass
     class ShowWarning(ShowMessage):
         icon: str = 'warning-icon.ico'
         title: str = 'Warning'
 
+        def __post_init__(self):
+            from core.locale_manager import L
+            if self.title == 'Warning':
+                self.title = L('application_warning_title', 'Warning')
+            super().__post_init__()
+
     @dataclass
     class ShowInfo(ShowMessage):
         icon: str = 'info-icon.ico'
         title: str = 'Info'
 
+        def __post_init__(self):
+            from core.locale_manager import L
+            if self.title == 'Info':
+                self.title = L('application_info_title', 'Info')
+            super().__post_init__()
+
     @dataclass
     class ShowDialogue(ShowMessage):
         confirm_text: str = 'Confirm'
         cancel_text: str = 'Cancel'
+
+        def __post_init__(self):
+            from core.locale_manager import L
+            if self.confirm_text == 'Confirm':
+                self.confirm_text = L('application_confirm_button', 'Confirm')
+            if self.cancel_text == 'Cancel':
+                self.cancel_text = L('application_cancel_button', 'Cancel')
+            super().__post_init__()
 
     @dataclass
     class VerifyFileAccess:
@@ -236,21 +269,34 @@ class Application:
                 parser.print_help()
                 return
         except BaseException:
-            raise ValueError(f'Failed to parse args: {sys.argv}')
+            from core.locale_manager import T
+            raise ValueError(T('application_failed_parse_args', 'Failed to parse args: {}').format(sys.argv))
 
         # Load config json
         try:
             self.load_config()
         except Exception as error:
             logging.exception(error)
+            from core.locale_manager import L
             self.gui.show_messagebox(Events.Application.ShowError(
                 modal=True,
                 screen_center=not self.gui.is_shown(),
                 lock_master=self.gui.is_shown(),
-                message=f'Failed to load configuration! Falling back to defaults.',
+                message=L('application_config_load_failed', 'Failed to load configuration! Falling back to defaults.'),
             ))
 
         logging.getLogger().setLevel(logging.getLevelNamesMapping().get(Config.Launcher.log_level, 'DEBUG'))
+
+        # Initialize localization
+        try:
+            from core.locale_manager import Locale
+            Locale.load_locale(Config.Launcher.language)
+        except Exception:
+            try:
+                from core.locale_manager import Locale
+                Locale.load_locale('English')
+            except Exception:
+                pass
 
         # Async query and log OS and hardware info
         self.run_as_thread(system_info.log_system_info)
@@ -304,7 +350,8 @@ class Application:
 
         if self.args.update:
             Events.Fire(Events.Application.Busy())
-            Events.Fire(Events.Application.StatusUpdate(status='Initializing update...'))
+            from core.locale_manager import L
+            Events.Fire(Events.Application.StatusUpdate(status=L('application_initializing_update', 'Initializing update...')))
 
         Events.Fire(Events.Application.LoadImporter(importer_id=Config.Launcher.active_importer))
 
@@ -346,13 +393,14 @@ class Application:
                 shutil.copy2(Config.Config.config_path, cfg_backup_path)
         except Exception as e:
             if Config.Config.config_path.is_file():
+                from core.locale_manager import L
                 error_dialogue = Events.Application.ShowError(
                     modal=True,
                     screen_center=not self.gui.is_shown(),
                     lock_master=self.gui.is_shown(),
-                    confirm_text='Load Backup',
-                    cancel_text='Load Default',
-                    message='Failed to load configuration!',
+                    confirm_text=L('application_load_backup', 'Load Backup'),
+                    cancel_text=L('application_load_default', 'Load Default'),
+                    message=L('application_config_load_failed', 'Failed to load configuration!'),
                 )
                 user_requested_backup_load = self.gui.show_messagebox(error_dialogue)
                 if user_requested_backup_load:
@@ -363,7 +411,8 @@ class Application:
     def validate_importer_name(self, importer_name: str) -> str:
         importer_name = importer_name.upper()
         if importer_name != 'XXMI' and importer_name not in Config.Importers.__dict__.keys():
-            raise ValueError(f'Unknown model importer {importer_name}!')
+            from core.locale_manager import T
+            raise ValueError(T('application_unknown_importer', 'Unknown model importer {}!').format(importer_name))
         return importer_name
 
     def get_importer_from_path(self, path: Path):
@@ -375,7 +424,8 @@ class Application:
         for package_name in ['WWMI', 'ZZMI', 'SRMI', 'GIMI']:
             package = self.package_manager.get_package(package_name)
             if not isinstance(package, ModelImporterPackage):
-                raise ValueError(f'Package {package.metadata.package_name} is not ModelImporterPackage!')
+                from core.locale_manager import T
+                raise ValueError(T('application_not_model_importer_package', 'Package {} is not ModelImporterPackage!').format(package.metadata.package_name))
             try:
                 game_path = package.validate_game_path(game_folder)
                 game_exe_path = package.validate_game_exe_path(game_path)
@@ -383,8 +433,8 @@ class Application:
                 continue
             return package.metadata.package_name, game_path, game_exe_path
 
-        raise ValueError(f'Failed to auto-select importer for `{path}`!\n\n'
-                         f'Try to add `--nogui --xxmi WWMI` args (or GIMI, SRMI, ZZMI).')
+        from core.locale_manager import T
+        raise ValueError(T('application_auto_select_failed', 'Failed to auto-select importer for `{}`!\n\nTry to add `--nogui --xxmi WWMI` args (or GIMI, SRMI, ZZMI).').format(path))
 
     def get_active_importer(self) -> str:
         active_importer = None
@@ -404,8 +454,9 @@ class Application:
             try:
                 active_importer = self.validate_importer_name(self.args.xxmi)
             except Exception:
+                from core.locale_manager import L
                 Events.Fire(Events.Application.ShowWarning(
-                    message=f'Unknown model importer supplied as command line arg `--xxmi={self.args.xxmi}`!')
+                    message=L('application_unknown_importer_arg', 'Unknown model importer supplied as command line arg `--xxmi={}`!').format(self.args.xxmi))
                 )
 
         elif Config.Launcher.active_importer:
@@ -413,8 +464,9 @@ class Application:
             try:
                 active_importer = self.validate_importer_name(Config.Launcher.active_importer)
             except Exception:
+                from core.locale_manager import L
                 Events.Fire(Events.Application.ShowWarning(
-                    message=f'Unknown model importer `{Config.Launcher.active_importer}` supplied with `active_importer` setting!')
+                    message=L('application_unknown_importer_setting', 'Unknown model importer `{}` supplied with `active_importer` setting!').format(Config.Launcher.active_importer))
                 )
 
         if active_importer is None:
@@ -436,8 +488,9 @@ class Application:
                 return
         except Exception as e:
             if self.args.update:
+                from core.locale_manager import L
                 Events.Fire(Events.Application.ShowWarning(
-                    message=f'Failed to get latest versions list from GitHub!\n\n{str(e)}',
+                    message=L('application_github_fetch_failed', 'Failed to get latest versions list from GitHub!\n\n{}').format(str(e)),
                     modal=True))
         # Exit early if there are no updates available
         if not self.package_manager.update_available():
@@ -489,20 +542,22 @@ class Application:
                 continue
             # Include packages with version different from the latest
             if package.latest_version != '' and (package.installed_version != package.latest_version):
+                from core.locale_manager import L
                 pending_update_message.append(
-                    f'{package_name} update found: {package.installed_version or 'N/A'} -> {package.latest_version}')
+                    str(L('application_update_found', '{package} update found: {current} -> {latest}').format(package=package_name, current=package.installed_version or 'N/A', latest=package.latest_version)))
 
         if len(pending_update_message) == 0:
             return False
 
+        from core.locale_manager import L
         update_dialogue = Events.Application.ShowDialogue(
             modal=True,
             screen_center=not self.gui.is_shown(),
             lock_master=self.gui.is_shown(),
             icon='update-icon.ico',
-            title='Update Available',
-            confirm_text='Update',
-            cancel_text='Skip',
+            title=L('application_update_available', 'Update Available'),
+            confirm_text=L('application_update_button', 'Update'),
+            cancel_text=L('application_skip_button', 'Skip'),
             message='\n'.join(pending_update_message),
         )
 
@@ -523,6 +578,7 @@ class Application:
                 raise e
             else:
                 # Failed to check some other package, lets give a warning and still try to go further
+                from core.locale_manager import L
                 Events.Fire(Events.Application.ShowWarning(
                     message=str(e),
                     modal=True
@@ -531,9 +587,10 @@ class Application:
             if self.update_scheduled():
                 self.package_manager.update_packages(no_check=True, force=force)
         else:
+            from core.locale_manager import L
             Events.Fire(Events.Application.ShowInfo(
                 modal=True,
-                message='No updates available!',
+                message=L('application_no_updates', 'No updates available!'),
             ))
 
     def get_launch_counters_from_log(self, exclude_failed = True):
@@ -665,7 +722,8 @@ class Application:
             self.gui.after(100, Events.Fire, Events.Application.Ready())
             return
         except Exception as e:
-            raise Exception(f'{Config.Launcher.active_importer} Loading Failed:\n{str(e)}') from e
+            from core.locale_manager import T
+            raise Exception(T('application_loading_failed', '{importer} Loading Failed:\n{error}').format(importer=Config.Launcher.active_importer, error=str(e))) from e
         finally:
             self.is_locked = False
             if not Config.Launcher.auto_close:
@@ -685,21 +743,22 @@ class Application:
             try:
                 Paths.assert_file_write(event.path)
             except Paths.FileReadOnlyError:
+                from core.locale_manager import L
                 user_requested_flag_remove = self.gui.show_messagebox(Events.Application.ShowDialogue(
                     modal=True,
                     screen_center=not self.gui.is_shown(),
                     lock_master=self.gui.is_shown(),
                     icon='error-icon.ico',
-                    title='File Read Only Error',
-                    message=f'Failed to write Read Only file {event.path}!\n\n'
-                            f'Press [Confirm] to remove this flag and continue.',
+                    title=L('application_file_readonly_error', 'File Read Only Error'),
+                    message=L('application_file_readonly_message', 'Failed to write Read Only file {path}!\n\nPress [Confirm] to remove this flag and continue.').format(path=event.path),
                 ))
                 if user_requested_flag_remove:
                     logging.debug(f'Removing Read-Only flag from {event.path}...')
                     Paths.remove_read_only(event.path)
                     Paths.assert_file_write(event.path)
                 else:
-                    raise ValueError(f'Failed to write critical file: {event.path}!')
+                    from core.locale_manager import T
+                    raise ValueError(T('application_failed_write_critical_file', 'Failed to write critical file: {path}!').format(path=event.path))
         if event.exe:
             Paths.assert_file_read(event.path)
 
