@@ -196,8 +196,7 @@ class AppConfig:
                     dll_initialization_delay = ini.get_section('System').get_option('dll_initialization_delay')
                     if dll_initialization_delay is not None:
                         dll_initialization_delay = int(dll_initialization_delay)
-                        log.debug(
-                            f'Detected existing dll_initialization_delay in for {package_name}: {dll_initialization_delay}')
+                        log.debug(f'Detected existing dll_initialization_delay in for {package_name}: {dll_initialization_delay}')
                     else:
                         dll_initialization_delay = 0
             except Exception as e:
@@ -212,6 +211,8 @@ class AppConfig:
 
             # Keep existing dll_initialization_delay
             importer.Importer.xxmi_dll_init_delay = dll_initialization_delay
+
+            log.debug(f'Set xxmi_dll_init_delay for {package_name} to {dll_initialization_delay}')
 
     def upgrade(self, old_version, new_version):
         # Save config to file and exit early if old version is empty (aka fresh installation)
