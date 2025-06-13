@@ -63,6 +63,7 @@ class ModelImporterConfig:
     game_folder: str = ''
     overwrite_ini: bool = True
     process_start_method: str = 'Native'
+    xxmi_dll_init_delay: int = 0
     process_priority: str = 'Normal'
     window_mode: str = 'Borderless'
     run_pre_launch_enabled: bool = False
@@ -429,6 +430,12 @@ class ModelImporterPackage(Package):
         # 2. Add `"target": "GenshinImpact.exe",` line before `"loader": "XXMI Launcher.exe"`
         ini.set_option('Loader', 'target', game_exe_path.name)
 
+        ini.set_option('System', 'dll_initialization_delay', Config.Active.Importer.xxmi_dll_init_delay)
+
+        screen_width, screen_height = ctypes.windll.user32.GetSystemMetrics(0), ctypes.windll.user32.GetSystemMetrics(1)
+        ini.set_option('System', 'screen_width', screen_width)
+        ini.set_option('System', 'screen_height', screen_height)
+
         self.set_default_ini_values(ini, 'core', SettingType.Constant)
         if Config.Active.Migoto.enforce_rendering:
             self.set_default_ini_values(ini, 'enforce_rendering', SettingType.Constant)
@@ -437,10 +444,6 @@ class ModelImporterPackage(Package):
         self.set_default_ini_values(ini, 'mute_warnings', SettingType.Bool, Config.Active.Migoto.mute_warnings)
         self.set_default_ini_values(ini, 'enable_hunting', SettingType.Bool, Config.Active.Migoto.enable_hunting)
         self.set_default_ini_values(ini, 'dump_shaders', SettingType.Bool, Config.Active.Migoto.dump_shaders)
-
-        screen_width, screen_height = ctypes.windll.user32.GetSystemMetrics(0), ctypes.windll.user32.GetSystemMetrics(1)
-        ini.set_option('System', 'screen_width', screen_width)
-        ini.set_option('System', 'screen_height', screen_height)
 
         if ini.is_modified():
             log.debug(f'Writing d3dx.ini...')

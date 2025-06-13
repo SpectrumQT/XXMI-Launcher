@@ -27,6 +27,7 @@ log = logging.getLogger(__name__)
 class WWMIConfig(ModelImporterConfig):
     importer_folder: str = 'WWMI/'
     launch_options: str = '-SkipSplash'
+    xxmi_dll_init_delay: int = 500
     d3dx_ini: Dict[
         str, Dict[str, Dict[str, Union[str, int, float, Dict[str, Union[str, int, float]]]]]
     ] = field(default_factory=lambda: {
