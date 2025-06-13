@@ -23,8 +23,16 @@ src = "*Model Importer package offers a set of API functions required for mods t
 loc = "*模型导入器包提供了一套 API 函数，用于在指定游戏中运行模组。*"
 
 [package_release_notes]
-src = "{package_release_notes}\n\n<font color=\"#3366ff\">*<u>Left-Click</u> to open {package_name} Package GitHub releases for full changelog.*</font>\n<font color=\"#aaaaaa\">{package_description}</font>"
-loc = "{package_release_notes}\n\n<font color=\"#3366ff\">*<u>左键点击</u> 打开 {package_name} 包的 GitHub 发布页面查看完整更新日志。*</font>\n<font color=\"#aaaaaa\">{package_description}</font>"
+src = "{package_release_notes}\n\n{actions_tooltip}\n<font color=\"#aaaaaa\">{package_description}</font>"
+loc = "{package_release_notes}\n\n{actions_tooltip}\n<font color=\"#aaaaaa\">{package_description}</font>"
+
+[package_description_tooltip_open_github_changelog]
+src = "<font color=\"#3366ff\">*<u>Left-Click</u> to open {package_name} Dev Blog on Patreon.*</font>\n<font color=\"#3366ff\">*<u>Right-Click</u> to open {package_name} GitHub releases for full changelog.*</font>"
+loc = "<font color=\"#3366ff\">*<u>左键点击</u> 在 Patreon 上打开 {package_name} 开发博客。*</font>\n<font color=\"#3366ff\">*<u>右键点击</u> 打开 {package_name} GitHub 发布页面查看完整更新日志。*</font>"
+
+[package_description_tooltip_open_dev_blog]
+src = "<font color=\"#3366ff\">*<u>Left-Click</u> to open {package_name} GitHub releases for full changelog.*</font>"
+loc = "<font color=\"#3366ff\">*<u>左键点击</u> 打开 {package_name} GitHub 发布页面查看完整更新日志。*</font>"
 
 # 更新器包相关
 [updater_start_failed]
