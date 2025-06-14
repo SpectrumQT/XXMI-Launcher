@@ -70,6 +70,7 @@ class WWMIConfig(ModelImporterConfig):
         'ConsoleVariables': {
             'r.Kuro.SkeletalMesh.LODDistanceScale': 24,
             'r.Streaming.FullyLoadUsedTextures': 1,
+            'r.Streaming.Boost': 30,
             'r.Streaming.UsingNewKuroStreaming': 1,
         }
     })
