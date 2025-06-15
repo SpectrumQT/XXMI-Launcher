@@ -3,7 +3,6 @@ import logging
 import time
 import tkinter
 import re
-from core.locale_manager import T
 # import cv2
 # import math
 
@@ -11,12 +10,14 @@ from typing import Union, Tuple, List, Dict, Optional, Callable
 from pathlib import Path
 
 from tkinter import Menu, INSERT, font
-from customtkinter import CTkBaseClass, CTkButton, CTkImage, CTkLabel, CTkProgressBar, CTkEntry, CTkCheckBox, CTkTextbox, CTkOptionMenu, CTkRadioButton, StringVar
+from customtkinter import CTkBaseClass, CTkButton, CTkImage, CTkLabel, CTkProgressBar, CTkEntry, CTkCheckBox, \
+    CTkTextbox, CTkOptionMenu, CTkRadioButton, StringVar
 from customtkinter import END, CURRENT
 from customtkinter import ThemeManager, CTkFont
 from PIL import Image, ImageTk
 
 import core.config_manager as Config
+from core.locale_manager import T
 
 from gui.classes.element import UIElementBase
 from gui.classes.windows import UIWindow
@@ -79,7 +80,7 @@ class UIText(UICanvasWidget, CTkBaseClass):
         self.master = master
         self.canvas = canvas or master.canvas
         CTkBaseClass.__init__(self, master=master)
-        UIWidget.__init__(self, master,  **kwargs)
+        UIWidget.__init__(self, master, **kwargs)
         self.fill = fill
         self.activefill = activefill
         self.disabledfill = disabledfill
@@ -94,7 +95,7 @@ class UIText(UICanvasWidget, CTkBaseClass):
             font_pattern = re.compile(r'(?P<family>.*)\s(?P<size>\d+)\s*(?P<weight>.*)?')
             result = list(re.finditer(font_pattern, font))
             if len(result) != 1:
-                raise ValueError(T('widgets_failed_set_checkbox_value', 'Failed to set checkbox to unknown value {}!').format(value))
+                raise ValueError(T('widgets_failed_parse_font', 'Failed to parse font from {}!').format(font))
             font = result[0].groupdict()
             if font['weight']:
                 font = (font['family'], int(font['size']), font['weight'])
@@ -176,7 +177,7 @@ class UIImage(UICanvasWidget, CTkBaseClass):
         self.master = master
         self.canvas = canvas or master.canvas
         CTkBaseClass.__init__(self, master=master)
-        UIWidget.__init__(self, master,  **kwargs)
+        UIWidget.__init__(self, master, **kwargs)
 
         self._x = None
         self._y = None
@@ -450,7 +451,7 @@ class UIImageButton(UICanvasWidget, CTkBaseClass):
                  **kwargs):
 
         CTkBaseClass.__init__(self, master=master)
-        UIWidget.__init__(self, master,  **kwargs)
+        UIWidget.__init__(self, master, **kwargs)
 
         self.master = master
         self.canvas = canvas or master.canvas
@@ -468,28 +469,38 @@ class UIImageButton(UICanvasWidget, CTkBaseClass):
         self._bg_image = None
         if bg_image_path is not None:
             self._bg_image = self.put(UIImage(master=master, image_path=bg_image_path, width=bg_width, height=bg_height,
-                                      x=x, y=y, anchor=anchor,
-                                      opacity=bg_normal_opacity, brightness=bg_normal_brightness))
-            self.bg_apply_normal = lambda: self._bg_image.configure(opacity=bg_normal_opacity, brightness=bg_normal_brightness)
-            self.bg_apply_hover = lambda: self._bg_image.configure(opacity=bg_hover_opacity, brightness=bg_hover_brightness)
-            self.bg_apply_select = lambda: self._bg_image.configure(opacity=bg_selected_opacity, brightness=bg_selected_brightness)
-            self.bg_apply_disable = lambda: self._bg_image.configure(opacity=bg_disabled_opacity, brightness=bg_disabled_brightness)
+                                              x=x, y=y, anchor=anchor,
+                                              opacity=bg_normal_opacity, brightness=bg_normal_brightness))
+            self.bg_apply_normal = lambda: self._bg_image.configure(opacity=bg_normal_opacity,
+                                                                    brightness=bg_normal_brightness)
+            self.bg_apply_hover = lambda: self._bg_image.configure(opacity=bg_hover_opacity,
+                                                                   brightness=bg_hover_brightness)
+            self.bg_apply_select = lambda: self._bg_image.configure(opacity=bg_selected_opacity,
+                                                                    brightness=bg_selected_brightness)
+            self.bg_apply_disable = lambda: self._bg_image.configure(opacity=bg_disabled_opacity,
+                                                                     brightness=bg_disabled_brightness)
 
         self._button_image = None
         if button_image_path is not None:
-            self._button_image = self.put(UIImage(master=master, image_path=button_image_path, width=width, height=height,
-                                                  x=button_x_offset+x, y=button_y_offset+y, anchor=anchor,
-                                                  opacity=button_normal_opacity, brightness=button_normal_brightness))
-            self.button_apply_normal = lambda: self._button_image.configure(opacity=button_normal_opacity, brightness=button_normal_brightness)
-            self.button_apply_hover = lambda: self._button_image.configure(opacity=button_hover_opacity, brightness=button_hover_brightness)
-            self.button_apply_select = lambda: self._button_image.configure(opacity=button_selected_opacity, brightness=button_selected_brightness)
-            self.button_apply_disable = lambda: self._button_image.configure(opacity=button_disabled_opacity, brightness=button_disabled_brightness)
+            self._button_image = self.put(
+                UIImage(master=master, image_path=button_image_path, width=width, height=height,
+                        x=button_x_offset + x, y=button_y_offset + y, anchor=anchor,
+                        opacity=button_normal_opacity, brightness=button_normal_brightness))
+            self.button_apply_normal = lambda: self._button_image.configure(opacity=button_normal_opacity,
+                                                                            brightness=button_normal_brightness)
+            self.button_apply_hover = lambda: self._button_image.configure(opacity=button_hover_opacity,
+                                                                           brightness=button_hover_brightness)
+            self.button_apply_select = lambda: self._button_image.configure(opacity=button_selected_opacity,
+                                                                            brightness=button_selected_brightness)
+            self.button_apply_disable = lambda: self._button_image.configure(opacity=button_disabled_opacity,
+                                                                             brightness=button_disabled_brightness)
 
         self._text_image = None
         if text is not None:
-            self._text_image = self.put(UIText(master=master, canvas=self.canvas, text=text, font=font, width=0, justify=justify,
-                                        x=text_x_offset+x, y=text_y_offset+y, anchor=text_anchor or anchor,
-                                        fill=fill, activefill=activefill, disabledfill=disabledfill))
+            self._text_image = self.put(
+                UIText(master=master, canvas=self.canvas, text=text, font=font, width=0, justify=justify,
+                       x=text_x_offset + x, y=text_y_offset + y, anchor=text_anchor or anchor,
+                       fill=fill, activefill=activefill, disabledfill=disabledfill))
 
         self.update_dimensions()
 
@@ -497,7 +508,7 @@ class UIImageButton(UICanvasWidget, CTkBaseClass):
         self.selected = False
 
         self._apply_theme()
-        
+
         self.bind("<ButtonPress-1>", self._handle_button_press)
         self.bind("<ButtonRelease-1>", self._handle_button_release)
         self.bind("<Enter>", self._handle_enter)
@@ -511,9 +522,9 @@ class UIImageButton(UICanvasWidget, CTkBaseClass):
         if self._bg_image is not None:
             self._bg_image.move(x, y)
         if self._button_image is not None:
-            self._button_image.move(self._button_x_offset+x, self._button_y_offset+y)
+            self._button_image.move(self._button_x_offset + x, self._button_y_offset + y)
         if self._text_image is not None:
-            self._text_image.move(self._text_x_offset+x, self._text_y_offset+y)
+            self._text_image.move(self._text_x_offset + x, self._text_y_offset + y)
         self.update_dimensions()
 
     def update_dimensions(self):
@@ -641,12 +652,13 @@ class UILabel(UIWidget, CTkLabel):
                  state: str = tkinter.NORMAL,
                  text_color_disabled: Optional[Union[str, Tuple[str, str]]] = None,
                  **kwargs):
-        UIWidget.__init__(self, master,  **kwargs)
+        UIWidget.__init__(self, master, **kwargs)
         self._state = state
         self.image: Optional[CTkImage] = None
         if image_path is not None:
             self._supported_extensions = ['.webp', '.jpeg', '.png', '.jpg']
-            self.image = CTkImage(Image.open(str(Config.get_resource_path(self, image_path, self._supported_extensions))))
+            self.image = CTkImage(
+                Image.open(str(Config.get_resource_path(self, image_path, self._supported_extensions))))
         CTkLabel.__init__(self, master, image=self.image, **kwargs)
 
         if text_color_disabled is None:
@@ -675,10 +687,11 @@ class UILabel(UIWidget, CTkLabel):
     def _draw(self, no_color_updates=False):
         CTkBaseClass._draw(self, no_color_updates)
 
-        requires_recoloring = self._draw_engine.draw_rounded_rect_with_border(self._apply_widget_scaling(self._current_width),
-                                                                              self._apply_widget_scaling(self._current_height),
-                                                                              self._apply_widget_scaling(self._corner_radius),
-                                                                              0)
+        requires_recoloring = self._draw_engine.draw_rounded_rect_with_border(
+            self._apply_widget_scaling(self._current_width),
+            self._apply_widget_scaling(self._current_height),
+            self._apply_widget_scaling(self._corner_radius),
+            0)
         if self._state == tkinter.DISABLED:
             text_color = self._text_color_disabled
         else:
@@ -716,21 +729,25 @@ class UIButton(UIWidget, CTkButton):
                  padx: int = 12,
                  **kwargs):
 
-        UIWidget.__init__(self, master,  **kwargs)
+        UIWidget.__init__(self, master, **kwargs)
 
         self._auto_width = auto_width
         self._padx = padx
         self.image: Optional[CTkImage] = None
         if image_path is not None:
             self._supported_extensions = ['.webp', '.jpeg', '.png', '.jpg']
-            self.image = CTkImage(Image.open(str(Config.get_resource_path(self, image_path, self._supported_extensions))))
+            self.image = CTkImage(
+                Image.open(str(Config.get_resource_path(self, image_path, self._supported_extensions))))
 
         self.is_hovered = False
         self.is_selected = False
 
-        self._select_color: Union[str, Tuple[str, str]] = ThemeManager.theme["CTkButton"]["select_color"] if select_color is None else self._check_color_type(select_color)
-        self._text_color_hovered: Union[str, Tuple[str, str]] = ThemeManager.theme["CTkButton"]["text_color_hovered"] if text_color_hovered is None else self._check_color_type(text_color_hovered)
-        self._text_color_selected: Union[str, Tuple[str, str]] = ThemeManager.theme["CTkButton"]["text_color_selected"] if text_color_selected is None else self._check_color_type(text_color_selected)
+        self._select_color: Union[str, Tuple[str, str]] = ThemeManager.theme["CTkButton"][
+            "select_color"] if select_color is None else self._check_color_type(select_color)
+        self._text_color_hovered: Union[str, Tuple[str, str]] = ThemeManager.theme["CTkButton"][
+            "text_color_hovered"] if text_color_hovered is None else self._check_color_type(text_color_hovered)
+        self._text_color_selected: Union[str, Tuple[str, str]] = ThemeManager.theme["CTkButton"][
+            "text_color_selected"] if text_color_selected is None else self._check_color_type(text_color_selected)
 
         CTkButton.__init__(self, master, image=self.image, **kwargs)
 
@@ -738,7 +755,7 @@ class UIButton(UIWidget, CTkButton):
 
         if self._auto_width:
             self._set_auto_width()
-        
+
         self.unbind('<Button-1>')
 
     def configure(self, require_redraw=False, **kwargs):
@@ -774,10 +791,10 @@ class UIButton(UIWidget, CTkButton):
     def _set_auto_width(self):
         scaling = self._apply_widget_scaling(1)
         offset = self._padx * 2
-        text_width = int(self._text_label.winfo_reqwidth()/scaling)
+        text_width = int(self._text_label.winfo_reqwidth() / scaling)
         if scaling != 1:
             offset += self._apply_widget_scaling(2)
-        self.configure(width=text_width+offset)
+        self.configure(width=text_width + offset)
 
     def _draw(self, no_color_updates=False):
         CTkBaseClass._draw(self, no_color_updates)
@@ -995,8 +1012,7 @@ class UIRadioButton(UIWidget, CTkRadioButton):
     def __init__(self,
                  master: Union[UIWindow, 'UIFrame'],
                  **kwargs):
-
-        UIWidget.__init__(self, master,  **kwargs)
+        UIWidget.__init__(self, master, **kwargs)
 
         CTkRadioButton.__init__(self, master, **kwargs)
 
@@ -1007,7 +1023,7 @@ class UIProgressBar(UIWidget, CTkProgressBar):
     def __init__(self,
                  master: Union[UIWindow, 'UIFrame'],
                  **kwargs):
-        UIWidget.__init__(self, master,  **kwargs)
+        UIWidget.__init__(self, master, **kwargs)
         CTkProgressBar.__init__(self, master, **kwargs)
 
         self._apply_theme()
@@ -1016,30 +1032,21 @@ class UIProgressBar(UIWidget, CTkProgressBar):
 class UIEntry(CTkEntry, UIWidget):
     def __init__(self,
                  master: Union[UIWindow, 'UIFrame'],
+                 input_filter: Optional[str] = None,
                  **kwargs):
 
-        # Original tkEntry fails with empty string for IntVar and behaves poorly with input filtering overall
-        # Here we solve it via creating proxy StringVar and updating original IntVar with filtered input (r'-*\d*')
-        # TODO: Refactor
-        # TODO: Add float support
-        self._original_textvariable = None
-        textvariable = kwargs.get('textvariable', None)
-        if textvariable is not None:
-            value = textvariable.get()
-            if isinstance(value, int):
-                self._original_textvariable = textvariable
-                proxy_var = StringVar(master=master, value=f'{value}')
-                proxy_var.trace_add('write', self.handle_proxy_var_update)
-                kwargs['textvariable'] = proxy_var
+        UIWidget.__init__(self, master, **kwargs)
 
-        UIWidget.__init__(self, master,  **kwargs)
+        # Smart input filtering for INT and FLOAT values
+        self._input_filter = input_filter.upper() if input_filter else None
+        if self._input_filter is not None:
+            self.setup_input_filter(master, kwargs)
+
         self._fg_color_disabled = ThemeManager.theme["CTkEntry"].get("fg_color_disabled", None)
         self._border_color_disabled = ThemeManager.theme["CTkEntry"].get("border_color_disabled", None)
         self._text_color_disabled = ThemeManager.theme["CTkEntry"].get("text_color_disabled", None)
-        CTkEntry.__init__(self, master, **kwargs)
 
-        if self._original_textvariable is not None:
-            self.trace_write(self._original_textvariable, self.handle_original_var_update)
+        CTkEntry.__init__(self, master, **kwargs)
 
         self.state_log = [('', 0)]
         self.state_id = -1
@@ -1060,30 +1067,67 @@ class UIEntry(CTkEntry, UIWidget):
 
         self._apply_theme()
 
-    def handle_original_var_update(self, var, val):
-        if self._textvariable.get() != str(val):
-            self._textvariable.set(str(val))
+    @staticmethod
+    def validate_float_like_input(value):
+        if value == '':
+            return True
+        return re.fullmatch(r'^-?(\d+)?(\.\d*)?$', value) is not None
+
+    @staticmethod
+    def validate_int_like_input(value):
+        if value == '':
+            return True
+        return re.fullmatch(r'^-?\d*$', value) is not None
+
+    def setup_input_filter(self, master, kwargs):
+        self._textvariable = None
+        self._original_textvariable = kwargs.pop('textvariable', None)
+        if self._original_textvariable is None:
+            return
+
+        proxy_var = StringVar(master=master, value=f'{self._original_textvariable.get()}')
+
+        proxy_var.trace_add('write', self.handle_proxy_var_update)
+        self.trace_write(self._original_textvariable, self.handle_original_var_update)
+
+        kwargs['textvariable'] = proxy_var
+
+        kwargs['validate'] = 'key'
+        if self._input_filter == 'INT':
+            kwargs['validatecommand'] = (master.register(self.validate_int_like_input), "%P")
+        elif self._input_filter == 'FLOAT':
+            kwargs['validatecommand'] = (master.register(self.validate_float_like_input), "%P")
+        else:
+            raise ValueError(T('widgets_unknown_input_filter', 'Unknown input filter type `{}`!').format(self._input_filter))
+
+    def _get_proxy_var_value(self):
+        value = self._textvariable.get()
+        if value in ['', '-', '.']:
+            value = 0
+        if self._input_filter == 'INT':
+            return int(value)
+        elif self._input_filter == 'FLOAT':
+            return float(value)
+        else:
+            raise ValueError(T('widgets_unknown_input_filter', 'Unknown input filter type `{}`!').format(self._input_filter))
+
+    def handle_original_var_update(self, var, original_val):
+        if self._textvariable is None:
+            return
+        value = self._get_proxy_var_value()
+        if value != self._original_textvariable.get():
+            self._original_textvariable.set(value)
 
     def handle_proxy_var_update(self, varname=None, index=None, mode=None):
-        value = self._textvariable.get().strip()
-        if value == '' or value == '-':
-            return
-        result = re.search(r'-?\d+', value)
-        if result:
-            filtered_value = result.group()
-            if filtered_value == '' or filtered_value == '-':
-                if filtered_value != value:
-                    self.set(filtered_value)
-                return
-            self._original_textvariable.set(int(filtered_value))
-            if filtered_value != value:
-                self.set(filtered_value)
-        else:
-            self.set('')
+        value = self._get_proxy_var_value()
+        if value != self._original_textvariable.get():
+            self._original_textvariable.set(value)
 
     def _entry_focus_out(self, event=None):
-        if self._original_textvariable is not None and self._textvariable.get().strip() == '':
-            self.set('0')
+        if self._input_filter is not None:
+            value = self._get_proxy_var_value()
+            self.set(value)
+
         super()._entry_focus_out(event)
 
     def configure(self, require_redraw=False, **kwargs):
@@ -1099,54 +1143,57 @@ class UIEntry(CTkEntry, UIWidget):
     def _draw(self, no_color_updates=False):
         CTkBaseClass._draw(self, no_color_updates)
 
-        requires_recoloring = self._draw_engine.draw_rounded_rect_with_border(self._apply_widget_scaling(self._current_width),
-                                                                              self._apply_widget_scaling(self._current_height),
-                                                                              self._apply_widget_scaling(self._corner_radius),
-                                                                              self._apply_widget_scaling(self._border_width))
+        requires_recoloring = self._draw_engine.draw_rounded_rect_with_border(
+            self._apply_widget_scaling(self._current_width),
+            self._apply_widget_scaling(self._current_height),
+            self._apply_widget_scaling(self._corner_radius),
+            self._apply_widget_scaling(self._border_width))
 
         if requires_recoloring or no_color_updates is False:
             self._canvas.configure(bg=self._apply_appearance_mode(self._bg_color))
 
-            if self._apply_appearance_mode(self._fg_color) == "transparent":
+            # set color for inner parts (border parts, text)
+            text_color = self._text_color
+            if self._state == tkinter.DISABLED and self._text_color_disabled is not None:
+                text_color = self._text_color_disabled
+
+            if self._fg_color == "transparent":
                 self._canvas.itemconfig("inner_parts",
-                                        fill=self._apply_appearance_mode(self._bg_color),
-                                        outline=self._apply_appearance_mode(self._bg_color))
+                                         fill=self._apply_appearance_mode(self._bg_color),
+                                         outline=self._apply_appearance_mode(self._bg_color))
                 self._entry.configure(bg=self._apply_appearance_mode(self._bg_color),
-                                      disabledbackground=self._apply_appearance_mode(self._bg_color),
-                                      readonlybackground=self._apply_appearance_mode(self._bg_color),
-                                      highlightcolor=self._apply_appearance_mode(self._bg_color))
+                                       fg=self._apply_appearance_mode(text_color),
+                                       disabledbackground=self._apply_appearance_mode(self._bg_color),
+                                       readonlybackground=self._apply_appearance_mode(self._bg_color),
+                                       insertbackground=self._apply_appearance_mode(self._text_color))
+
             else:
                 fg_color = self._fg_color
                 if self._state == tkinter.DISABLED and self._fg_color_disabled:
                     fg_color = self._fg_color_disabled
+
                 self._canvas.itemconfig("inner_parts",
-                                        fill=self._apply_appearance_mode(fg_color),
-                                        outline=self._apply_appearance_mode(fg_color))
+                                         fill=self._apply_appearance_mode(fg_color),
+                                         outline=self._apply_appearance_mode(fg_color))
                 self._entry.configure(bg=self._apply_appearance_mode(fg_color),
-                                      disabledbackground=self._apply_appearance_mode(fg_color),
-                                      readonlybackground=self._apply_appearance_mode(fg_color),
-                                      highlightcolor=self._apply_appearance_mode(fg_color))
+                                       fg=self._apply_appearance_mode(text_color),
+                                       disabledbackground=self._apply_appearance_mode(fg_color),
+                                       readonlybackground=self._apply_appearance_mode(fg_color),
+                                       insertbackground=self._apply_appearance_mode(self._text_color))
 
-            border_color = self._border_color
-            if self._state == tkinter.DISABLED and self._border_color_disabled:
-                border_color = self._border_color_disabled
-
-            self._canvas.itemconfig("border_parts",
-                                    fill=self._apply_appearance_mode(border_color),
-                                    outline=self._apply_appearance_mode(border_color))
-
-            if self._placeholder_text_active:
-                self._entry.config(fg=self._apply_appearance_mode(self._placeholder_text_color),
-                                   disabledforeground=self._apply_appearance_mode(self._placeholder_text_color),
-                                   insertbackground=self._apply_appearance_mode(self._placeholder_text_color))
+            # configure border color
+            if self._border_color == "transparent":
+                self._canvas.itemconfig("border_parts",
+                                         fill=self._apply_appearance_mode(self._bg_color),
+                                         outline=self._apply_appearance_mode(self._bg_color))
             else:
-                text_color = self._text_color
-                if self._state == tkinter.DISABLED and self._text_color_disabled:
-                    text_color = self._text_color_disabled
+                border_color = self._border_color
+                if self._state == tkinter.DISABLED and self._border_color_disabled is not None:
+                    border_color = self._border_color_disabled
 
-                self._entry.config(fg=self._apply_appearance_mode(text_color),
-                                   disabledforeground=self._apply_appearance_mode(text_color),
-                                   insertbackground=self._apply_appearance_mode(text_color))
+                self._canvas.itemconfig("border_parts",
+                                         fill=self._apply_appearance_mode(border_color),
+                                         outline=self._apply_appearance_mode(border_color))
 
     def event_generate(self, *args, **kwargs):
         self._entry.event_generate(*args, **kwargs)
@@ -1183,7 +1230,7 @@ class UIEntry(CTkEntry, UIWidget):
 
     def handle_return(self, event):
         self.master.focus_set()
-        
+
     def initialize_state_log(self, event=None):
         if len(self.state_log) == 1:
             self.state_log[0] = (self.get(), self.index(INSERT))
@@ -1217,7 +1264,7 @@ class UIEntry(CTkEntry, UIWidget):
 
             old_states = self.state_log[self.state_id:]
             # print(f'REMOVE: {old_states}  STATES: {self.state_log}')
-            self.state_log = self.state_log[:self.state_id+1]
+            self.state_log = self.state_log[:self.state_id + 1]
 
         self.state_id = len(self.state_log)
         self.set_state(self.state_id, self.get(), self.index(INSERT))
@@ -1270,7 +1317,7 @@ class UICheckbox(CTkCheckBox, UIWidget):
     def __init__(self,
                  master: Union[UIWindow, 'UIFrame'],
                  **kwargs):
-        UIWidget.__init__(self, master,  **kwargs)
+        UIWidget.__init__(self, master, **kwargs)
 
         self._fg_color_disabled = ThemeManager.theme["CTkCheckBox"].get("fg_color_disabled", None)
         self._checkmark_color_disabled = ThemeManager.theme["CTkCheckBox"].get("checkmark_color_disabled", None)
@@ -1294,15 +1341,17 @@ class UICheckbox(CTkCheckBox, UIWidget):
     def _draw(self, no_color_updates=False):
         CTkBaseClass._draw(self, no_color_updates)
 
-        requires_recoloring_1 = self._draw_engine.draw_rounded_rect_with_border(self._apply_widget_scaling(self._checkbox_width),
-                                                                                self._apply_widget_scaling(self._checkbox_height),
-                                                                                self._apply_widget_scaling(self._corner_radius),
-                                                                                self._apply_widget_scaling(self._border_width))
+        requires_recoloring_1 = self._draw_engine.draw_rounded_rect_with_border(
+            self._apply_widget_scaling(self._checkbox_width),
+            self._apply_widget_scaling(self._checkbox_height),
+            self._apply_widget_scaling(self._corner_radius),
+            self._apply_widget_scaling(self._border_width))
 
         if self._check_state is True:
             requires_recoloring_2 = self._draw_engine.draw_checkmark(self._apply_widget_scaling(self._checkbox_width),
                                                                      self._apply_widget_scaling(self._checkbox_height),
-                                                                     self._apply_widget_scaling(self._checkbox_height * 0.5))
+                                                                     self._apply_widget_scaling(
+                                                                         self._checkbox_height * 0.5))
         else:
             requires_recoloring_2 = False
             self._canvas.delete("checkmark")
@@ -1327,7 +1376,8 @@ class UICheckbox(CTkCheckBox, UIWidget):
                 #                         outline=self._apply_appearance_mode(fg_color),
                 #                         fill=self._apply_appearance_mode(fg_color))
                 if self._state == tkinter.DISABLED:
-                    self._canvas.itemconfig("checkmark", fill=self._apply_appearance_mode(self._checkmark_color_disabled))
+                    self._canvas.itemconfig("checkmark",
+                                            fill=self._apply_appearance_mode(self._checkmark_color_disabled))
                 else:
                     self._canvas.itemconfig("checkmark", fill=self._apply_appearance_mode(self._checkmark_color))
             else:
@@ -1431,7 +1481,7 @@ class UIOptionMenu(CTkOptionMenu, UIWidget):
     def __init__(self,
                  master: Union[UIWindow, 'UIFrame'],
                  **kwargs):
-        UIWidget.__init__(self, master,  **kwargs)
+        UIWidget.__init__(self, master, **kwargs)
         self._border_width = ThemeManager.theme["CTkTextbox"].get("border_width", 2)
         self._button_color_disabled = ThemeManager.theme["CTkOptionMenu"].get("button_color_disabled", None)
         CTkOptionMenu.__init__(self, master, **kwargs)
@@ -1455,11 +1505,12 @@ class UIOptionMenu(CTkOptionMenu, UIWidget):
         CTkBaseClass._draw(self, no_color_updates)
 
         left_section_width = self._current_width - self._current_height
-        requires_recoloring = self._draw_engine.draw_rounded_rect_with_border_vertical_split(self._apply_widget_scaling(self._current_width),
-                                                                                             self._apply_widget_scaling(self._current_height),
-                                                                                             self._apply_widget_scaling(self._corner_radius),
-                                                                                             self._apply_widget_scaling(self._border_width),
-                                                                                             self._apply_widget_scaling(left_section_width))
+        requires_recoloring = self._draw_engine.draw_rounded_rect_with_border_vertical_split(
+            self._apply_widget_scaling(self._current_width),
+            self._apply_widget_scaling(self._current_height),
+            self._apply_widget_scaling(self._corner_radius),
+            self._apply_widget_scaling(self._border_width),
+            self._apply_widget_scaling(left_section_width))
 
         # Drawing Y with CustomTkinter_shapes_font bugs out for some reason, lets hardcode ▼ for now
         requires_recoloring_2 = False
@@ -1490,14 +1541,18 @@ class UIOptionMenu(CTkOptionMenu, UIWidget):
 
             if self._state == tkinter.DISABLED:
                 self._canvas.itemconfig("inner_parts_right",
-                                        outline=self._apply_appearance_mode(self._button_color_disabled or self._button_color),
-                                        fill=self._apply_appearance_mode(self._button_color_disabled or self._button_color))
+                                        outline=self._apply_appearance_mode(
+                                            self._button_color_disabled or self._button_color),
+                                        fill=self._apply_appearance_mode(
+                                            self._button_color_disabled or self._button_color))
                 self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color_disabled)))
                 self._canvas.itemconfig("dropdown_arrow",
                                         fill=self._apply_appearance_mode(self._fg_color))
                 self._canvas.itemconfig("border_parts",
-                                        outline=self._apply_appearance_mode(self._button_color_disabled or self._button_color),
-                                        fill=self._apply_appearance_mode(self._button_color_disabled or self._button_color))
+                                        outline=self._apply_appearance_mode(
+                                            self._button_color_disabled or self._button_color),
+                                        fill=self._apply_appearance_mode(
+                                            self._button_color_disabled or self._button_color))
             else:
                 self._canvas.itemconfig("inner_parts_right",
                                         outline=self._apply_appearance_mode(self._button_color),
@@ -1510,7 +1565,6 @@ class UIOptionMenu(CTkOptionMenu, UIWidget):
                                         fill=self._apply_appearance_mode(self._button_color))
 
             self._text_label.configure(bg=self._apply_appearance_mode(self._fg_color))
-
 
         self._canvas.update_idletasks()
 
@@ -1558,7 +1612,7 @@ class UITextbox(CTkTextbox, UIWidget):
                  master: Union[UIWindow, 'UIFrame'],
                  text_variable,
                  **kwargs):
-        UIWidget.__init__(self, master,  **kwargs)
+        UIWidget.__init__(self, master, **kwargs)
 
         self._state = tkinter.NORMAL
 
@@ -1601,14 +1655,15 @@ class UITextbox(CTkTextbox, UIWidget):
         if not self._canvas.winfo_exists():
             return
 
-        requires_recoloring = self._draw_engine.draw_rounded_rect_with_border(self._apply_widget_scaling(self._current_width),
-                                                                              self._apply_widget_scaling(self._current_height),
-                                                                              self._apply_widget_scaling(self._corner_radius),
-                                                                              self._apply_widget_scaling(self._border_width))
+        requires_recoloring = self._draw_engine.draw_rounded_rect_with_border(
+            self._apply_widget_scaling(self._current_width),
+            self._apply_widget_scaling(self._current_height),
+            self._apply_widget_scaling(self._corner_radius),
+            self._apply_widget_scaling(self._border_width))
 
         if no_color_updates is False or requires_recoloring:
             text_color = self._text_color
-            if self._state == tkinter.DISABLED and self._text_color_disabled:
+            if self._state == tkinter.DISABLED and self._text_color_disabled is not None:
                 text_color = self._text_color_disabled
 
             if self._fg_color == "transparent":
@@ -1639,20 +1694,19 @@ class UITextbox(CTkTextbox, UIWidget):
                                             button_hover_color=self._scrollbar_button_hover_color)
 
             border_color = self._border_color
-            if self._state == tkinter.DISABLED and self._border_color_disabled:
+            if self._state == tkinter.DISABLED and self._border_color_disabled is not None:
                 border_color = self._border_color_disabled
 
             self._canvas.itemconfig("border_parts",
                                     fill=self._apply_appearance_mode(border_color),
                                     outline=self._apply_appearance_mode(border_color))
-            self._canvas.configure(bg=self._apply_appearance_mode(self._bg_color))
 
         self._canvas.tag_lower("inner_parts")
         self._canvas.tag_lower("border_parts")
 
     def set(self, value):
-        self.delete(1.0, END)
-        self.insert(END, value)
+        self.delete(0, END)
+        self.insert(0, value)
 
     def handle_on_widget_change(self, event=None):
         self.text_variable.set(self.get(0.0, END))

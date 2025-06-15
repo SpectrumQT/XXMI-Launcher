@@ -916,11 +916,23 @@ loc = "取消"
 # GUI - Widgets Messages
 [widgets_failed_parse_font]
 src = "Failed to parse font from {}!"
-loc = "解析字体 {} 失败！"
+loc = "无法从 {} 解析字体！"
 
 [widgets_failed_set_checkbox_value]
 src = "Failed to set checkbox to unknown value {}!"
-loc = "设置复选框为未知值 {} 失败！"
+loc = "无法将复选框设置为未知值 {}！"
+
+[widgets_unknown_input_filter]
+src = "Unknown input filter type `{}`!"
+loc = "未知的输入过滤器类型 `{}`！"
+
+[widgets_input_filter_invalid_float]
+src = "Invalid float value for input filter!"
+loc = "输入过滤器的浮点数值无效！"
+
+[widgets_input_filter_invalid_int]
+src = "Invalid integer value for input filter!"
+loc = "输入过滤器的整数值无效！"
 
 # Donate Frame
 [donate_popup_introduction]
