@@ -1478,15 +1478,15 @@ loc = "**启用**：游戏启动前确保ZZMI兼容的游戏内**图形设置**�
 
 [general_settings_open_engine_ini_button]
 src = "🔍 Open Engine.ini"
-loc = "🔍 打开Engine.ini"
+loc = "🔍 打开 Engine.ini"
 
 [general_settings_open_engine_ini_tooltip]
 src = "Open Engine.ini in default text editor file for manual tweaking."
-loc = "在默认文本编辑器中打开Engine.ini文件进行手动调整。"
+loc = "在默认文本编辑器中打开 Engine.ini 进行手动调整。"
 
 [general_settings_tweaks_label]
 src = "Tweaks:"
-loc = "调整："
+loc = "调整项："
 
 [general_settings_unlock_fps_checkbox]
 src = "Force 120 FPS"
@@ -1518,11 +1518,15 @@ loc = "**启用**：游戏启动时向`Engine.ini`的`[SystemSettings]`部分添
 
 [general_settings_enable_hdr_checkbox]
 src = "Enable HDR"
-loc = "启用HDR"
+loc = "启用 HDR"
 
 [general_settings_enable_hdr_tooltip]
-src = "**Warning**! Your monitor must support HDR and `Use HDR` must be enabled in Windows Display settings!\n**Enabled**: Turn HDR On. Creates HDR registry record each time before the game launch.\n**Disabled**: Turn HDR Off. No extra action required, game auto-removes HDR registry record on launch."
-loc = "**警告**！您的显示器必须支持HDR，且Windows显示设置中必须启用`使用HDR`！\n**启用**：打开HDR。每次游戏启动前创建HDR注册表记录。\n**禁用**：关闭HDR。无需额外操作，游戏启动时自动移除HDR注册表记录。"
+src = """**Warning**! Your monitor must support HDR and `Use HDR` must be enabled in Windows Display settings!
+**Enabled**: Turn HDR On. Creates HDR registry record each time before the game launch.
+**Disabled**: Turn HDR Off. No extra action required, game auto-removes HDR registry record on launch."""
+loc = """**警告**！您的显示器必须支持 HDR，且 Windows 显示设置中必须启用`使用 HDR`！
+**启用**：开启 HDR。每次游戏启动前创建 HDR 注册表记录。
+**禁用**：关闭 HDR。无需额外操作，游戏启动时会自动移除 HDR 注册表记录。"""
 
 [general_settings_disable_wounded_effect_checkbox]
 src = "Disable Wounded Effect"
@@ -1530,7 +1534,33 @@ loc = "禁用受伤效果"
 
 [general_settings_disable_wounded_effect_tooltip]
 src = "Most mods do not support this effect, so textures usually break after few hits taken.\n**Enabled**: Turn the effect `Off`. Ensures proper rendering of modded textures.\n**Disabled**: Turn the effect `On`. Select this if you use `Injured Effect Remover` tool."
-loc = "大多数模组不支持此效果，受击几次后纹理通常会损坏。\n**启用**：关闭此效果。确保模组纹理正确渲染。\n**禁用**：打开此效果。如果您使用`受伤效果移除器`工具请选择此项。"
+loc = "大多数模组不支持此效果，所以在受到几次伤害后纹理通常会损坏。\n**启用**：关闭此效果。确保正确渲染模组纹理。\n**禁用**：开启此效果。如果您使用了`受伤效果移除器`工具，请选择此项。"
+
+[general_settings_texture_boost_label]
+src = "Texture Boost:"
+loc = "纹理加速："
+
+[general_settings_texture_boost_tooltip]
+src = """
+Value to set as **r.Streaming.Boost** in **Engine.ini**.
+Fine tuning the value allows to prevent short texture glitch on switch to modded characters.
+With low values, try decimals (e.g. `1.1` or `2.5`).
+## Approximate values for Wuthering Waves 2.4:
+- **2.75**: RTX 4090.
+- **30.0**: RTX 3070.
+"""
+loc = """
+在 **Engine.ini** 中设置 **r.Streaming.Boost** 的值。
+微调此值可以防止切换到模组角色时出现短暂的纹理故障。
+对于低数值，可以尝试使用小数（例如 `1.1` 或 `2.5`）。
+## 鸣潮 2.4 的参考值：
+- **2.75**：RTX 4090。
+- **30.0**：RTX 3070。
+"""
+
+[general_settings_engine_ini_not_found]
+src = 'File does not exist: "{}"!'
+loc = '文件不存在："{}"！'
 
 # Advanced Settings Frame
 [advanced_settings_update_policy_label]
