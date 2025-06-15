@@ -312,16 +312,21 @@ class StartMethodLabel(UILabel):
 class StartMethodOptionMenu(UIOptionMenu):
     def __init__(self, master):
         super().__init__(
-            values=['Native', 'Shell'],
+            values=['Native', 'Shell', 'Manual'],
             variable=Vars.Active.Importer.process_start_method,
             width=140,
             height=36,
             font=('Arial', 14),
             dropdown_font=('Arial', 14),
             master=master)
-        self.set_tooltip(f'**Native**: Use native Python call to start game process (`subprocess.popen`).\n'
-                         f'**Shell**: Use external library C++ call to start game process (`ShellExecute`)')
+        self.set_tooltip(self.get_tooltip)
 
+    def get_tooltip(self):
+        return dedent(f"""
+            **Native**: Create the game process directly. Usually it's the most reliable way.
+            **Shell**: Start the game process via system console. Worth to try if you have some issues with Native.
+            **Manual**: Skip launching the game on **Start** button press. Wait for user to launch it manually ({Config.Launcher.start_timeout}s timeout).
+        """)
 
 class MigotoInitDelayLabel(UILabel):
     def __init__(self, master):
