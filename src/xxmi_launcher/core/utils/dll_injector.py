@@ -90,7 +90,8 @@ class DllInjector:
                      process_flags: Optional[int],
                      process_name: Optional[str] = None,
                      dll_paths: Optional[List[Path]] = None,
-                     cmd: Optional[str] = None):
+                     cmd: Optional[str] = None,
+                     inject_timeout: int = 15):
 
         log.debug(f'Starting game process {process_name} using {start_method} method: exe_path={exe_path}, work_dir={work_dir}, start_args={start_args}, process_flags={process_flags}, cmd={cmd}, dll_paths={dll_paths}')
 
@@ -119,11 +120,14 @@ class DllInjector:
                 # cmd = ' '.join([f'start \"\" \"{exe_path}\"'] + start_args)
                 self.start_process('cmd.exe', None, f'/C "{cmd}"')
 
+        elif start_method == 'MANUAL':
+            log.debug(f'Waiting for user to start the game process {process_name}...')
+
         else:
             raise ValueError(T('dll_injector_unknown_start_method', 'Unknown process start method `{}`!').format(start_method))
 
         if dll_paths:
-            pid = self.inject_libraries(dll_paths, process_name)
+            pid = self.inject_libraries(dll_paths, process_name, timeout=inject_timeout)
             if pid == -1:
                 raise ValueError(T('dll_injector_injection_failed', 'Failed to inject {}!').format(str(dll_paths)))
 

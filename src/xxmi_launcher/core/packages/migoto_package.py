@@ -140,7 +140,8 @@ class MigotoPackage(Package):
                     process_flags = process_flags,
                     process_name = process_name,
                     dll_paths = extra_dll_paths,
-                    cmd = custom_launch_cmd
+                    cmd = custom_launch_cmd,
+                    inject_timeout=Config.Launcher.start_timeout,
                 )
 
                 # Early DLL injection verification
@@ -194,7 +195,8 @@ class MigotoPackage(Package):
                 process_flags=process_flags,
                 process_name=process_name,
                 dll_paths=dll_paths,
-                cmd=custom_launch_cmd
+                cmd=custom_launch_cmd,
+                inject_timeout=Config.Launcher.start_timeout,
             )
 
             Events.Fire(Events.Application.WaitForProcess(process_name=process_name))

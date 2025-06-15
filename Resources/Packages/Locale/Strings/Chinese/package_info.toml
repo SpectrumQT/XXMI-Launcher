@@ -1434,19 +1434,31 @@ loc = "**原生**：使用原生Python调用启动游戏进程（`subprocess.pop
 
 [general_settings_xxmi_delay_label]
 src = "XXMI Delay:"
-loc = "XXMI延迟："
+loc = "XXMI 延迟："
 
 [general_settings_xxmi_delay_tooltip_base]
 src = "Delay in milliseconds for how long injected XXMI DLL (3dmigoto) must wait before initialization.\n"
-loc = "注入的XXMI DLL（3dmigoto）在初始化前必须等待的毫秒延迟时间。\n"
+loc = "注入的 XXMI DLL (3dmigoto) 在初始化前需要等待的毫秒数。\n"
 
 [general_settings_xxmi_delay_tooltip_wwmi]
-src = "<font color=\"red\">⚠ Wuthering Waves crashes on launch with wrong delay! ⚠</font>\n<font color=\"#8B8000\">⚠ If default value fails, try to increase or decrease it until WuWa stops crashing. ⚠</font>\n## Known values for Wuthering Waves 2.4:\n- **500**: Default, works for most users.\n- **150**: Minimal known value to work along with ReShade.\n- **50**: Minimal known value to work.\n- **1000+**: Some users need really huge delays."
-loc = "<font color=\"red\">⚠ 鸣潮在启动时会因错误的延迟而崩溃！⚠</font>\n<font color=\"#8B8000\">⚠ 如果默认值失败，请尝试增加或减少延迟直到鸣潮停止崩溃。⚠</font>\n## 鸣潮2.4的已知值：\n- **500**：默认值，适用于大多数用户。\n- **150**：与ReShade一起工作的最小已知值。\n- **50**：工作的最小已知值。\n- **1000+**：有些用户需要很大的延迟。"
+src = """<font color="red">⚠ Wuthering Waves crashes on launch with wrong delay! ⚠</font>
+<font color="#8B8000">⚠ If default value fails, try to increase or decrease it until WuWa stops crashing. ⚠</font>
+## Known values for Wuthering Waves 2.4:
+- **500**: Default, works for most users.
+- **150**: Minimal known value to work along with ReShade.
+- **50**: Minimal known value to work.
+- **1000+**: Some users need really huge delays."""
+loc = """<font color="red">⚠ 鸣潮在延迟设置错误时会崩溃！⚠</font>
+<font color="#8B8000">⚠ 如果默认值不起作用，请尝试增加或减少数值直到游戏不再崩溃。⚠</font>
+## 鸣潮 2.4 已知可用值：
+- **500**：默认值，适用于大多数用户。
+- **150**：与 ReShade 一起使用时的最小已知值。
+- **50**：可用的最小已知值。
+- **1000+**：某些用户需要非常大的延迟值。"""
 
 [general_settings_xxmi_delay_tooltip_general]
 src = "If game crashes with no mods, try to increase it. Start with steps of 50 and increase them as you go."
-loc = "如果游戏在没有模组的情况下崩溃，请尝试增加延迟。从50开始逐步增加。"
+loc = "如果游戏在没有模组的情况下崩溃，请尝试增加此值。从50开始逐步增加。"
 
 [general_settings_process_priority_label]
 src = "Process Priority:"
