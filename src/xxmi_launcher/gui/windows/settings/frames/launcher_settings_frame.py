@@ -203,6 +203,7 @@ class TimeoutEntry(UIEntry):
     def __init__(self, master):
         super().__init__(
             textvariable=Vars.Launcher.start_timeout,
+            input_filter='INT',
             width=40,
             height=36,
             font=('Arial', 14),
