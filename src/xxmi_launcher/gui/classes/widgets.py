@@ -1015,30 +1015,21 @@ class UIProgressBar(UIWidget, CTkProgressBar):
 class UIEntry(CTkEntry, UIWidget):
     def __init__(self,
                  master: Union[UIWindow, 'UIFrame'],
+                 input_filter: Optional[str] = None,
                  **kwargs):
 
-        # Original tkEntry fails with empty string for IntVar and behaves poorly with input filtering overall
-        # Here we solve it via creating proxy StringVar and updating original IntVar with filtered input (r'-*\d*')
-        # TODO: Refactor
-        # TODO: Add float support
-        self._original_textvariable = None
-        textvariable = kwargs.get('textvariable', None)
-        if textvariable is not None:
-            value = textvariable.get()
-            if isinstance(value, int):
-                self._original_textvariable = textvariable
-                proxy_var = StringVar(master=master, value=f'{value}')
-                proxy_var.trace_add('write', self.handle_proxy_var_update)
-                kwargs['textvariable'] = proxy_var
-
         UIWidget.__init__(self, master,  **kwargs)
+
+        # Smart input filtering for INT and FLOAT values
+        self._input_filter = input_filter.upper() if input_filter else None
+        if self._input_filter is not None:
+            self.setup_input_filter(master, kwargs)
+
         self._fg_color_disabled = ThemeManager.theme["CTkEntry"].get("fg_color_disabled", None)
         self._border_color_disabled = ThemeManager.theme["CTkEntry"].get("border_color_disabled", None)
         self._text_color_disabled = ThemeManager.theme["CTkEntry"].get("text_color_disabled", None)
-        CTkEntry.__init__(self, master, **kwargs)
 
-        if self._original_textvariable is not None:
-            self.trace_write(self._original_textvariable, self.handle_original_var_update)
+        CTkEntry.__init__(self, master, **kwargs)
 
         self.state_log = [('', 0)]
         self.state_id = -1
@@ -1059,30 +1050,67 @@ class UIEntry(CTkEntry, UIWidget):
 
         self._apply_theme()
 
-    def handle_original_var_update(self, var, val):
-        if self._textvariable.get() != str(val):
-            self._textvariable.set(str(val))
+    @staticmethod
+    def validate_float_like_input(value):
+        if value == '':
+            return True
+        return re.fullmatch(r'^-?(\d+)?(\.\d*)?$', value) is not None
+
+    @staticmethod
+    def validate_int_like_input(value):
+        if value == '':
+            return True
+        return re.fullmatch(r'^-?\d*$', value) is not None
+
+    def setup_input_filter(self, master, kwargs):
+        self._textvariable = None
+        self._original_textvariable = kwargs.pop('textvariable', None)
+        if self._original_textvariable is None:
+            return
+
+        proxy_var = StringVar(master=master, value=f'{self._original_textvariable.get()}')
+
+        proxy_var.trace_add('write', self.handle_proxy_var_update)
+        self.trace_write(self._original_textvariable, self.handle_original_var_update)
+
+        kwargs['textvariable'] = proxy_var
+
+        kwargs['validate'] = 'key'
+        if self._input_filter == 'INT':
+            kwargs['validatecommand'] = (master.register(self.validate_int_like_input), "%P")
+        elif self._input_filter == 'FLOAT':
+            kwargs['validatecommand'] = (master.register(self.validate_float_like_input), "%P")
+        else:
+            raise ValueError(f'Unknown input filer type `{self._input_filter}`!')
+
+    def _get_proxy_var_value(self):
+        value = self._textvariable.get()
+        if value in ['', '-', '.']:
+            value = 0
+        if self._input_filter == 'INT':
+            return int(value)
+        elif self._input_filter == 'FLOAT':
+            return float(value)
+        else:
+            raise ValueError(f'Unknown input filer type `{self._input_filter}`!')
+
+    def handle_original_var_update(self, var, original_val):
+        if self._textvariable is None:
+            return
+        value = self._get_proxy_var_value()
+        if value != self._original_textvariable.get():
+            self._original_textvariable.set(value)
 
     def handle_proxy_var_update(self, varname=None, index=None, mode=None):
-        value = self._textvariable.get().strip()
-        if value == '' or value == '-':
-            return
-        result = re.search(r'-?\d+', value)
-        if result:
-            filtered_value = result.group()
-            if filtered_value == '' or filtered_value == '-':
-                if filtered_value != value:
-                    self.set(filtered_value)
-                return
-            self._original_textvariable.set(int(filtered_value))
-            if filtered_value != value:
-                self.set(filtered_value)
-        else:
-            self.set('')
+        value = self._get_proxy_var_value()
+        if value != self._original_textvariable.get():
+            self._original_textvariable.set(value)
 
     def _entry_focus_out(self, event=None):
-        if self._original_textvariable is not None and self._textvariable.get().strip() == '':
-            self.set('0')
+        if self._input_filter is not None:
+            value = self._get_proxy_var_value()
+            self.set(value)
+
         super()._entry_focus_out(event)
 
     def configure(self, require_redraw=False, **kwargs):
