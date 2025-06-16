@@ -34,6 +34,13 @@ class IniHandlerSection:
                     return float(option_value)
         return None
 
+    def get_option_values(self, name):
+        result = {}
+        for option_id, (option_name, option_value, modified, comments, inline_comment) in enumerate(self.options):
+            if option_name.lower() == name.lower():
+                result[option_id] = option_value
+        return result
+
     def set_option(self, name, value, flag_modified=True, overwrite=True, comments=None, inline_comment=None):
         if overwrite:
             for i, (option_name, option_value, modified, default_comments, default_inline_comment) in enumerate(self.options):
@@ -57,6 +64,18 @@ class IniHandlerSection:
             self.options.append((name, str(value), flag_modified, comments, inline_comment))
             if flag_modified:
                 self.modified = True
+
+    def remove_option(self, name, value=None):
+        if value is None:
+            filter_func = lambda option: option[0] != name
+        else:
+            filter_func = lambda option: option[0] != name or (option[0] == name and option[1] != str(value))
+
+        options = list(filter(filter_func, self.options))
+
+        if len(options) != len(self.options):
+            self.options = options
+            self.modified = True
 
     def to_string(self, cfg: IniHandlerSettings):
         result = ''
@@ -167,3 +186,26 @@ class IniHandler:
         if section is None:
             section = self.add_section(section_name)
         section.set_option(option_name, option_value, flag_modified=modified, overwrite=overwrite, comments=comments)
+
+    def remove_option(self, option_name, section_name=None, option_value=None):
+        if section_name:
+            sections = [self.get_section(section_name)]
+        else:
+            sections = self.sections.values()
+
+        for section in sections:
+            section.remove_option(option_name, option_value)
+
+    def get_option_values(self, option_name, section_name=None):
+        if section_name:
+            sections = [self.get_section(section_name)]
+        else:
+            sections = self.sections.values()
+
+        result = {}
+        for section in sections:
+            values = section.get_option_values(option_name)
+            if len(values) > 0:
+                result[section.name] = values
+
+        return result
