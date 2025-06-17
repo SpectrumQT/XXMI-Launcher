@@ -143,46 +143,6 @@ class AppConfig:
         with open(self.config_path, 'w', encoding='utf-8') as f:
             return f.write(cfg)
 
-    def run_patch_110(self):
-        for package_name, importer in self.Importers.__dict__.items():
-            # Set new default process priority to Normal
-            if importer.Importer.process_priority == 'Above Normal':
-                importer.Importer.process_priority = 'Normal'
-
-            # Add deployed model importers to list of selected games for launcher to work with
-            package_config = self.Packages.packages.get(package_name, None)
-            if package_config is not None and package_config.deployed_version != '':
-                if package_name not in self.Launcher.enabled_importers:
-                    self.Launcher.enabled_importers.append(package_name)
-
-            # Modify changed d3dx.ini settings stacks
-            ini_overrides = importer.Importer.d3dx_ini
-            new_config = type(importer)()
-            try:
-                del ini_overrides['core']['Rendering']
-            except:
-                pass
-            ini_overrides['enforce_rendering'] = new_config.Importer.d3dx_ini['enforce_rendering']
-            try:
-                del ini_overrides['debug_logging']['Logging']['calls']
-            except:
-                pass
-            ini_overrides['calls_logging'] = new_config.Importer.d3dx_ini['calls_logging']
-
-    def run_patch_133(self):
-        for package_name, importer in self.Importers.__dict__.items():
-            # Disable hunting by default
-            importer.Migoto.enable_hunting = False
-
-    def run_patch_160(self):
-        importer = self.Importers.__dict__['WWMI']
-        importer.Importer.engine_ini['ConsoleVariables']['r.Streaming.UsingNewKuroStreaming'] = 1
-
-    def run_patch_163(self):
-        importer = self.Importers.__dict__['WWMI']
-        new_config = type(importer)()
-        importer.Importer.engine_ini.update(new_config.Importer.engine_ini)
-
     def run_patch_184(self):
         for package_name, importer in self.Importers.__dict__.items():
             # Detect existing System > dll_initialization_delay
@@ -214,9 +174,12 @@ class AppConfig:
 
             log.debug(f'Set xxmi_dll_init_delay for {package_name} to {dll_initialization_delay}')
 
-    def run_patch_185(self):
+    def run_patch_186(self):
         importer = self.Importers.__dict__['WWMI']
-        importer.Importer.engine_ini['ConsoleVariables']['r.Streaming.Boost'] = 30
+        try:
+            del importer.Importer.perf_tweaks['SystemSettings']['r.Streaming.LimitPoolSizeToVRAM']
+        except:
+            pass
 
     def upgrade(self, old_version, new_version):
         # Save config to file and exit early if old version is empty (aka fresh installation)
@@ -228,12 +191,8 @@ class AppConfig:
 
         # Apply patches
         patches = {
-            '1.1.0': self.run_patch_110,
-            '1.3.3': self.run_patch_133,
-            '1.6.0': self.run_patch_160,
-            '1.6.3': self.run_patch_163,
             '1.8.4': self.run_patch_184,
-            '1.8.5': self.run_patch_185,
+            '1.8.6': self.run_patch_186,
         }
         applied_patches = []
         for patch_version, patch_func in patches.items():

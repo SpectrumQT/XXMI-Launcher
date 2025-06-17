@@ -68,14 +68,6 @@ class WWMIConfig(ModelImporterConfig):
             },
         },
     })
-    engine_ini: Dict[str, Dict[str, Union[str, int, float]]] = field(default_factory=lambda: {
-        'ConsoleVariables': {
-            'r.Kuro.SkeletalMesh.LODDistanceScale': 24,
-            'r.Streaming.FullyLoadUsedTextures': 1,
-            'r.Streaming.Boost': 30,
-            'r.Streaming.UsingNewKuroStreaming': 1,
-        }
-    })
     apply_perf_tweaks: bool = False
     unlock_fps: bool = False
     disable_wounded_fx: bool = False
@@ -83,7 +75,6 @@ class WWMIConfig(ModelImporterConfig):
     perf_tweaks: Dict[str, Dict[str, Union[str, int, float]]] = field(default_factory=lambda: {
         'SystemSettings': {
             'r.Streaming.HLODStrategy': 2,
-            'r.Streaming.LimitPoolSizeToVRAM': 1,
             'r.Streaming.PoolSizeForMeshes': -1,
             'r.XGEShaderCompile': 0,
             'FX.BatchAsync': 1,
@@ -94,7 +85,10 @@ class WWMIConfig(ModelImporterConfig):
             'tick.AllowAsyncTickDispatch': 1,
         }
     })
+    mesh_lod_distance_scale: int = 24
     texture_streaming_boost: float = 30.0
+    texture_streaming_pool_size: int = 0
+    texture_streaming_limit_to_vram: bool = True
 
 
 @dataclass
@@ -313,26 +307,52 @@ class WWMIPackage(ModelImporterPackage):
         Events.Fire(Events.Application.VerifyFileAccess(path=engine_ini_path, write=True))
         with open(engine_ini_path, 'r', encoding='utf-8') as f:
             ini = IniHandler(IniHandlerSettings(option_value_spacing=False, inline_comments=True, add_section_spacing=True), f)
-
-        if '/Script/Engine.RendererRTXSettings' in Config.Active.Importer.engine_ini.keys():
-            if ini.get_section('/Script/Engine.RendererRTXSettings') is not None:
-                ini.remove_section('/Script/Engine.RendererRTXSettings')
-            del Config.Active.Importer.engine_ini['/Script/Engine.RendererRTXSettings']
-
-        for section_name, section_data in Config.Importers.WWMI.Importer.engine_ini.items():
-            for option_name, option_value in section_data.items():
-                ini.set_option(section_name, option_name, option_value)
-
+        # if '/Script/Engine.RendererRTXSettings' in Config.Active.Importer.engine_ini.keys():
+        #     if ini.get_section('/Script/Engine.RendererRTXSettings') is not None:
+        #         ini.remove_section('/Script/Engine.RendererRTXSettings')
+        #     del Config.Active.Importer.engine_ini['/Script/Engine.RendererRTXSettings']
+        #
+        # for section_name, section_data in Config.Importers.WWMI.Importer.engine_ini.items():
+        #     for option_name, option_value in section_data.items():
+        #         ini.set_option(section_name, option_name, option_value)
         # console_variables = Config.Importers.WWMI.Importer.engine_ini.get('ConsoleVariables', None)
         # default_streaming_boost = console_variables.get('r.Streaming.Boost', None) if console_variables else None
-        if Config.Importers.WWMI.Importer.texture_streaming_boost != 30:
-            ini.set_option('ConsoleVariables', 'r.Streaming.Boost',
-                           Config.Importers.WWMI.Importer.texture_streaming_boost)
 
         if Config.Importers.WWMI.Importer.apply_perf_tweaks:
             for section_name, section_data in Config.Importers.WWMI.Importer.perf_tweaks.items():
                 for option_name, option_value in section_data.items():
                     ini.set_option(section_name, option_name, option_value)
+
+                # Remove invalid options
+                ini.remove_option(
+                    'r.Streaming.UsingNewKuroStreaming')  # Ancient 3rd-party configs set it to 0 with bad results
+                ini.remove_option('r.Streaming.FullyLoadUsedTextures')  # No longer works since 14/06
+
+                console_variables_options = {
+                    # Controls how far game starts to replace weighted meshes with LoDs
+                    # Mods contain mesh metadata only for original model and won't apply to LoDs
+                    'r.Kuro.SkeletalMesh.LODDistanceScale': Config.Importers.WWMI.Importer.mesh_lod_distance_scale,
+                    # Controls how aggressively higher resolution textures are pushed to VRAM
+                    # Mods contain texture hashes only for original model and won't apply to LoDs
+                    'r.Streaming.Boost': Config.Importers.WWMI.Importer.texture_streaming_boost,
+                    # Controls amount of VRAM used for textures streaming
+                    # When set to 0, tends to keep full resolution textures in VRAM, so LoDs don't break mods
+                    'r.Streaming.PoolSize': Config.Importers.WWMI.Importer.texture_streaming_pool_size,
+                    # Prevents pool size from exceeding VRAM
+                    # Doesn't explicitly affect mods, but acts as failsafe for low and mid-range GPUs for PoolSize=0
+                    'r.Streaming.LimitPoolSizeToVRAM': int(
+                        Config.Importers.WWMI.Importer.texture_streaming_limit_to_vram)
+                }
+                log.debug(f'Using console variables: {console_variables_options}')
+
+                for option_name, option_value in console_variables_options.items():
+                    # Remove duplicate settings
+                    option_values = ini.get_option_values(option_name)
+                    if (len(option_values) == 1 and len(option_values.get('ConsoleVariables', {})) != 1) or len(
+                            option_values) > 1:
+                        ini.remove_option(option_name)
+                    # Set option value
+                    ini.set_option('ConsoleVariables', option_name, option_value)
 
         if ini.is_modified():
             with open(engine_ini_path, 'w', encoding='utf-8') as f:

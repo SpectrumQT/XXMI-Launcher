@@ -1780,3 +1780,85 @@ loc = "模型导入器"
 [settings_tab_advanced]
 src = "Advanced"
 loc = "高级"
+
+[general_settings_texture_streaming_pool_size_label]
+src = "Texture Pool Size:"
+loc = "纹理池大小："
+
+[general_settings_texture_streaming_pool_size_tooltip]
+src = """## Controls how much VRAM the game can use for textures:
+
+* Set to **0** **(default)** for **automatic control** (based on available VRAM).
+    ✅ Large enough pool eliminates modded textures loading delay after first load.
+
+* Set to specific value (e.g. 4096) for precise VRAM management.
+
+*Applied to ConsoleVariables → r.Streaming.PoolSize value in Engine.ini*"""
+loc = """## 控制游戏可以使用的显存量：
+
+* 设为 **0** **（默认值）** 进行**自动控制**（基于可用显存）。
+    ✅ 足够大的池可以消除模组纹理在首次加载后的加载延迟。
+
+* 设置特定值（如4096）以精确管理显存。
+
+*应用于Engine.ini中的ConsoleVariables → r.Streaming.PoolSize值*"""
+
+[general_settings_texture_streaming_limit_pool_checkbox]
+src = "Limit Pool Size To VRAM"
+loc = "限制池大小到显存"
+
+[general_settings_texture_streaming_limit_pool_tooltip]
+src = """## Sets the upper limit for how much VRAM the game can use for textures:
+
+* **Enabled** **(default)** – Limits texture pool size based on your GPU's available VRAM.
+    ✅ Helps prevent crashes or stuttering on low VRAM systems.
+    ⚠️ May reduce texture quality or cause pop-ins if too restrictive on high-end GPUs.
+
+* **Disabled** – Unlocks maximum texture pool size, even if it exceeds your GPU's safe limits.
+    ✅ Can improve texture quality and reduce pop-ins on powerful systems.
+    ⚠️ Risk of performance drops, stutters, or crashes if VRAM runs out.
+
+*Applied to ConsoleVariables → r.Streaming.LimitPoolSizeToVRAM value in Engine.ini*"""
+loc = """## 设置游戏可用于纹理的显存上限：
+
+* **启用** **（默认值）** – 根据GPU可用显存限制纹理池大小。
+    ✅ 有助于防止低显存系统崩溃或卡顿。
+    ⚠️ 在高端GPU上如果限制过严可能降低纹理质量或导致突然加载。
+
+* **禁用** – 解锁最大纹理池大小，即使超过GPU安全限制。
+    ✅ 可以在性能强大的系统上提高纹理质量并减少突然加载。
+    ⚠️ 如果显存耗尽可能导致性能下降、卡顿或崩溃。
+
+*应用于Engine.ini中的ConsoleVariables → r.Streaming.LimitPoolSizeToVRAM值*"""
+
+[general_settings_mesh_lod_distance_label]
+src = "Mesh LOD Distance:"
+loc = "网格LOD距离："
+
+[general_settings_mesh_lod_distance_tooltip]
+src = """## Controls how far game replaces full animated meshes with simplified LoDs:
+
+* Set to **24** **(default)** to force full models as far as the game loads animated objects.
+    ✅ With this value mods are applied as far as you can see.
+    ⚠️ Risk of performance drops for low-end GPUs.
+
+* Set to lower value (e.g. `15`) for better performance.
+    ✅ Reduce FPS cost by allowing the game to use LoD meshes for distant animated objects.
+    ⚠️ LoDs may look wrong due to modded textures being applied to original LoD meshes.
+
+*Applied to ConsoleVariables → r.Kuro.SkeletalMesh.LODDistanceScale value in Engine.ini*"""
+loc = """## 控制游戏将完整动画网格替换为简化LOD的距离：
+
+* 设为 **24** **（默认值）** 以在游戏加载动画对象的范围内强制使用完整模型。
+    ✅ 使用此值时，模组效果会应用到可见范围内的所有内容。
+    ⚠️ 低端GPU可能出现性能下降。
+
+* 设置较低的值（如`15`）以获得更好的性能。
+    ✅ 通过允许游戏对远处的动画对象使用LOD网格来减少FPS消耗。
+    ⚠️ 由于模组纹理应用到原始LOD网格，LOD可能看起来不正确。
+
+*应用于Engine.ini中的ConsoleVariables → r.Kuro.SkeletalMesh.LODDistanceScale值*"""
+
+[general_settings_engine_settings_label]
+src = "Engine Settings:"
+loc = "引擎设置："
