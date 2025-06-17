@@ -288,6 +288,9 @@ class WWMIPackage(ModelImporterPackage):
                                 f'{e}') from e
 
     def update_engine_ini(self, game_path: Path):
+        if not Config.Importers.WWMI.Importer.configure_engine_ini:
+            return
+        
         Events.Fire(Events.Application.StatusUpdate(status='Updating Engine.ini...'))
 
         engine_ini_path = game_path / 'Client' / 'Saved' / 'Config' / 'WindowsNoEditor' / 'Engine.ini'

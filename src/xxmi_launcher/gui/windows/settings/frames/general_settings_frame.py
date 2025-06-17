@@ -62,11 +62,12 @@ class GeneralSettingsFrame(UIScrollableFrame):
             #  Performance Tweaks
             if Vars.Launcher.active_importer.get() == 'WWMI':
                 tweaks_frame.put(ApplyTweaksCheckbox(tweaks_frame)).grid(row=0, column=1, padx=(20, 10), pady=(0, 0), sticky='w')
-                tweaks_frame.put(OpenEngineIniButton(tweaks_frame)).grid(row=0, column=2, padx=(10, 20), pady=(0, 0), sticky='e')
 
         if Vars.Launcher.active_importer.get() == 'WWMI':
-            self.put(EngineSettingsLabel(self)).grid(row=5, column=0, padx=20, pady=(0, 20), sticky='w')
-            self.put(TextureStreamingFrame(self)).grid(row=5, column=1, padx=(0, 20), pady=(0, 20), sticky='w', columnspan=3)
+            self.put(AutoConfigEngineIniLabel(self)).grid(row=5, column=0, padx=20, pady=(0, 20), sticky='w')
+            self.put(AutoConfigEngineIniFrame(self)).grid(row=5, column=1, padx=(0, 20), pady=(0, 20), sticky='w', columnspan=3)
+            self.put(EngineSettingsLabel(self)).grid(row=6, column=0, padx=20, pady=(0, 20), sticky='w')
+            self.put(TextureStreamingFrame(self)).grid(row=6, column=1, padx=(0, 20), pady=(0, 20), sticky='w', columnspan=3)
 
 
 class GameFolderFrame(UIFrame):
@@ -516,6 +517,45 @@ class DisableWoundedEffectCheckbox(UICheckbox):
         else:
             self.configure(state='disabled')
 
+class AutoConfigEngineIniFrame(UIFrame):
+    def __init__(self, master):
+        super().__init__(
+            fg_color = 'transparent',
+            master=master)
+
+        self.grid_columnconfigure(0, weight=100)
+
+        self.put(ConfigureEngineIniCheckbox(self)).grid(row=0, column=0, padx=(0, 10), pady=(0, 0), sticky='w')
+        
+        self.put(OpenEngineIniButton(self)).grid(row=0, column=1, padx=(10, 20), pady=(0, 0), sticky='e')
+
+class AutoConfigEngineIniLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text='Auto Config Engine:',
+            font=('Microsoft YaHei', 14, 'bold'),
+            fg_color='transparent',
+            master=master)
+            
+class ConfigureEngineIniCheckbox(UICheckbox):
+    def __init__(self, master):
+        super().__init__(
+            text='Configure Engine.ini',
+            variable=Vars.Active.Importer.configure_engine_ini,
+            master=master)
+
+        self.set_tooltip(self.get_tooltip)
+
+    def get_tooltip(self):
+        msg = ''
+        if Config.Launcher.active_importer == 'WWMI':
+            msg = dedent("""
+                **Enabled**: Will modify Engine.ini file, based on **Engine Settings** below.
+                **Disabled**: **Engine Settings** below will not be applied to Engine.ini file.
+                                Already added ones will have to be **removed manually**.
+                <font color="red">⚠ If disabled, mods probably will **not work** and you need to modify Engine.ini file manually! ⚠</font>
+            """)
+        return msg.strip()
 
 class TextureStreamingBoostLabel(UILabel):
     def __init__(self, master):
