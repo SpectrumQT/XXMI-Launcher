@@ -107,6 +107,7 @@ class ImporterSelectButton(UIImageButton):
             'ZZMI': f'Zenless Zone Zero Model Importer',
             'SRMI': f'Honkai: Star Rail Model Importer',
             'GIMI': f'Genshin Impact Model Importer',
+            'HIMI': f'Honkai Impact Model Importer',
         }
         self.set_tooltip(tooltips[importer_id], delay=0.5)
 
@@ -207,6 +208,8 @@ class GameBananaButton(WebResourceButton):
             webbrowser.open('https://gamebanana.com/tools/13050'),
         elif Config.Launcher.active_importer == 'GIMI':
             webbrowser.open('https://gamebanana.com/tools/10093'),
+        elif Config.Launcher.active_importer == 'HIMI':
+            webbrowser.open('https://gamebanana.com/tools/16498'),
 
     def get_tooltip(self):
         return f'{Config.Launcher.active_importer} GameBanana'

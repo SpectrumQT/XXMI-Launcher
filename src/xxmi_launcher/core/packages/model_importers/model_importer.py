@@ -639,6 +639,7 @@ class ModelImporterPackage(Package):
     def validate_mods_folder(self):
         log.debug(f'Searching for invalid folders...')
         mods_path = Config.Active.Importer.importer_path / 'Mods'
+        Paths.verify_path(mods_path)
 
         for entry in self.scan_directory(mods_path, self.get_ini_exclude_patterns()):
 

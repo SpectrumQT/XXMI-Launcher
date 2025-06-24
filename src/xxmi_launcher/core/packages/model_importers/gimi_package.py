@@ -70,6 +70,7 @@ class GIMIConfig(ModelImporterConfig):
         },
     })
     unlock_fps: bool = False
+    unlock_fps_value: int = 120
     disable_dcr: bool = True
     enable_hdr: bool = False
 
@@ -409,6 +410,10 @@ class GIMIPackage(ModelImporterPackage):
             if fps_config.get(setting, None) != value:
                 fps_config[setting] = value
                 modified = True
+
+        if fps_config.get('FPSTarget', None) != Config.Active.Importer.unlock_fps_value:
+            fps_config['FPSTarget'] = Config.Active.Importer.unlock_fps_value
+            modified = True
 
         if not modified:
             return
