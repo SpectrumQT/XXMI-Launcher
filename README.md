@@ -26,14 +26,14 @@
 
 ## Installation
 
-* **Native Windows APP** (for **Windows** only)
+### **Native Windows APP** (for **Windows** only)
   1. Download the [latest release](https://github.com/SpectrumQT/XXMI-Launcher/releases/latest) of **XXMI-Launcher-Installer-Online-vX.X.X.msi**
   2. Run **XXMI-Launcher-Installer-Online-vX.X.X.msi** with Double-Click.
   3. Click **[Quick Installation]** to install **XXMI Launcher** to the default location (`%AppData%\XXMI Launcher`) or use **[Custom Installation]** to set another folder.
   4. On the game selection page of **XXMI Launcher Window** click desired **Game Tile** to add **Model Importer Icon** to the top-left corner.
   5. Click **Model Importer Icon** to open Model Importer page and press **[Install]** button to download and install selected Model Importer.
 
-* **Portable** (for **Windows** and **Linux** via **WINE 9.22+**)
+### **Portable** (for **Windows** and **Linux** via **WINE 9.22+**)
   1. Download and install [the latest Microsoft Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe).
   2. Download the [latest release](https://github.com/SpectrumQT/XXMI-Launcher/releases/latest) of **XXMI-Launcher-Portable-vX.X.X.zip**.
   3. Extract the archive to desired location (avoid Program Files folders!).
@@ -45,8 +45,9 @@
 
 - [WWMI - Wuthering Waves Model Importer GitHub](https://github.com/SpectrumQT/WWMI-Package)
 - [ZZMI - Zenless Zone Zero Model Importer GitHub](https://github.com/leotorrez/ZZMI-Package)
-- [SRMI - Honkai: Star Rail Model Importer GitHub](https://github.com/SilentNightSound/SR-Model-Importer)
-- [GIMI - Genshin Impact Model Importer GitHub](https://github.com/SilentNightSound/GI-Model-Importer)
+- [SRMI - Star Rail Model Importer GitHub](https://github.com/SpectrumQT/SRMI-TEST) ([old repo](https://github.com/SilentNightSound/SR-Model-Importer))
+- [GIMI - Genshin Impact Model Importer GitHub](https://github.com/SilentNightSound/GIMI-Package) ([old repo](https://github.com/SilentNightSound/GI-Model-Importer))
+- [HIMI - Honkai Impact Model Importer GitHub](https://github.com/leotorrez/HIMI-Package) ([old repo](https://github.com/SilentNightSound/HI-Model-Importer))
   
 ## Support This Project
 
@@ -65,6 +66,9 @@
 ### ZZMI: 
 - **Creator**: [LeoTorrez](https://github.com/leotorrez) ([Ko-Fi](https://ko-fi.com/leotorrez)), [Scyll](https://gamebanana.com/members/2644630) ([Ripe](https://gamebanana.com/members/2644630)), [SilentNightSound](https://github.com/SilentNightSound) ([Ko-Fi](https://ko-fi.com/silentnightsound))
 - **Maintainers**: [SinsOfSeven](https://github.com/SinsOfSeven) ([Ko-Fi](https://ko-fi.com/sinsofseven)), [LeoTorrez](https://github.com/leotorrez) ([Ko-Fi](https://ko-fi.com/leotorrez)), [Gustav0](https://github.com/Seris0) ([Ko-Fi](https://ko-fi.com/gustav0_)), [Scyll](https://gamebanana.com/members/2644630) ([Ripe](https://gamebanana.com/members/2644630)), [Satan1c](https://gamebanana.com/members/2789093) ([Patreon](https://patreon.com/Satan1cL))
+### HIMI:
+- **Creator**: [SilentNightSound](https://github.com/SilentNightSound) ([Ko-Fi](https://ko-fi.com/silentnightsound))
+- **Maintainers**: [LeoTorrez](https://github.com/leotorrez) ([Ko-Fi](https://ko-fi.com/leotorrez)), [SinsOfSeven](https://github.com/SinsOfSeven) ([Ko-Fi](https://ko-fi.com/sinsofseven))
 
 ## License
 

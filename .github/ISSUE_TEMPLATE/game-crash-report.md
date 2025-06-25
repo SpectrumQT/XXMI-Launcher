@@ -76,3 +76,6 @@ Please don't forget to include the **launcher log**  — it is essential for und
 
 - **ZZMI (Zenless Zone Zero)**  
   https://github.com/leotorrez/ZZMI-package/issues
+
+- **HIMI (Zenless Zone Zero)**  
+  https://github.com/leotorrez/HIMI-package/issues

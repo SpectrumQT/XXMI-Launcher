@@ -44,3 +44,6 @@ If your issue is confirmed to be Model Importer–related, please **report it to
 
 - **ZZMI (Zenless Zone Zero)**  
   https://github.com/leotorrez/ZZMI-package/issues
+
+- **HIMI (Zenless Zone Zero)**  
+  https://github.com/leotorrez/HIMI-package/issues
