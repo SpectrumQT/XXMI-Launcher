@@ -28,21 +28,21 @@ class GeneralSettingsFrame(UIScrollableFrame):
         self.grid()
 
         # Game Folder
-        self.put(GameFolderLabel(self)).grid(row=0, column=0, padx=(20, 0), pady=(0, 30), sticky='w')
+        self.put(GameFolderLabel(self)).grid(row=0, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
         self.put(GameFolderFrame(self)).grid(row=0, column=1, padx=(0, 65), pady=(0, 30), sticky='new', columnspan=3)
         self.put(DetectGameFolderButton(self)).grid(row=0, column=1, padx=(0, 20), pady=(0, 30), sticky='e', columnspan=3)
 
         # Launch Options
-        self.put(LaunchOptionsLabel(self)).grid(row=1, column=0, padx=(20, 0), pady=(0, 30), sticky='w')
+        self.put(LaunchOptionsLabel(self)).grid(row=1, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
         self.put(LaunchOptionsFrame(self)).grid(row=1, column=1, padx=(0, 20), pady=(0, 30), sticky='ew', columnspan=3)
 
         # Process Priority
-        self.put(StartMethodLabel(self)).grid(row=2, column=0, padx=20, pady=(0, 30), sticky='w')
+        self.put(StartMethodLabel(self)).grid(row=2, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
         self.put(ProcessOptionsFrame(self)).grid(row=2, column=1, padx=(0, 20), pady=(0, 30), sticky='w', columnspan=3)
 
         # Auto Config
-        if Vars.Launcher.active_importer.get() != 'SRMI':
-            self.put(AutoConfigLabel(self)).grid(row=3, column=0, padx=(20, 0), pady=(0, 30), sticky='w')
+        if Vars.Launcher.active_importer.get() not in ['SRMI', 'HIMI']:
+            self.put(AutoConfigLabel(self)).grid(row=3, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
             self.put(AutoConfigFrame(self)).grid(row=3, column=1, padx=(0, 20), pady=(0, 30), sticky='w', columnspan=3)
 
         if Vars.Launcher.active_importer.get() != 'ZZMI':
@@ -71,7 +71,7 @@ class GeneralSettingsFrame(UIScrollableFrame):
                 tweaks_frame.put(OpenEngineIniButton(tweaks_frame)).grid(row=0, column=2, padx=(10, 20), pady=(0, 0), sticky='e')
 
         if Vars.Launcher.active_importer.get() == 'WWMI':
-            self.put(EngineSettingsLabel(self)).grid(row=5, column=0, padx=20, pady=(0, 20), sticky='w')
+            self.put(EngineSettingsLabel(self)).grid(row=5, column=0, padx=(20, 10), pady=(0, 20), sticky='w')
             self.put(TextureStreamingFrame(self)).grid(row=5, column=1, padx=(0, 20), pady=(0, 20), sticky='w', columnspan=3)
 
 
@@ -94,6 +94,19 @@ class GameFolderFrame(UIFrame):
 class LaunchOptionsFrame(UIFrame):
     def __init__(self, master):
         super().__init__(
+            fg_color = 'transparent',
+            master=master)
+
+        self.grid_columnconfigure(1, weight=100)
+
+        self.put(LaunchOptionsCheckbox(self)).grid(row=0, column=0, padx=(0, 0), pady=(0, 0), sticky='w')
+        self.put(LaunchOptionsEntryFrame(self)).grid(row=0, column=1, padx=(0, 0), pady=(0, 0), sticky='ew')
+        self.grab(LaunchOptionsCheckbox).set_tooltip(self.grab(LaunchOptionsEntryFrame).grab(LaunchOptionsEntry))
+
+
+class LaunchOptionsEntryFrame(UIFrame):
+    def __init__(self, master):
+        super().__init__(
             border_color = ThemeManager.theme["CTkEntry"].get("border_color", None),
             border_width = ThemeManager.theme["CTkEntry"].get("border_width", None),
             fg_color = ThemeManager.theme["CTkEntry"].get("fg_color", None),
@@ -103,6 +116,18 @@ class LaunchOptionsFrame(UIFrame):
 
         self.put(LaunchOptionsEntry(self)).grid(row=0, column=0, padx=(4, 0), pady=(2, 2), sticky='ew')
         self.put(LaunchOptionsButton(self)).grid(row=0, column=1, padx=(0, 4), pady=(2, 2), sticky='e')
+
+        self.trace_write(Vars.Active.Importer.use_launch_options, self.handle_write_use_launch_options)
+
+    def handle_write_use_launch_options(self, var, val):
+        if val:
+            self.configure(
+                fg_color = ThemeManager.theme['CTkEntry'].get('fg_color', None),
+                border_color = ThemeManager.theme["CTkEntry"].get("border_color", None))
+        else:
+            self.configure(
+                fg_color = ThemeManager.theme['CTkEntry'].get('fg_color_disabled', None),
+                border_color = ThemeManager.theme["CTkEntry"].get("border_color_disabled", None))
 
 
 class ProcessOptionsFrame(UIFrame):
@@ -279,6 +304,57 @@ class DetectGameFolderButton(UIButton):
             pass
 
 
+class LaunchOptionsLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text='Launch Options:',
+            font=('Microsoft YaHei', 14, 'bold'),
+            fg_color='transparent',
+            master=master)
+
+
+class LaunchOptionsCheckbox(UICheckbox):
+    def __init__(self, master):
+        super().__init__(
+            text='',
+            font=('Microsoft YaHei', 14, 'bold'),
+            variable=Vars.Active.Importer.use_launch_options,
+            width=36,
+            master=master)
+
+
+class LaunchOptionsEntry(UIEntry):
+    def __init__(self, master):
+        super().__init__(
+            textvariable=Vars.Active.Importer.launch_options,
+            width=100,
+            height=32,
+            border_width=0,
+            font=('Arial', 14),
+            master=master)
+        self.set_tooltip(self.get_tooltip)
+        self.trace_write(Vars.Active.Importer.use_launch_options, self.handle_write_use_launch_options)
+
+    def get_tooltip(self):
+        if Config.Launcher.active_importer == 'WWMI':
+            return dedent("""
+                **Enabled**: Start game via **Client-Win64-Shipping.exe** with specified command line arguments.
+                **Disabled (default)**: Start game normally via **Wuthering Waves.exe** (most reliable way).
+                <font color="red">⚠ Game may crash with this option enabled! ⚠</font>
+            """)
+        else:
+            return dedent("""
+                **Enabled**: Start game exe with specified command line arguments.
+                **Disabled**: Ignore specified command line arguments and start game exe normally.
+            """)
+
+    def handle_write_use_launch_options(self, var, val):
+        if val:
+            self.configure(state='normal')
+        else:
+            self.configure(state='disabled')
+
+
 class LaunchOptionsButton(UIButton):
     def __init__(self, master):
         fg_color = ThemeManager.theme['CTkEntry'].get('fg_color', None)
@@ -299,6 +375,22 @@ class LaunchOptionsButton(UIButton):
 
         self.set_tooltip(self.get_tooltip)
 
+        self.trace_write(Vars.Active.Importer.use_launch_options, self.handle_write_use_launch_options)
+
+    def handle_write_use_launch_options(self, var, val):
+        if val:
+            self.configure(
+                fg_color=ThemeManager.theme['CTkEntry'].get('fg_color', None),
+                hover_color=ThemeManager.theme['CTkEntry'].get('fg_color', None),
+                text_color=['#000000', '#aaaaaa'],
+            )
+        else:
+            self.configure(
+                fg_color=ThemeManager.theme['CTkEntry'].get('fg_color_disabled', None),
+                hover_color=ThemeManager.theme['CTkEntry'].get('fg_color_disabled', None),
+                text_color=['#000000', '#666666'],
+            )
+
     def open_docs(self):
         if Config.Launcher.active_importer == 'WWMI':
             webbrowser.open('https://dev.epicgames.com/documentation/en-us/unreal-engine/command-line-arguments?application_version=4.27')
@@ -316,33 +408,6 @@ class LaunchOptionsButton(UIButton):
         return (
             f'Open {engine} command line arguments documentation webpage.\n'
             f'Note: Game engine is customized by devs and some args may not work.')
-
-
-class LaunchOptionsLabel(UILabel):
-    def __init__(self, master):
-        super().__init__(
-            text='Launch Options:',
-            font=('Microsoft YaHei', 14, 'bold'),
-            fg_color='transparent',
-            master=master)
-
-
-class LaunchOptionsEntry(UIEntry):
-    def __init__(self, master):
-        super().__init__(
-            textvariable=Vars.Active.Importer.launch_options,
-            width=100,
-            height=32,
-            border_width=0,
-            font=('Arial', 14),
-            master=master)
-        self.set_tooltip(self.get_tooltip)
-
-    def get_tooltip(self):
-        msg = 'Command line arguments aka Launch Options to start game exe with.\n'
-        if Config.Launcher.active_importer == 'WWMI':
-            msg += '* Disable intro: -SkipSplash'
-        return msg.strip()
 
 
 class StartMethodLabel(UILabel):
@@ -482,7 +547,7 @@ class ConfigureGameCheckbox(UICheckbox):
 
                 <font color="red">⚠ Mods will not work with wrong settings! ⚠</font>
             """)
-        if Config.Launcher.active_importer == 'WWMI':
+        elif Config.Launcher.active_importer == 'WWMI':
             msg = dedent("""
                 **Enabled**: Ensure WWMI-compatible in-game **Graphics Settings** before game start:
 
@@ -492,7 +557,7 @@ class ConfigureGameCheckbox(UICheckbox):
 
                 <font color="red">⚠ Mods will not work with wrong settings! ⚠</font>
             """)
-        if Config.Launcher.active_importer == 'ZZMI':
+        elif Config.Launcher.active_importer == 'ZZMI':
             msg = dedent("""
                 **Enabled**: Ensure ZZMI-compatible in-game **Graphics Settings** before game start:
 

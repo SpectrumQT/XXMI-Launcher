@@ -105,6 +105,10 @@ class MigotoPackage(Package):
 
         dll_path = Config.Active.Importer.importer_path / 'd3d11.dll'
 
+        start_args = event.start_args
+        if Config.Active.Importer.use_launch_options:
+            start_args += Config.Active.Importer.launch_options.split()
+
         process_flags = subprocess.CREATE_NEW_CONSOLE | subprocess.CREATE_DEFAULT_ERROR_MODE
         process_flags |= ProcessPriority(Config.Active.Importer.process_priority).get_process_flag()
 
@@ -135,7 +139,7 @@ class MigotoPackage(Package):
                     start_method = Config.Active.Importer.process_start_method,
                     exe_path = str(event.start_exe_path),
                     work_dir = event.work_dir,
-                    start_args = event.start_args + Config.Active.Importer.launch_options.split(),
+                    start_args = start_args,
                     process_flags = process_flags,
                     process_name = process_name,
                     dll_paths = extra_dll_paths,
@@ -189,7 +193,7 @@ class MigotoPackage(Package):
                 start_method=Config.Active.Importer.process_start_method,
                 exe_path=str(event.start_exe_path),
                 work_dir=event.work_dir,
-                start_args=event.start_args + Config.Active.Importer.launch_options.split(),
+                start_args=start_args,
                 process_flags=process_flags,
                 process_name=process_name,
                 dll_paths=dll_paths,
