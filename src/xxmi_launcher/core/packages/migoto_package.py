@@ -7,6 +7,7 @@ import time
 from typing import List
 from dataclasses import dataclass, field
 from pathlib import Path
+from textwrap import dedent
 
 import core.path_manager as Paths
 import core.event_manager as Events
@@ -157,9 +158,13 @@ class MigotoPackage(Package):
                 result, pid = wait_for_process(process_name, with_window=True, timeout=Config.Launcher.start_timeout, check_visibility=True)
                 if result == WaitResult.Timeout:
                     if hooked:
-                        raise ValueError(f'Failed to detect game process {process_name}!\n\n'
-                                         f'If game window takes more than {Config.Launcher.start_timeout} seconds to appear, adjust Timeout in Launcher Settings.\n\n'
-                                         f'If game crashed, try to clear Mods and ShaderFixes folders.')
+                        raise ValueError(dedent(f"""
+                            Failed to detect game process {process_name}!
+                            
+                            If game crashed, try to adjust XXMI Delay in General Settings or clear Mods and ShaderFixes folders.
+                            
+                            If game window takes more than {Config.Launcher.start_timeout} seconds to appear, adjust Timeout in Launcher Settings.
+                        """))
                     else:
                         raise ValueError(f'Failed to start {process_name}!')
 
@@ -204,8 +209,13 @@ class MigotoPackage(Package):
             Events.Fire(Events.Application.WaitForProcess(process_name=process_name))
             result, pid = wait_for_process(process_name, with_window=True, timeout=Config.Launcher.start_timeout, check_visibility=True)
             if result == WaitResult.Timeout:
-                raise ValueError(f'Failed to detect game process {process_name}!\n\n'
-                                 f'If game crashed, try to clear Mods and ShaderFixes folders.')
+                raise ValueError(dedent(f"""
+                    Failed to detect game process {process_name}!
+
+                    If game crashed, try to adjust XXMI Delay in General Settings or clear Mods and ShaderFixes folders.
+
+                    If game window takes more than {Config.Launcher.start_timeout} seconds to appear, adjust Timeout in Launcher Settings.
+                """))
 
         # Wait a bit more for window to maximize
         time.sleep(1)
