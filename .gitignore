@@ -18,3 +18,65 @@ __pycache__/
 /XXMI-Launcher Log.txt
 /XXMI Launcher Log.txt
 /fps_config.json
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+pytest_cache/
+.tox/
+.nox/
+
+# Poetry
+dist/
+*.egg-info/
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+
+# Claude settings
+.claude/*
+
+# Build artifacts
+build/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg
+
+# Byte-compiled / optimized / DLL files
+*.py[cod]
+*$py.class
+*.so
+
+# Unit test / coverage reports
+nosetests.xml
+coverage.xml
+*.cover
+.coverage.*
+.cache
