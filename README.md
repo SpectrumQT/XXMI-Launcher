@@ -47,7 +47,7 @@
 
 ## 包含的模型导入器
 
-- [WWMI - 无尽之夜模型导入器 GitHub](https://github.com/SpectrumQT/WWMI-Package)
+- [WWMI - 鸣潮模型导入器 GitHub](https://github.com/SpectrumQT/WWMI-Package)
 - [ZZMI - 绝区零模型导入器 GitHub](https://github.com/leotorrez/ZZMI-Package)
 - [SRMI - 崩坏：星穹铁道模型导入器 GitHub](https://github.com/SilentNightSound/SR-Model-Importer)
 - [GIMI - 原神模型导入器 GitHub](https://github.com/SilentNightSound/GI-Model-Importer)
