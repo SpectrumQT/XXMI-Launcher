@@ -1069,7 +1069,7 @@ loc = "原神模型导入器"
 
 [top_bar_himi_tooltip]
 src = "Honkai Impact Model Importer"
-loc = "崩坏模型导入器"
+loc = "崩坏3模型导入器"
 
 [top_bar_gamebanana_tooltip]
 src = "{importer} GameBanana"
@@ -1398,7 +1398,7 @@ loc = "包含\"GenshinImpact.exe\"或\"YuanShen.exe\"（国服）的文件夹路
 
 [general_settings_game_folder_tooltip_himi]
 src = "Path to folder with \"BH3.exe\".\nUsually this folder is named \"Games\" and located inside \"DATA\" folder of HSR installation folder."
-loc = "包含\"BH3.exe\"的文件夹路径。\n通常此文件夹名为\"Games\"，位于BH3安装文件夹的\"DATA\"文件夹内。"
+loc = "包含\"BH3.exe\"的文件夹路径。\n通常此文件夹名为\"Games\"，位于崩坏3安装文件夹的\"DATA\"文件夹内。"
 
 [general_settings_game_folder_error]
 src = "Failed to detect Game Folder!"
@@ -1874,3 +1874,44 @@ loc = """## 控制游戏将完整动画网格替换为简化LOD的距离：
 [general_settings_engine_settings_label]
 src = "Engine Settings:"
 loc = "引擎设置："
+
+# HIMI Package Messages
+[himi_game_exe_not_found]
+src = "Game executable {} not found!"
+loc = "未找到游戏可执行文件 {}！"
+
+[himi_updating_ini]
+src = "Updating HIMI main.ini..."
+loc = "正在更新 HIMI main.ini..."
+
+[himi_ini_not_found]
+src = "Failed to locate Core/HIMI/main.ini!"
+loc = "无法找到 Core/HIMI/main.ini！"
+
+[himi_registry_key_not_found]
+src = "Honkai Impact 3rd registry key is not found!\n\nPlease start the game without FPS tweak, change FPS to any value to create the record and try again.\n\nNote: Tweak is supported only for the Global client and will not work for CN."
+loc = "未找到崩坏3注册表项！\n\n请在不使用FPS调整的情况下启动游戏，更改FPS值以创建记录，然后重试。\n\n注意：此调整仅支持国际服客户端，不适用于国服。"
+
+[himi_graphics_settings_not_found]
+src = "Graphics Settings record is not found in Honkai Impact 3rd registry!\n\nPlease start the game without FPS tweak, change FPS to any value to create the record and try again."
+loc = "在崩坏3注册表中未找到图形设置记录！\n\n请在不使用FPS调整的情况下启动游戏，更改FPS值以创建记录，然后重试。"
+
+[himi_unknown_graphics_format]
+src = "Unknown Graphics Settings format: Data type {} is not {} of REG_BINARY!"
+loc = "未知的图形设置格式：数据类型 {} 不是 REG_BINARY 类型的 {}！"
+
+[himi_fps_key_not_found]
+src = "Unknown Graphics Settings format: \"TargetFrameRateForInLevel\" key not found!"
+loc = "未知的图形设置格式：未找到\"TargetFrameRateForInLevel\"键！"
+
+[himi_malformed_version]
+src = "Malformed HIMI version!"
+loc = "HIMI版本格式错误！"
+
+[himi_version_not_found]
+src = "Failed to locate HIMI version!"
+loc = "无法找到HIMI版本！"
+
+[himi_fps_unlock_failed]
+src = "Failed to configure FPS: {}"
+loc = "配置FPS失败：{}"

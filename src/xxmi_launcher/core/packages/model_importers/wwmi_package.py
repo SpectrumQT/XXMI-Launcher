@@ -209,8 +209,8 @@ class WWMIPackage(ModelImporterPackage):
         return game_exe_path
 
     def get_start_cmd(self, game_path: Path) -> Tuple[Path, List[str], Optional[str]]:
-        game_exe_path = self.validate_game_exe_path(game_path)
-        return game_exe_path, ['Client', '-DisableModule=streamline', '-d3d11', '-dx11'], str(game_exe_path.parent)
+        self.validate_game_exe_path(game_path)
+        return game_path / 'Wuthering Waves.exe', ['-dx11'], str(game_path)
 
     def initialize_game_launch(self, game_path: Path):
         # self.verify_plugins(game_path)
