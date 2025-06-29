@@ -72,7 +72,7 @@ class LauncherFrame(UIFrame):
             lambda event: self.update_background(event.importer_id))
 
     def update_background(self, importer_id):
-        self.set_background_image(f'background-image-{importer_id.lower()}.jpg',
+        self.set_background_image(f'background-image-{importer_id.lower()}.webp',
                                   width=self.master.cfg.width,
                                   height=self.master.cfg.height)
 
