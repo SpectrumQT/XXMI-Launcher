@@ -106,3 +106,8 @@ class UIScrollableFrame(CTkScrollableFrame, UIElementBase):
                 self._scrollbar.grid_forget()
             else:
                 self._scrollbar.grid()
+
+    def check_if_master_is_canvas(self, widget):
+        if widget is None:
+            return False
+        return super().check_if_master_is_canvas(widget)
