@@ -731,7 +731,7 @@ class UnlockFPSCheckbox(UICheckbox):
             variable=Vars.Active.Importer.unlock_fps,
             master=master)
         if Config.Launcher.active_importer in ['GIMI', 'HIMI']:
-            self.configure(text='Unlock FPS:')
+            self.configure(text=str(L('general_settings_unlock_fps_label', 'Unlock FPS:')))
         self.set_tooltip(self.get_tooltip)
 
     def get_tooltip(self):

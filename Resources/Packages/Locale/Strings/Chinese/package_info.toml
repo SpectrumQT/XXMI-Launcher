@@ -70,16 +70,12 @@ loc = "XXMI启动器快捷方式"
 
 # Migoto包相关
 [migoto_game_detection_timeout]
-src = "Failed to detect game process {process_name}!\n\nIf game window takes more than {timeout} seconds to appear, adjust Timeout in Launcher Settings.\n\nIf game crashed, try to clear Mods and ShaderFixes folders."
-loc = "检测游戏进程{process_name}失败！\n\n如果游戏窗口出现时间超过{timeout}秒，请在启动器设置中调整超时时间。\n\n如果游戏崩溃，请尝试清理Mods和ShaderFixes文件夹。"
+src = "Failed to detect game process {process_name}!\n\nIf game crashed, try to adjust XXMI Delay in General Settings or clear Mods and ShaderFixes folders.\n\nIf game window takes more than {Config.Launcher.start_timeout} seconds to appear, adjust Timeout in Launcher Settings."
+loc = "检测游戏进程{process_name}失败！\n\n如果游戏崩溃了，请在常规设置中尝试调整XXMI延迟，或者清空模组和ShaderFixes文件夹。\n\n如果游戏窗口出现时间超过{timeout}秒，请在启动器设置中调整超时时间。"
 
 [migoto_game_start_failed]
 src = "Failed to start {process_name}!"
 loc = "启动{process_name}失败！"
-
-[migoto_game_detection_timeout_simple]
-src = "Failed to detect game process {process_name}!\n\nIf game crashed, try to clear Mods and ShaderFixes folders."
-loc = "检测游戏进程{process_name}失败！\n\n如果游戏崩溃，请尝试清理Mods和ShaderFixes文件夹。"
 
 [migoto_restore_button]
 src = "Restore"
@@ -1945,3 +1941,7 @@ loc = """
 **启用**：使用指定的命令行参数启动游戏可执行文件。
 **禁用**：忽略指定的命令行参数，正常启动游戏可执行文件。
 """
+
+[general_settings_unlock_fps_label]
+src = "Unlock FPS:"
+loc = "解锁帧率："
