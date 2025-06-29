@@ -30,6 +30,7 @@ from core.packages.model_importers.gimi_package import GIMIPackage
 from core.packages.model_importers.srmi_package import SRMIPackage
 from core.packages.model_importers.wwmi_package import WWMIPackage
 from core.packages.model_importers.zzmi_package import ZZMIPackage
+from core.packages.model_importers.himi_package import HIMIPackage
 
 
 @dataclass
@@ -252,7 +253,7 @@ class Application:
         parser.add_argument('-h', '--help', '-help', action='store_true',
                             help='Show this help message and exit.')
         parser.add_argument('-x', '--xxmi', type=str,
-                            help='Set active model importer (WWMI/ZZMI/SRMI/GIMI) used by launcher.')
+                            help='Set active model importer (WWMI/ZZMI/SRMI/GIMI/HIMI) used by launcher.')
         parser.add_argument('-n', '--nogui', action='store_true',
                             help='Start game with active model importer without showing launcher window.')
         parser.add_argument('-u', '--update', action='store_true',
@@ -310,6 +311,7 @@ class Application:
             SRMIPackage(),
             WWMIPackage(),
             ZZMIPackage(),
+            HIMIPackage(),
         ]
 
         self.package_manager = PackageManager(self.packages)
@@ -421,7 +423,7 @@ class Application:
         else:
             game_folder = path
 
-        for package_name in ['WWMI', 'ZZMI', 'SRMI', 'GIMI']:
+        for package_name in ['WWMI', 'ZZMI', 'SRMI', 'GIMI', 'HIMI']:
             package = self.package_manager.get_package(package_name)
             if not isinstance(package, ModelImporterPackage):
                 from core.locale_manager import T
@@ -434,7 +436,7 @@ class Application:
             return package.metadata.package_name, game_path, game_exe_path
 
         from core.locale_manager import T
-        raise ValueError(T('application_auto_select_failed', 'Failed to auto-select importer for `{}`!\n\nTry to add `--nogui --xxmi WWMI` args (or GIMI, SRMI, ZZMI).').format(path))
+        raise ValueError(T('application_auto_select_failed', 'Failed to auto-select importer for `{}`!\n\nTry to add `--nogui --xxmi WWMI` args (or GIMI, SRMI, ZZMI, HIMI).').format(path))
 
     def get_active_importer(self) -> str:
         active_importer = None
@@ -595,7 +597,7 @@ class Application:
 
     def get_launch_counters_from_log(self, exclude_failed = True):
         with (open(Paths.App.Root / 'XXMI Launcher Log.txt', 'r', encoding='utf-8', errors='ignore') as f):
-            launch_counters = { 'GIMI': 0, 'SRMI': 0,  'WWMI': 0, 'ZZMI': 0 }
+            launch_counters = { 'GIMI': 0, 'SRMI': 0,  'WWMI': 0, 'ZZMI': 0, 'HIMI': 0 }
 
             def parse_active_package(line):
                 if 'Loaded package:' in line:

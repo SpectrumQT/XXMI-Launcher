@@ -57,8 +57,17 @@ class GeneralSettingsFrame(UIScrollableFrame):
     
             # Window mode for GI FPS Unlocker
             if Vars.Launcher.active_importer.get() == 'GIMI':
-                tweaks_frame.put(UnlockFPSWindowOptionMenu(tweaks_frame)).grid(row=0, column=1, padx=(20, 10), pady=(0, 0), sticky='w')
-                tweaks_frame.put(EnableHDR(tweaks_frame)).grid(row=0, column=2, padx=(60, 10), pady=(0, 0), sticky='w')
+                tweaks_frame.put(UnlockFPSValueEntry(tweaks_frame)).grid(row=0, column=1, padx=(0, 10), pady=(0, 0),
+                                                                         sticky='w')
+                tweaks_frame.grab(UnlockFPSValueEntry).set_tooltip(tweaks_frame.grab(UnlockFPSCheckbox))
+                tweaks_frame.put(UnlockFPSWindowOptionMenu(tweaks_frame)).grid(row=0, column=2, padx=(20, 10),
+                                                                               pady=(0, 0), sticky='w')
+                tweaks_frame.put(EnableHDR(tweaks_frame)).grid(row=0, column=3, padx=(60, 10), pady=(0, 0), sticky='w')
+
+            elif Vars.Launcher.active_importer.get() == 'HIMI':
+                tweaks_frame.put(UnlockFPSValueEntry(tweaks_frame)).grid(row=0, column=1, padx=(0, 10), pady=(0, 0),
+                                                                         sticky='w')
+                tweaks_frame.grab(UnlockFPSValueEntry).set_tooltip(tweaks_frame.grab(UnlockFPSCheckbox))
     
             #  Performance Tweaks
             if Vars.Launcher.active_importer.get() == 'WWMI':
@@ -204,6 +213,8 @@ class GameFolderEntry(UIEntry):
             msg = str(L('general_settings_game_folder_tooltip_srmi', 'Path to folder with "StarRail.exe".\nUsually this folder is named "Games" and located inside "DATA" folder of HSR installation folder.'))
         if Config.Launcher.active_importer == 'GIMI':
             msg = str(L('general_settings_game_folder_tooltip_gimi', 'Path to folder with "GenshinImpact.exe" or "YuanShen.exe" (CN).\nUsually this folder is named "Genshin Impact Game" and located inside "DATA" folder of GI installation folder.'))
+        if Config.Launcher.active_importer == 'HIMI':
+            msg = str(L('general_settings_game_folder_tooltip_himi', 'Path to folder with "BH3.exe".\nUsually this folder is named "Games" and located inside "DATA" folder of HSR installation folder.'))
         return msg.strip()
 
 
@@ -289,13 +300,13 @@ class LaunchOptionsButton(UIButton):
     def open_docs(self):
         if Config.Launcher.active_importer == 'WWMI':
             webbrowser.open('https://dev.epicgames.com/documentation/en-us/unreal-engine/command-line-arguments?application_version=4.27')
-        elif Config.Launcher.active_importer in ['GIMI', 'SRMI', 'ZZMI']:
+        elif Config.Launcher.active_importer in ['GIMI', 'SRMI', 'ZZMI', 'HIMI']:
             webbrowser.open('https://docs.unity3d.com/Manual/PlayerCommandLineArguments.html')
 
     def get_tooltip(self):
         if Config.Launcher.active_importer == 'WWMI':
             engine = 'UE4'
-        elif Config.Launcher.active_importer in ['GIMI', 'SRMI', 'ZZMI']:
+        elif Config.Launcher.active_importer in ['GIMI', 'SRMI', 'ZZMI', 'HIMI']:
             engine = 'Unity'
         else:
             raise ValueError(f'Game engine is unknown!')
@@ -657,6 +668,8 @@ class UnlockFPSCheckbox(UICheckbox):
             text=str(L('general_settings_unlock_fps_checkbox', 'Force 120 FPS')),
             variable=Vars.Active.Importer.unlock_fps,
             master=master)
+        if Config.Launcher.active_importer in ['GIMI', 'HIMI']:
+            self.configure(text='Unlock FPS:')
         self.set_tooltip(self.get_tooltip)
 
     def get_tooltip(self):
@@ -667,7 +680,7 @@ class UnlockFPSCheckbox(UICheckbox):
                 'Please do note that with some hardware game refuses to go 120 FPS even with this tweak.\n'
                 '**Enabled**: Sets `CustomFrameRate` to `120` in `LocalStorage.db` on game start.\n'
                 '**Disabled**: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.'))
-        if Config.Launcher.active_importer == 'SRMI':
+        elif Config.Launcher.active_importer == 'SRMI':
             msg = str(L('general_settings_unlock_fps_tooltip_srmi',
                 'This option allows to set FPS limit to 120.\n'
                 '**Enabled**: Updates Graphics Settings Windows Registry key with 120 FPS value on game start.\n'
@@ -676,13 +689,38 @@ class UnlockFPSCheckbox(UICheckbox):
                 '*Note: Edits `FPS` value in `HKEY_CURRENT_USER/SOFTWARE/Cognosphere/Star Rail/GraphicsSettings_Model_h2986158309`.*'))
         elif Config.Launcher.active_importer == 'GIMI':
             msg = str(L('general_settings_unlock_fps_tooltip_gimi',
-                'This option allows to force 120 FPS mode.\n'
+                'This option allows to set custom FPS limit.\n'
+                '**Warning!**: To minimize game engine glitches set FPS to 120 / 180 / 240 etc.\n'
                 '**Enabled**: Launch game via `unlockfps_nc.exe` and let it run in background to keep FPS tweak applied.\n'
                 '**Disabled**: Launch game via original `.exe` file, has no effect on FPS.\n'
                 '*Hint: If FPS Unlocker package is outdated, you can manually update "unlockfps_nc.exe" from original repository.*\n'
                 '*Local Path*: `Resources/Packages/GI-FPS-Unlocker/unlockfps_nc.exe`\n'
                 '*Original Repository*: `https://github.com/34736384/genshin-fps-unlock`'))
+        elif Config.Launcher.active_importer == 'HIMI':
+            msg = str(L('general_settings_unlock_fps_tooltip_himi',
+            'This option allows to set custom FPS limit.\n'
+            '**Enabled**: Updates Graphics Settings Windows Registry key with specified FPS value on game start.\n'
+            '**Disabled**: Has no effect on FPS settings, use in-game settings to undo already tweaked FPS.'))
         return msg.strip()
+
+class UnlockFPSValueEntry(UIEntry):
+    def __init__(self, master):
+        super().__init__(
+            textvariable=Vars.Active.Importer.unlock_fps_value,
+            input_filter='INT',
+            width=50,
+            height=36,
+            font=('Arial', 14),
+            master=master)
+
+        self.trace_write(Vars.Active.Importer.unlock_fps, self.handle_write_unlock_fps)
+
+    def handle_write_unlock_fps(self, var, val):
+        if val:
+            self.configure(state='normal')
+        else:
+            self.configure(state='disabled')
+
 
 
 class UnlockFPSWindowOptionMenu(UIOptionMenu):

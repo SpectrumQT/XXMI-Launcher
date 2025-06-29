@@ -19,6 +19,7 @@ from core.packages.model_importers import gimi_package
 from core.packages.model_importers import srmi_package
 from core.packages.model_importers import wwmi_package
 from core.packages.model_importers import zzmi_package
+from core.packages.model_importers import himi_package
 
 log = logging.getLogger(__name__)
 
@@ -29,6 +30,7 @@ class ImportersConfig:
     SRMI: srmi_package.SRMIPackageConfig = field(default_factory=lambda: srmi_package.SRMIPackageConfig())
     WWMI: wwmi_package.WWMIPackageConfig = field(default_factory=lambda: wwmi_package.WWMIPackageConfig())
     ZZMI: zzmi_package.ZZMIPackageConfig = field(default_factory=lambda: zzmi_package.ZZMIPackageConfig())
+    HIMI: himi_package.HIMIPackageConfig = field(default_factory=lambda: himi_package.HIMIPackageConfig())
 
 
 @dataclass
@@ -69,7 +71,8 @@ class AppConfig:
 
     @property
     def Active(self) -> Union[gimi_package.GIMIPackageConfig, srmi_package.SRMIPackageConfig,
-                              zzmi_package.ZZMIPackageConfig, wwmi_package.WWMIPackageConfig]:
+                              zzmi_package.ZZMIPackageConfig, wwmi_package.WWMIPackageConfig,
+                              himi_package.HIMIPackageConfig]:
         global Active
         return Active
 
@@ -322,7 +325,8 @@ Launcher: launcher_package.LauncherManagerConfig
 Packages: package_manager.PackageManagerConfig
 Importers: ImportersConfig
 Active: Union[gimi_package.GIMIPackageConfig, srmi_package.SRMIPackageConfig,
-              wwmi_package.WWMIPackageConfig, zzmi_package.ZZMIPackageConfig]
+              wwmi_package.WWMIPackageConfig, zzmi_package.ZZMIPackageConfig,
+              himi_package.HIMIPackageConfig]
 
 
 def get_resource_path(element, filename: Union[str, Path], extensions: Optional[Union[str, List[str]]] = None):
