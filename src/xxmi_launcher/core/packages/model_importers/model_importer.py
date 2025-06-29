@@ -61,6 +61,7 @@ class ModelImporterConfig:
     package_name: str = ''
     importer_folder: str = ''
     game_folder: str = ''
+    use_launch_options: bool = True
     overwrite_ini: bool = True
     process_start_method: str = 'Native'
     xxmi_dll_init_delay: int = 0

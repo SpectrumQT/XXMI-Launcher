@@ -1437,8 +1437,16 @@ src = "Start Method:"
 loc = "启动方式："
 
 [general_settings_start_method_tooltip]
-src = "**Native**: Use native Python call to start game process (`subprocess.popen`).\n**Shell**: Use external library C++ call to start game process (`ShellExecute`)"
-loc = "**原生**：使用原生Python调用启动游戏进程（`subprocess.popen`）。\n**Shell**：使用外部库C++调用启动游戏进程（`ShellExecute`）"
+src = """
+**Native**: Create the game process directly. Usually it's the most reliable way.
+**Shell**: Start the game process via system console. Worth to try if you have some issues with Native.
+**Manual**: Skip launching the game on **Start** button press. Wait for user to launch it manually ({timeout}s timeout).
+"""
+loc = """
+**原生**：直接创建游戏进程。通常是最可靠的方式。
+**Shell**：通过系统控制台启动游戏进程。如果原生方式有问题可以尝试此选项。
+**手动**：按下**启动**按钮时不启动游戏。等待用户手动启动游戏（{timeout}秒超时）。
+"""
 
 [general_settings_xxmi_delay_label]
 src = "XXMI Delay:"
@@ -1652,8 +1660,8 @@ src = "Warning! This command also overrides `Launch Options` from General Settin
 loc = "警告！此命令还会覆盖常规设置中的`启动选项`。\n"
 
 [advanced_settings_custom_launch_tooltip_wwmi_warning]
-src = "Warning! Make sure to pass `Client -DisableModule=streamline` argument to Client-Win64-Shipping.exe to force DX11 mode!\n"
-loc = "警告！确保向Client-Win64-Shipping.exe传递`Client -DisableModule=streamline`参数以强制DX11模式！\n"
+src = "Warning! Make sure to pass `-dx11` argument to Client-Win64-Shipping.exe to force DX11 mode!\n"
+loc = "警告！确保向 Client-Win64-Shipping.exe 传递 `-dx11` 参数以强制 DX11 模式！\n"
 
 [advanced_settings_custom_launch_tooltip_note]
 src = "Note: If you want to start game exe with another custom exe, do it here.\n"
@@ -1915,3 +1923,25 @@ loc = "无法找到HIMI版本！"
 [himi_fps_unlock_failed]
 src = "Failed to configure FPS: {}"
 loc = "配置FPS失败：{}"
+
+[launch_options_tooltip_wwmi]
+src = """
+**Enabled**: Start game via **Client-Win64-Shipping.exe** with specified command line arguments.
+**Disabled (default)**: Start game normally via **Wuthering Waves.exe** (most reliable way).
+<font color="red">⚠ Game may crash with this option enabled! ⚠</font>
+"""
+loc = """
+**启用**：通过 **Client-Win64-Shipping.exe** 使用指定的命令行参数启动游戏。
+**禁用（默认）**：通过 **Wuthering Waves.exe** 正常启动游戏（最可靠的方式）。
+<font color="red">⚠ 启用此选项可能导致游戏崩溃！⚠</font>
+"""
+
+[launch_options_tooltip_default]
+src = """
+**Enabled**: Start game exe with specified command line arguments.
+**Disabled**: Ignore specified command line arguments and start game exe normally.
+"""
+loc = """
+**启用**：使用指定的命令行参数启动游戏可执行文件。
+**禁用**：忽略指定的命令行参数，正常启动游戏可执行文件。
+"""

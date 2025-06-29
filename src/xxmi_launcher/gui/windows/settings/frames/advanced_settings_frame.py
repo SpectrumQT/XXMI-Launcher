@@ -195,7 +195,7 @@ class CustomLaunchEntry(UIEntry):
         message += str(L('advanced_settings_custom_launch_tooltip_hint', 'Hint: If you want to change injection method only, just leave this field empty.\n'))
         message += str(L('advanced_settings_custom_launch_tooltip_warning', 'Warning! This command also overrides `Launch Options` from General Settings.\n'))
         if Config.Launcher.active_importer == 'WWMI':
-            message += str(L('advanced_settings_custom_launch_tooltip_wwmi_warning', 'Warning! Make sure to pass `Client -DisableModule=streamline` argument to Client-Win64-Shipping.exe to force DX11 mode!\n'))
+            message += str(L('advanced_settings_custom_launch_tooltip_wwmi_warning', 'Warning! Make sure to pass `-dx11` argument to Client-Win64-Shipping.exe to force DX11 mode!\n'))
         message += str(L('advanced_settings_custom_launch_tooltip_note', 'Note: If you want to start game exe with another custom exe, do it here.\n'))
         message += str(L('advanced_settings_custom_launch_tooltip_example', 'Example (equivalent for command internally used by launcher to start GI via FPS unlocker):\n'))
         message += r'`start /d "C:\Games\XXMI Launcher\Resources\Packages\GI-FPS-Unlocker" unlockfps_nc.exe`'
