@@ -124,7 +124,15 @@ class ZZMIPackage(ModelImporterPackage):
     def validate_game_exe_path(self, game_path: Path) -> Path:
         game_exe_path = game_path / 'ZenlessZoneZero.exe'
         if not game_exe_path.is_file():
-            raise ValueError(L('error_game_exe_not_found', 'Game executable {exe_name} not found!').format(exe_name=game_exe_path.name))
+            beta_game_exe_path = game_path / 'ZenlessZoneZeroBeta.exe'
+            if not beta_game_exe_path.is_file():
+                raise ValueError(L('error_gimi_game_exe_not_found',
+                    'Game executable {game_exe_name} or {game_exe_name_cn} not found!'
+                ).format(
+                    game_exe_name=game_exe_path.name,
+                    game_exe_name_cn=beta_game_exe_path.name
+                ))
+            game_exe_path = beta_game_exe_path
         return game_exe_path
 
     def initialize_game_launch(self, game_path: Path):
