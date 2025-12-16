@@ -26,6 +26,8 @@
 
 ## Installation
 
+> **Wuthering Waves Warning:** **Google Play Games** version is **not** supported currently.
+
 ### **Native Windows APP** (for **Windows** only)
   1. Download the [latest release](https://github.com/SpectrumQT/XXMI-Launcher/releases/latest) of **XXMI-Launcher-Installer-Online-vX.X.X.msi**
   2. Run **XXMI-Launcher-Installer-Online-vX.X.X.msi** with Double-Click.
