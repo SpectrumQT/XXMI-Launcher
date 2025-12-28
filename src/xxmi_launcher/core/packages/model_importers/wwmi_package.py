@@ -245,11 +245,8 @@ class WWMIPackage(ModelImporterPackage):
                 if not Config.Importers.WWMI.Importer.configure_game:
                     return
 
-                # Set internal custom quality flag to True
-                settings_manager.set_setting('IsCustomImageQuality', '"___1B___"')
-
-                # Set "Image Quality" to "Quality" - required to force high quality textures mods are made for
-                settings_manager.set_setting('ImageQuality', '3')
+                # Set "LOD Bias" to "Ultra High" - required to force high quality textures mods are made for
+                settings_manager.set_setting('ImageDetail', '3')
 
                 # Force Ray Tracing Off as it doesn't work with DX11 aka WWMI
                 settings_manager.set_setting('RayTracing', '0')
@@ -323,9 +320,13 @@ class WWMIPackage(ModelImporterPackage):
                 for option_name, option_value in section_data.items():
                     ini.set_option(section_name, option_name, option_value)
 
-        # Remove invalid options
-        ini.remove_option('r.Streaming.UsingNewKuroStreaming')  # Ancient 3rd-party configs set it to 0 with bad results
-        ini.remove_option('r.Streaming.FullyLoadUsedTextures')  # No longer works since 14/06
+        # Remove UsingNewKuroStreaming option (ancient 3rd-party configs set it to 0 with bad results)
+        ini.remove_option('r.Streaming.UsingNewKuroStreaming')
+
+        # Remove Boost option if it matches configured MinBoost (mostly to clear one from pre-3.0 auto-config)
+        ini.remove_option('r.Streaming.Boost',
+                          section_name='ConsoleVariables',
+                          option_value=Config.Importers.WWMI.Importer.texture_streaming_boost)
 
         console_variables_options = {
             # Controls how far game starts to replace weighted meshes with LoDs
@@ -333,7 +334,7 @@ class WWMIPackage(ModelImporterPackage):
             'r.Kuro.SkeletalMesh.LODDistanceScale': Config.Importers.WWMI.Importer.mesh_lod_distance_scale,
             # Controls how aggressively higher resolution textures are pushed to VRAM
             # Mods contain texture hashes only for original model and won't apply to LoDs
-            'r.Streaming.Boost': Config.Importers.WWMI.Importer.texture_streaming_boost,
+            'r.Streaming.MinBoost': Config.Importers.WWMI.Importer.texture_streaming_boost,
             # Controls amount of VRAM used for textures streaming
             # When set to 0, tends to keep full resolution textures in VRAM, so LoDs don't break mods
             'r.Streaming.PoolSize': Config.Importers.WWMI.Importer.texture_streaming_pool_size,

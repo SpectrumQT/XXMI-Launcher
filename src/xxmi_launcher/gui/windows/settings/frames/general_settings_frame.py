@@ -551,7 +551,7 @@ class ConfigureGameCheckbox(UICheckbox):
             msg = dedent("""
                 **Enabled**: Ensure WWMI-compatible in-game **Graphics Settings** before game start:
 
-                - `Graphics Quality: Quality`
+                - `LOD Bias: Ultra High`
 
                 **Disabled**: In-game settings will not be affected.
 
@@ -623,11 +623,11 @@ class TextureStreamingBoostEntry(UIEntry):
             * Start tuning around **2.5** for **high end PC**.
                 ✅ For fast systems tuning can completely eliminate modded textures loading delay.
                 
-            * Set to **0** to disable the boost and stick to the default game engine behavior.
+            * Set to **1.0** to disable the boost and stick to the default game engine behavior.
             
             ⚠️ With low values, try decimals (e.g. `1.1` or `2.5`).
             
-            *Applied to ConsoleVariables → r.Streaming.Boost value in Engine.ini*
+            *Applied to ConsoleVariables → r.Streaming.MinBoost value in Engine.ini*
         """)
         return msg
 
