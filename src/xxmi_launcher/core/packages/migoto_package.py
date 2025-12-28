@@ -308,7 +308,7 @@ class MigotoPackage(Package):
                             original_signature = self.get_signature(deployment_path)
                             Config.Active.Importer.deployed_migoto_signatures[file_name] = original_signature
                     else:
-                        raise ValueError(f'XXMI package is missing critical file: {deployment_path.name}!\n')
+                        raise ValueError(f'XXMI package is missing critical file: {deployment_path.name}!')
 
     def validate_deployed_files(self):
         package_libs = ['3dmloader.dll']
