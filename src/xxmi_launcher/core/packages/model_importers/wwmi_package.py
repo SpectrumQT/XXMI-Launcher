@@ -69,6 +69,7 @@ class WWMIConfig(ModelImporterConfig):
     })
     apply_perf_tweaks: bool = False
     unlock_fps: bool = False
+    force_max_lod_bias: bool = False
     disable_wounded_fx: bool = False
     disable_wounded_fx_warned: bool = False
     perf_tweaks: Dict[str, Dict[str, Union[str, int, float]]] = field(default_factory=lambda: {
@@ -85,7 +86,9 @@ class WWMIConfig(ModelImporterConfig):
         }
     })
     mesh_lod_distance_scale: int = 24
-    texture_streaming_boost: float = 30.0
+    mesh_lod_distance_offset: int = -50
+    texture_streaming_boost: float = 20.0
+    texture_streaming_use_all_mips: bool = True
     texture_streaming_pool_size: int = 0
     texture_streaming_limit_to_vram: bool = True
 
@@ -246,7 +249,8 @@ class WWMIPackage(ModelImporterPackage):
                     return
 
                 # Set "LOD Bias" to "Ultra High" - required to force high quality textures mods are made for
-                settings_manager.set_setting('ImageDetail', '3')
+                if Config.Importers.WWMI.Importer.force_max_lod_bias:
+                    settings_manager.set_setting('ImageDetail', '3')
 
                 # Force Ray Tracing Off as it doesn't work with DX11 aka WWMI
                 settings_manager.set_setting('RayTracing', '0')
@@ -332,9 +336,13 @@ class WWMIPackage(ModelImporterPackage):
             # Controls how far game starts to replace weighted meshes with LoDs
             # Mods contain mesh metadata only for original model and won't apply to LoDs
             'r.Kuro.SkeletalMesh.LODDistanceScale': Config.Importers.WWMI.Importer.mesh_lod_distance_scale,
+            # Controls how far from camera character is replaced with LOD
+            'r.Kuro.SkeletalMesh.LODDistanceScaleDeviceOffset': Config.Importers.WWMI.Importer.mesh_lod_distance_offset,
             # Controls how aggressively higher resolution textures are pushed to VRAM
             # Mods contain texture hashes only for original model and won't apply to LoDs
             'r.Streaming.MinBoost': Config.Importers.WWMI.Importer.texture_streaming_boost,
+            # Controls whether texture resolution limits imposed by LOD Bias are applied
+            'r.Streaming.UseAllMips': int(Config.Importers.WWMI.Importer.texture_streaming_use_all_mips),
             # Controls amount of VRAM used for textures streaming
             # When set to 0, tends to keep full resolution textures in VRAM, so LoDs don't break mods
             'r.Streaming.PoolSize': Config.Importers.WWMI.Importer.texture_streaming_pool_size,
