@@ -30,6 +30,8 @@
 
 ## 安装说明
 
+> **鸣潮：** 目前**不**支持**Google Play Games**版本。
+> 
 * **原生 Windows 应用程序**（仅适用于 **Windows**）
   1. 下载[最新版本](https://github.com/SpectrumQT/XXMI-Launcher/releases/latest)的 **XXMI-Launcher-Installer-Online-vX.X.X.msi**
   2. 双击运行 **XXMI-Launcher-Installer-Online-vX.X.X.msi**
