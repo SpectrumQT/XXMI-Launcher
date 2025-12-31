@@ -541,7 +541,7 @@ class ConfigureGameCheckbox(UICheckbox):
         elif Config.Launcher.active_importer == 'WWMI':
             msg = str(L('general_settings_configure_game_tooltip_wwmi',
                 '**Enabled**: Ensure WWMI-compatible in-game **Graphics Settings** before game start:\n\n'
-                '- `Graphics Quality: Quality`\n\n'
+                '- `LOD Bias: Ultra High`\n\n'
                 '**Disabled**: In-game settings will not be affected.\n\n'
                 '<font color="red">⚠ Mods will not work with wrong settings! ⚠</font>'))
         elif Config.Launcher.active_importer == 'ZZMI':
@@ -601,11 +601,11 @@ class TextureStreamingBoostEntry(UIEntry):
             * Start tuning around **2.5** for **high end PC**.
                 ✅ For fast systems tuning can completely eliminate modded textures loading delay.
 
-            * Set to **0** to disable the boost and stick to the default game engine behavior.
+            * Set to **1.0** to disable the boost and stick to the default game engine behavior.
 
             ⚠️ With low values, try decimals (e.g. `1.1` or `2.5`).
 
-            *Applied to ConsoleVariables → r.Streaming.Boost value in Engine.ini*
+            *Applied to ConsoleVariables → r.Streaming.MinBoost value in Engine.ini*
         """))))
 
 

@@ -1493,8 +1493,8 @@ src = "**Enabled**: Ensure GIMI-compatible in-game **Graphics Settings** before 
 loc = "**启用**：游戏启动前确保GIMI兼容的游戏内**图形设置**：\n\n- `动态角色分辨率：关闭`\n\n**禁用**：游戏内设置不会受影响。\n\n<font color=\"red\">⚠ 设置错误时模组将无法工作！⚠</font>"
 
 [general_settings_configure_game_tooltip_wwmi]
-src = "**Enabled**: Ensure WWMI-compatible in-game **Graphics Settings** before game start:\n\n- `Graphics Quality: Quality`\n\n**Disabled**: In-game settings will not be affected.\n\n<font color=\"red\">⚠ Mods will not work with wrong settings! ⚠</font>"
-loc = "**启用**：游戏启动前确保WWMI兼容的游戏内**图形设置**：\n\n- `图形质量：质量`\n\n**禁用**：游戏内设置不会受影响。\n\n<font color=\"red\">⚠ 设置错误时模组将无法工作！⚠</font>"
+src = "**Enabled**: Ensure WWMI-compatible in-game **Graphics Settings** before game start:\n\n- `LOD Bias: Ultra High`\n\n**Disabled**: In-game settings will not be affected.\n\n<font color=\"red\">⚠ Mods will not work with wrong settings! ⚠</font>"
+loc = "**启用**：游戏启动前确保WWMI兼容的游戏内**图形设置**：\n\n- `LOD 偏差：超高`\n\n**禁用**：游戏内设置不会受影响。\n\n<font color=\"red\">⚠ 设置错误时模组将无法工作！⚠</font>"
 
 [general_settings_configure_game_tooltip_zzmi]
 src = "**Enabled**: Ensure ZZMI-compatible in-game **Graphics Settings** before game start:\n\n- `Character Quality: High`\n- `High-Precision Character Animation: Disabled`\n\n**Disabled**: In-game settings will not be affected.\n\n<font color=\"red\">⚠ Mods will not work with wrong settings! ⚠</font>"
