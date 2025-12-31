@@ -159,7 +159,8 @@ class AutoConfigFrame(UIFrame):
         self.put(ConfigureGameCheckbox(self)).grid(row=0, column=0, padx=(0, 10), pady=(0, 0), sticky='w')
         
         if Vars.Launcher.active_importer.get() == 'WWMI':
-            self.put(DisableWoundedEffectCheckbox(self)).grid(row=0, column=1, padx=(10, 20), pady=(0, 0), sticky='w')
+            self.put(ForceUltraHighLodBias(self)).grid(row=0, column=1, padx=(10, 20), pady=(0, 0), sticky='w')
+            self.put(DisableWoundedEffectCheckbox(self)).grid(row=0, column=2, padx=(10, 20), pady=(0, 0), sticky='w')
 
 
 class EngineSettingsLabel(UILabel):
@@ -178,18 +179,24 @@ class TextureStreamingFrame(UIFrame):
 
         self.grid_columnconfigure(0, weight=100)
 
-        self.put(TextureStreamingBoostLabel(self)).grid(row=0, column=0, padx=(0, 0), pady=(0, 0), sticky='w')
-        self.put(TextureStreamingBoostEntry(self)).grid(row=0, column=1, padx=(10, 0), pady=(0, 0), sticky='w')
-        self.grab(TextureStreamingBoostLabel).set_tooltip(self.grab(TextureStreamingBoostEntry))
-
-        self.put(MeshLODDistanceLabel(self)).grid(row=0, column=2, padx=(30, 0), pady=(0, 0), sticky='w')
-        self.put(MeshLODDistanceEntry(self)).grid(row=0, column=3, padx=(10, 0), pady=(0, 0), sticky='w')
+        self.put(MeshLODDistanceLabel(self)).grid(row=0, column=0, padx=(0, 0), pady=(0, 0), sticky='w')
+        self.put(MeshLODDistanceEntry(self)).grid(row=0, column=1, padx=(10, 0), pady=(0, 0), sticky='w')
         self.grab(MeshLODDistanceLabel).set_tooltip(self.grab(MeshLODDistanceEntry))
 
-        self.put(TextureStreamingPoolSizeLabel(self)).grid(row=1, column=0, padx=(0, 0), pady=(15, 0), sticky='w')
-        self.put(TextureStreamingPoolSizeEntry(self)).grid(row=1, column=1, padx=(10, 0), pady=(15, 0), sticky='w')
+        self.put(MeshLODDistanceOffsetLabel(self)).grid(row=0, column=2, padx=(30, 0), pady=(0, 0), sticky='w')
+        self.put(MeshLODDistanceOffsetEntry(self)).grid(row=0, column=3, padx=(10, 0), pady=(0, 0), sticky='w')
+        self.grab(MeshLODDistanceOffsetLabel).set_tooltip(self.grab(MeshLODDistanceOffsetEntry))
+
+        self.put(TextureStreamingBoostLabel(self)).grid(row=1, column=0, padx=(0, 0), pady=(15, 0), sticky='w')
+        self.put(TextureStreamingBoostEntry(self)).grid(row=1, column=1, padx=(10, 0), pady=(15, 0), sticky='w')
+        self.grab(TextureStreamingBoostLabel).set_tooltip(self.grab(TextureStreamingBoostEntry))
+
+        self.put(TextureStreamingUseAllMipsCheckbox(self)).grid(row=1, column=2, padx=(30, 0), pady=(15, 0), sticky='w', columnspan=2)
+
+        self.put(TextureStreamingPoolSizeLabel(self)).grid(row=2, column=0, padx=(0, 0), pady=(15, 0), sticky='w')
+        self.put(TextureStreamingPoolSizeEntry(self)).grid(row=2, column=1, padx=(10, 0), pady=(15, 0), sticky='w')
         self.grab(TextureStreamingPoolSizeLabel).set_tooltip(self.grab(TextureStreamingPoolSizeEntry))
-        self.put(TextureStreamingLimitPoolToVramCheckbox(self)).grid(row=1, column=2, padx=(20, 0), pady=(15, 0), sticky='w', columnspan=2)
+        self.put(TextureStreamingLimitPoolToVramCheckbox(self)).grid(row=2, column=2, padx=(30, 0), pady=(15, 0), sticky='w', columnspan=2)
 
 
 class GameFolderLabel(UILabel):
@@ -553,6 +560,27 @@ class ConfigureGameCheckbox(UICheckbox):
                 '<font color="red">⚠ Mods will not work with wrong settings! ⚠</font>'))
         return msg.strip()
 
+
+class ForceUltraHighLodBias(UICheckbox):
+    def __init__(self, master):
+        super().__init__(
+            text=str(L('general_settings_force_max_lod_bias_checkbox', 'Max LOD Bias')),
+            variable=Vars.Active.Importer.force_max_lod_bias,
+            master=master)
+        self.set_tooltip(str(L('general_settings_force_max_lod_bias_tooltip', dedent("""
+            **Enabled**: Set **LOD Bias** to **Ultra High** to force full resolution LOD textures.
+            **Disabled**: Keep **LOD Bias** setting untouched. Select this if **Use All Mips** is enabled below.
+        """))))
+
+        self.trace_write(Vars.Active.Importer.configure_game, self.handle_write_configure_game)
+
+    def handle_write_configure_game(self, var, val):
+        if val:
+            self.configure(state='normal')
+        else:
+            self.configure(state='disabled')
+
+
 class DisableWoundedEffectCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
@@ -572,6 +600,69 @@ class DisableWoundedEffectCheckbox(UICheckbox):
             self.configure(state='normal')
         else:
             self.configure(state='disabled')
+
+
+class MeshLODDistanceLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text=str(L('general_settings_mesh_lod_distance_label', 'Mesh LOD Distance:')),
+            font=('Microsoft YaHei', 14),
+            fg_color='transparent',
+            master=master)
+
+
+class MeshLODDistanceEntry(UIEntry):
+    def __init__(self, master):
+        super().__init__(
+            textvariable=Vars.Active.Importer.mesh_lod_distance_scale,
+            input_filter='INT',
+            width=40,
+            height=36,
+            font=('Arial', 14),
+            master=master)
+
+        self.set_tooltip(str(L('general_settings_mesh_lod_distance_tooltip', dedent("""
+            ## Controls how far game replaces full animated meshes with simplified LoDs:
+
+            * Set to **24** **(default)** to force full models as far as the game loads animated objects.
+                ✅ With this value mods are applied as far as you can see.
+                ⚠️ Risk of performance drops for low-end GPUs.
+
+            * Set to lower value (e.g. `15`) for better performance.
+                ✅ Reduce FPS cost by allowing the game to use LoD meshes for distant animated objects.
+                ⚠️ LoDs may look wrong due to modded textures being applied to original LoD meshes.
+
+            *Applied to ConsoleVariables → r.Kuro.SkeletalMesh.LODDistanceScale value in Engine.ini*
+        """))))
+
+
+class MeshLODDistanceOffsetLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text=str(L('general_settings_mesh_lod_offset_label', 'Mesh LOD Offset:')),
+            font=('Microsoft YaHei', 14),
+            fg_color='transparent',
+            master=master)
+
+
+class MeshLODDistanceOffsetEntry(UIEntry):
+    def __init__(self, master):
+        super().__init__(
+            textvariable=Vars.Active.Importer.mesh_lod_distance_offset,
+            input_filter='INT',
+            width=40,
+            height=36,
+            font=('Arial', 14),
+            master=master)
+
+        self.set_tooltip(str(L('general_settings_mesh_lod_offset_tooltip', dedent("""
+            ## Controls how far from camera character is replaced with LOD:
+
+            * Set to **-50** **(default)** to keep character modded in flight, cutscenes, etc.
+
+            *Applied to ConsoleVariables → r.Kuro.SkeletalMesh.LODDistanceScaleDeviceOffset value in Engine.ini*
+        """))))
+
 
 class TextureStreamingBoostLabel(UILabel):
     def __init__(self, master):
@@ -595,17 +686,37 @@ class TextureStreamingBoostEntry(UIEntry):
         self.set_tooltip(str(L('general_settings_texture_boost_tooltip', dedent("""
             ## Controls how aggressively higher resolution textures are pushed to VRAM:
 
-            * Start tuning around **30.0** **(default)** for **mid-range PC**.
-                ✅ For slow systems tuning can significantly reduce modded textures loading delay.
+            This value may require fine tuning to minimize textures loading delay (or to make it work):
 
-            * Start tuning around **2.5** for **high end PC**.
-                ✅ For fast systems tuning can completely eliminate modded textures loading delay.
+            * Start tuning with **20.0** **(default)**.
+                ✅ This baseline value should work for most PCs.
+                
+            * If modded textures are not loading, try increasing it to **25** or **30**.
 
-            * Set to **1.0** to disable the boost and stick to the default game engine behavior.
-
-            ⚠️ With low values, try decimals (e.g. `1.1` or `2.5`).
+            * If modded textures are loading fine, start decreasing it until small textures like eyes break.
+                ✅ Value just above a breaking point should net minimal textures loading delay.
 
             *Applied to ConsoleVariables → r.Streaming.MinBoost value in Engine.ini*
+        """))))
+
+
+class TextureStreamingUseAllMipsCheckbox(UICheckbox):
+    def __init__(self, master):
+        super().__init__(
+            text=str(L('general_settings_texture_streaming_use_all_mips_checkbox', 'Use All Mips')),
+            variable=Vars.Active.Importer.texture_streaming_use_all_mips,
+            master=master)
+        self.set_tooltip(str(L('general_settings_texture_streaming_use_all_mips_tooltip', dedent("""
+            ## Controls whether texture resolution limits are applied:
+
+            * **Enabled** **(default)** – Disable resolution restrictions from LOD Bias.
+                ✅ Allows to load full resolution textures at cost of higher VRAM usage.
+                ⚠️ If it has no effect or consumes too much VRAM, try to enable **Max LOD Bias** instead. 
+
+            * **Disabled** – Enable resolution restrictions from LOD Bias.
+                ⚠️ Modded textures won't load if disabled without Max (Ultra High) LOD Bias enabled.
+
+            *Applied to ConsoleVariables → r.Streaming.UseAllMips value in Engine.ini*
         """))))
 
 
@@ -658,40 +769,6 @@ class TextureStreamingLimitPoolToVramCheckbox(UICheckbox):
                 ⚠️ Risk of performance drops, stutters, or crashes if VRAM runs out.
 
             *Applied to ConsoleVariables → r.Streaming.LimitPoolSizeToVRAM value in Engine.ini*
-        """))))
-
-
-class MeshLODDistanceLabel(UILabel):
-    def __init__(self, master):
-        super().__init__(
-            text=str(L('general_settings_mesh_lod_distance_label', 'Mesh LOD Distance:')),
-            font=('Microsoft YaHei', 14),
-            fg_color='transparent',
-            master=master)
-
-
-class MeshLODDistanceEntry(UIEntry):
-    def __init__(self, master):
-        super().__init__(
-            textvariable=Vars.Active.Importer.mesh_lod_distance_scale,
-            input_filter='INT',
-            width=40,
-            height=36,
-            font=('Arial', 14),
-            master=master)
-
-        self.set_tooltip(str(L('general_settings_mesh_lod_distance_tooltip', dedent("""
-            ## Controls how far game replaces full animated meshes with simplified LoDs:
-
-            * Set to **24** **(default)** to force full models as far as the game loads animated objects.
-                ✅ With this value mods are applied as far as you can see.
-                ⚠️ Risk of performance drops for low-end GPUs.
-
-            * Set to lower value (e.g. `15`) for better performance.
-                ✅ Reduce FPS cost by allowing the game to use LoD meshes for distant animated objects.
-                ⚠️ LoDs may look wrong due to modded textures being applied to original LoD meshes.
-
-            *Applied to ConsoleVariables → r.Kuro.SkeletalMesh.LODDistanceScale value in Engine.ini*
         """))))
 
 

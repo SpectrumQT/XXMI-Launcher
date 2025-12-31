@@ -159,12 +159,21 @@ class MigotoPackage(Package):
                 result, pid = wait_for_process(process_name, with_window=True, timeout=Config.Launcher.start_timeout, check_visibility=True)
                 if result == WaitResult.Timeout:
                     if hooked:
-                        raise ValueError(T('migoto_game_detection_timeout', 
-                                         f'Failed to detect game process {process_name}!\n\n'
-                                         f'If game crashed, try to adjust XXMI Delay in General Settings or clear Mods and ShaderFixes folders.\n\n'
-                                         f'If game window takes more than {Config.Launcher.start_timeout} seconds to appear, adjust Timeout in Launcher Settings.'))
+                        message = L(
+                            'migoto_game_detection_timeout',
+                            'Failed to detect game process {process_name}!\n\n'
+                            'If game crashed, try to adjust XXMI Delay in General Settings or clear Mods and ShaderFixes folders.\n\n'
+                            'If game window takes more than {timeout} seconds to appear, adjust Timeout in Launcher Settings.',
+                        ).format(
+                            process_name=process_name,
+                            timeout=Config.Launcher.start_timeout,
+                        )
+                        raise ValueError(str(message))
                     else:
-                        raise ValueError(T('migoto_game_start_failed', f'Failed to start {process_name}!'))
+                        message = L('migoto_game_start_failed', 'Failed to start {process_name}!').format(
+                            process_name=process_name
+                        )
+                        raise ValueError(str(message))
 
                 # Late DLL injection verification
                 Events.Fire(Events.Application.VerifyHook(library_name=dll_path.name, process_name=process_name))
@@ -207,10 +216,16 @@ class MigotoPackage(Package):
             Events.Fire(Events.Application.WaitForProcess(process_name=process_name))
             result, pid = wait_for_process(process_name, with_window=True, timeout=Config.Launcher.start_timeout, check_visibility=True)
             if result == WaitResult.Timeout:
-                raise ValueError(T('[migoto_game_detection_timeout]',
-                               f'Failed to detect game process {process_name}!\n\n'
-                               f'If game crashed, try to adjust XXMI Delay in General Settings or clear Mods and ShaderFixes folders.\n\n'
-                               f'If game window takes more than {Config.Launcher.start_timeout} seconds to appear, adjust Timeout in Launcher Settings.'))
+                message = L(
+                    'migoto_game_detection_timeout',
+                    'Failed to detect game process {process_name}!\n\n'
+                    'If game crashed, try to adjust XXMI Delay in General Settings or clear Mods and ShaderFixes folders.\n\n'
+                    'If game window takes more than {timeout} seconds to appear, adjust Timeout in Launcher Settings.',
+                ).format(
+                    process_name=process_name,
+                    timeout=Config.Launcher.start_timeout,
+                )
+                raise ValueError(str(message))
 
         # Wait a bit more for window to maximize
         time.sleep(1)
@@ -288,11 +303,14 @@ class MigotoPackage(Package):
                 Events.Fire(Events.Application.StatusUpdate(status=L('migoto_ensuring_game_closed', 'Ensuring the game is closed...')))
                 result, pid = wait_for_process_exit(process_name=process_name, timeout=5, kill_timeout=0)
                 if result == WaitResult.Timeout:
+                    message = L(
+                        'migoto_failed_stop_game',
+                        'Failed to stop {process_name}!\n\n'
+                        'Please close the game manually and press [OK] to continue.',
+                    ).format(process_name=process_name)
                     Events.Fire(Events.Application.ShowError(
                         modal=True,
-                        message=T('migoto_failed_stop_game', 
-                                f'Failed to stop {process_name}!\n\n'
-                                'Please close the game manually and press [OK] to continue.'),
+                        message=str(message),
                     ))
                 if remove_pending:
                     deployment_path.unlink()

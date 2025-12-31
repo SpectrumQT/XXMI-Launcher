@@ -184,6 +184,15 @@ class AppConfig:
         except:
             pass
 
+    def run_patch_195(self):
+        importer = self.Importers.__dict__['WWMI']
+        try:
+            if importer.Importer.texture_streaming_boost < 20 or importer.Importer.texture_streaming_boost == 30:
+                importer.Importer.texture_streaming_boost = 20
+        except:
+            pass
+
+
     def upgrade(self, old_version, new_version):
         # Save config to file and exit early if old version is empty (aka fresh installation)
         if not old_version:
@@ -196,6 +205,7 @@ class AppConfig:
         patches = {
             '1.8.4': self.run_patch_184,
             '1.8.6': self.run_patch_186,
+            '1.9.5': self.run_patch_195,
         }
         applied_patches = []
         for patch_version, patch_func in patches.items():

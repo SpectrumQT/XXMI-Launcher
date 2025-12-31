@@ -70,7 +70,7 @@ loc = "XXMI启动器快捷方式"
 
 # Migoto包相关
 [migoto_game_detection_timeout]
-src = "Failed to detect game process {process_name}!\n\nIf game crashed, try to adjust XXMI Delay in General Settings or clear Mods and ShaderFixes folders.\n\nIf game window takes more than {Config.Launcher.start_timeout} seconds to appear, adjust Timeout in Launcher Settings."
+src = "Failed to detect game process {process_name}!\n\nIf game crashed, try to adjust XXMI Delay in General Settings or clear Mods and ShaderFixes folders.\n\nIf game window takes more than {timeout} seconds to appear, adjust Timeout in Launcher Settings."
 loc = "检测游戏进程{process_name}失败！\n\n如果游戏崩溃了，请在常规设置中尝试调整XXMI延迟，或者清空模组和ShaderFixes文件夹。\n\n如果游戏窗口出现时间超过{timeout}秒，请在启动器设置中调整超时时间。"
 
 [migoto_game_start_failed]
@@ -1420,14 +1420,6 @@ loc = "打开{engine}命令行参数文档网页。\n注意：游戏引擎由开
 src = "Launch Options:"
 loc = "启动选项："
 
-[general_settings_launch_options_tooltip_base]
-src = "Command line arguments aka Launch Options to start game exe with.\n"
-loc = "用于启动游戏可执行文件的命令行参数（即启动选项）。\n"
-
-[general_settings_launch_options_tooltip_wwmi]
-src = "* Disable intro: -SkipSplash"
-loc = "* 禁用开场动画：-SkipSplash"
-
 [general_settings_start_method_label]
 src = "Start Method:"
 loc = "启动方式："
@@ -1499,6 +1491,16 @@ loc = "**启用**：游戏启动前确保WWMI兼容的游戏内**图形设置**�
 [general_settings_configure_game_tooltip_zzmi]
 src = "**Enabled**: Ensure ZZMI-compatible in-game **Graphics Settings** before game start:\n\n- `Character Quality: High`\n- `High-Precision Character Animation: Disabled`\n\n**Disabled**: In-game settings will not be affected.\n\n<font color=\"red\">⚠ Mods will not work with wrong settings! ⚠</font>"
 loc = "**启用**：游戏启动前确保ZZMI兼容的游戏内**图形设置**：\n\n- `角色质量：高`\n- `高精度角色动画：禁用`\n\n**禁用**：游戏内设置不会受影响。\n\n<font color=\"red\">⚠ 设置错误时模组将无法工作！⚠</font>"
+
+[general_settings_force_max_lod_bias_checkbox]
+src = "Max LOD Bias"
+loc = "最大LOD偏差"
+
+[general_settings_force_max_lod_bias_tooltip]
+src = """**Enabled**: Set **LOD Bias** to **Ultra High** to force full resolution LOD textures.
+**Disabled**: Keep **LOD Bias** setting untouched. Select this if **Use All Mips** is enabled below."""
+loc = """**启用**：将 **LOD 偏差（LOD Bias）** 设置为 **超高（Ultra High）**，以强制使用完整分辨率的LOD纹理。
+**禁用**：保持当前 **LOD 偏差** 设置不变。如果下方已启用 **使用所有 Mips（Use All Mips）**，可考虑关闭本选项。"""
 
 [general_settings_open_engine_ini_button]
 src = "🔍 Open Engine.ini"
@@ -1874,6 +1876,48 @@ loc = """## 控制游戏将完整动画网格替换为简化LOD的距离：
     ⚠️ 由于模组纹理应用到原始LOD网格，LOD可能看起来不正确。
 
 *应用于Engine.ini中的ConsoleVariables → r.Kuro.SkeletalMesh.LODDistanceScale值*"""
+
+[general_settings_mesh_lod_offset_label]
+src = "Mesh LOD Offset:"
+loc = "网格LOD偏移："
+
+[general_settings_mesh_lod_offset_tooltip]
+src = """## Controls how far from camera character is replaced with LOD:
+
+* Set to **-50** **(default)** to keep character modded in flight, cutscenes, etc.
+
+*Applied to ConsoleVariables → r.Kuro.SkeletalMesh.LODDistanceScaleDeviceOffset value in Engine.ini*"""
+loc = """## 控制角色在距离摄像机多远时被替换为LOD：
+
+* 设为 **-50** **（默认值）** 以在飞行、过场动画等场景中保持角色为模组状态。
+
+*应用于Engine.ini中的ConsoleVariables → r.Kuro.SkeletalMesh.LODDistanceScaleDeviceOffset值*"""
+
+[general_settings_texture_streaming_use_all_mips_checkbox]
+src = "Use All Mips"
+loc = "使用所有Mips"
+
+[general_settings_texture_streaming_use_all_mips_tooltip]
+src = """## Controls whether texture resolution limits are applied:
+
+* **Enabled** **(default)** – Disable resolution restrictions from LOD Bias.
+    ✅ Allows to load full resolution textures at cost of higher VRAM usage.
+    ⚠️ If it has no effect or consumes too much VRAM, try to enable **Max LOD Bias** instead. 
+
+* **Disabled** – Enable resolution restrictions from LOD Bias.
+    ⚠️ Modded textures won't load if disabled without Max (Ultra High) LOD Bias enabled.
+
+*Applied to ConsoleVariables → r.Streaming.UseAllMips value in Engine.ini*"""
+loc = """## 控制是否应用纹理分辨率限制：
+
+* **启用** **（默认值）** – 取消来自 LOD 偏差的分辨率限制。
+    ✅ 以更高的显存占用为代价加载完整分辨率纹理。
+    ⚠️ 如果无明显效果或显存占用过高，可尝试改为启用 **最大 LOD 偏差**。
+
+* **禁用** – 启用来自 LOD 偏差的分辨率限制。
+    ⚠️ 如果未启用最大（超高）LOD 偏差就禁用本选项，模组纹理可能无法加载。
+
+*应用于Engine.ini中的ConsoleVariables → r.Streaming.UseAllMips值*"""
 
 [general_settings_engine_settings_label]
 src = "Engine Settings:"
