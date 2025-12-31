@@ -189,7 +189,8 @@ class IniHandler:
 
     def remove_option(self, option_name, section_name=None, option_value=None):
         if section_name:
-            sections = [self.get_section(section_name)]
+            section = self.get_section(section_name)
+            sections = [section] if section else []
         else:
             sections = self.sections.values()
 
