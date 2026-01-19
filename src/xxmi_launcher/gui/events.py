@@ -35,6 +35,10 @@ class GUIEvents:
             importer_id: str
             hover: bool = False
 
+        @dataclass
+        class OpenModManager:
+            pass
+
     @dataclass
     class ToggleThemeDevMode:
         enabled: bool = False

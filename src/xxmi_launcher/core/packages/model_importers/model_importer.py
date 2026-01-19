@@ -55,6 +55,41 @@ class ModelImporterEvents:
     class DetectGameFolder:
         pass
 
+    @dataclass
+    class RefreshMods:
+        """Refresh mod manager cache"""
+        pass
+
+    @dataclass
+    class EnableMod:
+        """Enable a mod by SHA"""
+        sha: str
+
+    @dataclass
+    class DisableMod:
+        """Disable a mod by SHA"""
+        sha: str
+
+    @dataclass
+    class ToggleMod:
+        """Toggle mod enabled/disabled state"""
+        sha: str
+
+    @dataclass
+    class GetModInfo:
+        """Get information about a specific mod"""
+        sha: str
+
+    @dataclass
+    class GetAllMods:
+        """Get list of all mods"""
+        pass
+
+    @dataclass
+    class GetModsByCategory:
+        """Get mods filtered by category"""
+        category: str
+
 
 @dataclass
 class ModelImporterConfig:
@@ -193,6 +228,7 @@ class ModelImporterPackage(Package):
         self.backups_path = None
         self.use_hook: bool = True
         self.ini = None
+        self.mod_manager = None  # Will be initialized when mod folder is available
 
     def validate_game_path(self, game_folder) -> Path:
         game_path = Path(game_folder)
@@ -211,13 +247,45 @@ class ModelImporterPackage(Package):
         self.subscribe(Events.ModelImporter.ValidateGameFolder, lambda event: self.validate_game_folder(event))
         self.subscribe(Events.ModelImporter.CreateShortcut, lambda event: self.create_shortcut())
         self.subscribe(Events.ModelImporter.DetectGameFolder, lambda event: self.detect_game_paths(supress_errors=True))
+        # Mod management events
+        self.subscribe(Events.ModelImporter.RefreshMods, lambda event: self.mod_manager.refresh() if self.mod_manager else None)
+        self.subscribe(Events.ModelImporter.EnableMod, lambda event: self.mod_manager.enable_mod(event.sha) if self.mod_manager else False)
+        self.subscribe(Events.ModelImporter.DisableMod, lambda event: self.mod_manager.disable_mod(event.sha) if self.mod_manager else False)
+        self.subscribe(Events.ModelImporter.ToggleMod, lambda event: self.mod_manager.toggle_mod(event.sha) if self.mod_manager else False)
         super().load()
         if self.get_installed_version() != '' and not Config.Active.Importer.shortcut_deployed:
             self.create_shortcut()
+        # Initialize mod manager if importer is installed
+        self.initialize_mod_manager()
 
     def unload(self):
         self.unsubscribe()
         super().unload()
+
+    def initialize_mod_manager(self):
+        """Initialize mod manager for this model importer"""
+        try:
+            # Only initialize if importer is installed
+            if self.get_installed_version() == '':
+                return
+            
+            # Get mods folder path
+            mods_folder = Config.Active.Importer.importer_path / 'Mods'
+            
+            # Only initialize if mods folder exists
+            if not mods_folder.exists():
+                log.debug(f"Mods folder not found for {self.metadata.package_name}, skipping mod manager initialization")
+                return
+            
+            # Import and initialize mod manager
+            from core.mod_manager import ModManager
+            self.mod_manager = ModManager(mods_folder)
+            self.mod_manager.initialize()
+            log.info(f"Mod manager initialized for {self.metadata.package_name}: {self.mod_manager.get_stats()}")
+            
+        except Exception as e:
+            log.warning(f"Failed to initialize mod manager for {self.metadata.package_name}: {e}")
+            self.mod_manager = None
 
     def validate_game_folder(self, event):
         game_path = self.validate_game_path(event.game_folder)

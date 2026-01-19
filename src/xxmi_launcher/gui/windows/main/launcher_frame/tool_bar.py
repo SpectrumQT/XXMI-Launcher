@@ -30,6 +30,7 @@ class ToolBarFrame(UIFrame):
         self.put(CheckForUpdatesButton(self))
         self.put(CreateShortcutButton(self))
         self.put(OpenModsFolderButton(self))
+        self.put(ModManagerButton(self))
 
         self.subscribe(Events.GUI.LauncherFrame.ToggleToolbox, self.handle_toggle_toolbox)
         self.subscribe(Events.Application.Busy, lambda event: self.hide())
@@ -157,6 +158,23 @@ class OpenModsFolderButton(ToolsBarButton):
             button_image_path='button-tool-mods-folder.png',
             text='Open Mods Folder',
             command=lambda: Events.Fire(Events.MigotoManager.OpenModsFolder()),
+            master=master)
+        self.subscribe(Events.PackageManager.VersionNotification, self.handle_version_notification)
+
+    def handle_version_notification(self, event):
+        package_state = event.package_states.get(Config.Launcher.active_importer, None)
+        if package_state is None:
+            return
+        self.set_disabled(not package_state.installed_version)
+
+
+class ModManagerButton(ToolsBarButton):
+    def __init__(self, master):
+        super().__init__(
+            y=605,
+            button_image_path='button-tool-mods-folder.png',  # Reuse same icon for now
+            text='Mod Manager',
+            command=lambda: Events.Fire(Events.GUI.LauncherFrame.OpenModManager()),
             master=master)
         self.subscribe(Events.PackageManager.VersionNotification, self.handle_version_notification)
 

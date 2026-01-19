@@ -57,6 +57,9 @@ class LauncherFrame(UIFrame):
         # Donate Frame
         self.subscribe(Events.Application.OpenDonationCenter, self.handle_open_donation_center)
 
+        # Mod Manager Frame
+        self.subscribe(Events.GUI.LauncherFrame.OpenModManager, self.handle_open_mod_manager)
+
         # Application Events
         self.subscribe(
             Events.Application.Ready,
@@ -81,6 +84,11 @@ class LauncherFrame(UIFrame):
         donate_frame = self.put(DonateFrame(self, self.canvas))
         donate_frame.set_content(mode=event.mode, model_importer=event.model_importer, num_sessions=event.launch_count)
         donate_frame.show()
+
+    def handle_open_mod_manager(self, event: Events.GUI.LauncherFrame.OpenModManager):
+        from gui.windows.main.mod_manager_frame import ModManagerFrame
+        mod_manager_frame = self.put(ModManagerFrame(self, self.canvas))
+        mod_manager_frame.show()
 
 
 class SelectGameText(UIText):
