@@ -21,6 +21,29 @@ class ModManagerFrame(UIFrame):
     def __init__(self, master, canvas, **kwargs):
         super().__init__(master, canvas, **kwargs)
         
+        # Store reference to application for later use
+        self.app = None
+        try:
+            # Try to get app reference from master chain
+            current = master
+            while current is not None:
+                if hasattr(current, 'app'):
+                    self.app = current.app
+                    break
+                current = getattr(current, 'master', None)
+        except Exception:
+            pass
+
+
+class ModManagerFrame(UIFrame):
+    """
+    GUI frame for managing 3DMigoto mods
+    Displays mod list with enable/disable functionality
+    """
+    
+    def __init__(self, master, canvas, **kwargs):
+        super().__init__(master, canvas, **kwargs)
+        
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
         
@@ -72,9 +95,8 @@ class ModManagerFrame(UIFrame):
                 return None
             
             # Get the active importer package from application
-            from core.application import Application
-            if hasattr(self.master, 'app') and hasattr(self.master.app, 'package_manager'):
-                package = self.master.app.package_manager.get_package(Config.Launcher.active_importer)
+            if self.app and hasattr(self.app, 'package_manager'):
+                package = self.app.package_manager.get_package(Config.Launcher.active_importer)
                 if hasattr(package, 'mod_manager'):
                     return package.mod_manager
         except Exception as e:
@@ -136,6 +158,7 @@ class ModManagerFrame(UIFrame):
             
             for mod in sorted(category_mods, key=lambda m: m.name):
                 # Create mod item frame
+                # Use default argument to properly capture mod.sha in closure
                 mod_item = ModItemWidget(
                     self.mod_list_frame,
                     mod=mod,

@@ -172,7 +172,7 @@ class ModManagerButton(ToolsBarButton):
     def __init__(self, master):
         super().__init__(
             y=605,
-            button_image_path='button-tool-mods-folder.png',  # Reuse same icon for now
+            button_image_path='button-tool-mods-folder.png',  # TODO: Create dedicated icon for mod manager
             text='Mod Manager',
             command=lambda: Events.Fire(Events.GUI.LauncherFrame.OpenModManager()),
             master=master)

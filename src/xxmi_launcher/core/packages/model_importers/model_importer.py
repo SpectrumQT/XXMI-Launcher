@@ -241,6 +241,12 @@ class ModelImporterPackage(Package):
     def validate_game_exe_path(self, game_path: Path) -> Path:
         raise NotImplementedError
 
+    def _safe_mod_operation(self, operation, *args, **kwargs):
+        """Helper to safely execute mod manager operations"""
+        if self.mod_manager:
+            return operation(*args, **kwargs)
+        return None
+
     def load(self):
         self.subscribe(Events.ModelImporter.Install, self.install)
         self.subscribe(Events.ModelImporter.StartGame, self.start_game)
@@ -248,10 +254,14 @@ class ModelImporterPackage(Package):
         self.subscribe(Events.ModelImporter.CreateShortcut, lambda event: self.create_shortcut())
         self.subscribe(Events.ModelImporter.DetectGameFolder, lambda event: self.detect_game_paths(supress_errors=True))
         # Mod management events
-        self.subscribe(Events.ModelImporter.RefreshMods, lambda event: self.mod_manager.refresh() if self.mod_manager else None)
-        self.subscribe(Events.ModelImporter.EnableMod, lambda event: self.mod_manager.enable_mod(event.sha) if self.mod_manager else False)
-        self.subscribe(Events.ModelImporter.DisableMod, lambda event: self.mod_manager.disable_mod(event.sha) if self.mod_manager else False)
-        self.subscribe(Events.ModelImporter.ToggleMod, lambda event: self.mod_manager.toggle_mod(event.sha) if self.mod_manager else False)
+        self.subscribe(Events.ModelImporter.RefreshMods, 
+                      lambda event: self._safe_mod_operation(self.mod_manager.refresh) if self.mod_manager else None)
+        self.subscribe(Events.ModelImporter.EnableMod, 
+                      lambda event: self._safe_mod_operation(self.mod_manager.enable_mod, event.sha))
+        self.subscribe(Events.ModelImporter.DisableMod, 
+                      lambda event: self._safe_mod_operation(self.mod_manager.disable_mod, event.sha))
+        self.subscribe(Events.ModelImporter.ToggleMod, 
+                      lambda event: self._safe_mod_operation(self.mod_manager.toggle_mod, event.sha))
         super().load()
         if self.get_installed_version() != '' and not Config.Active.Importer.shortcut_deployed:
             self.create_shortcut()
