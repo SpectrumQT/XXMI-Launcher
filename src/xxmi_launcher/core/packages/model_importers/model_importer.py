@@ -255,7 +255,7 @@ class ModelImporterPackage(Package):
         self.subscribe(Events.ModelImporter.DetectGameFolder, lambda event: self.detect_game_paths(supress_errors=True))
         # Mod management events
         self.subscribe(Events.ModelImporter.RefreshMods, 
-                      lambda event: self._safe_mod_operation(self.mod_manager.refresh) if self.mod_manager else None)
+                      lambda event: self._safe_mod_operation(self.mod_manager.refresh))
         self.subscribe(Events.ModelImporter.EnableMod, 
                       lambda event: self._safe_mod_operation(self.mod_manager.enable_mod, event.sha))
         self.subscribe(Events.ModelImporter.DisableMod, 

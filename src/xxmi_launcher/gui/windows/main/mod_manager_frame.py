@@ -33,16 +33,6 @@ class ModManagerFrame(UIFrame):
                 current = getattr(current, 'master', None)
         except Exception:
             pass
-
-
-class ModManagerFrame(UIFrame):
-    """
-    GUI frame for managing 3DMigoto mods
-    Displays mod list with enable/disable functionality
-    """
-    
-    def __init__(self, master, canvas, **kwargs):
-        super().__init__(master, canvas, **kwargs)
         
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
