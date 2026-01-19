@@ -21,6 +21,7 @@
 - **Custom Launch** — Can be configured to start game in almost every possible way via Advanced Settings
 - **Automatic Updates** — Always keeps XXMI instances and itself up-to date
 - **Safe to Use** — Verifies authenticity of XXMI libraries and own downloads
+- **Mod Manager** — Built-in visual mod management system for easy mod enable/disable and organization
 
 ![xxmi-launcher](https://github.com/SpectrumQT/XXMI-Launcher/blob/main/public-media/XXMI%20Launcher.jpg)
 
@@ -71,6 +72,58 @@
 ### HIMI:
 - **Creator**: [SilentNightSound](https://github.com/SilentNightSound) ([Ko-Fi](https://ko-fi.com/silentnightsound))
 - **Maintainers**: [LeoTorrez](https://github.com/leotorrez) ([Ko-Fi](https://ko-fi.com/leotorrez)), [SinsOfSeven](https://github.com/SinsOfSeven) ([Ko-Fi](https://ko-fi.com/sinsofseven))
+
+## Mod Management
+
+XXMI Launcher now includes an integrated mod manager inspired by [d3dxSkinManage](https://github.com/numlinka/d3dxSkinManage), providing visual mod management alongside kernel updates.
+
+### Features
+
+- **Visual Mod Browser** — Browse all installed mods in a clean, organized interface
+- **Easy Enable/Disable** — Toggle mods on or off with a single click
+- **Automatic Categorization** — Mods are automatically grouped by category for easy navigation
+- **Mod Metadata** — View mod names, authors, descriptions, and associated characters/weapons
+- **Live Statistics** — See total, enabled, and disabled mod counts at a glance
+- **Conflict Detection** — Only one mod per character/weapon can be active at a time
+
+### How to Use
+
+1. Select a game from the main launcher screen
+2. Click the **Tools** icon (wrench) in the bottom-right corner
+3. Click **Mod Manager** to open the mod management interface
+4. Browse mods by category
+5. Use the **Enable/Disable** buttons to toggle individual mods
+6. Click **Refresh Mods** to rescan the Mods folder after adding new mods
+
+### Mod Structure
+
+Mods should be placed in the `Mods` folder of your model importer installation. Each mod should be in its own folder:
+
+```
+YourGameFolder/
+  Mods/
+    ModFolderName/
+      mod.json (optional metadata)
+      *.ini (mod configuration files)
+      *.buf (mod assets)
+      preview.png (optional preview image)
+```
+
+### Mod Metadata (Optional)
+
+Create a `mod.json` file in your mod folder for enhanced mod information:
+
+```json
+{
+  "name": "Character Outfit Name",
+  "object": "CharacterName",
+  "author": "YourName",
+  "category": "Characters",
+  "description": "Description of the mod",
+  "preview": "preview.png",
+  "tags": ["outfit", "costume"]
+}
+```
 
 ## License
 
