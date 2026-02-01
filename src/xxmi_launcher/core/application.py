@@ -327,7 +327,7 @@ class Application:
 
         self.package_manager.notify_package_versions(detect_installed=True)
 
-        self.gui.after(100, self.run_as_thread, self.auto_update)
+        self.gui.after(100, self.run_as_thread, self.auto_update, self.args.nogui)
 
         self.handle_stats()
 
@@ -424,7 +424,7 @@ class Application:
 
         return active_importer
 
-    def auto_update(self):
+    def auto_update(self, launch=False):
         # Exit early if current active model importer is not installed
         importer_package = self.package_manager.packages.get(Config.Launcher.active_importer, None)
         if importer_package is None or importer_package.get_installed_version() == '':
@@ -454,6 +454,10 @@ class Application:
         self.package_manager.update_packages(no_check=True, force=self.args.update, silent=False)
         # This flag is supposed to affect only the first auto-update after launcher start, so lets remove it here
         self.args.update = False
+
+        if (launch):
+            self.launch()
+            self.exit()
 
     def load_importer(self, importer_id, update=True, reload=False):
         # Unload package of other MI if there's one loaded
