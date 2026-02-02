@@ -1,3 +1,4 @@
+import logging
 import tomllib
 import random
 import locale
@@ -6,6 +7,8 @@ from pathlib import Path
 from textwrap import dedent
 from typing import Optional, Dict, Callable
 from enum import Enum
+
+log = logging.getLogger(__name__)
 
 
 class LocaleName(Enum):
@@ -112,24 +115,29 @@ class LocaleEngine:
                 src_string = None
                 alt_strings = None
 
-                for loc_tag, loc_line in locale.items():
-                    if loc_tag == 'src':
-                        src_string = loc_line
-                    elif loc_tag == 'loc':
-                        loc_string = loc_line
-                    elif loc_tag.startswith('alt'):
-                        if alt_strings is None:
-                            alt_strings = [loc_line]
+                try:
+                    for loc_tag, loc_line in locale.items():
+                        if loc_tag == 'src':
+                            src_string = loc_line
+                        elif loc_tag == 'loc':
+                            loc_string = loc_line
+                        elif loc_tag.startswith('alt'):
+                            if alt_strings is None:
+                                alt_strings = [loc_line]
+                            else:
+                                alt_strings.append(loc_line)
                         else:
-                            alt_strings.append(loc_line)
-                    else:
-                        raise Exception(f'Locale key `{key}` has unknown `{loc_tag}` locale string tag!')
+                            raise ValueError(f'Locale key `{key}` has unknown `{loc_tag}` locale string tag!')
 
-                if loc_string is None:
-                    raise Exception(f'Locale key `{key}` is missing `loc` locale string!')
+                    if loc_string is None:
+                        raise ValueError(f'Locale key `{key}` is missing `loc` locale string!')
 
-                if src_string is None:
-                    raise Exception(f'Locale key `{key}` is missing `src` locale string!')
+                    if src_string is None:
+                        raise ValueError(f'Locale key `{key}` is missing `src` locale string!')
+
+                except Exception as e:
+                    log.error(f'Malformed locale string: {e} in file {path}')
+                    continue
 
                 if alt_strings is not None:
                     loc_string = [loc_string] + alt_strings
@@ -185,7 +193,7 @@ class LocaleManager:
         # self.enable_guide_chan = False
 
     def set_root_path(self, root_path: Path):
-        self.package_path = root_path / 'Resources' / 'Packages' / 'Locale'
+        self.package_path = root_path / 'Locale'
         self.locale = LocaleEngine(self.package_path / 'Strings')
 
     def read_active_locale(self) -> Optional[LocaleName]:

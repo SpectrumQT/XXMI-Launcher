@@ -276,7 +276,7 @@ class ContentFrame(UIScrollableFrame):
         style = self.get_style()
         # html = self.get_html()
 
-        html = markdown_parser.convert(message)
+        html = markdown_parser.convert(str(message))
 
         radio_widget = None
         if radio_options is not None:
