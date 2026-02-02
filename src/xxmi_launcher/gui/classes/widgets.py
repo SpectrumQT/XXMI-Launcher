@@ -13,7 +13,7 @@ from tkinter import Menu, INSERT, font
 from customtkinter import CTkBaseClass, CTkButton, CTkImage, CTkLabel, CTkProgressBar, CTkEntry, CTkCheckBox, CTkTextbox, CTkOptionMenu, CTkRadioButton, StringVar
 from customtkinter import END, CURRENT
 from customtkinter import ThemeManager, CTkFont
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageDraw
 
 import core.config_manager as Config
 
@@ -78,7 +78,7 @@ class UIText(UICanvasWidget, CTkBaseClass):
         self.master = master
         self.canvas = canvas or master.canvas
         CTkBaseClass.__init__(self, master=master)
-        UIWidget.__init__(self, master,  **kwargs)
+        UIWidget.__init__(self, master, **kwargs)
         self.fill = fill
         self.activefill = activefill
         self.disabledfill = disabledfill
@@ -163,7 +163,7 @@ class UIImage(UICanvasWidget, CTkBaseClass):
     def __init__(self,
                  master: Union[UIWindow, 'UIFrame'],
                  canvas=None,
-                 image_path: Optional[Path] = None,
+                 image_path: Optional[Union[Path, Image]] = None,
                  x: int = 0,
                  y: int = 0,
                  width: int = 64,
@@ -171,11 +171,18 @@ class UIImage(UICanvasWidget, CTkBaseClass):
                  anchor: str = 'center',
                  opacity: float = 1,
                  brightness: float = 1,
+                 fg_color: Optional[Union[str, Tuple[str, str]]] = None,
+                 border_radius: int = 0,
+                 border_width: int = 0,
+                 border_color: Optional[Union[str, Tuple[str, str]]] = None,
+                 bg_opacity = 0,
+                 padx = None,
+                 pady = None,
                  **kwargs):
         self.master = master
         self.canvas = canvas or master.canvas
         CTkBaseClass.__init__(self, master=master)
-        UIWidget.__init__(self, master,  **kwargs)
+        UIWidget.__init__(self, master, **kwargs)
 
         self._x = None
         self._y = None
@@ -202,6 +209,15 @@ class UIImage(UICanvasWidget, CTkBaseClass):
         # self._video_rendering_active = False
         # self._video_frame_counter = []
 
+        if fg_color or border_radius:
+            new_image = self.create_rectangle(width, height, fg_color, border_radius, border_width, border_color,
+                                              bg_opacity=bg_opacity, padx=padx, pady=pady)
+            width, height = new_image.width, new_image.height
+            if image_path is not None:
+                image_path = self.compose_image_centered(image_path, new_image)
+            else:
+                image_path = new_image
+
         self.configure(image_path=image_path, x=x, y=y, width=width, height=height, anchor=anchor,
                        opacity=opacity, brightness=brightness, **kwargs)
 
@@ -209,37 +225,41 @@ class UIImage(UICanvasWidget, CTkBaseClass):
 
     def configure(self, **kwargs):
         if self._update_attrs(['image_path'], kwargs):
-            path = Path(self.image_path)
+            if isinstance(self.image_path, Image.Image):
+                self._image = self.image_path
+                self.image_path = None
+            else:
+                path = Path(self.image_path)
 
-            # Resolve relative path from active theme
-            # Also search for files with same name but different extension to support advanced themes
-            if not path.is_absolute():
-                path = Config.get_resource_path(self, path, self._supported_extensions)
+                # Resolve relative path from active theme
+                # Also search for files with same name but different extension to support advanced themes
+                if not path.is_absolute():
+                    path = Config.get_resource_path(self, path, self._supported_extensions)
 
-            # if path.suffix in ['.mp4', '.gif', '.mkv', '.avi']:
-            #     self._update_attrs(list(kwargs.keys()), kwargs)
-            #
-            #     self._video = cv2.VideoCapture(str(path))
-            #
-            #     self._video_fps = int(self._video.get(cv2.CAP_PROP_FPS))
-            #     self._video_frame_time = 1000 / self._video_fps / 1000
-            #
-            #     if self.image_tag is None:
-            #         self.image_tag = self.canvas.create_image(self._x, self._y, anchor=self.anchor, **kwargs)
-            #
-            #     # Start async video renderer
-            #     if not self._video_rendering_active:
-            #         self._video_rendering_active = True
-            #         self._buffer_frame()
-            #         self._render_frame()
-            #         # self.print_fps()
-            #
-            # else:
-            # Signal async video renderer to stop if it's active
-            #     if self._video_rendering_active:
-            #         self._video_rendering_active = False
+                # if path.suffix in ['.mp4', '.gif', '.mkv', '.avi']:
+                #     self._update_attrs(list(kwargs.keys()), kwargs)
+                #
+                #     self._video = cv2.VideoCapture(str(path))
+                #
+                #     self._video_fps = int(self._video.get(cv2.CAP_PROP_FPS))
+                #     self._video_frame_time = 1000 / self._video_fps / 1000
+                #
+                #     if self.image_tag is None:
+                #         self.image_tag = self.canvas.create_image(self._x, self._y, anchor=self.anchor, **kwargs)
+                #
+                #     # Start async video renderer
+                #     if not self._video_rendering_active:
+                #         self._video_rendering_active = True
+                #         self._buffer_frame()
+                #         self._render_frame()
+                #         # self.print_fps()
+                #
+                # else:
+                # Signal async video renderer to stop if it's active
+                #     if self._video_rendering_active:
+                #         self._video_rendering_active = False
 
-            self._image = Image.open(str(path))
+                self._image = Image.open(str(path))
 
         if self._update_attrs(['width', 'height', 'opacity', 'brightness'], kwargs):
             self.image = self.create_image(self._image, self._width, self._height, self.opacity, self.brightness)
@@ -353,7 +373,67 @@ class UIImage(UICanvasWidget, CTkBaseClass):
     def set_image(self, image):
         self.canvas.itemconfig(self.image_tag, image=image)
 
-    def create_image(self, image: Image, width, height, opacity: float, brightness: float):
+    @staticmethod
+    def get_pad_value(x) -> int:
+        if x is None:
+            return 0
+        if isinstance(x, tuple):
+            return x[0]
+        if isinstance(x, list):
+            return x[0]
+        return int(x)
+
+    @staticmethod
+    def get_pad_sum(x) -> int:
+        if x is None:
+            return 0
+        if isinstance(x, int):
+            return x
+        if isinstance(x, float):
+            return int(x)
+        return sum(x)
+
+    def create_rectangle(self, width, height, fill_color, radius, border_width, border_color, bg_opacity=0, padx=None, pady=None, scale=4):
+        bg_image = None
+        if padx or pady:
+            padded_width = width + self.get_pad_sum(padx) * 2
+            padded_height = height + self.get_pad_sum(pady) * 2
+            bg_opacity = max(0.0, min(1.0, bg_opacity))
+            bg_opacity_int = int(bg_opacity * 255)
+            bg_image = Image.new("RGBA", (padded_width, padded_height), (0, 0, 0, bg_opacity_int))
+
+        image = Image.new('RGBA', (width*scale, height*scale), (0, 0, 0, 0))
+        border_width *= scale
+        draw = ImageDraw.Draw(image)
+        draw.rounded_rectangle(
+            [
+                (border_width // 2, border_width // 2),
+                (width*scale - border_width // 2 - 1, height*scale - border_width // 2 - 1)
+            ],
+            radius=radius*scale,
+            outline=border_color,
+            width=border_width,
+            fill=fill_color  # None makes the inside transparent
+        )
+
+        if scale != 1:
+            image = image.resize((width, height), Image.LANCZOS)
+
+        if bg_image:
+            bg_image.alpha_composite(image, (self.get_pad_value(padx), self.get_pad_value(pady)))
+            return bg_image
+
+        return image
+
+    @staticmethod
+    def compose_image_centered(bg, fg):
+        bg = bg.copy()
+        x = (bg.width - fg.width) // 2
+        y = (bg.height - fg.height) // 2
+        bg.alpha_composite(fg, (x, y))
+        return bg
+
+    def create_image(self, image: Image.Image, width, height, opacity: float, brightness: float):
         # Modify opacity and/or brightness
         if opacity != 1 or brightness != 1:
             channels = image.split()
@@ -412,7 +492,7 @@ class UIImageButton(UICanvasWidget, CTkBaseClass):
                  command: Callable = None,
                  disabled: bool = False,
                  # Background Image
-                 bg_image_path: Optional[Path] = None,
+                 bg_image_path: Optional[Union[Path, Image]] = None,
                  bg_width: int = 64,
                  bg_height: int = 64,
                  bg_normal_opacity: float = 1,
@@ -423,8 +503,12 @@ class UIImageButton(UICanvasWidget, CTkBaseClass):
                  bg_hover_brightness: float = 1,
                  bg_selected_brightness: float = 1,
                  bg_disabled_brightness: float = 1,
+                 fg_color: Optional[Union[str, Tuple[str, str]]] = None,
+                 border_radius: int = 0,
+                 border_width: int = 0,
+                 border_color: Optional[Union[str, Tuple[str, str]]] = None,
                  # Button Image
-                 button_image_path: Optional[Path] = None,
+                 button_image_path: Optional[Union[Path, Image]] = None,
                  button_x_offset: int = 0,
                  button_y_offset: int = 0,
                  button_normal_opacity: float = 1,
@@ -449,7 +533,7 @@ class UIImageButton(UICanvasWidget, CTkBaseClass):
                  **kwargs):
 
         CTkBaseClass.__init__(self, master=master)
-        UIWidget.__init__(self, master,  **kwargs)
+        UIWidget.__init__(self, master, **kwargs)
 
         self.master = master
         self.canvas = canvas or master.canvas
@@ -465,10 +549,10 @@ class UIImageButton(UICanvasWidget, CTkBaseClass):
         self._text_y_offset = text_y_offset
 
         self._bg_image = None
-        if bg_image_path is not None:
+        if bg_image_path is not None or fg_color or border_radius:
             self._bg_image = self.put(UIImage(master=master, image_path=bg_image_path, width=bg_width, height=bg_height,
-                                      x=x, y=y, anchor=anchor,
-                                      opacity=bg_normal_opacity, brightness=bg_normal_brightness))
+                                              x=x, y=y, anchor=anchor, opacity=bg_normal_opacity, brightness=bg_normal_brightness,
+                                              fg_color=fg_color, border_radius=border_radius, border_width=border_width, border_color=border_color))
             self.bg_apply_normal = lambda: self._bg_image.configure(opacity=bg_normal_opacity, brightness=bg_normal_brightness)
             self.bg_apply_hover = lambda: self._bg_image.configure(opacity=bg_hover_opacity, brightness=bg_hover_brightness)
             self.bg_apply_select = lambda: self._bg_image.configure(opacity=bg_selected_opacity, brightness=bg_selected_brightness)
@@ -487,8 +571,8 @@ class UIImageButton(UICanvasWidget, CTkBaseClass):
         self._text_image = None
         if text is not None:
             self._text_image = self.put(UIText(master=master, canvas=self.canvas, text=text, font=font, width=0, justify=justify,
-                                        x=text_x_offset+x, y=text_y_offset+y, anchor=text_anchor or anchor,
-                                        fill=fill, activefill=activefill, disabledfill=disabledfill))
+                                               x=text_x_offset+x, y=text_y_offset+y, anchor=text_anchor or anchor,
+                                               fill=fill, activefill=activefill, disabledfill=disabledfill))
 
         self.update_dimensions()
 
@@ -496,7 +580,7 @@ class UIImageButton(UICanvasWidget, CTkBaseClass):
         self.selected = False
 
         self._apply_theme()
-        
+
         self.bind("<ButtonPress-1>", self._handle_button_press)
         self.bind("<ButtonRelease-1>", self._handle_button_release)
         self.bind("<Enter>", self._handle_enter)
@@ -510,9 +594,9 @@ class UIImageButton(UICanvasWidget, CTkBaseClass):
         if self._bg_image is not None:
             self._bg_image.move(x, y)
         if self._button_image is not None:
-            self._button_image.move(self._button_x_offset+x, self._button_y_offset+y)
+            self._button_image.move(self._button_x_offset + x, self._button_y_offset + y)
         if self._text_image is not None:
-            self._text_image.move(self._text_x_offset+x, self._text_y_offset+y)
+            self._text_image.move(self._text_x_offset + x, self._text_y_offset + y)
         self.update_dimensions()
 
     def update_dimensions(self):
@@ -632,6 +716,15 @@ class UIImageButton(UICanvasWidget, CTkBaseClass):
     def winfo_height(self):
         return int(self._apply_widget_scaling(self._height))
 
+    def destroy(self):
+        if self._bg_image:
+            self._bg_image.destroy()
+        if self._button_image:
+            self._button_image.destroy()
+        if self._text_image:
+            self._text_image.destroy()
+        super().destroy()
+
 
 class UILabel(UIWidget, CTkLabel):
     def __init__(self,
@@ -640,7 +733,7 @@ class UILabel(UIWidget, CTkLabel):
                  state: str = tkinter.NORMAL,
                  text_color_disabled: Optional[Union[str, Tuple[str, str]]] = None,
                  **kwargs):
-        UIWidget.__init__(self, master,  **kwargs)
+        UIWidget.__init__(self, master, **kwargs)
         self._state = state
         self.image: Optional[CTkImage] = None
         if image_path is not None:
@@ -715,7 +808,7 @@ class UIButton(UIWidget, CTkButton):
                  padx: int = 12,
                  **kwargs):
 
-        UIWidget.__init__(self, master,  **kwargs)
+        UIWidget.__init__(self, master, **kwargs)
 
         self._auto_width = auto_width
         self._padx = padx
@@ -737,7 +830,7 @@ class UIButton(UIWidget, CTkButton):
 
         if self._auto_width:
             self._set_auto_width()
-        
+
         self.unbind('<Button-1>')
 
     def configure(self, require_redraw=False, **kwargs):
@@ -773,10 +866,10 @@ class UIButton(UIWidget, CTkButton):
     def _set_auto_width(self):
         scaling = self._apply_widget_scaling(1)
         offset = self._padx * 2
-        text_width = int(self._text_label.winfo_reqwidth()/scaling)
+        text_width = int(self._text_label.winfo_reqwidth() / scaling)
         if scaling != 1:
             offset += self._apply_widget_scaling(2)
-        self.configure(width=text_width+offset)
+        self.configure(width=text_width + offset)
 
     def _draw(self, no_color_updates=False):
         CTkBaseClass._draw(self, no_color_updates)
@@ -995,7 +1088,7 @@ class UIRadioButton(UIWidget, CTkRadioButton):
                  master: Union[UIWindow, 'UIFrame'],
                  **kwargs):
 
-        UIWidget.__init__(self, master,  **kwargs)
+        UIWidget.__init__(self, master, **kwargs)
 
         CTkRadioButton.__init__(self, master, **kwargs)
 
@@ -1006,7 +1099,8 @@ class UIProgressBar(UIWidget, CTkProgressBar):
     def __init__(self,
                  master: Union[UIWindow, 'UIFrame'],
                  **kwargs):
-        UIWidget.__init__(self, master,  **kwargs)
+
+        UIWidget.__init__(self, master, **kwargs)
         CTkProgressBar.__init__(self, master, **kwargs)
 
         self._apply_theme()
@@ -1018,7 +1112,7 @@ class UIEntry(CTkEntry, UIWidget):
                  input_filter: Optional[str] = None,
                  **kwargs):
 
-        UIWidget.__init__(self, master,  **kwargs)
+        UIWidget.__init__(self, master, **kwargs)
 
         # Smart input filtering for INT and FLOAT values
         self._input_filter = input_filter.upper() if input_filter else None
@@ -1210,7 +1304,7 @@ class UIEntry(CTkEntry, UIWidget):
 
     def handle_return(self, event):
         self.master.focus_set()
-        
+
     def initialize_state_log(self, event=None):
         if len(self.state_log) == 1:
             self.state_log[0] = (self.get(), self.index(INSERT))
@@ -1244,7 +1338,7 @@ class UIEntry(CTkEntry, UIWidget):
 
             old_states = self.state_log[self.state_id:]
             # print(f'REMOVE: {old_states}  STATES: {self.state_log}')
-            self.state_log = self.state_log[:self.state_id+1]
+            self.state_log = self.state_log[:self.state_id + 1]
 
         self.state_id = len(self.state_log)
         self.set_state(self.state_id, self.get(), self.index(INSERT))
@@ -1297,7 +1391,7 @@ class UICheckbox(CTkCheckBox, UIWidget):
     def __init__(self,
                  master: Union[UIWindow, 'UIFrame'],
                  **kwargs):
-        UIWidget.__init__(self, master,  **kwargs)
+        UIWidget.__init__(self, master, **kwargs)
 
         self._fg_color_disabled = ThemeManager.theme["CTkCheckBox"].get("fg_color_disabled", None)
         self._checkmark_color_disabled = ThemeManager.theme["CTkCheckBox"].get("checkmark_color_disabled", None)
@@ -1458,7 +1552,9 @@ class UIOptionMenu(CTkOptionMenu, UIWidget):
     def __init__(self,
                  master: Union[UIWindow, 'UIFrame'],
                  **kwargs):
-        UIWidget.__init__(self, master,  **kwargs)
+        UIWidget.__init__(self, master, **kwargs)
+        if isinstance(kwargs.get('values', None), dict):
+            self._setup_values(master, kwargs)
         self._border_width = ThemeManager.theme["CTkTextbox"].get("border_width", 2)
         self._button_color_disabled = ThemeManager.theme["CTkOptionMenu"].get("button_color_disabled", None)
         CTkOptionMenu.__init__(self, master, **kwargs)
@@ -1477,6 +1573,38 @@ class UIOptionMenu(CTkOptionMenu, UIWidget):
             kwargs['font'] = tuple(font)
 
         super().configure(require_redraw, **kwargs)
+
+    def _setup_values(self, master, kwargs):
+        self._values_dict = kwargs.pop('values')
+        self._variable = None
+        self._original_variable = kwargs.pop('variable', None)
+
+        proxy_var = StringVar(master=master, value=f'{self._values_dict[self._original_variable.get()]}')
+
+        proxy_var.trace_add('write', self._handle_proxy_var_update)
+        self.trace_write(self._original_variable, self._handle_original_var_update)
+
+        kwargs['variable'] = proxy_var
+        kwargs['values'] = list(self._values_dict.values())
+
+    def get(self) -> str:
+        if self._values_dict is None:
+            return self._current_value
+        else:
+            return next((k for k, v in self._values_dict.items() if v == self._current_value), None)
+
+    def _handle_original_var_update(self, var, original_val):
+        if self._variable is None:
+            return
+        value = self._values_dict[self._original_variable.get()]
+        if value != self._variable.get():
+            self._variable.set(value)
+
+    def _handle_proxy_var_update(self, varname=None, index=None, mode=None):
+        value = self._variable.get()
+        value_key = next((k for k, v in self._values_dict.items() if v == value), None)
+        if value_key != self._original_variable.get():
+            self._original_variable.set(value_key)
 
     def _draw(self, no_color_updates=False):
         CTkBaseClass._draw(self, no_color_updates)
@@ -1554,6 +1682,8 @@ class UIOptionMenu(CTkOptionMenu, UIWidget):
 
     def _clicked(self, event=0):
         if self._state is not tkinter.DISABLED and len(self._values) > 0:
+            if self.tooltip:
+                self.tooltip._on_leave()
             if not self.dropdown_menu_opened:
                 # Adding toggle behaviour to dropdown button is a bit tricky
                 # By default, the same click that closes the menu will open it again if dropdown button is clicked
@@ -1585,7 +1715,7 @@ class UITextbox(CTkTextbox, UIWidget):
                  master: Union[UIWindow, 'UIFrame'],
                  text_variable,
                  **kwargs):
-        UIWidget.__init__(self, master,  **kwargs)
+        UIWidget.__init__(self, master, **kwargs)
 
         self._state = tkinter.NORMAL
 
@@ -1678,8 +1808,8 @@ class UITextbox(CTkTextbox, UIWidget):
         self._canvas.tag_lower("border_parts")
 
     def set(self, value):
-        self.delete(1.0, END)
-        self.insert(END, value)
+        self.delete(0, END)
+        self.insert(0, value)
 
     def handle_on_widget_change(self, event=None):
         self.text_variable.set(self.get(0.0, END))
