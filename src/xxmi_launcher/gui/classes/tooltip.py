@@ -33,7 +33,7 @@ class UIToolTip:
             height: int = 600,
             style: str = dedent("""
                 <style>
-                    html { background-color: #eeeeee;}
+                    html { background-color: #fafafa;}
                     body { font-size: 14px;}
                     p { font-family: Asap; margin: 5px;}
                     ul { margin: 10px 5px;}
@@ -128,7 +128,8 @@ class UIToolTip:
             msg = "\n".join(self.msg)
         else:
             msg = str(self.msg)
-        self.text = self.engine.markdown_parser.convert(msg)
+        html = self.engine.markdown_parser.convert(msg)
+        self.text = f"<html><body>{html}</body></html>"
         # html += '<br/><br/>' + self.engine.markdown_parser.convert(f'```\n{html}\n```')
 
     def _init_bindings(self) -> list[Binding]:
@@ -257,9 +258,10 @@ class UIToolTipEngine(tk.Toplevel):
         """
         Displays the ToolTip.
         """
-        if tooltip != self.tooltip:
-            if self.tooltip is not None:
-                self.tooltip.status = ToolTipStatus.OUTSIDE
+        # if self.tooltip is not None:
+        #     if tooltip != self.tooltip:
+        #         self.tooltip.status = ToolTipStatus.OUTSIDE
+        #         print('ToolTipStatus.OUTSIDE')
 
         self.tooltip = tooltip
 
