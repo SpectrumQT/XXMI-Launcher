@@ -4,6 +4,8 @@ import core.config_manager as Config
 import core.event_manager as Events
 import gui.vars as Vars
 
+from core.locale_manager import L
+
 from gui.classes.containers import UIFrame
 from gui.classes.widgets import UIButton, UILabel
 
@@ -16,7 +18,7 @@ log = logging.getLogger(__name__)
 
 
 class SettingsTabsFrame(UIFrame):
-    def __init__(self, master):
+    def __init__(self, master, default_tab='GENERAL_TAB'):
 
         super().__init__(master)
 
@@ -34,12 +36,12 @@ class SettingsTabsFrame(UIFrame):
         self.tabs = {}
         self.selected_tab = None
 
-        self.add_tab('GENERAL_TAB', 'General', GeneralSettingsFrame(master=self.tab_content_frame))
-        self.add_tab('LAUNCHER_TAB', 'Launcher', LauncherSettingsFrame(master=self.tab_content_frame))
-        self.add_tab('IMPORTER_TAB', 'MI', ModelImporterSettingsFrame(master=self.tab_content_frame))
-        self.add_tab('ADVANCED_TAB', 'Advanced', AdvancedSettingsFrame(master=self.tab_content_frame))
+        self.add_tab('GENERAL_TAB', L('settings_tab_general', 'General'), GeneralSettingsFrame(master=self.tab_content_frame, fix_grid=default_tab=='GENERAL_TAB'))
+        self.add_tab('LAUNCHER_TAB', L('settings_tab_launcher', 'Launcher'), LauncherSettingsFrame(master=self.tab_content_frame, fix_grid=default_tab=='LAUNCHER_TAB'))
+        self.add_tab('IMPORTER_TAB', L('settings_tab_importer', 'MI'), ModelImporterSettingsFrame(master=self.tab_content_frame))
+        self.add_tab('ADVANCED_TAB', L('settings_tab_advanced', 'Advanced'), AdvancedSettingsFrame(master=self.tab_content_frame))
 
-        self.select_tab(self.tabs['GENERAL_TAB'])
+        self.select_tab(self.tabs[default_tab])
 
         self.trace_save(Vars.Settings.Launcher.active_importer, self.handle_active_importer_update)
         self.trace_save(Vars.Active.Importer.importer_folder, self.handle_importer_folder_update)
@@ -62,7 +64,7 @@ class SettingsTabsFrame(UIFrame):
                 self.buttons[self.selected_tab.guid].set_selected(False)
 
         self.buttons[tab.guid].set_selected(True)
-        tab.label.grid(row=0, column=0, padx=(30, 10), pady=(0, 20), sticky='nw')
+        # tab.label.grid(row=0, column=0, padx=(30, 10), pady=(0, 20), sticky='nw')
         tab.frame.configure(fg_color=self._fg_color)
         tab.frame.grid(row=1, column=0, padx=(10, 10), pady=(10, 10), sticky='news', rowspan=len(self.tabs))
         self.selected_tab = tab
@@ -104,7 +106,7 @@ class SettingsTabsListFrame(UIFrame):
 class SettingsLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Settings',
+            text=L('settings_title', 'Settings'),
             font=('Microsoft YaHei', 20),
             fg_color='transparent',
             text_color='#888888',

@@ -28,10 +28,10 @@ class SettingsFrame(UIFrame):
 
         self.subscribe(
             Events.Application.OpenSettings,
-            lambda event: self.open_settings(wait_window=event.wait_window))
+            lambda event: self.open_settings(tab_name=event.tab_name, wait_window=event.wait_window))
         self.subscribe(Events.Application.CloseSettings, self.handle_close_settings)
 
-    def open_settings(self, wait_window=False):
+    def open_settings(self, tab_name='', wait_window=False):
         if self.settings_frame is not None:
             return
         Vars.Settings.initialize_vars()
@@ -40,7 +40,10 @@ class SettingsFrame(UIFrame):
         self.place(x=124, y=167)
 
         from gui.windows.settings.settings_tabs_frame import SettingsTabsFrame
-        self.settings_frame = self.put(SettingsTabsFrame(self))
+        if not tab_name:
+            self.settings_frame = self.put(SettingsTabsFrame(self))
+        else:
+            self.settings_frame = self.put(SettingsTabsFrame(self, default_tab=tab_name))
         self.settings_frame.grid(row=0, column=0, sticky='news')
         self.settings_frame.show()
         self.show()
@@ -49,19 +52,20 @@ class SettingsFrame(UIFrame):
         Vars.Settings.save()
         Config.Config.save()
         self.hide()
+        self._reset_frame()
 
     def handle_close_settings(self, event=None):
         if event.save:
             self.save_and_close()
         else:
             self.hide()
+            self._reset_frame()
 
     def _show(self):
         super()._show()
         self.close_button.show()
 
-    def _hide(self):
-        super()._hide()
+    def _reset_frame(self):
         self.place_forget()
         if self.settings_frame is not None:
             self.settings_frame.grid_forget()
@@ -71,6 +75,9 @@ class SettingsFrame(UIFrame):
         self.settings_frame = None
         if self.close_button is not None:
             self.close_button.hide()
+
+    def _hide(self):
+        super()._hide()
 
     def _handle_button_press(self, event):
         self._offset_x = event.x

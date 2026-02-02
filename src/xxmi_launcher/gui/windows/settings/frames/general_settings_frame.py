@@ -1,14 +1,14 @@
 import subprocess
 import webbrowser
 
-from pathlib import Path
 from customtkinter import filedialog, ThemeManager
-from textwrap import dedent
 
 import core.event_manager as Events
 import core.config_manager as Config
 import core.path_manager as Paths
 import gui.vars as Vars
+
+from core.locale_manager import L, LocaleName
 from core.application import Application
 
 from gui.classes.containers import UIFrame, UIScrollableFrame
@@ -16,42 +16,43 @@ from gui.classes.widgets import UILabel, UIButton, UIEntry, UICheckbox,  UIOptio
 
 
 class GeneralSettingsFrame(UIScrollableFrame):
-    def __init__(self, master):
-        super().__init__(master, height=360, corner_radius=0, border_width=0, hide_scrollbar=True)
+    def __init__(self, master, fix_grid=False):
+        super().__init__(master, height=410, corner_radius=0, border_width=0, hide_scrollbar=True, fix_grid=fix_grid)
 
         self.grid_columnconfigure((0, 2, 3), weight=1)
         self.grid_columnconfigure(1, weight=100)
         self.grid_rowconfigure((0, 1, 2, 3), weight=1)
         self.grid_rowconfigure(6, weight=100)
 
-        # Call grid manager to workaround customtkinter bug that causes content to overlap with scrollbar
-        self.grid()
+        # Language
+        self.put(LanguageLabel(self)).grid(row=0, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
+        self.put(LanguageOptionMenu(self)).grid(row=0, column=1, padx=(0, 10), pady=(0, 30), sticky='w', columnspan=3)
 
         # Game Folder
-        self.put(GameFolderLabel(self)).grid(row=0, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
-        self.put(GameFolderFrame(self)).grid(row=0, column=1, padx=(0, 65), pady=(0, 30), sticky='new', columnspan=3)
-        self.put(DetectGameFolderButton(self)).grid(row=0, column=1, padx=(0, 20), pady=(0, 30), sticky='e', columnspan=3)
+        self.put(GameFolderLabel(self)).grid(row=1, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
+        self.put(GameFolderFrame(self)).grid(row=1, column=1, padx=(0, 65), pady=(0, 30), sticky='new', columnspan=3)
+        self.put(DetectGameFolderButton(self)).grid(row=1, column=1, padx=(0, 20), pady=(0, 30), sticky='e', columnspan=3)
 
         # Launch Options
-        self.put(LaunchOptionsLabel(self)).grid(row=1, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
-        self.put(LaunchOptionsFrame(self)).grid(row=1, column=1, padx=(0, 20), pady=(0, 30), sticky='ew', columnspan=3)
+        self.put(LaunchOptionsLabel(self)).grid(row=2, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
+        self.put(LaunchOptionsFrame(self)).grid(row=2, column=1, padx=(0, 20), pady=(0, 30), sticky='ew', columnspan=3)
 
         # Process Priority
-        self.put(StartMethodLabel(self)).grid(row=2, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
-        self.put(ProcessOptionsFrame(self)).grid(row=2, column=1, padx=(0, 20), pady=(0, 30), sticky='w', columnspan=3)
+        self.put(StartMethodLabel(self)).grid(row=3, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
+        self.put(ProcessOptionsFrame(self)).grid(row=3, column=1, padx=(0, 20), pady=(0, 30), sticky='w', columnspan=3)
 
         # Auto Config
         if Vars.Launcher.active_importer.get() not in ['SRMI', 'HIMI']:
-            self.put(AutoConfigLabel(self)).grid(row=3, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
-            self.put(AutoConfigFrame(self)).grid(row=3, column=1, padx=(0, 20), pady=(0, 30), sticky='w', columnspan=3)
+            self.put(AutoConfigLabel(self)).grid(row=4, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
+            self.put(AutoConfigFrame(self)).grid(row=4, column=1, padx=(0, 20), pady=(0, 30), sticky='w', columnspan=3)
 
         if Vars.Launcher.active_importer.get() != 'ZZMI':
             
             # Tweaks
-            self.put(TweaksLabel(self)).grid(row=4, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
+            self.put(TweaksLabel(self)).grid(row=5, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
     
             tweaks_frame = UIFrame(self, fg_color=master._fg_color)
-            tweaks_frame.grid(row=4, column=1, padx=(0, 0), pady=(0, 30), sticky='we', columnspan=3)
+            tweaks_frame.grid(row=5, column=1, padx=(0, 0), pady=(0, 30), sticky='we', columnspan=3)
             tweaks_frame.put(UnlockFPSCheckbox(tweaks_frame)).grid(row=0, column=0, padx=(0, 10), pady=(0, 0), sticky='w')
     
             # Window mode for GI FPS Unlocker
@@ -71,8 +72,39 @@ class GeneralSettingsFrame(UIScrollableFrame):
                 tweaks_frame.put(OpenEngineIniButton(tweaks_frame)).grid(row=0, column=2, padx=(10, 20), pady=(0, 0), sticky='e')
 
         if Vars.Launcher.active_importer.get() == 'WWMI':
-            self.put(EngineSettingsLabel(self)).grid(row=5, column=0, padx=(20, 10), pady=(0, 20), sticky='w')
-            self.put(TextureStreamingFrame(self)).grid(row=5, column=1, padx=(0, 20), pady=(0, 20), sticky='w', columnspan=3)
+            self.put(EngineSettingsLabel(self)).grid(row=6, column=0, padx=(20, 10), pady=(0, 20), sticky='w')
+            self.put(TextureStreamingFrame(self)).grid(row=6, column=1, padx=(0, 20), pady=(0, 20), sticky='w', columnspan=3)
+
+
+class LanguageLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text=L('launcher_settings_language_label', 'Language:'),
+            font=('Microsoft YaHei', 14, 'bold'),
+            fg_color='transparent',
+            master=master)
+
+
+class LanguageOptionMenu(UIOptionMenu):
+    def __init__(self, master):
+        super().__init__(
+            width=120,
+            height=36,
+            font=('Arial', 14),
+            dropdown_font=('Arial', 14),
+            values={e.name: e.value for e in LocaleName},
+            variable=Vars.Launcher.locale,
+            command=self.handle_language_change,
+            master=master)
+
+    def handle_language_change(self, value):
+        from core.locale_manager import Locale
+        Locale.set_active_locale(LocaleName[Vars.Launcher.locale.get()])
+        Events.Fire(Events.Application.CloseSettings(save=True))
+        Events.Fire(Events.GUI.ReloadGUI())
+        Events.Fire(Events.Application.Busy())
+        Events.Fire(Events.Application.OpenSettings())
+        Events.Fire(Events.Application.Ready())
 
 
 class GameFolderFrame(UIFrame):
@@ -94,7 +126,7 @@ class GameFolderFrame(UIFrame):
 class LaunchOptionsFrame(UIFrame):
     def __init__(self, master):
         super().__init__(
-            fg_color = 'transparent',
+            fg_color='transparent',
             master=master)
 
         self.grid_columnconfigure(1, weight=100)
@@ -163,7 +195,7 @@ class AutoConfigFrame(UIFrame):
 class EngineSettingsLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Engine Settings:',
+            text=L('general_settings_engine_settings_label', 'Engine Settings:'),
             font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
@@ -200,7 +232,7 @@ class TextureStreamingFrame(UIFrame):
 class GameFolderLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Game Folder:',
+            text=L('general_settings_game_folder_label', 'Game Folder:'),
             font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
@@ -234,28 +266,36 @@ class GameFolderEntry(UIEntry):
         return True
 
     def get_tooltip(self):
-        msg = ''
         if Config.Launcher.active_importer == 'WWMI':
-            msg = 'Path to folder with "Wuthering Waves.exe" and "Client" & "Engine" subfolders.\n'
-            msg += 'Usually this folder is named "Wuthering Waves Game" and located inside WuWa installation folder.'
+            return L('general_settings_game_folder_tooltip_wwmi', """
+                Path to folder with "Wuthering Waves.exe" and "Client" & "Engine" subfolders.
+                Usually this folder is named "Wuthering Waves Game" and located inside WuWa installation folder.
+            """)
         if Config.Launcher.active_importer == 'ZZMI':
-            msg = 'Path to folder with "ZenlessZoneZero.exe".\n'
+            return L('general_settings_game_folder_tooltip_zzmi', """
+                Path to folder with "ZenlessZoneZero.exe".
+            """)
         if Config.Launcher.active_importer == 'SRMI':
-            msg = 'Path to folder with "StarRail.exe".\n'
-            msg += 'Usually this folder is named "Games" and located inside "DATA" folder of HSR installation folder.'
+            return L('general_settings_game_folder_tooltip_srmi', """
+                Path to folder with "StarRail.exe".
+                Usually this folder is named "Star Rail Games".
+            """)
         if Config.Launcher.active_importer == 'GIMI':
-            msg = 'Path to folder with "GenshinImpact.exe" or "YuanShen.exe" (CN).\n'
-            msg += 'Usually this folder is named "Genshin Impact Game" and located inside "DATA" folder of GI installation folder.'
+            return L('general_settings_game_folder_tooltip_gimi', """
+                Path to folder with "GenshinImpact.exe" or "YuanShen.exe" (CN).
+                Usually this folder is named "Genshin Impact Game".
+            """)
         if Config.Launcher.active_importer == 'HIMI':
-            msg = 'Path to folder with "StarRail.exe".\n'
-            msg += 'Usually this folder is named "Games" and located inside "DATA" folder of HSR installation folder.'
-        return msg.strip()
+            return L('general_settings_game_folder_tooltip_himi', """
+                Path to folder with "BH3.exe".
+                Usually this folder is named "Honkai Impact 3rd game".
+            """)
 
 
 class GameFolderErrorLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Failed to detect Game Folder!',
+            text=L('general_settings_game_folder_error_label', 'Failed to detect Game Folder!'),
             font=('Microsoft YaHei', 14, 'bold'),
             text_color='#ff3636',
             fg_color='transparent',
@@ -270,7 +310,7 @@ class ChangeGameFolderButton(UIButton):
     def __init__(self, master):
         fg_color = ThemeManager.theme["CTkEntry"].get("fg_color", None)
         super().__init__(
-            text='Browse...',
+            text=L('settings_browse_path_button', 'Browse...'),
             command=self.change_game_folder,
             auto_width=True,
             padx=6,
@@ -300,7 +340,7 @@ class DetectGameFolderButton(UIButton):
             font=('Asap', 18),
             master=master)
 
-        self.set_tooltip('Try to automatically detect existing installation folders.')
+        self.set_tooltip(L('general_settings_detect_game_folder_button_tooltip', 'Try to automatically detect existing installation folders.'))
 
     def detect_game_folder(self):
         try:
@@ -314,7 +354,7 @@ class DetectGameFolderButton(UIButton):
 class LaunchOptionsLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Launch Options:',
+            text=L('general_settings_launch_options_label', 'Launch Options:'),
             font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
@@ -344,13 +384,16 @@ class LaunchOptionsEntry(UIEntry):
 
     def get_tooltip(self):
         if Config.Launcher.active_importer == 'WWMI':
-            return dedent("""
+            return L('general_settings_launch_options_entry_tooltip_wwmi', """
                 **Enabled**: Start game via **Client-Win64-Shipping.exe** with specified command line arguments.
+                
+                - Disable intro: -SkipSplash
+                
                 **Disabled (default)**: Start game normally via **Wuthering Waves.exe** (most reliable way).
                 <font color="red">⚠ Game may crash with this option enabled! ⚠</font>
             """)
         else:
-            return dedent("""
+            return L('general_settings_launch_options_entry_tooltip_default', """
                 **Enabled**: Start game exe with specified command line arguments.
                 **Disabled**: Ignore specified command line arguments and start game exe normally.
             """)
@@ -367,7 +410,7 @@ class LaunchOptionsButton(UIButton):
         fg_color = ThemeManager.theme['CTkEntry'].get('fg_color', None)
 
         super().__init__(
-            text='About...',
+            text=L('general_settings_launch_options_about_button', 'About...'),
             command=self.open_docs,
             auto_width=True,
             padx=6,
@@ -412,15 +455,16 @@ class LaunchOptionsButton(UIButton):
         else:
             raise ValueError(f'Game engine is unknown!')
 
-        return (
-            f'Open {engine} command line arguments documentation webpage.\n'
-            f'Note: Game engine is customized by devs and some args may not work.')
+        return L('general_settings_launch_options_about_button_tooltip', """
+            Open {engine} command line arguments documentation webpage.
+            Note: Game engine is customized by devs and some args may not work.
+        """).format(engine=engine)
 
 
 class StartMethodLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Start Method:',
+            text=L('general_settings_start_method_label', 'Start Method:'),
             font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
@@ -429,7 +473,11 @@ class StartMethodLabel(UILabel):
 class StartMethodOptionMenu(UIOptionMenu):
     def __init__(self, master):
         super().__init__(
-            values=['Native', 'Shell', 'Manual'],
+            values={
+                'Native': L('general_settings_start_method_native', 'Native'),
+                'Shell': L('general_settings_start_method_shell', 'Shell'),
+                'Manual': L('general_settings_start_method_manual', 'Manual'),
+            },
             variable=Vars.Active.Importer.process_start_method,
             width=140,
             height=36,
@@ -439,17 +487,17 @@ class StartMethodOptionMenu(UIOptionMenu):
         self.set_tooltip(self.get_tooltip)
 
     def get_tooltip(self):
-        return dedent(f"""
+        return L('general_settings_start_method_option_menu_tooltip', """
             **Native**: Create the game process directly. Usually it's the most reliable way.
             **Shell**: Start the game process via system console. Worth to try if you have some issues with Native.
-            **Manual**: Skip launching the game on **Start** button press. Wait for user to launch it manually ({Config.Launcher.start_timeout}s timeout).
-        """)
+            **Manual**: Skip launching the game on **Start** button press. Wait for user to launch it manually ({timeout}s timeout).
+        """).format(timeout=Config.Launcher.start_timeout)
 
 
 class MigotoInitDelayLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='XXMI Delay:',
+            text=L('general_settings_xxmi_delay_label', 'XXMI Delay:'),
             font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
@@ -468,9 +516,12 @@ class MigotoInitDelayEntry(UIEntry):
         self.set_tooltip(self.get_tooltip)
 
     def get_tooltip(self):
-        msg = 'Delay in milliseconds for how long injected XXMI DLL (3dmigoto) must wait before initialization.\n'
+        msg = L('general_settings_xxmi_delay_entry_tooltip_base', """
+            Delay in milliseconds for how long injected XXMI DLL (3dmigoto) must wait before initialization.
+            {tooltip_footer}
+        """)
         if Config.Launcher.active_importer == 'WWMI':
-            msg += dedent("""
+            msg = msg.format(tooltip_footer=L('general_settings_xxmi_delay_entry_tooltip_footer_wwmi', """
                 <font color="red">⚠ Wuthering Waves crashes on launch with wrong delay! ⚠</font>
                 <font color="#8B8000">⚠ If default value fails, try to increase or decrease it until WuWa stops crashing. ⚠</font>
                 ## Known values for Wuthering Waves 2.4:
@@ -478,9 +529,11 @@ class MigotoInitDelayEntry(UIEntry):
                 - **150**: Minimal known value to work along with ReShade.
                 - **50**: Minimal known value to work.
                 - **1000+**: Some users need really huge delays.
-            """)
+            """))
         else:
-            msg += 'If game crashes with no mods, try to increase it. Start with steps of 50 and increase them as you go.'
+            msg = msg.format(tooltip_footer=L('general_settings_xxmi_delay_entry_tooltip_footer_general', """
+                If game crashes with no mods, try to increase it. Start with steps of 50 and increase them as you go.
+            """))
 
         return msg
 
@@ -488,7 +541,7 @@ class MigotoInitDelayEntry(UIEntry):
 class ProcessPriorityLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Process Priority:',
+            text=L('general_settings_process_priority_label', 'Process Priority:'),
             font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
@@ -505,15 +558,23 @@ class ProcessPriorityLabel(UILabel):
 class ProcessPriorityOptionMenu(UIOptionMenu):
     def __init__(self, master):
         super().__init__(
-            values=['Low', 'Below Normal', 'Normal', 'Above Normal', 'High', 'Realtime'],
+            values={
+                'Low': L('general_settings_process_priority_low', 'Low'),
+                'Below Normal': L('general_settings_process_priority_below_normal', 'Below Normal'),
+                'Normal': L('general_settings_process_priority_normal', 'Normal'),
+                'Above Normal': L('general_settings_process_priority_above_normal', 'Above Normal'),
+                'High': L('general_settings_process_priority_high', 'High'),
+                'Realtime': L('general_settings_process_priority_realtime', 'Realtime'),
+            },
             variable=Vars.Active.Importer.process_priority,
             width=140,
             height=36,
             font=('Arial', 14),
             dropdown_font=('Arial', 14),
             master=master)
-        self.set_tooltip('Set process priority for the game exe.\n'
-                         '**Warning!** **Shell** start method does not support process priority!')
+        self.set_tooltip(L('general_settings_process_priority_option_menu_tooltip', """
+            Set process priority for the game exe.
+        """))
 
         self.trace_write(Vars.Active.Importer.process_start_method, self.handle_write_process_start_method)
 
@@ -527,7 +588,7 @@ class ProcessPriorityOptionMenu(UIOptionMenu):
 class AutoConfigLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Auto Config:',
+            text=L('general_settings_auto_config_label', 'Auto Config:'),
             font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
@@ -536,16 +597,15 @@ class AutoConfigLabel(UILabel):
 class ConfigureGameCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Configure Game Settings',
+            text=L('general_settings_configure_game_checkbox', 'Configure Game Settings'),
             variable=Vars.Active.Importer.configure_game,
             master=master)
 
         self.set_tooltip(self.get_tooltip)
 
     def get_tooltip(self):
-        msg = ''
         if Config.Launcher.active_importer == 'GIMI':
-            msg = dedent("""
+            return L('general_settings_configure_game_tooltip_gimi', """
                 **Enabled**: Ensure GIMI-compatible in-game **Graphics Settings** before game start:
 
                 - `Dynamic Character Resolution: Off`
@@ -555,17 +615,17 @@ class ConfigureGameCheckbox(UICheckbox):
                 <font color="red">⚠ Mods will not work with wrong settings! ⚠</font>
             """)
         elif Config.Launcher.active_importer == 'WWMI':
-            msg = dedent("""
+            return L('general_settings_configure_game_tooltip_wwmi', """
                 **Enabled**: Ensure WWMI-compatible in-game **Graphics Settings** before game start:
 
-                - `LOD Bias: Ultra High`
+                - `Graphics Quality: Quality`
 
                 **Disabled**: In-game settings will not be affected.
 
                 <font color="red">⚠ Mods will not work with wrong settings! ⚠</font>
             """)
         elif Config.Launcher.active_importer == 'ZZMI':
-            msg = dedent("""
+            return L('general_settings_configure_game_tooltip_zzmi', """
                 **Enabled**: Ensure ZZMI-compatible in-game **Graphics Settings** before game start:
 
                 - `Character Quality: High`
@@ -575,19 +635,20 @@ class ConfigureGameCheckbox(UICheckbox):
 
                 <font color="red">⚠ Mods will not work with wrong settings! ⚠</font>
             """)
-        return msg.strip()
+        else:
+            return L('error_no_data_available_short', 'N/A')
 
 
 class ForceUltraHighLodBias(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Max LOD Bias',
+            text=L('general_settings_force_ultra_high_lod_bias_label', 'Max LOD Bias'),
             variable=Vars.Active.Importer.force_max_lod_bias,
             master=master)
-        self.set_tooltip(
-            '**Enabled**: Set **LOD Bias** to **Ultra High** to force full resolution LOD textures.\n'
-            "**Disabled**: Keep **LOD Bias** setting untouched. Select this if **Use All Mips** is enabled below."
-        )
+        self.set_tooltip(L('general_settings_force_ultra_high_lod_bias_tooltip', """
+            **Enabled**: Set **LOD Bias** to **Ultra High** to force full resolution LOD textures.
+            **Disabled**: Keep **LOD Bias** setting untouched. Select this if **Use All Mips** is enabled below.
+        """))
 
         self.trace_write(Vars.Active.Importer.configure_game, self.handle_write_configure_game)
 
@@ -601,14 +662,14 @@ class ForceUltraHighLodBias(UICheckbox):
 class DisableWoundedEffectCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Disable Wounded Effect',
+            text=L('general_settings_disable_wounded_effect_checkbox', 'Disable Wounded Effect'),
             variable=Vars.Active.Importer.disable_wounded_fx,
             master=master)
-        self.set_tooltip(
-            'Most mods do not support this effect, so textures usually break after few hits taken.\n'
-            '**Enabled**: Turn the effect `Off`. Ensures proper rendering of modded textures.\n'
-            "**Disabled**: Turn the effect `On`. Select this if you use `Injured Effect Remover` tool."
-        )
+        self.set_tooltip(L('general_settings_disable_wounded_effect_checkbox_tooltip', """
+            Most mods do not support this effect, so textures usually break after few hits taken.
+            **Enabled**: Turn the effect `Off`. Ensures proper rendering of modded textures.
+            **Disabled**: Turn the effect `On`. Select this if you use `Injured Effect Remover` tool.
+        """))
 
         self.trace_write(Vars.Active.Importer.configure_game, self.handle_write_configure_game)
 
@@ -622,7 +683,7 @@ class DisableWoundedEffectCheckbox(UICheckbox):
 class MeshLODDistanceLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Mesh LOD Distance:',
+            text=L('general_settings_mesh_lod_distance_label', 'Mesh LOD Distance:'),
             font=('Microsoft YaHei', 14),
             fg_color='transparent',
             master=master)
@@ -638,17 +699,17 @@ class MeshLODDistanceEntry(UIEntry):
             font=('Arial', 14),
             master=master)
 
-        self.set_tooltip(dedent("""
+        self.set_tooltip(L('general_settings_mesh_lod_distance_entry_tooltip', """
             ## Controls how far game replaces full animated meshes with simplified LoDs:
-            
+
             * Set to **24** **(default)** to force full models as far as the game loads animated objects.
                 ✅ With this value mods are applied as far as you can see.
                 ⚠️ Risk of performance drops for low-end GPUs.
-                
+
             * Set to lower value (e.g. `15`) for better performance.
                 ✅ Reduce FPS cost by allowing the game to use LoD meshes for distant animated objects.
                 ⚠️ LoDs may look wrong due to modded textures being applied to original LoD meshes.
-                
+
             *Applied to ConsoleVariables → r.Kuro.SkeletalMesh.LODDistanceScale value in Engine.ini*
         """))
 
@@ -656,7 +717,7 @@ class MeshLODDistanceEntry(UIEntry):
 class MeshLODDistanceOffsetLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Mesh LOD Offset:',
+            text=L('general_settings_mesh_lod_offset_label', 'Mesh LOD Offset:'),
             font=('Microsoft YaHei', 14),
             fg_color='transparent',
             master=master)
@@ -672,7 +733,7 @@ class MeshLODDistanceOffsetEntry(UIEntry):
             font=('Arial', 14),
             master=master)
 
-        self.set_tooltip(dedent("""
+        self.set_tooltip(L('general_settings_mesh_lod_offset_tooltip', """
             ## Controls how far from camera character is replaced with LOD:
             
             * Set to **-50** **(default)** to keep character modded in flight, cutscenes, etc.
@@ -684,7 +745,7 @@ class MeshLODDistanceOffsetEntry(UIEntry):
 class TextureStreamingBoostLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Texture Boost:',
+            text=L('general_settings_texture_boost_label', 'Texture Boost:'),
             font=('Microsoft YaHei', 14),
             fg_color='transparent',
             master=master)
@@ -700,10 +761,7 @@ class TextureStreamingBoostEntry(UIEntry):
             font=('Arial', 14),
             master=master)
 
-        self.set_tooltip(self.get_tooltip)
-
-    def get_tooltip(self):
-        msg = dedent("""
+        self.set_tooltip(L('general_settings_texture_boost_entry_tooltip', """
             ## Controls how aggressively higher resolution textures are pushed to VRAM:
             
             This value may require fine tuning to minimize textures loading delay (or to make it work):
@@ -717,24 +775,23 @@ class TextureStreamingBoostEntry(UIEntry):
                 ✅ Value just above a breaking point should net minimal textures loading delay.
                 
             *Applied to ConsoleVariables → r.Streaming.MinBoost value in Engine.ini*
-        """)
-        return msg
+        """))
 
 
 class TextureStreamingUseAllMipsCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Use All Mips',
+            text=L('general_settings_use_all_mips_label', 'Use All Mips'),
             variable=Vars.Active.Importer.texture_streaming_use_all_mips,
             master=master)
-        self.set_tooltip(dedent("""
+        self.set_tooltip(L('general_settings_use_all_mips_tooltip', """
             ## Controls whether texture resolution limits are applied:
             
-            * **Enabled** **(default)** – Disable resolution restrictions from LOD Bias.
+            * **Enabled** **(default)**: Disable resolution restrictions from LOD Bias.
                 ✅ Allows to load full resolution textures at cost of higher VRAM usage.
                 ⚠️ If it has no effect or consumes too much VRAM, try to enable **Max LOD Bias** instead. 
             
-            * **Disabled** – Enable resolution restrictions from LOD Bias.
+            * **Disabled**: Enable resolution restrictions from LOD Bias.
                 ⚠️ Modded textures won't load if disabled without Max (Ultra High) LOD Bias enabled.
                 
             *Applied to ConsoleVariables → r.Streaming.UseAllMips value in Engine.ini*
@@ -744,7 +801,7 @@ class TextureStreamingUseAllMipsCheckbox(UICheckbox):
 class TextureStreamingPoolSizeLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Texture Pool Size:',
+            text=L('general_settings_texture_streaming_pool_size_label', 'Texture Pool Size:'),
             font=('Microsoft YaHei', 14),
             fg_color='transparent',
             master=master)
@@ -760,7 +817,7 @@ class TextureStreamingPoolSizeEntry(UIEntry):
             font=('Arial', 14),
             master=master)
 
-        self.set_tooltip(dedent("""
+        self.set_tooltip(L('general_settings_texture_streaming_pool_size_entry_tooltip', """
             ## Controls how much VRAM the game can use for textures:
 
             * Set to **0** **(default)** for **automatic control** (based on available VRAM).
@@ -775,13 +832,13 @@ class TextureStreamingPoolSizeEntry(UIEntry):
 class TextureStreamingLimitPoolToVramCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Limit Pool Size To VRAM',
+            text=L('general_settings_texture_streaming_limit_pool_checkbox', 'Limit Pool Size To VRAM'),
             variable=Vars.Active.Importer.texture_streaming_limit_to_vram,
             master=master)
-        self.set_tooltip(dedent("""
+        self.set_tooltip(L('general_settings_texture_streaming_limit_pool_checkbox_tooltip', """
             ## Sets the upper limit for how much VRAM the game can use for textures:
 
-            * **Enabled** **(default)** – Limits texture pool size based on your GPU’s available VRAM.
+            * **Enabled** **(default)** – Limits texture pool size based on your GPU's available VRAM.
                 ✅ Helps prevent crashes or stuttering on low VRAM systems.
                 ⚠️ May reduce texture quality or cause pop-ins if too restrictive on high-end GPUs.
 
@@ -796,13 +853,14 @@ class TextureStreamingLimitPoolToVramCheckbox(UICheckbox):
 class OpenEngineIniButton(UIButton):
     def __init__(self, master):
         super().__init__(
-            text='🔍 Open Engine.ini',
+            text=L('general_settings_open_engine_ini_button', '🔍 Open Engine.ini'),
             command=self.open_engine_ini,
             width=140,
             height=36,
             font=('Roboto', 14),
+            auto_width=True,
             master=master)
-        self.set_tooltip(f'Open Engine.ini in default text editor file for manual tweaking.')
+        self.set_tooltip(L('general_settings_open_engine_ini_button_tooltip', 'Open Engine.ini in default text editor file for manual tweaking.'))
 
     def open_engine_ini(self):
         game_folder = Events.Call(Events.ModelImporter.ValidateGameFolder(Config.Active.Importer.game_folder))
@@ -810,13 +868,13 @@ class OpenEngineIniButton(UIButton):
         if engine_ini.is_file():
             subprocess.Popen([f'{str(engine_ini)}'], shell=True)
         else:
-            raise ValueError(f'File does not exist: "{engine_ini}"!')
+            raise ValueError(L('error_general_settings_engine_ini_not_found', 'File does not exist: "{engine_ini}"!').format(engine_ini=engine_ini))
 
 
 class TweaksLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text='Tweaks:',
+            text=L('general_settings_tweaks_label', 'Tweaks:'),
             font=('Microsoft YaHei', 14, 'bold'),
             fg_color='transparent',
             master=master)
@@ -825,40 +883,47 @@ class TweaksLabel(UILabel):
 class UnlockFPSCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Force 120 FPS',
+            text=L('general_settings_unlock_fps_checkbox_force', 'Force 120 FPS'),
             variable=Vars.Active.Importer.unlock_fps,
             master=master)
         if Config.Launcher.active_importer in ['GIMI', 'HIMI']:
-            self.configure(text='Unlock FPS:')
+            self.configure(text=L('general_settings_unlock_fps_checkbox', 'Unlock FPS:'))
         self.set_tooltip(self.get_tooltip)
 
     def get_tooltip(self):
-        msg = ''
         if Config.Launcher.active_importer == 'WWMI':
-            msg = 'This option allows to set FPS limit to 120 even on not officially supported devices.\n'
-            msg += 'Please do note that with some hardware game refuses to go 120 FPS even with this tweak.\n'
-            msg += '**Enabled**: Sets `CustomFrameRate` to `120` in `LocalStorage.db` on game start.\n'
-            msg += '**Disabled**: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.'
+            return L('general_settings_unlock_fps_checkbox_tooltip_wwmi', """
+                This option allows to set FPS limit to 120 even on not officially supported devices.
+                Please do note that with some hardware game refuses to go 120 FPS even with this tweak.
+                **Enabled**: Sets `CustomFrameRate` to `120` in `LocalStorage.db` on game start.
+                **Disabled**: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.
+            """)
         elif Config.Launcher.active_importer == 'SRMI':
-            msg = 'This option allows to set FPS limit to 120.\n'
-            msg += '**Enabled**: Updates Graphics Settings Windows Registry key with 120 FPS value on game start.\n'
-            msg += '**Disabled**: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.\n'
-            msg += '**Warning!** Tweak is supported only for the Global HSR client and will not work for CN.\n'
-            msg += '*Note: Edits `FPS` value in `HKEY_CURRENT_USER/SOFTWARE/Cognosphere/Star Rail/GraphicsSettings_Model_h2986158309`.*'
+            return L('general_settings_unlock_fps_checkbox_tooltip_srmi', """
+                This option allows to set FPS limit to 120.
+                **Enabled**: Updates Graphics Settings Windows Registry key with 120 FPS value on game start.
+                **Disabled**: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.
+                **Warning!** Tweak is supported only for the Global HSR client and will not work for CN.
+                *Note: Edits `FPS` value in `HKEY_CURRENT_USER/SOFTWARE/Cognosphere/Star Rail/GraphicsSettings_Model_h2986158309`.*
+            """)
         elif Config.Launcher.active_importer == 'GIMI':
-            msg = 'This option allows to set custom FPS limit.\n'
-            msg += '**Warning!**: To minimize game engine glitches set FPS to 120 / 180 / 240 etc.\n'
-            msg += '**Enabled**: Launch game via `unlockfps_nc.exe` and let it run in background to keep FPS tweak applied.\n'
-            msg += '**Disabled**: Launch game via original `.exe` file, has no effect on FPS.\n'
-            msg += '*Hint: If FPS Unlocker package is outdated, you can manually update "unlockfps_nc.exe" from original repository.*\n'
-            msg += '*Local Path*: `Resources/Packages/GI-FPS-Unlocker/unlockfps_nc.exe`\n'
-            msg += '*Original Repository*: `https://github.com/34736384/genshin-fps-unlock`'
+            return L('general_settings_unlock_fps_checkbox_tooltip_gimi', """
+                This option allows to set custom FPS limit.
+                **Warning!**: To minimize game engine glitches set FPS to 120 / 180 / 240 etc.
+                **Enabled**: Launch game via `unlockfps_nc.exe` and let it run in background to keep FPS tweak applied.
+                **Disabled**: Launch game via original `.exe` file, has no effect on FPS.
+                *Hint: If FPS Unlocker package is outdated, you can manually update "unlockfps_nc.exe" from original repository.*
+                *Local Path*: `Resources/Packages/GI-FPS-Unlocker/unlockfps_nc.exe`
+                *Original Repository*: `https://github.com/34736384/genshin-fps-unlock`
+            """)
         elif Config.Launcher.active_importer == 'HIMI':
-            msg = 'This option allows to set custom FPS limit.\n'
-            msg += '**Enabled**: Updates Graphics Settings Windows Registry key with specified FPS value on game start.\n'
-            msg += '**Disabled**: Has no effect on FPS settings, use in-game settings to undo already tweaked FPS.\n'
-        return msg.strip()
-
+            return L('general_settings_unlock_fps_checkbox_tooltip_himi', """
+                This option allows to set custom FPS limit.
+                **Enabled**: Updates Graphics Settings Windows Registry key with specified FPS value on game start.
+                **Disabled**: Has no effect on FPS settings, use in-game settings to undo already tweaked FPS.
+            """)
+        else:
+            return L('error_no_data_available_short', 'N/A')
 
 class UnlockFPSValueEntry(UIEntry):
     def __init__(self, master):
@@ -882,15 +947,19 @@ class UnlockFPSValueEntry(UIEntry):
 class UnlockFPSWindowOptionMenu(UIOptionMenu):
     def __init__(self, master):
         super().__init__(
-            values=['Windowed', 'Borderless', 'Fullscreen', 'Exclusive Fullscreen'],
+            values={
+                'Windowed': L('general_settings_window_mode_windowed', 'Windowed'),
+                'Borderless': L('general_settings_window_mode_borderless', 'Borderless'),
+                'Fullscreen': L('general_settings_window_mode_fullscreen', 'Fullscreen'),
+                'Exclusive Fullscreen': L('general_settings_window_mode_exclusive_fullscreen', 'Exclusive Fullscreen'),
+            },
             variable=Vars.Active.Importer.window_mode,
             width=140,
             height=36,
             font=('Arial', 14),
             dropdown_font=('Arial', 14),
             master=master)
-
-        self.set_tooltip('Game window mode when started with FPS Unlocker.')
+        self.set_tooltip(L('general_settings_window_mode_option_menu_tooltip', 'Game window mode when started with FPS Unlocker.'))
         self.trace_write(Vars.Active.Importer.unlock_fps, self.handle_write_unlock_fps)
 
     def handle_write_unlock_fps(self, var, val):
@@ -903,32 +972,33 @@ class UnlockFPSWindowOptionMenu(UIOptionMenu):
 class ApplyTweaksCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Apply Performance Tweaks',
+            text=L('general_settings_apply_tweaks_checkbox', 'Apply Performance Tweaks'),
             variable=Vars.Active.Importer.apply_perf_tweaks,
             master=master)
-        self.set_tooltip(
-            '**Enabled**: Add list of performance tweaks to `[SystemSettings]` section of `Engine.ini` on game start.\n'
-            "**Disabled**: Do not add tweaks to `Engine.ini`. Already added ones will have to be removed manually.\n\n"
-            'List of tweaks:\n'
-            '* r.Streaming.HLODStrategy = 2\n'
-            '* r.Streaming.PoolSizeForMeshes = -1\n'
-            '* r.XGEShaderCompile = 0\n'
-            '* FX.BatchAsync = 1\n'
-            '* FX.EarlyScheduleAsync = 1\n'
-            '* fx.Niagara.ForceAutoPooling = 1\n'
-            '* wp.Runtime.KuroRuntimeStreamingRangeOverallScale = 0.5\n'
-            '* tick.AllowAsyncTickCleanup = 1\n'
-            '* tick.AllowAsyncTickDispatch = 1'
-        )
+        self.set_tooltip(self.get_tooltip)
+
+    def get_tooltip(self):
+        tweaks = ''
+        for section, options in Vars.Active.Importer.perf_tweaks.items():
+            tweaks += f'[{section}]' + '\n'
+            tweaks += '\n'.join([f'{k} = {v}' for k, v in options.items()])
+        return L('general_settings_apply_tweaks_checkbox_tooltip', """
+            **Enabled**: Add list of performance tweaks to `[SystemSettings]` section of `Engine.ini` on game start.
+            **Disabled**: Do not add tweaks to `Engine.ini`. Already added ones will have to be removed manually.
+            
+            List of tweaks:
+            {tweaks}
+        """).format(tweaks=tweaks)
 
 
 class EnableHDR(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text='Enable HDR',
+            text=L('general_settings_enable_hdr_checkbox', 'Enable HDR'),
             variable=Vars.Active.Importer.enable_hdr,
             master=master)
-        self.set_tooltip(
-            '**Warning**! Your monitor must support HDR and `Use HDR` must be enabled in Windows Display settings!\n'
-            '**Enabled**: Turn HDR On. Creates HDR registry record each time before the game launch.\n'
-            '**Disabled**: Turn HDR Off. No extra action required, game auto-removes HDR registry record on launch.')
+        self.set_tooltip(L('general_settings_enable_hdr_checkbox_tooltip', """
+            **Warning**! Your monitor must support HDR and `Use HDR` must be enabled in Windows Display settings!
+            **Enabled**: Turn HDR On. Creates HDR registry record each time before the game launch.
+            **Disabled**: Turn HDR Off. No extra action required, game auto-removes HDR registry record on launch.
+        """))
