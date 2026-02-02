@@ -1,11 +1,11 @@
 import webbrowser
-from textwrap import dedent
 
-from core.locale_manager import L
 import core.event_manager as Events
 import core.path_manager as Paths
 import core.config_manager as Config
 import gui.vars as Vars
+
+from core.locale_manager import L
 
 from gui.events import Stage
 from gui.classes.containers import UIFrame
@@ -57,6 +57,40 @@ class LauncherFrame(UIFrame):
         # Donate Frame
         self.subscribe(Events.Application.OpenDonationCenter, self.handle_open_donation_center)
 
+        from gui.windows.main.message_frame.message_frame import MessageFrame
+
+        # text = f"""
+        #     <html>
+        #     <body>
+        #     <h1>This is a heading</h1>
+        #     <p>This is a paragraph.</p>
+        #
+        #     <img src='file:///{Config.get_resource_path(self, 'SilverWolfHeyYou.png')}' width='128'> <br>
+        #     <a href="https://www.python.org" target="_blank">Go to Python.org</a>
+        #     <h3>Select:</h3>
+        #     {{radio_widget}}
+        #
+        #     This is some text
+        #     <br><br>
+        #     More text
+        #     <br>
+        #     Even more text xD
+        #
+        #     </body>
+        #     </html>
+        # """
+
+        # from textwrap import dedent
+        # text = dedent("""
+        # Launcher update found: 0.0.0 → 1.9.5 Launcher update found: 0.0.0 → 1.9.5
+        # XXMI update found: 0.6.8 → 0.7.1
+        # WWMI update found: 0.9.1 → 0.9.8
+        # Launcher update found: 0.0.0 → 1.9.5
+        # """)
+
+        # message_frame = self.put(MessageFrame(self, self.canvas, title='Message Title', message=text, confirm_text='Confirm 1', cancel_text='Cancel 1', radio_options=['Option 1', 'Option 2']))
+        # message_frame.show()
+
         # Application Events
         self.subscribe(
             Events.Application.Ready,
@@ -87,7 +121,7 @@ class SelectGameText(UIText):
     def __init__(self, master):
         super().__init__(x=30,
                          y=495,
-                         text='Select Games To Mod:',
+                         text=L('launcher_select_games_text', 'Select Games To Mod:'),
                          font=('Microsoft YaHei', 24, 'bold'),
                          fill='white',
                          activefill='white',
@@ -235,7 +269,6 @@ class UpdateButton(MainActionButton):
             button_image_path='button-update.png',
             command=lambda: Events.Fire(Events.Application.Update(force=True)),
             master=master)
-        self.set_tooltip('Update packages to latest versions', delay=0.01)
         self.subscribe(Events.PackageManager.VersionNotification, self.handle_version_notification)
 
     def handle_version_notification(self, event):
@@ -251,18 +284,17 @@ class UpdateButton(MainActionButton):
 
         if len(pending_update_message) > 0:
             self.enabled = True
-            self.set_tooltip(L('action_update_packages', dedent("""
+            self.set_tooltip(L('launcher_update_button_tooltip', """
                 ## Update packages to latest versions:
                 {pending_update_message}
                 
                 <font color="#3366ff">*Hover over versions in the bottom-left corner to view update descriptions.*</font>
             """).format(
                 pending_update_message='\n'.join(pending_update_message)
-            )))
+            ), delay=0)
             self.show(self.stage == Stage.Ready and Config.Launcher.active_importer != 'XXMI')
         else:
             self.enabled = False
-            self.set_tooltip('No updates available!')
             self.hide()
 
 
@@ -277,7 +309,7 @@ class StartButton(MainActionButton):
             bg_image_path='button-start-background.png',
             bg_width=340,
             bg_height=64,
-            text='Start',
+            text=L('launcher_start_button', 'Start'),
             text_x_offset=36,
             text_y_offset=-1,
             font=('Microsoft YaHei', 23, 'bold'),
@@ -326,7 +358,7 @@ class InstallButton(MainActionButton):
             bg_image_path='button-start-background.png',
             bg_width=340,
             bg_height=64,
-            text='Install',
+            text=L('launcher_install_button', 'Install'),
             text_x_offset=18,
             text_y_offset=-1,
             font=('Microsoft YaHei', 23, 'bold'),
@@ -400,7 +432,7 @@ class PackageVersionText(UIImageButton):
         super().__init__(**defaults)
         self.stage = None
         self.package_name = ''
-        self.set_tooltip(self.get_tooltip, delay = 0.1)
+        self.set_tooltip(self.get_tooltip, delay = 0)
         self.subscribe(Events.GUI.LauncherFrame.StageUpdate, self.handle_stage_update)
         self.package_aliases = {
             'Launcher': 'XXMI Launcher',
@@ -437,50 +469,50 @@ class PackageVersionText(UIImageButton):
         installed_release_notes = package.cfg.deployed_release_notes
 
         if package.installed_version == package.cfg.latest_version:
-            package_release_notes = L('package_release_notes_up_to_date', dedent("""
+            package_release_notes = L('package_release_notes_up_to_date', """
                 # What's new in {package_name} v{new_package_version}:
                 {installed_release_notes}
-            """))
+            """)
             installed_release_notes = installed_release_notes or package.cfg.latest_release_notes
         else:
-            package_release_notes = L('package_release_notes_update_available', dedent("""
+            package_release_notes = L('package_release_notes_update_available', """
                 # Update {package_name} to v{new_package_version} for:
                 {latest_release_notes}
-            """))
+            """)
 
         if not package.cfg.deployed_release_notes and not package.cfg.latest_release_notes:
-            package_release_notes = L('package_release_notes_not_installed', dedent("""
+            package_release_notes = L('package_release_notes_not_installed', """
                 Press **Install** button to setup the package.
-            """))
+            """)
 
         if self.package_name == 'Launcher':
-            package_description = L('package_description_launcher', dedent("""
+            package_description = L('package_description_launcher', """
                 *This package is XXMI Launcher App itself and defines its features.*
-            """))
+            """)
         elif self.package_name == 'XXMI':
-            package_description = L('package_description_xxmi_libraries', dedent("""
+            package_description = L('package_description_xxmi_libraries', """
                 *XXMI Libraries package is custom 3dmigoto build fiddling with data between GPU and a game process.*
-            """))
+            """)
         else:
-            package_description = L('package_description_model_importer', dedent("""
+            package_description = L('package_description_model_importer', """
                 *Model Importer package offers a set of API functions required for mods to work in given game.*
-            """))
+            """)
         if self.package_name in ['Launcher', 'XXMI', 'WWMI']:
-            actions_tooltip = L('package_description_tooltip_open_github_changelog', dedent("""
+            actions_tooltip = L('package_description_tooltip_open_github_changelog', """
                 <font color="#3366ff">*<u>Left-Click</u> to open {package_name} Dev Blog on Patreon.*</font>
                 <font color="#3366ff">*<u>Right-Click</u> to open {package_name} GitHub releases for full changelog.*</font>
-            """))
+            """)
         else:
-            actions_tooltip = L('package_description_tooltip_open_dev_blog', dedent("""
+            actions_tooltip = L('package_description_tooltip_open_dev_blog', """
                 <font color="#3366ff">*<u>Left-Click</u> to open {package_name} GitHub releases for full changelog.*</font>
-            """))
+            """)
 
-        txt = L('package_release_notes', dedent("""
+        txt = L('package_release_notes', """
             {package_release_notes}
             
             {actions_tooltip}
             <font color="#aaaaaa">{package_description}</font>
-        """)).format(
+        """).format(
             package_release_notes=package_release_notes,
             actions_tooltip=actions_tooltip
         )
@@ -509,12 +541,12 @@ class LauncherVersionText(PackageVersionText):
         self.show(self.stage == Stage.Ready)
 
     def handle_version_notification(self, event):
-        self.set_text(f'CORE {event.package_states["Launcher"].installed_version}')
+        self.set_text(f'LAUNCHER {event.package_states["Launcher"].installed_version}')
 
 
 class XXMIVersionText(PackageVersionText):
     def __init__(self, master):
-        super().__init__(x=125,
+        super().__init__(x=160,
                          y=680,
                          master=master)
         self.subscribe(Events.Application.LoadImporter, self.handle_load_importer)
@@ -536,7 +568,7 @@ class XXMIVersionText(PackageVersionText):
 
 class ImporterVersionText(PackageVersionText):
     def __init__(self, master):
-        super().__init__(x=230,
+        super().__init__(x=265,
                          y=680,
                          master=master)
         self.subscribe(Events.Application.LoadImporter, self.handle_load_importer)
