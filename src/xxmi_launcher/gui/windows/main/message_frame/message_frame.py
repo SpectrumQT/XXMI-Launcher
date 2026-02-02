@@ -420,7 +420,7 @@ class RadioWidget:
     def make_radio_label_hover_callback(self, idx):
         def callback(event):
             self.hovered_option = idx
-            print(f'hovered {self.hovered_option}')
+            # print(f'hovered {self.hovered_option}')
         return callback
 
     def make_radio_label_callback(self, idx):
@@ -429,20 +429,20 @@ class RadioWidget:
             button.checked = True
             self.selected_option = idx
             self.radio_var.set(self.selected_option)
-            print(f'label {idx}')
+            # print(f'label {idx}')
         return callback
 
     def make_radio_button_hover_callback(self, idx):
         def callback(event):
             self.hovered_option = idx
-            print(f'hovered {self.hovered_option}')
+            # print(f'hovered {self.hovered_option}')
         return callback
 
     def make_radio_button_modified_callback(self, idx):
         def callback(event):
             self.selected_option = self.hovered_option
             self.radio_var.set(self.selected_option)
-            print(f'selected {self.selected_option}')
+            # print(f'selected {self.selected_option}')
         return callback
 
     def setup_callbacks(self):
