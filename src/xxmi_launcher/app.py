@@ -104,12 +104,20 @@ if __name__ == '__main__':
     logging.debug(f'App Start')
 
     try:
+        import core.locale_manager as Locale
+        Locale.initialize(root_path)
+
         try:
             verify_msvc_integrity()
         except Exception as e:
-            raise Exception(f'MSVC++ Redistributable is damaged or not installed!\n\n'
-                            f'Please reintall it from https://aka.ms/vs/17/release/vc_redist.x64.exe\n\n'
-                            f'ERROR: {e}') from e
+            from core.locale_manager import L
+            raise Exception(L('error_msvc_integrity_verification_failed', """
+                MSVC++ Redistributable is damaged or not installed!
+    
+                Please reinstall it from https://aka.ms/vs/17/release/vc_redist.x64.exe
+                
+                ERROR: {error}
+            """).format(error=e))
 
         import core.path_manager as Paths
         Paths.initialize(root_path)

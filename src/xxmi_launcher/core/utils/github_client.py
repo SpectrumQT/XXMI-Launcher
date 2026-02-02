@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from dacite import from_dict
 from requests.exceptions import SSLError
 
+from core.locale_manager import L
 from core.utils.proxy import ProxyConfig, ProxyManager
 
 
@@ -52,11 +53,17 @@ class GitHubClient:
                 verify=self.verify_ssl
             ).json()
         except SSLError as e:
-            raise ValueError(f'Failed to validate SSL certificate of GitHub HTTPS connection!\n\n'
-                             f'If you trust your proxy, uncheck *Verify SSL* in *Launcher Settings* and try again.') from e
+            raise ValueError(L('error_ssl_certificate_validation_failed', """
+                 Failed to validate SSL certificate of GitHub HTTPS connection!
+                 
+                 If you trust your proxy, uncheck *Verify SSL* in *Launcher Settings* and try again.
+            """)) from e
         except Exception as e:
-            raise ValueError(f'Failed to establish HTTPS connection to GitHub!\n\n'
-                             f'Please check your Antivirus, Firewall, Proxy and VPN settings.') from e
+            raise ValueError(L('error_github_connection_failed', """
+                 Failed to establish HTTPS connection to GitHub!
+                 
+                 Please check your Antivirus, Firewall, Proxy and VPN settings.
+            """)) from e
 
         if not isinstance(response, list):
             message, status = response.get('message', None), response.get('status', 0)
@@ -65,21 +72,24 @@ class GitHubClient:
                 message = message.lower()
                 status = int(status)
                 if 'rate limit' in message:
-                    raise ConnectionRefusedError('GitHub API rate limit exceeded!')
+                    raise ConnectionRefusedError(L('error_github_rate_limit_exceeded', 'GitHub API rate limit exceeded!'))
                 elif 'bad credentials' in message or status == 401:
-                    raise ConnectionError('GitHub Personal Access Token is invalid!\n\n'
-                                          'Please configure correct token in launcher settings.')
+                    raise ConnectionError(L('error_github_invalid_token', """
+                         GitHub Personal Access Token is invalid!
+                         
+                         Please configure correct token in launcher settings.
+                    """))
 
         try:
             if isinstance(response, list):
                 response = response[0]
             response = from_dict(data_class=ResponseRelease, data=response)
         except Exception as e:
-            raise ValueError(f'Failed to parse GitHub response!') from e
+            raise ValueError(L('error_github_parse_response_failed', 'Failed to parse GitHub response!')) from e
 
         result = asset_version_pattern.findall(response.tag_name)
         if len(result) != 1:
-            raise ValueError('Failed to parse latest release version!')
+            raise ValueError(L('error_github_parse_version_failed', 'Failed to parse latest release version!'))
         version = result[0]
 
         if signature_pattern is None:
@@ -87,7 +97,7 @@ class GitHubClient:
         else:
             result = signature_pattern.findall(response.body)
             if len(result) != 1:
-                raise ValueError('Failed to parse signature!')
+                raise ValueError(L('error_github_parse_signature_failed', 'Failed to parse signature!'))
             signature = result[0]
 
         release_notes = self.parse_release_notes(response.body)
@@ -101,7 +111,9 @@ class GitHubClient:
                 manifest_download_url = asset.browser_download_url
 
         if asset_download_url is None:
-            raise ValueError(f"Failed to locate asset matching to '{asset_name_format}'!")
+            raise ValueError(L('error_github_asset_not_found', 
+                "Failed to locate asset matching to '{asset_name_format}'!"
+            ).format(asset_name_format=asset_name_format))
 
         return version, asset_download_url, signature, release_notes, manifest_download_url
 
@@ -140,10 +152,10 @@ class GitHubClient:
         # Search for start of section
         start = body.find('##')
         if start == -1:
-            return '<font color="red">⚠ Error! Invalid release notes format! ⚠</font>'
+            return L('error_github_invalid_release_notes', '<font color="red">⚠ Error! Invalid release notes format! ⚠</font>')
         # Search for start of signature section (footer)
         end = body.find('## Signature')
         if end == -1:
-            return '<font color="red">☢ Error! Release is unsigned! ☢</font>'
+            return L('error_github_unsigned_release', '<font color="red">☢ Error! Release is unsigned! ☢</font>')
         # Return text inbetween
         return body[start:end]

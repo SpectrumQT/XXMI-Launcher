@@ -16,6 +16,7 @@ import core.event_manager as Events
 import core.path_manager as Paths
 import core.config_manager as Config
 
+from core.locale_manager import L
 from core.utils.security import Security
 from core.utils.github_client import GitHubClient
 
@@ -94,7 +95,11 @@ class Package:
             self.installed_version = self.get_installed_version()
         except Exception as e:
             self.installed_version = ''
-            raise ValueError(f'Failed to detect installed {self.metadata.package_name} version:\n\n{e}') from e
+            raise ValueError(L('error_package_version_detect_failed', """
+                Failed to detect installed {package_name} version:
+                
+                {error_text}
+            """).format(package_name=self.metadata.package_name, error_text=e)) from e
 
     def get_latest_version(self) -> Tuple[str, str, Union[str, None], str, str]:
         version, url, signature, release_notes, manifest_url = self.manager.github_client.fetch_latest_release(
@@ -113,7 +118,11 @@ class Package:
             raise e
         except Exception as e:
             self.cfg.latest_version, self.download_url, self.signature, self.cfg.latest_release_notes = '', '', '', ''
-            raise ValueError(f'Failed to detect latest {self.metadata.package_name} version:\n\n{e}') from e
+            raise ValueError(L('package_manager_detect_latest_failed', """
+                Failed to detect latest {package_name} version:
+                
+                {error_text}
+            """).format(package_name=self.metadata.package_name, error_text=e)) from e
 
     def update_available(self):
         return self.cfg.latest_version != '' and self.cfg.latest_version != self.get_installed_version()
@@ -159,8 +168,10 @@ class Package:
         Events.Fire(Events.PackageManager.StartIntegrityVerification(asset_name='downloaded data'))
 
         if not self.security.verify(self.signature, data):
-            raise ValueError(f'Downloaded data integrity verification failed!\n'
-                             'Please restart the launcher and try again!')
+            raise ValueError(L('error_downloaded_data_verification_failed', """
+                Downloaded data integrity verification failed!
+                Please restart the launcher and try again!
+            """))
 
         Events.Fire(Events.PackageManager.StartFileWrite(asset_name=asset_path.name))
 
@@ -171,8 +182,10 @@ class Package:
 
         with open(asset_path, 'rb') as f:
             if not self.security.verify(self.signature, f.read()):
-                raise ValueError(f'{asset_path.name} data integrity verification failed!\n'
-                                 'Please restart the launcher and try again!')
+                raise ValueError(L('package_manager_file_verification_failed', """
+                    {asset_name} data integrity verification failed!
+                    Please restart the launcher and try again!
+                """).format(asset_name=asset_path.name))
 
         return asset_path
 
@@ -228,30 +241,30 @@ class Package:
         manifest = Manifest()
         manifest_path = self.package_path / 'Manifest.json'
         if not manifest_path.exists():
-            raise ValueError(f'{self.metadata.package_name} package is missing manifest file!\n')
+            raise ValueError(L('error_missing_manifest', '{package_name} package is missing manifest file!').format(package_name=self.metadata.package_name))
         try:
             manifest.from_json(manifest_path)
         except Exception as e:
-            raise ValueError(f'Failed to parse {self.metadata.package_name} manifest file!\n') from e
+            raise ValueError(L('error_parse_manifest_failed', 'Failed to parse {package_name} manifest file!').format(package_name=self.metadata.package_name)) from e
         self.manifest = manifest
 
     def verify_signature(self, file_path: Path):
         if self.manifest is None:
             self.load_manifest()
         if not file_path.exists():
-            raise ValueError(f'{self.metadata.package_name} package is missing critical file: {file_path.name}!\n')
+            raise ValueError(L('error_missing_critical_file', '{package_name} package is missing critical file: {file_name}!').format(package_name=self.metadata.package_name, file_name=file_path.name))
         with open(file_path, 'rb') as f:
             if self.security.verify(self.get_signature(file_path), f.read()):
                 return True
             else:
-                raise ValueError(f'File {file_path.name} signature is invalid!')
+                raise ValueError(L('error_file_signature_invalid', 'File {file_name} signature is invalid!').format(file_name=file_path.name))
 
     def get_signature(self, file_path: Path):
         if self.manifest is None:
             self.load_manifest()
         signature = self.manifest.signatures.get(file_path.name, None)
         if signature is None:
-            raise ValueError(f'{self.metadata.package_name} manifest file is missing signature for {file_path.name}!\n')
+            raise ValueError(L('error_missing_signature', '{package_name} manifest file is missing signature for {file_name}!').format(package_name=self.metadata.package_name, file_name=file_path.name))
         return signature
 
     def validate_files(self, file_paths: List[Path]):
@@ -330,7 +343,10 @@ class Package:
         try:
             self.download_latest_version()
         except Exception as e:
-            raise Exception(f'Failed to download {self.cfg.latest_version} update for {self.metadata.package_name} package:\n{e}')
+            raise Exception(L('error_download_update_failed', """
+                Failed to download {version} update for {package} package:
+                {error_text}
+            """).format(version=self.cfg.latest_version, package=self.metadata.package_name, error_text=e))
 
         try:
             self.install_latest_version(clean=clean)
@@ -338,9 +354,12 @@ class Package:
             manifest_path = self.package_path / f'Manifest.json'
             if manifest_path.is_file():
                 manifest_path.unlink()
-            raise Exception(f'Failed to install {self.cfg.latest_version} update for {self.metadata.package_name} package!\n'
-                            f'Please restart the launcher or your PC and try again.\n\n'
-                            f'{e}')
+            raise Exception(L('error_install_update_failed', """
+                Failed to install {version} update for {package} package!
+                Please restart the launcher or your PC and try again.
+                
+                {error_text}
+            """).format(version=self.cfg.latest_version, package=self.metadata.package_name, error_text=e))
 
         self.load_manifest()
         self.detect_installed_version()
@@ -379,6 +398,10 @@ class PackageManagerConfig:
 
 @dataclass
 class PackageManagerEvents:
+
+    @dataclass
+    class NotifyPackageVersions:
+        detect_installed: bool = True
 
     @dataclass
     class StartCheckUpdate:
@@ -439,6 +462,7 @@ class PackageManager:
         self.api_connection_refused_notified = False
         Events.Subscribe(Events.PackageManager.GetPackage, lambda event: self.get_package(event.package_name))
         Events.Subscribe(Events.Application.ConfigUpdate, self.handle_config_update)
+        Events.Subscribe(Events.PackageManager.NotifyPackageVersions, lambda event: self.notify_package_versions(detect_installed=event.detect_installed))
 
     def handle_config_update(self, event):
         self.github_client.configure(
@@ -557,9 +581,13 @@ class PackageManager:
             if self.api_connection_refused and not self.api_connection_refused_notified:
                 if not silent:
                     self.api_connection_refused_notified = True
-                raise ConnectionRefusedError(f'Unauthorized GitHub API requests limit reached for your IP!\n\n'
-                                             f'GitHub servers will ignore further connection attempts for an hour.\n\n'
-                                             f'Set (another) *Proxy* or *GitHub Token* in *Launcher Settings* for instant access.')
+                raise ConnectionRefusedError(L('error_github_api_limit', """
+                    Unauthorized GitHub API requests limit reached for your IP!
+                    
+                    GitHub servers will ignore further connection attempts for an hour.
+                    
+                    Set (another) *Proxy* or *GitHub Token* in *Launcher Settings* for instant access.
+                """))
 
         except Exception as e:
             if silent:

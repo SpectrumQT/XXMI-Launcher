@@ -47,7 +47,12 @@ def Subscribe(event, callback, caller_id=None):
     event_name = event.__qualname__
     if event_name not in events:
         events[event_name] = {}
-    callback_id = f'{event_name}_{len(events[event_name])}'
+    callbacks = events[event_name]
+    if len(callbacks) == 0:
+        callback_id = f'{event_name}_0'
+    else:
+        last_callback_id = int(next(reversed(callbacks)).split('_')[-1])
+        callback_id = f'{event_name}_{last_callback_id+1}'
     events[event_name][callback_id] = (event, callback, caller_id)
     return callback_id
 

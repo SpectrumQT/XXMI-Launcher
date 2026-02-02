@@ -3,12 +3,11 @@ import subprocess
 import time
 
 from dataclasses import dataclass
-from pathlib import Path
 
 import core.path_manager as Paths
 import core.event_manager as Events
-from core.config_manager import Config as Config
 
+from core.locale_manager import L
 from core.package_manager import Package, PackageMetadata
 
 from core.utils.process_tracker import wait_for_process, WaitResult
@@ -63,7 +62,10 @@ class UpdaterPackage(Package):
 
         result, pid = wait_for_process(self.exe_path.name, with_window=True, timeout=15)
         if result == WaitResult.Timeout:
-            raise ValueError('Failed to start XXMI Updater.exe!\n\n'
-                             'Was it blocked by Antivirus software or security settings?')
+            raise ValueError(L('error_updater_start_failed', """
+                Failed to start XXMI Updater.exe!
+                
+                Was it blocked by Antivirus software or security settings?
+            """))
 
         time.sleep(1)

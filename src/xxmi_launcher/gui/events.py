@@ -38,3 +38,7 @@ class GUIEvents:
     @dataclass
     class ToggleThemeDevMode:
         enabled: bool = False
+
+    @dataclass
+    class ReloadGUI:
+        reload_theme: bool = False

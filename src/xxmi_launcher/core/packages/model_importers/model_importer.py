@@ -4,6 +4,7 @@ import sys
 import shutil
 import winreg
 import ctypes
+
 import winshell
 import pythoncom
 import re
@@ -19,6 +20,7 @@ import core.path_manager as Paths
 import core.event_manager as Events
 import core.config_manager as Config
 
+from core.locale_manager import L
 from core.package_manager import Package, PackageMetadata
 
 from core.utils.ini_handler import IniHandler, IniHandlerSettings
@@ -110,7 +112,11 @@ class ModelImporterConfig:
             if dll_path.is_file():
                 dll_paths.append(dll_path)
             else:
-                raise ValueError(f'Failed to inject extra library {dll_path}:\nFile not found!\nPlease check Advanced Settings -> Inject Libraries.')
+                raise ValueError(L('error_extra_library_not_found', """
+                    Failed to inject extra library {dll_path}:
+                    File not found!
+                    Please check Advanced Settings → Inject Libraries.
+                """).format(dll_path=dll_path))
         return dll_paths
 
 
@@ -149,11 +155,14 @@ class ModelImporterCommandFileHandler:
         for (name, value, flag_modified, comments, inline_comment) in section.options:
             command_handler = supported_commands.get(name, None)
             if command_handler is None:
-                raise ValueError(f'Unknown command {name}!')
+                raise ValueError(L('error_model_importer_unknown_command', 'Unknown command {name}!'))
             try:
                 command_handler(value)
             except Exception as e:
-                raise ValueError(f'Failed to execute `{name} = {value}` of auto_update.xcmd!:\n{str(e)}') from e
+                raise ValueError(L('error_model_importer_command_execution_failed', """
+                    Failed to execute `{name} = {value}` of auto_update.xcmd!
+                    {error_text}
+                """).format(name=name, value=value, error_text=e)) from e
 
     @staticmethod
     def cmd_delete(path: str):
@@ -169,11 +178,13 @@ class ModelImporterCommandFileHandler:
         valid_roots = ['Core', 'ShaderFixes']
         path_root = non_dots_parts[0]
         if path_root.lower() not in [x.lower() for x in valid_roots]:
-            raise ValueError(f'File or folder removal is allowed only from Core or ShaderFixes folder!')
+            raise ValueError(L('error_model_importer_removal_scope_restricted',
+                               'File or folder removal is allowed only from Core or ShaderFixes folder!'))
 
         # Forbid removal of entire Core or ShaderFixes folder for security reasons
         if len(non_dots_parts) == 1:
-            raise ValueError(f'Explicit removal of entire Core or ShaderFixes folder is not allowed!')
+            raise ValueError(L('error_model_importer_removal_forbidden',
+                               'Explicit removal of entire Core or ShaderFixes folder is not allowed!'))
 
         # Execute removal for given path
         path = Config.Active.Importer.importer_path.joinpath(path)
@@ -197,9 +208,11 @@ class ModelImporterPackage(Package):
     def validate_game_path(self, game_folder) -> Path:
         game_path = Path(game_folder)
         if not str(game_folder):
-            raise ValueError(f'Game installation folder is not specified!')
+            raise ValueError(L('error_model_importer_game_folder_not_specified',
+                               'Game installation folder is not specified!'))
         if not game_path.is_absolute() or not game_path.is_dir():
-            raise ValueError(f'Specified game installation folder is not found!')
+            raise ValueError(L('error_model_importer_game_folder_not_found', 
+                               'Specified game installation folder is not found!'))
         return game_path
 
     def validate_game_exe_path(self, game_path: Path) -> Path:
@@ -242,10 +255,13 @@ class ModelImporterPackage(Package):
 
     def notify_game_folder_detection_failure(self):
         user_requested_settings = Events.Call(Events.Application.ShowError(
-            message=f'Automatic detection of the game installation failed!\n\n'
-                    f'Please configure it manually with Game Folder option of General Settings.',
-            confirm_text='Open Settings',
-            cancel_text='Cancel',
+            message=L('message_text_game_detection_failed', """
+                Automatic detection of the game installation failed!
+                
+                Please configure it manually with Game Folder option of General Settings.
+            """),
+            confirm_text=L('message_button_open_settings', 'Open Settings'),
+            cancel_text=L('message_button_cancel', 'Cancel'),
             modal=True,
         ))
 
@@ -256,21 +272,29 @@ class ModelImporterPackage(Package):
         if len(game_folders_index) == 1:
             game_folder_id = 0
             user_confirmed_game_folder = Events.Call(Events.Application.ShowInfo(
-                message=f'Detected game installation:\n\n'
-                        f'{game_folders_index[0]}\n\n'
-                        f'Please check if it is desired Game Folder or change it in General Settings.',
-                confirm_text='Confirm',
-                cancel_text='Open Settings',
+                message=L('message_text_game_detected_single', """
+                    Detected game installation:
+                    
+                    {game_folder}
+                    
+                    Please check if it is desired Game Folder or change it in General Settings.
+                """).format(game_folder=game_folders_index[0]),
+                confirm_text=L('message_button_confirm', 'Confirm'),
+                cancel_text=L('message_button_open_settings', 'Open Settings'),
                 modal=True,
             ))
             if user_confirmed_game_folder is None:
                 user_confirmed_game_folder = True
         else:
             (user_confirmed_game_folder, game_folder_id) = Events.Call(Events.Application.ShowWarning(
-                message=f'Detected game installations:\n\n'
-                        f'Select desired Game Folder from the list below or set it in General Settings:\n',
-                confirm_text='Confirm',
-                cancel_text='Open Settings',
+                message=L('message_text_game_detected_multiple', """
+                    Detected game installations:
+                    
+                    Select desired Game Folder from the list below or set it in General Settings:
+                    
+                """),
+                confirm_text=L('message_button_confirm', 'Confirm'),
+                cancel_text=L('message_button_open_settings', 'Open Settings'),
                 radio_options=game_folders_index,
                 modal=True,
             ))
@@ -278,10 +302,13 @@ class ModelImporterPackage(Package):
 
     def notify_game_folder_not_configured(self):
         user_requested_settings = Events.Call(Events.Application.ShowError(
-            message=f'Game installation folder is not configured!\n\n'
-                    f'Please set it with Game Folder option of General Settings.',
-            confirm_text='Open Settings',
-            cancel_text='Cancel',
+            message=L('message_text_game_folder_not_configured', """
+                Game installation folder is not configured!
+                
+                Please set it with Game Folder option of General Settings.
+            """),
+            confirm_text=L('message_button_open_settings', 'Open Settings'),
+            cancel_text=L('message_button_cancel', 'Cancel'),
             modal=True,
         ))
 
@@ -292,7 +319,7 @@ class ModelImporterPackage(Package):
 
         try:
 
-            Events.Fire(Events.Application.StatusUpdate(status='Autodetecting game installation folder...'))
+            Events.Fire(Events.Application.StatusUpdate(status=L('status_autodetecting_game', 'Autodetecting game installation folder...')))
 
             # Try to automatically detect the game folder using search algo dedicated for given game
             # Those results are inaccurate as algos try to parse as much path-like strings as possible
@@ -357,15 +384,21 @@ class ModelImporterPackage(Package):
 
         # Ensure that user didn't install the launcher to the game exe location
         if str(game_exe_path.parent) in str(Paths.App.Root):
-            raise ValueError(f'\n'
-                             f'Launcher must be installed outside of the game folder!\n\n'
-                             f'Please reinstall the launcher to another location.')
+            raise ValueError(L('error_launcher_in_game_folder', """
+                
+                Launcher must be installed outside of the game folder!
+                
+                Please reinstall the launcher to another location.
+            """))
 
         # Ensure that user didn't set a model importer folder to the game exe location
         if str(game_exe_path.parent) in str(Config.Active.Importer.importer_path):
-            raise ValueError(f'\n'
-                             f'{Config.Launcher.active_importer} Folder must be located outside of the Game Folder!\n\n'
-                             f'Please chose another location for Settings > {Config.Launcher.active_importer} > {Config.Launcher.active_importer} Folder.')
+            raise ValueError(L('error_model_importer_in_game_folder', """
+                
+                {importer} Folder must be located outside of the Game Folder!
+                
+                Please chose another location for Settings > {importer} > {importer} Folder.
+            """).format(importer=Config.Launcher.active_importer))
 
         return game_path, game_exe_path
 
@@ -397,7 +430,10 @@ class ModelImporterPackage(Package):
         except UserWarning:
             return
         except Exception as e:
-            raise ValueError(f'{Config.Launcher.active_importer} Installation Failed:\n{e}') from e
+            raise ValueError(L('error_model_importer_installation_failed', """
+                {importer} Installation Failed:
+                {error_text}
+            """).format(importer=Config.Launcher.active_importer, error_text=e)) from e
         # Install importer package and its requirements
         Events.Fire(Events.Application.Update(packages=[Config.Launcher.active_importer], force=True, reinstall=True))
 
@@ -405,7 +441,7 @@ class ModelImporterPackage(Package):
         raise NotImplementedError
 
     def update_d3dx_ini(self, game_exe_path: Path):
-        Events.Fire(Events.Application.StatusUpdate(status='Updating d3dx.ini...'))
+        Events.Fire(Events.Application.StatusUpdate(status=L('status_updating_ini', 'Updating d3dx.ini...')))
 
         ini_path = Config.Active.Importer.importer_path / 'd3dx.ini'
 
@@ -445,7 +481,9 @@ class ModelImporterPackage(Package):
     def set_default_ini_values(self, ini: IniHandler, setting_name: str, setting_type: SettingType, setting_value=None):
         settings = Config.Active.Importer.d3dx_ini.get(setting_name, None)
         if settings is None:
-            raise ValueError(f'Config is missing {setting_name} setting!')
+            raise ValueError(L('error_ini_missing_setting',
+                'Config is missing {setting_name} setting!'
+            ).format(setting_name=setting_name))
         for section, options in settings.items():
             for option, values in options.items():
 
@@ -461,12 +499,16 @@ class ModelImporterPackage(Package):
                     value = values[key]
 
                 if value is None:
-                    raise ValueError(f'Config is missing value for section `{section}` option `{option}` key `{key}')
+                    raise ValueError(L('error_ini_missing_value',
+                        'Config is missing value for section `{section}` option `{option}` key `{key}`'
+                    ).format(section=section, option=option, key=key))
 
                 try:
                     ini.set_option(section, option, value)
                 except Exception as e:
-                    raise ValueError(f'Failed to set section {section} option {option} to {value}: {str(e)}') from e
+                    raise ValueError(L('error_set_ini_option_failed',
+                        'Failed to set section {section} option {option} to {value}: {error_text}'
+                   ).format(section=section, option=option, key=key, error_text=e)) from e
 
     def get_start_cmd(self, game_path: Path) -> Tuple[Path, List[str], Optional[str]]:
         game_exe_path = self.validate_game_exe_path(game_path)
@@ -537,15 +579,17 @@ class ModelImporterPackage(Package):
         if not ini_path.exists():
             user_requested_restore = Events.Call(Events.Application.ShowError(
                 modal=True,
-                confirm_text='Restore',
-                cancel_text='Cancel',
-                message=f'{Config.Launcher.active_importer} installation is damaged!\n'
-                        f'Details: Missing critical file: {ini_path.name}!\n'
-                        f'Would you like to restore {Config.Launcher.active_importer} automatically?',
+                confirm_text=L('message_button_restore', 'Restore'),
+                cancel_text=L('message_button_cancel', 'Cancel'),
+                message=L('message_text_model_importer_installation_damaged', """
+                    {importer} installation is damaged!
+                    Details: Missing critical file: {file_name}!
+                    Would you like to restore {importer} automatically?
+                """).format(importer=Config.Launcher.active_importer, file_name=ini_path.name),
             ))
 
             if not user_requested_restore:
-                raise ValueError(f'Missing critical file: {ini_path.name}!')
+                raise ValueError(L('model_importer_missing_critical_file', 'Missing critical file: {file_name}!').format(file_name=ini_path.name))
 
             Events.Fire(Events.Application.Update(no_thread=True, force=True, reinstall=True, packages=[self.metadata.package_name]))
 
@@ -569,7 +613,9 @@ class ModelImporterPackage(Package):
         pythoncom.CoInitialize()
         with winshell.shortcut(str(Path(winshell.desktop()) / f'{Config.Launcher.active_importer} Quick Start.lnk')) as link:
             link.path = str(Path(sys.executable))
-            link.description = f'Start game with {Config.Launcher.active_importer} and skip launcher load'
+            link.description = str(L('model_importer_shortcut_description',
+                'Start game with {importer} and skip launcher load'
+            ).format(importer=Config.Launcher.active_importer))
             link.working_directory = str(Paths.App.Resources / 'Bin')
             link.arguments = f'--nogui --xxmi {Config.Launcher.active_importer}'
             link.icon_location = (str(Config.Config.theme_path / 'Shortcuts' / f'{Config.Launcher.active_importer}.ico'), 0)
@@ -603,6 +649,7 @@ class ModelImporterPackage(Package):
     def disable_duplicate_libraries(self, libs_path: Path):
         log.debug(f'Searching for duplicate libs...')
         mods_path = Config.Active.Importer.importer_path / 'Mods'
+        Paths.verify_path(mods_path)
 
         mods_namespaces = self.index_namespaces(mods_path, self.get_ini_exclude_patterns())
         packaged_namespaces = self.index_namespaces(libs_path, [])
@@ -619,11 +666,18 @@ class ModelImporterPackage(Package):
 
         user_requested_disable = Events.Call(Events.Application.ShowError(
             modal=True,
-            confirm_text='Disable',
-            cancel_text='Ignore',
-            message=f'Your {Config.Launcher.active_importer} installation already includes some libraries present in the Mods folder!\n\n'
-                    f'Would you like to disable following duplicates automatically (recommended)?\n'
-                    '\n' + '\n'.join([f'Mods\\{x.relative_to(mods_path)}' for x in duplicate_ini_paths])
+            confirm_text=L('message_button_disable', 'Disable'),
+            cancel_text=L('message_button_ignore', 'Ignore'),
+            message=L('message_text_duplicate_libraries_detected', """
+                Your Mods folder contains some libraries that are already included into {importer}!
+                
+                Would you like to disable following duplicates automatically (recommended)?
+                
+                {duplicates}
+            """).format(
+                importer=Config.Launcher.active_importer,
+                duplicates='\n'.join([f'Mods\\{x.relative_to(mods_path)}' for x in duplicate_ini_paths]
+            ))
         ))
 
         if not user_requested_disable:
@@ -640,7 +694,6 @@ class ModelImporterPackage(Package):
     def validate_mods_folder(self):
         log.debug(f'Searching for invalid folders...')
         mods_path = Config.Active.Importer.importer_path / 'Mods'
-        Paths.verify_path(mods_path)
 
         for entry in self.scan_directory(mods_path, self.get_ini_exclude_patterns()):
 
@@ -649,17 +702,21 @@ class ModelImporterPackage(Package):
                 if path.name == 'd3dx.ini':
                     user_requested_fix = Events.Call(Events.Application.ShowError(
                         modal=True,
-                        confirm_text='Delete File',
-                        cancel_text='Abort',
-                        message=f'Global config file d3dx.ini found inside the Mods folder:\n'
-                                f'{path.relative_to(Config.Active.Importer.importer_path.parent)}\n\n'
-                                f'It is duplicate file that may cause glitches and crashes.\n\n'
-                                f'Would you like to remove it?'
+                        confirm_text=L('message_button_delete_file', 'Delete File'),
+                        cancel_text=L('message_button_abort', 'Abort'),
+                        message=L('message_text_d3dx_ini_in_mods_folder_detected', """
+                            Global config file d3dx.ini found inside the Mods folder:
+                            {path}
+                            
+                            It is duplicate file that may cause glitches and crashes.
+                            
+                            Would you like to remove it?
+                        """).format(path=path.relative_to(Config.Active.Importer.importer_path.parent))
                     ))
                     if user_requested_fix:
                         path.unlink()
                     else:
-                        raise ValueError(f'Cannot start with d3dx.ini in Mods folder!')
+                        raise ValueError(L('error_cannot_start_with_d3dx_ini_in_mods', 'Cannot start with d3dx.ini in Mods folder!'))
                 else:
                     if path.parent.name == 'ShaderFixes' and path.name in ['3dvision2sbs.ini', 'help.ini', 'mouse.ini', 'upscale.ini']:
                         logging.warning(f'Automatically disabling illegitimate {path}...')
@@ -751,3 +808,47 @@ class ModelImporterPackage(Package):
         if shortcut_path.is_file():
             log.debug(f'Removing {shortcut_path}...')
             shortcut_path.unlink()
+
+
+class Version:
+    def __init__(self, ini_path, pattern = r'^global \$version = (\d+)\.*(\d)(\d*)'):
+        self.ini_path = ini_path
+        self.version = None
+        self.parse_version(pattern)
+
+    def parse_version(self, pattern):
+        Events.Fire(Events.Application.VerifyFileAccess(path=self.ini_path, write=False))
+
+        with open(self.ini_path, 'r', encoding='utf-8') as f:
+
+            version_pattern = re.compile(pattern)
+
+            for line in f.readlines():
+
+                result = version_pattern.findall(line)
+
+                if len(result) != 1:
+                    continue
+
+                result = list(result[0])
+
+                if len(result) == 2:
+                    result.append(0)
+
+                if len(result) != 3:
+                    raise ValueError(L('error_malformed_model_importer_version', 'Malformed {importer} version!').format(importer=Config.Launcher.active_importer))
+
+                self.version = result
+
+                return
+
+        raise ValueError(L('error_model_importer_version_not_found', 'Failed to locate {importer} version!').format(importer=Config.Launcher.active_importer))
+
+    def __str__(self) -> str:
+        return f'{self.version[0]}.{self.version[1]}.{self.version[2]}'
+
+    def as_float(self):
+        return float(f'{self.version[0]}.{self.version[1]}{self.version[2]}')
+
+    def as_ints(self):
+        return [map(int, self.version)]

@@ -6,20 +6,21 @@ import shutil
 import subprocess
 import time
 import traceback
-import re
 
 from pathlib import Path
 from typing import Union, Callable, List, Optional
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from threading import Thread, current_thread, main_thread
 from queue import Queue, Empty
 
+import core.locale_manager as Locale
 import core.path_manager as Paths
 import core.event_manager as Events
 import core.config_manager as Config
 
 import core.utils.system_info as system_info
 
+from core.locale_manager import L, LocaleName
 from core.package_manager import PackageManager
 
 from core.packages.launcher_package import LauncherPackage
@@ -43,6 +44,7 @@ class ApplicationEvents:
     @dataclass
     class OpenSettings:
         wait_window: bool = False
+        tab_name: str = ''
 
     @dataclass
     class CloseSettings:
@@ -144,9 +146,9 @@ class ApplicationEvents:
     class ShowMessage:
         modal: bool = False
         icon: str = 'info-icon.ico'
-        title: str = 'Message'
+        title: str = field(default_factory=lambda: L('message_title_message', 'Message'))
         message: str = '< Text >'
-        confirm_text: str = 'OK'
+        confirm_text: str = field(default_factory=lambda: L('message_button_ok', 'OK'))
         confirm_command: Optional[Callable] = None
         cancel_text: str = ''
         cancel_command: Optional[Callable] = None
@@ -157,22 +159,22 @@ class ApplicationEvents:
     @dataclass
     class ShowError(ShowMessage):
         icon: str = 'error-icon.ico'
-        title: str = 'Error'
+        title: str = field(default_factory=lambda: L('message_title_error', 'Error'))
 
     @dataclass
     class ShowWarning(ShowMessage):
         icon: str = 'warning-icon.ico'
-        title: str = 'Warning'
+        title: str = field(default_factory=lambda: L('message_title_warning', 'Warning'))
 
     @dataclass
     class ShowInfo(ShowMessage):
         icon: str = 'info-icon.ico'
-        title: str = 'Info'
+        title: str = field(default_factory=lambda: L('message_title_info', 'Info'))
 
     @dataclass
     class ShowDialogue(ShowMessage):
-        confirm_text: str = 'Confirm'
-        cancel_text: str = 'Cancel'
+        confirm_text: str = field(default_factory=lambda: L('message_button_confirm', 'Confirm'))
+        cancel_text: str = field(default_factory=lambda: L('message_button_cancel', 'Cancel'))
 
     @dataclass
     class VerifyFileAccess:
@@ -237,7 +239,7 @@ class Application:
                 parser.print_help()
                 return
         except BaseException:
-            raise ValueError(f'Failed to parse args: {sys.argv}')
+            raise ValueError(L('application_failed_parse_args', 'Failed to parse args: {args}').format(args=sys.argv))
 
         # Load config json
         try:
@@ -248,8 +250,19 @@ class Application:
                 modal=True,
                 screen_center=not self.gui.is_shown(),
                 lock_master=self.gui.is_shown(),
-                message=f'Failed to load configuration! Falling back to defaults.',
+                message=L('message_text_config_was_reset', 'Failed to load configuration! Falling back to defaults.'),
             ))
+
+        # Configure locale
+        try:
+            if not Config.Launcher.locale:
+                # Write detected OS locale to config
+                Config.Launcher.locale = Locale.Locale.active_locale.name
+            else:
+                # Use locale specified by config
+                Locale.Locale.set_active_locale(LocaleName[Config.Launcher.locale])
+        except Exception as error:
+            logging.exception(error)
 
         logging.getLogger().setLevel(logging.getLevelNamesMapping().get(Config.Launcher.log_level, 'DEBUG'))
 
@@ -306,7 +319,7 @@ class Application:
 
         if self.args.update:
             Events.Fire(Events.Application.Busy())
-            Events.Fire(Events.Application.StatusUpdate(status='Initializing update...'))
+            Events.Fire(Events.Application.StatusUpdate(status=L('status_initializing_update', 'Initializing update...')))
 
         Events.Fire(Events.Application.LoadImporter(importer_id=Config.Launcher.active_importer))
 
@@ -325,7 +338,7 @@ class Application:
 
         Events.Fire(Events.Application.ConfigUpdate())
 
-        self.package_manager.notify_package_versions(detect_installed=True)
+        Events.Fire(Events.PackageManager.NotifyPackageVersions(detect_installed=True))
 
         self.gui.after(100, self.run_as_thread, self.auto_update)
 
@@ -352,9 +365,9 @@ class Application:
                     modal=True,
                     screen_center=not self.gui.is_shown(),
                     lock_master=self.gui.is_shown(),
-                    confirm_text='Load Backup',
-                    cancel_text='Load Default',
-                    message='Failed to load configuration!',
+                    confirm_text=L('message_button_load_backup_config', 'Load Backup'),
+                    cancel_text=L('message_button_load_default_config', 'Load Default'),
+                    message=L('message_text_config_load_failed', 'Failed to load configuration!'),
                 )
                 user_requested_backup_load = self.gui.show_messagebox(error_dialogue)
                 if user_requested_backup_load:
@@ -365,7 +378,7 @@ class Application:
     def validate_importer_name(self, importer_name: str) -> str:
         importer_name = importer_name.upper()
         if importer_name != 'XXMI' and importer_name not in Config.Importers.__dict__.keys():
-            raise ValueError(f'Unknown model importer {importer_name}!')
+            raise ValueError(L('error_unknown_model_importer', 'Unknown model importer {importer}!').format(importer=importer_name))
         return importer_name
 
     def get_importer_from_path(self, path: Path):
@@ -385,8 +398,11 @@ class Application:
                 continue
             return package.metadata.package_name, game_path, game_exe_path
 
-        raise ValueError(f'Failed to auto-select importer for `{path}`!\n\n'
-                         f'Try to add `--nogui --xxmi WWMI` args (or GIMI, SRMI, ZZMI, HIMI).')
+        raise ValueError(L('error_model_importer_auto_select_failed', """
+            Failed to auto-select importer for `{path}`!
+            
+            Try to add `--nogui --xxmi WWMI` args (or GIMI, SRMI, ZZMI, HIMI).
+        """).format(path=path))
 
     def get_active_importer(self) -> str:
         active_importer = None
@@ -407,7 +423,7 @@ class Application:
                 active_importer = self.validate_importer_name(self.args.xxmi)
             except Exception:
                 Events.Fire(Events.Application.ShowWarning(
-                    message=f'Unknown model importer supplied as command line arg `--xxmi={self.args.xxmi}`!')
+                    message=L('error_unknown_model_importer_arg', 'Unknown model importer supplied as command line arg `--xxmi={arg_xxmi}`!').format(arg_xxmi=self.args.xxmi))
                 )
 
         elif Config.Launcher.active_importer:
@@ -416,7 +432,7 @@ class Application:
                 active_importer = self.validate_importer_name(Config.Launcher.active_importer)
             except Exception:
                 Events.Fire(Events.Application.ShowWarning(
-                    message=f'Unknown model importer `{Config.Launcher.active_importer}` supplied with `active_importer` setting!')
+                    message=L('error_unknown_model_importer_setting', 'Unknown model importer `{importer}` supplied with `active_importer` setting!').format(importer=Config.Launcher.active_importer))
                 )
 
         if active_importer is None:
@@ -439,7 +455,11 @@ class Application:
         except Exception as e:
             if self.args.update:
                 Events.Fire(Events.Application.ShowWarning(
-                    message=f'Failed to get latest versions list from GitHub!\n\n{str(e)}',
+                    message=L('error_version_list_fetch_failed', """
+                        Failed to get latest versions list from GitHub!
+                        
+                        {error_text}
+                    """).format(error_text=e),
                     modal=True))
         # Exit early if there are no updates available
         if not self.package_manager.update_available():
@@ -491,8 +511,13 @@ class Application:
                 continue
             # Include packages with version different from the latest
             if package.latest_version != '' and (package.installed_version != package.latest_version):
-                pending_update_message.append(
-                    f'{package_name} update found: {package.installed_version or 'N/A'} -> {package.latest_version}')
+                pending_update_message.append(L('application_update_found',
+                    '{package} update found: {current} → {latest}'
+                ).format(
+                    package=package_name,
+                    current=package.installed_version or 'N/A',
+                    latest=package.latest_version
+                ))
 
         if len(pending_update_message) == 0:
             return False
@@ -502,9 +527,9 @@ class Application:
             screen_center=not self.gui.is_shown(),
             lock_master=self.gui.is_shown(),
             icon='update-icon.ico',
-            title='Update Available',
-            confirm_text='Update',
-            cancel_text='Skip',
+            title=L('message_title_update_available', 'Update Available'),
+            confirm_text=L('message_button_install_update', 'Update'),
+            cancel_text=L('message_button_skip_update', 'Skip'),
             message='\n'.join(pending_update_message),
         )
 
@@ -535,7 +560,7 @@ class Application:
         else:
             Events.Fire(Events.Application.ShowInfo(
                 modal=True,
-                message='No updates available!',
+                message=L('message_text_already_up_to_date', 'No updates available!'),
             ))
 
     def get_launch_counters_from_log(self, exclude_failed = True):
@@ -667,7 +692,13 @@ class Application:
             self.gui.after(100, Events.Fire, Events.Application.Ready())
             return
         except Exception as e:
-            raise Exception(f'{Config.Launcher.active_importer} Loading Failed:\n{str(e)}') from e
+            raise Exception(L('error_model_importer_loading_failed', """
+                {importer} Loading Failed:
+                {error}
+            """).format(
+                importer=Config.Launcher.active_importer,
+                error=str(e))
+            ) from e
         finally:
             self.is_locked = False
             if not Config.Launcher.auto_close:
@@ -692,16 +723,21 @@ class Application:
                     screen_center=not self.gui.is_shown(),
                     lock_master=self.gui.is_shown(),
                     icon='error-icon.ico',
-                    title='File Read Only Error',
-                    message=f'Failed to write Read Only file {event.path}!\n\n'
-                            f'Press [Confirm] to remove this flag and continue.',
+                    title=L('message_title_file_write_failed_read_only', 'File Read Only Error'),
+                    message=L('message_text_file_write_failed_read_only', """
+                        Failed to write Read Only file {path}!
+                        
+                        Press [Confirm] to remove this flag and continue.
+                    """).format(path=event.path)
                 ))
                 if user_requested_flag_remove:
                     logging.debug(f'Removing Read-Only flag from {event.path}...')
                     Paths.remove_read_only(event.path)
                     Paths.assert_file_write(event.path)
                 else:
-                    raise ValueError(f'Failed to write critical file: {event.path}!')
+                    raise ValueError(L('error_critical_file_write_failed',
+                        'Failed to write critical file: {path}!'
+                   ).format(path=event.path))
         if event.exe:
             Paths.assert_file_read(event.path)
 

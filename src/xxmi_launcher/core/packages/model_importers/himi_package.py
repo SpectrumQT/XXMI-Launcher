@@ -14,11 +14,12 @@ import core.path_manager as Paths
 import core.event_manager as Events
 import core.config_manager as Config
 
+from core.locale_manager import L
 from core.package_manager import PackageMetadata
 
 from core.utils.ini_handler import IniHandler, IniHandlerSettings
 from core.utils.process_tracker import wait_for_process_exit, WaitResult, ProcessPriority
-from core.packages.model_importers.model_importer import ModelImporterPackage, ModelImporterConfig
+from core.packages.model_importers.model_importer import ModelImporterPackage, ModelImporterConfig, Version
 from core.packages.migoto_package import MigotoManagerConfig
 
 log = logging.getLogger(__name__)
@@ -130,7 +131,7 @@ class HIMIPackage(ModelImporterPackage):
     def validate_game_exe_path(self, game_path: Path) -> Path:
         game_exe_path = game_path / 'BH3.exe'
         if not game_exe_path.is_file():
-            raise ValueError(f'Game executable {game_exe_path.name} not found!')
+            raise ValueError(L('error_game_exe_not_found', 'Game executable {exe_name} not found!').format(exe_name=game_exe_path.name))
         return game_exe_path
 
     def get_start_cmd(self, game_path: Path) -> Tuple[Path, List[str], Optional[str]]:
@@ -139,51 +140,39 @@ class HIMIPackage(ModelImporterPackage):
         return game_exe_path, [], work_dir_path
 
     def initialize_game_launch(self, game_path: Path):
-        if Config.Active.Importer.custom_launch_inject_mode != 'Bypass':
-            self.update_himi_ini()
+        # if Config.Active.Importer.custom_launch_inject_mode != 'Bypass':
+        #     pass
         if Config.Importers.HIMI.Importer.unlock_fps:
             try:
                 self.unlock_fps()
             except Exception as e:
-                raise Exception(f'Failed to configure FPS!\n\n{str(e)}')
-
-    def update_himi_ini(self):
-        Events.Fire(Events.Application.StatusUpdate(status='Updating HIMI main.ini...'))
-
-        himi_ini_path = Config.Importers.HIMI.Importer.importer_path / 'Core' / 'HIMI' / 'main.ini'
-        if not himi_ini_path.exists():
-            raise ValueError('Failed to locate Core/HIMI/main.ini!')
-
-        Events.Fire(Events.Application.VerifyFileAccess(path=himi_ini_path, write=True))
-
-        # with open(himi_ini_path, 'r', encoding='utf-8') as f:
-        #     ini = IniHandler(IniHandlerSettings(option_value_spacing=True, ignore_comments=False), f)
-        #
-        # if ini.is_modified():
-        #     log.debug(f'Writing main.ini...')
-        #     with open(himi_ini_path, 'w', encoding='utf-8') as f:
-        #         f.write(ini.to_string())
+                raise ValueError(L('error_himi_fps_unlock_failed', 'Failed to configure FPS: {error_text}').format(error_text=e))
 
     def unlock_fps(self):
         # Open HSR registry key
         try:
             settings_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, 'Software\\miHoYo\\Honkai Impact 3rd', 0, winreg.KEY_ALL_ACCESS)
         except FileNotFoundError:
-            raise ValueError(
-                f'Star Rail registry key is not found!\n\n'
-                f'Please start the game without 120 FPS tweak, change FPS to any value to create the record and try again.\n\n'
-                f'Note: Tweak is supported only for the Global HSR client and will not work for CN.'
-            )
+            raise ValueError(L('error_himi_registry_key_not_found', """
+                Honkai Impact 3rd registry key is not found!
+                
+                Please start the game without FPS tweak, change FPS to any value to create the record and try again.
+                
+                Note: Tweak is supported only for the Global client and will not work for CN.
+            """))
         # Read binary Graphics Settings key
         try:
             (settings_bytes, regtype) = winreg.QueryValueEx(settings_key, 'GENERAL_DATA_V2_PersonalGraphicsSettingV2_h3480068519')
         except FileNotFoundError as e:
-            raise ValueError(
-                f'Graphics Settings record is not found in HSR registry!\n\n'
-                f'Please start the game without FPS tweak, change FPS to any value to create the record and try again.'
-            )
+            raise ValueError(L('error_himi_graphics_settings_not_found', """
+                Graphics Settings record is not found in Honkai Impact 3rd registry!
+                
+                Please start the game without FPS tweak, change FPS to any value to create the record and try again.
+            """))
         if regtype != winreg.REG_BINARY:
-            raise ValueError(f'Unknown Graphics Settings format: Data type {regtype} is not {winreg.REG_BINARY} of REG_BINARY!')
+            raise ValueError(L('error_himi_unknown_graphics_format', 
+                'Unknown Graphics Settings format: Data type {regtype} is not {expected_type} of REG_BINARY!'
+            ).format(regtype=regtype, expected_type=winreg.REG_BINARY))
         # Read bytes till the first null byte as settings ascii string
         null_byte_pos = settings_bytes.find(b'\x00')
         if null_byte_pos != -1:
@@ -195,7 +184,7 @@ class HIMIPackage(ModelImporterPackage):
         settings_dict = json.loads(settings_str)
         # Ensure settings dict has known keys
         if 'TargetFrameRateForInLevel' not in settings_dict:
-            raise ValueError('Unknown Graphics Settings format: "TargetFrameRateForInLevel" key no found!')
+            raise ValueError(L('error_himi_fps_key_not_found', 'Unknown Graphics Settings format: "TargetFrameRateForInLevel" key not found!'))
         # Exit early if FPS is already set to Config.Importers.HIMI.Importer.unlock_fps_value
         if settings_dict['TargetFrameRateForInLevel'] == Config.Importers.HIMI.Importer.unlock_fps_value:
             return
@@ -208,45 +197,3 @@ class HIMIPackage(ModelImporterPackage):
         settings_bytes = bytes(settings_str.encode('ascii')) + b'\x00'
         # Write encoded settings back to registry
         winreg.SetValueEx(settings_key, 'GENERAL_DATA_V2_PersonalGraphicsSettingV2_h3480068519', None, regtype, settings_bytes)
-
-
-class Version:
-    def __init__(self, himi_ini_path):
-        self.himi_ini_path = himi_ini_path
-        self.version = None
-        self.parse_version()
-
-    def parse_version(self):
-        with open(self.himi_ini_path, 'r', encoding='utf-8') as f:
-
-            version_pattern = re.compile(r'^global \$version = (\d+)\.*(\d)(\d*)')
-
-            for line in f.readlines():
-
-                result = version_pattern.findall(line)
-
-                if len(result) != 1:
-                    continue
-
-                result = list(result[0])
-
-                if len(result) == 2:
-                    result.append(0)
-
-                if len(result) != 3:
-                    raise ValueError(f'Malformed HIMI version!')
-
-                self.version = result
-
-                return
-
-        raise ValueError(f'Failed to locate HIMI version!')
-
-    def __str__(self) -> str:
-        return f'{self.version[0]}.{self.version[1]}.{self.version[2]}'
-
-    def as_float(self):
-        return float(f'{self.version[0]}.{self.version[1]}{self.version[2]}')
-
-    def as_ints(self):
-        return [map(int, self.version)]

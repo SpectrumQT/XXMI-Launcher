@@ -1,11 +1,42 @@
 import tomllib
 import random
+import locale
 
-from textwrap import dedent
 from pathlib import Path
+from textwrap import dedent
 from typing import Optional, Dict, Callable
+from enum import Enum
 
-import core.path_manager as Paths
+
+class LocaleName(Enum):
+    EN = 'English'
+    CN = '中文'
+    RU = 'Русский'
+
+
+def get_os_locale() -> LocaleName:
+    language, codepage = locale.getlocale()
+
+    if language:
+        keywords = {
+            LocaleName.CN: ['zh_CN', 'Chinese', 'China'],
+            LocaleName.RU: ['ru_RU', 'Russian', 'Russia'],
+        }
+        for locale_name, locale_keywords in keywords.items():
+            for locale_keyword in locale_keywords:
+                if locale_keyword in language:
+                    return locale_name
+
+    if codepage:
+        codepages = {
+            LocaleName.CN: '936',
+            LocaleName.RU: '1252',
+        }
+        for locale_name, locale_codepage in codepages.items():
+            if locale_codepage in codepage:
+                return locale_name
+
+    return LocaleName.EN
 
 
 class Default(dict):
@@ -13,16 +44,18 @@ class Default(dict):
         return '{'+key+'}'
 
 
-class LocaleString:
-    def __init__(self, string):
-        self.string = str(string)
+class LocaleString(str):
+    def __new__(cls, string, key: str):
+        obj = super().__new__(cls, str(string))
+        obj.key = key
+        return obj
 
     def format(self, **kwargs) -> 'LocaleString':
-        self.string = self.string.format_map(Default(kwargs))
-        return self
+        formatted = self.format_map(Default(kwargs))
+        return LocaleString(formatted, key=self.key)
 
-    def __str__(self):
-        return self.string
+    def __repr__(self):
+        return f"LocaleString({super().__repr__()}, key={self.key!r})"
 
 
 class LocaleEngine:
@@ -31,10 +64,14 @@ class LocaleEngine:
         self.strings : Optional[Dict[str, str]] = None
         self.enable_locale = False
 
-    def load_locale(self, locale: str, tag: str = 'loc'):
+    def load_locale(self, locale: LocaleName, tag: str = 'loc'):
+        if locale == LocaleName.EN:
+            self.enable_locale = False
+            return
+
         self.strings = {}
 
-        locale_path = self.locales_path / locale
+        locale_path = self.locales_path / locale.name
 
         try:
             for path in sorted(locale_path.iterdir()):
@@ -48,6 +85,11 @@ class LocaleEngine:
         self.enable_locale = True
 
     def get_string(self, key: str, string: str) -> str:
+        string = dedent(string)
+        if string.startswith('\n'):
+            string = string[1:]
+        if string.endswith('\n'):
+            string = string[:-1]
         if self.enable_locale:
             string = self.translate(key, string)
         return string
@@ -136,13 +178,37 @@ class GuideChan:
 
 class LocaleManager:
     def __init__(self):
-        self.locale = LocaleEngine(Paths.App.Resources / 'Packages' / 'Locale' / 'Strings')
+        self.package_path = None
+        self.locale = None
+        self.active_locale = LocaleName.EN
         # self.guide_chan = GuideChan(Paths.App.Resources / 'Packages' / 'Locale' / 'GuideChan')
         # self.enable_guide_chan = False
 
-        # self.load_locale('English')
+    def set_root_path(self, root_path: Path):
+        self.package_path = root_path / 'Resources' / 'Packages' / 'Locale'
+        self.locale = LocaleEngine(self.package_path / 'Strings')
 
-    def load_locale(self, locale: str):
+    def read_active_locale(self) -> Optional[LocaleName]:
+        try:
+            with open(self.package_path / 'active_locale.cfg', 'r') as f:
+                locale = f.read()
+                for lang in LocaleName:
+                    if lang.name == locale:
+                        return lang
+        except:
+            pass
+        return None
+
+    def set_active_locale(self, locale: LocaleName, save_to_file = True):
+        if locale == self.active_locale:
+            return
+        if save_to_file:
+            with open(self.package_path / 'active_locale.cfg', 'w') as f:
+                f.write(locale.name)
+        self.load_locale(locale)
+        self.active_locale = locale
+
+    def load_locale(self, locale: LocaleName):
         self.locale.load_locale(locale)
         # self.guide_chan.load_locale(locale)
 
@@ -150,9 +216,17 @@ class LocaleManager:
         string = self.locale.get_string(key, string)
         # if self.enable_guide_chan:
         #     string = self.guide_chan.get_string(key, string)
-        return LocaleString(string)
+        return LocaleString(string, key)
 
 
 Locale = LocaleManager()
 
 L = Locale.get_string
+
+
+def initialize(root_path: Path):
+    Locale.set_root_path(root_path)
+    active_locale = Locale.read_active_locale()
+    if active_locale is None:
+        active_locale = get_os_locale()
+    Locale.set_active_locale(active_locale, save_to_file=False)

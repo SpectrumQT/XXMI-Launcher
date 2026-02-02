@@ -5,16 +5,18 @@ import json
 
 from dataclasses import dataclass, field
 from typing import Dict, Union, List
+
 from pathlib import Path
 
 import core.path_manager as Paths
 import core.event_manager as Events
 import core.config_manager as Config
 
+from core.locale_manager import L
 from core.package_manager import PackageMetadata
 
 from core.utils.ini_handler import IniHandler, IniHandlerSettings
-from core.packages.model_importers.model_importer import ModelImporterPackage, ModelImporterConfig
+from core.packages.model_importers.model_importer import ModelImporterPackage, ModelImporterConfig, Version
 from core.packages.migoto_package import MigotoManagerConfig
 from core.utils.sleepy import Sleepy, JsonSerializer
 
@@ -132,40 +134,26 @@ class ZZMIPackage(ModelImporterPackage):
     def validate_game_exe_path(self, game_path: Path) -> Path:
         game_exe_path = game_path / 'ZenlessZoneZero.exe'
         if not game_exe_path.is_file():
-            raise ValueError(f'Game executable {game_exe_path.name} not found!')
+            raise ValueError(L('error_game_exe_not_found', 'Game executable {exe_name} not found!').format(exe_name=game_exe_path.name))
         return game_exe_path
 
     def initialize_game_launch(self, game_path: Path):
         if Config.Active.Importer.custom_launch_inject_mode != 'Bypass':
-            self.update_zzmi_ini()
             if Config.Importers.ZZMI.Importer.configure_game:
                 try:
                     self.configure_game_settings(game_path)
                 except Exception as e:
-                    raise ValueError(f'Failed to configure in-game settings for ZZMI!\n'
-                        f"Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:\n"
-                        f'* Graphics > `Character Quality` must be `High`.\n'
-                        f'* Graphics > `High-Precision Character Animation` must be `Disabled`.\n\n'
-                        f'{e}') from e
-
-    def update_zzmi_ini(self):
-        Events.Fire(Events.Application.StatusUpdate(status='Updating ZZMI main.ini...'))
-
-        zzmi_ini_path = Config.Importers.ZZMI.Importer.importer_path / 'Core' / 'ZZMI' / 'main.ini'
-        if not zzmi_ini_path.exists():
-            raise ValueError('Failed to locate Core/ZZMI/main.ini!')
-
-        Events.Fire(Events.Application.VerifyFileAccess(path=zzmi_ini_path, write=True))
-
-        # with open(zzmi_ini_path, 'r', encoding='utf-8') as f:
-        #     ini = IniHandler(IniHandlerSettings(option_value_spacing=True, ignore_comments=False), f)
-        #
-        # if ini.is_modified():
-        #     with open(zzmi_ini_path, 'w', encoding='utf-8') as f:
-        #         f.write(ini.to_string())
+                    raise ValueError(L('error_zzmi_game_config_failed', """
+                        Failed to configure in-game settings for ZZMI!
+                        Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:
+                        * Graphics > `Character Quality` must be `High`.
+                        * Graphics > `High-Precision Character Animation` must be `Disabled`.
+                        
+                        {error_text}
+                    """).format(error_text=e)) from e
 
     def configure_game_settings(self, game_path: Path):
-        Events.Fire(Events.Application.StatusUpdate(status='Configuring in-game settings...'))
+        Events.Fire(Events.Application.StatusUpdate(status=L('status_configuring_settings', 'Configuring in-game settings...')))
 
         config_path = game_path / 'ZenlessZoneZero_Data' / 'Persistent' / 'LocalStorage' / 'GENERAL_DATA.bin'
 
@@ -225,7 +213,7 @@ class SettingsManager:
         else:
             old_value = setting.get('Data', None)
             if old_value is None:
-                raise ValueError(f'Unknown system settings entry format: {setting}!')
+                raise ValueError(L('error_zzmi_unknown_settings_format', 'Unknown system settings entry format: {setting}!').format(setting=setting))
             if old_value == new_value:
                 log.debug(f'Setting {setting_id} is already set to {old_value}')
                 return
@@ -233,45 +221,3 @@ class SettingsManager:
             self.modified = True
             log.debug(f'Updated setting {setting_id}: {old_value} -> {new_value}')
         self.settings['SystemSettingDataMap'] = system_settings
-
-
-class Version:
-    def __init__(self, zzmi_ini_path):
-        self.zzmi_ini_path = zzmi_ini_path
-        self.version = None
-        self.parse_version()
-
-    def parse_version(self):
-        with open(self.zzmi_ini_path, 'r', encoding='utf-8') as f:
-
-            version_pattern = re.compile(r'^global \$version = (\d+)\.*(\d)(\d*)')
-
-            for line in f.readlines():
-
-                result = version_pattern.findall(line)
-
-                if len(result) != 1:
-                    continue
-
-                result = list(result[0])
-
-                if len(result) == 2:
-                    result.append(0)
-
-                if len(result) != 3:
-                    raise ValueError(f'Malformed ZZMI version!')
-
-                self.version = result
-
-                return
-
-        raise ValueError(f'Failed to locate ZZMI version!')
-
-    def __str__(self) -> str:
-        return f'{self.version[0]}.{self.version[1]}.{self.version[2]}'
-
-    def as_float(self):
-        return float(f'{self.version[0]}.{self.version[1]}{self.version[2]}')
-
-    def as_ints(self):
-        return [map(int, self.version)]

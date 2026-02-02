@@ -11,6 +11,7 @@ from dacite import from_dict
 import core.path_manager as Paths
 import core.event_manager as Events
 
+from core.locale_manager import L
 from core.utils.security import Security
 from core import package_manager
 from core.packages import launcher_package
@@ -288,10 +289,13 @@ class AppConfigSecurity:
                 modal=True,
                 lock_master=False,
                 screen_center=True,
-                confirm_text='Reset',
-                cancel_text='Keep',
-                message=f'Failed to validate unsecure settings!\n\n'
-                        f'{msg}\n'
+                confirm_text=L('message_button_reset_unsecure_setting', 'Reset'),
+                cancel_text=L('message_button_keep_unsecure_setting', 'Keep'),
+                message=L('message_text_unsecure_setting_validation_failed', """
+                    Failed to validate unsecure settings!
+                    
+                    {msg}
+                """).format(msg=msg)
             ))
             if user_requested_reset:
                 if 'Unsafe Mode' in wrong_signatures:
@@ -350,8 +354,14 @@ def get_resource_path(element, filename: Union[str, Path], extensions: Optional[
             return resource_path
     resource_path = Paths.App.Themes / 'Default' / class_path
     if not resource_path.is_file():
-        raise FileNotFoundError(
-            f'Resource not found:\n\n'
-            f'{resource_path}\n\n'
-            f'Hint: You can also use other extensions: {", ".join(extensions)}')
+        raise FileNotFoundError(L('error_theme_resource_not_found', """
+            Resource not found:
+            
+            {resource_path}
+            
+            Hint: You can also use other extensions: {extensions}
+        """).format(
+            resource_path=resource_path,
+            extensions = ", ".join(extensions or []))
+        )
     return resource_path
