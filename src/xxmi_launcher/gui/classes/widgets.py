@@ -1808,8 +1808,8 @@ class UITextbox(CTkTextbox, UIWidget):
         self._canvas.tag_lower("border_parts")
 
     def set(self, value):
-        self.delete(0, END)
-        self.insert(0, value)
+        self.delete("1.0", END)
+        self.insert("1.0", value)
 
     def handle_on_widget_change(self, event=None):
         self.text_variable.set(self.get(0.0, END))

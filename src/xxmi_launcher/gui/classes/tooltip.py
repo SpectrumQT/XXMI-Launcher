@@ -34,7 +34,7 @@ class UIToolTip:
             style: str = dedent("""
                 <style>
                     html { background-color: #fafafa;}
-                    body { font-size: 14px;}
+                    body { font-size: 14px; background-color: #fafafa; }
                     p { font-family: Asap; margin: 5px;}
                     ul { margin: 10px 5px;}
                     li { margin: 10px 5px;}
