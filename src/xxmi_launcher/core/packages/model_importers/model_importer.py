@@ -60,6 +60,9 @@ class ModelImporterEvents:
 
 @dataclass
 class ModelImporterConfig:
+    game_exe_names: List[str] = field(default_factory=lambda: [])
+    game_folder_names: List[str] = field(default_factory=lambda: [])
+    game_folder_children: List[str] = field(default_factory=lambda: [])
     package_name: str = ''
     importer_folder: str = ''
     game_folder: str = ''
@@ -204,6 +207,9 @@ class ModelImporterPackage(Package):
         self.backups_path = None
         self.use_hook: bool = True
         self.ini = None
+        self.autodetect_patterns: Dict[str, re.Pattern] = {}
+        self.autodetect_files: Dict[str, List[str]] = {}
+        self.autodetect_known_paths: List[str] = []
 
     def validate_game_path(self, game_folder) -> Path:
         game_path = Path(game_folder)
@@ -423,6 +429,8 @@ class ModelImporterPackage(Package):
         if not Config.Active.Importer.shortcut_deployed:
             self.create_shortcut()
 
+        Paths.verify_path(Config.Active.Importer.importer_path / 'Mods')
+
     def install(self, event):
         # Assert installation path
         try:
@@ -572,7 +580,22 @@ class ModelImporterPackage(Package):
         return paths
 
     def autodetect_game_folders(self) -> List[Path]:
-        raise NotImplementedError
+        paths = self.reg_search_game_folders(Config.Active.Importer.game_exe_names)
+
+        for file_path_str, search_patterns in self.autodetect_files.items():
+
+            patterns = [self.autodetect_patterns[x] for x in search_patterns]
+
+            if file_path_str == '{HOYOPLAY}':
+                paths += self.get_paths_from_hoyoplay(patterns, Config.Active.Importer.game_folder_children)
+                continue
+
+            file_path = Path(file_path_str.replace('{APPDATA}', str(Path(os.getenv('APPDATA')).parent)))
+            paths += self.find_paths_in_file(file_path, patterns, Config.Active.Importer.game_folder_children)
+
+        paths += [Path(x) for x in self.autodetect_known_paths]
+
+        return paths
 
     def validate_package_files(self):
         ini_path = Config.Active.Importer.importer_path / 'd3dx.ini'
@@ -592,6 +615,8 @@ class ModelImporterPackage(Package):
                 raise ValueError(L('model_importer_missing_critical_file', 'Missing critical file: {file_name}!').format(file_name=ini_path.name))
 
             Events.Fire(Events.Application.Update(no_thread=True, force=True, reinstall=True, packages=[self.metadata.package_name]))
+
+        Paths.verify_path(Config.Active.Importer.importer_path / 'Mods')
 
     def initialize_backup(self):
         backup_name = self.metadata.package_name + ' ' + datetime.now().strftime('%Y-%m-%d %H-%M-%S')

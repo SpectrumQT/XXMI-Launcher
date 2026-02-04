@@ -25,6 +25,9 @@ log = logging.getLogger(__name__)
 
 @dataclass
 class ZZMIConfig(ModelImporterConfig):
+    game_exe_names: List[str] = field(default_factory=lambda: ['ZenlessZoneZero.exe'])
+    game_folder_names: List[str] = field(default_factory=lambda: ['ZenlessZoneZero Game'])
+    game_folder_children: List[str] = field(default_factory=lambda: ['ZenlessZoneZero_Data'])
     importer_folder: str = 'ZZMI/'
     launch_options: str = ''
     d3dx_ini: Dict[
@@ -94,42 +97,29 @@ class ZZMIPackage(ModelImporterPackage):
             installation_path='ZZMI/',
             requirements=['XXMI'],
         ))
+        self.autodetect_patterns = {
+            'common': re.compile(r'([a-zA-Z]:[^:\"\']*Zenless[^:\"\']*)'),
+            # "installPath":"D:\\Games\\ZenlessZoneZero Game"
+            # "persistentInstallPath":"D:\\Games\\ZenlessZoneZero Game"
+            'hoyoplay': re.compile(r'\"(?:installPath|persistentInstallPath)\":\"([a-zA-Z]:[^:^\"]*)\"'),
+            # WwiseUnity: Setting Plugin DLL path to: C:/Games/ZenlessZoneZero Game/ZenlessZoneZero_Data\Plugins\x86_64
+            # [Subsystems] Discovering subsystems at path C:/Games/ZenlessZoneZero Game/ZenlessZoneZero_Data/UnitySubsystems
+            'player_log': re.compile(r'([a-zA-Z]:[^:\"\']*)(?:Plugins|UnitySubsystems)'),
+            # [0704/170821.845:INFO:API.cpp(331)] zfb_init: Using --apm_config={"astrolabePath":"Astrolabe.dll","reportPath":"C:\\Games\\ZenlessZoneZero Game\\ZenlessZoneZero_Data\\SDKCaches\\webview","logLevel":2"}
+            'output_log': re.compile(r'([a-zA-Z]:[^:\"\']*)SDKCaches"'),
+        }
+        self.autodetect_files = {
+            '{HOYOPLAY}': ['common', 'hoyoplay'],
+            '{APPDATA}/LocalLow/miHoYo/ZenlessZoneZero/Player.log': ['common', 'player_log'],
+            '{APPDATA}/LocalLow/miHoYo/ZenlessZoneZero/Player-prev.log': ['common', 'player_log'],
+            '{APPDATA}/LocalLow/miHoYo/ZenlessZoneZero/output_log.txt': ['common', 'output_log'],
+        }
 
     def get_installed_version(self):
         try:
             return str(Version(Config.Importers.ZZMI.Importer.importer_path / 'Core' / 'ZZMI' / 'main.ini'))
         except Exception as e:
             return ''
-
-    def autodetect_game_folders(self) -> List[Path]:
-        paths = self.reg_search_game_folders(['ZenlessZoneZero.exe'])
-
-        common_pattern = re.compile(r'([a-zA-Z]:[^:\"\']*Zenless[^:\"\']*)')
-        known_children = ['ZenlessZoneZero_Data']
-
-        # "installPath":"D:\\Games\\ZenlessZoneZero Game"
-        # "persistentInstallPath":"D:\\Games\\ZenlessZoneZero Game"
-        hoyoplay_pattern = re.compile(r'\"(?:installPath|persistentInstallPath)\":\"([a-zA-Z]:[^:^\"]*)\"')
-
-        paths += self.get_paths_from_hoyoplay([common_pattern, hoyoplay_pattern], known_children)
-
-        # WwiseUnity: Setting Plugin DLL path to: C:/Games/ZenlessZoneZero Game/ZenlessZoneZero_Data\Plugins\x86_64
-        # [Subsystems] Discovering subsystems at path C:/Games/ZenlessZoneZero Game/ZenlessZoneZero_Data/UnitySubsystems
-        player_log_pattern = re.compile(r'([a-zA-Z]:[^:\"\']*)(?:Plugins|UnitySubsystems)')
-
-        player_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'miHoYo' / 'ZenlessZoneZero' / 'Player.log'
-        paths += self.find_paths_in_file(player_log_path, [common_pattern, player_log_pattern], known_children)
-
-        player_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'miHoYo' / 'ZenlessZoneZero' / 'Player-prev.log'
-        paths += self.find_paths_in_file(player_log_path, [common_pattern, player_log_pattern], known_children)
-
-        # [0704/170821.845:INFO:API.cpp(331)] zfb_init: Using --apm_config={"astrolabePath":"Astrolabe.dll","reportPath":"C:\\Games\\ZenlessZoneZero Game\\ZenlessZoneZero_Data\\SDKCaches\\webview","logLevel":2"}
-        output_log_pattern = re.compile(r'([a-zA-Z]:[^:\"\']*)SDKCaches"')
-
-        output_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'miHoYo' / 'ZenlessZoneZero' / 'output_log.txt'
-        paths += self.find_paths_in_file(output_log_path, [common_pattern, output_log_pattern], known_children)
-
-        return paths
 
     def validate_game_exe_path(self, game_path: Path) -> Path:
         game_exe_path = game_path / 'ZenlessZoneZero.exe'

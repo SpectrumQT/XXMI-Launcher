@@ -24,6 +24,9 @@ log = logging.getLogger(__name__)
 
 @dataclass
 class WWMIConfig(ModelImporterConfig):
+    game_exe_names: List[str] = field(default_factory=lambda: ['Wuthering Waves.exe'])
+    game_folder_names: List[str] = field(default_factory=lambda: ['Wuthering Waves Game'])
+    game_folder_children: List[str] = field(default_factory=lambda: ['Client', 'Data'])
     importer_folder: str = 'WWMI/'
     use_launch_options: bool = False
     launch_options: str = '-SkipSplash'

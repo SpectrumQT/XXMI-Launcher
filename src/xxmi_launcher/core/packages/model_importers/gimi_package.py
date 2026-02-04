@@ -26,6 +26,9 @@ log = logging.getLogger(__name__)
 
 @dataclass
 class GIMIConfig(ModelImporterConfig):
+    game_exe_names: List[str] = field(default_factory=lambda: ['GenshinImpact.exe', 'YuanShen.exe'])
+    game_folder_names: List[str] = field(default_factory=lambda: ['Genshin Impact Game'])
+    game_folder_children: List[str] = field(default_factory=lambda: ['GenshinImpact_Data'])
     importer_folder: str = 'GIMI/'
     launch_options: str = ''
     process_start_method: str = 'Shell'
@@ -107,36 +110,26 @@ class GIMIPackage(ModelImporterPackage):
             installation_path='GIMI/',
             requirements=['XXMI', 'GI-FPS-Unlocker'],
         ))
+        self.autodetect_patterns = {
+            'common': re.compile(r'([a-zA-Z]:[^:\"\']*Genshin[^:\"\']*)'),
+            # "installPath":"D:\\Games\\Genshin Impact game"
+            # "persistentInstallPath":"D:\\Games\\Genshin Impact game"
+            'hoyoplay': re.compile(r'\"(?:installPath|persistentInstallPath)\":\"([a-zA-Z]:[^:^\"]*)\"'),
+            # dll path: C:/Games/Genshin Impact/DATA/Genshin Impact game/GenshinImpact_Data\Plugins\EOSSDK-Win64-Shipping.dll
+            # TelemetryInterface path:C:\Games\Genshin Impact\DATA\Genshin Impact game\GenshinImpact_Data\SDKCaches, level:2, dest:0
+            'output_log': re.compile(r'([a-zA-Z]:[^:\"\']*)(?:Plugins|SDKCaches|StreamingAssets|Persistent)'),
+        }
+        self.autodetect_files = {
+            '{HOYOPLAY}': ['common', 'hoyoplay'],
+            '{APPDATA}/LocalLow/miHoYo/Genshin Impact/output_log.txt': ['common', 'output_log'],
+            '{APPDATA}/LocalLow/miHoYo/Genshin Impact/output_log.txt.last': ['common', 'output_log'],
+        }
 
     def get_installed_version(self):
         try:
             return str(Version(Config.Importers.GIMI.Importer.importer_path / 'Core' / 'GIMI' / 'main.ini'))
         except Exception as e:
             return ''
-
-    def autodetect_game_folders(self) -> List[Path]:
-        paths = self.reg_search_game_folders(['GenshinImpact.exe', 'YuanShen.exe'])
-
-        common_pattern = re.compile(r'([a-zA-Z]:[^:\"\']*Genshin[^:\"\']*)')
-        known_children = ['GenshinImpact_Data']
-
-        # "installPath":"D:\\Games\\Genshin Impact game"
-        # "persistentInstallPath":"D:\\Games\\Genshin Impact game"
-        hoyoplay_pattern = re.compile(r'\"(?:installPath|persistentInstallPath)\":\"([a-zA-Z]:[^:^\"]*)\"')
-
-        paths += self.get_paths_from_hoyoplay([common_pattern, hoyoplay_pattern], known_children)
-
-        # dll path: C:/Games/Genshin Impact/DATA/Genshin Impact game/GenshinImpact_Data\Plugins\EOSSDK-Win64-Shipping.dll
-        # TelemetryInterface path:C:\Games\Genshin Impact\DATA\Genshin Impact game\GenshinImpact_Data\SDKCaches, level:2, dest:0
-        output_log_pattern = re.compile(r'([a-zA-Z]:[^:\"\']*)(?:Plugins|SDKCaches|StreamingAssets|Persistent)')
-
-        output_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'miHoYo' / 'Genshin Impact' / 'output_log.txt'
-        paths += self.find_paths_in_file(output_log_path, [common_pattern, output_log_pattern], known_children)
-
-        output_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'miHoYo' / 'Genshin Impact' / 'output_log.txt.last'
-        paths += self.find_paths_in_file(output_log_path, [common_pattern, output_log_pattern], known_children)
-
-        return paths
 
     def validate_game_exe_path(self, game_path: Path) -> Path:
         game_exe_path = game_path / 'GenshinImpact.exe'

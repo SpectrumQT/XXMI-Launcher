@@ -27,6 +27,9 @@ log = logging.getLogger(__name__)
 
 @dataclass
 class HIMIConfig(ModelImporterConfig):
+    game_exe_names: List[str] = field(default_factory=lambda: ['BH3.exe'])
+    game_folder_names: List[str] = field(default_factory=lambda: ['Honkai Impact 3rd game'])
+    game_folder_children: List[str] = field(default_factory=lambda: ['BH3_Data'])
     importer_folder: str = 'HIMI/'
     launch_options: str = ''
     d3dx_ini: Dict[
@@ -100,33 +103,25 @@ class HIMIPackage(ModelImporterPackage):
             installation_path='HIMI/',
             requirements=['XXMI'],
         ))
+        self.autodetect_patterns = {
+            'common': re.compile(r'([a-zA-Z]:[^:\"\']*Honkai[^:\"\']*)'),
+            # "installPath":"D:\\Games\\Honkai Impact 3rd game"
+            # "persistentInstallPath":"D:\\Games\\Honkai Impact 3rd game"
+            'hoyoplay': re.compile(r'\"(?:installPath|persistentInstallPath)\":\"([a-zA-Z]:[^:^\"]*)\"'),
+            # WwiseUnity: Setting Plugin DLL path to: D:/Games/Honkai Impact 3rd game/BH3_Data\Plugins\
+            # TelemetryInterface path:D:\Games\Honkai Impact 3rd game\BH3_Data\SDKCaches, level:2, dest:0
+            'output_log': re.compile(r'([a-zA-Z]:[^:\"\']*)(?:Plugins|SDKCaches|StreamingAssets|Persistent)'),
+        }
+        self.autodetect_files = {
+            '{HOYOPLAY}': ['common', 'hoyoplay'],
+            '{APPDATA}/LocalLow/miHoYo/Honkai Impact 3rd/output_log.txt': ['common', 'output_log'],
+        }
 
     def get_installed_version(self):
         try:
             return str(Version(Config.Importers.HIMI.Importer.importer_path / 'Core' / 'HIMI' / 'main.ini'))
         except Exception as e:
             return ''
-
-    def autodetect_game_folders(self) -> List[Path]:
-        paths = self.reg_search_game_folders(['BH3.exe'])
-
-        common_pattern = re.compile(r'([a-zA-Z]:[^:\"\']*Genshin[^:\"\']*)')
-        known_children = ['BH3_Data']
-
-        # "installPath":"D:\\Games\\Genshin Impact game"
-        # "persistentInstallPath":"D:\\Games\\Genshin Impact game"
-        hoyoplay_pattern = re.compile(r'\"(?:installPath|persistentInstallPath)\":\"([a-zA-Z]:[^:^\"]*)\"')
-
-        paths += self.get_paths_from_hoyoplay([common_pattern, hoyoplay_pattern], known_children)
-
-        # WwiseUnity: Setting Plugin DLL path to: D:/Games/Honkai Impact 3rd game/BH3_Data\Plugins\
-        # TelemetryInterface path:D:\Games\Honkai Impact 3rd game\BH3_Data\SDKCaches, level:2, dest:0
-        output_log_pattern = re.compile(r'([a-zA-Z]:[^:\"\']*)(?:Plugins|SDKCaches|StreamingAssets|Persistent)')
-
-        output_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'miHoYo' / 'Honkai Impact 3rd' / 'output_log.txt'
-        paths += self.find_paths_in_file(output_log_path, [common_pattern, output_log_pattern], known_children)
-
-        return paths
 
     def validate_game_exe_path(self, game_path: Path) -> Path:
         game_exe_path = game_path / 'BH3.exe'

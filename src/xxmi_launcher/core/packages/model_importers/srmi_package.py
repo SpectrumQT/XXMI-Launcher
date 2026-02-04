@@ -24,6 +24,9 @@ log = logging.getLogger(__name__)
 
 @dataclass
 class SRMIConfig(ModelImporterConfig):
+    game_exe_names: List[str] = field(default_factory=lambda: ['StarRail.exe'])
+    game_folder_names: List[str] = field(default_factory=lambda: ['Star Rail Games'])
+    game_folder_children: List[str] = field(default_factory=lambda: ['StarRail_Data'])
     importer_folder: str = 'SRMI/'
     launch_options: str = ''
     d3dx_ini: Dict[
@@ -94,42 +97,29 @@ class SRMIPackage(ModelImporterPackage):
             installation_path='SRMI/',
             requirements=['XXMI'],
         ))
+        self.autodetect_patterns = {
+            'common': re.compile(r'([a-zA-Z]:[^:\"\']*Rail[^:\"\']*)'),
+            # "installPath":"D:\\Games\\Star Rail Games"
+            # "persistentInstallPath":"D:\\Games\\Star Rail Games"
+            'hoyoplay': re.compile(r'\"(?:installPath|persistentInstallPath)\":\"([a-zA-Z]:[^:^\"]*)\"'),
+            # WwiseUnity: Setting Plugin DLL path to: C:/Games/HonkaiStarRail/DATA/Games/StarRail_Data\Plugins\x86_64
+            # [Subsystems] Discovering subsystems at path C:/Games/HonkaiStarRail/DATA/Games/StarRail_Data/UnitySubsystems
+            'player_log': re.compile(r'([a-zA-Z]:[^:\"\']*)(?:Plugins|UnitySubsystems)'),
+            # [0314/092021.404:ERROR:cache_util.cc(146)] Unable to move cache folder C:\Games\HonkaiStarRail\DATA\Games\StarRail_Data\webCaches\2.20.0.0\GPUCache to C:\Games\HonkaiStarRail\DATA\Games\StarRail_Data\webCaches\2.20.0.0\old_GPUCache_000
+            'output_log': re.compile(r'([a-zA-Z]:[^:\"\']*)webCaches"'),
+        }
+        self.autodetect_files = {
+            '{HOYOPLAY}': ['common', 'hoyoplay'],
+            '{APPDATA}/LocalLow/Cognosphere/Star Rail/Player.log': ['common', 'player_log'],
+            '{APPDATA}/LocalLow/Cognosphere/Star Rail/Player-prev.log': ['common', 'player_log'],
+            '{APPDATA}/LocalLow/Cognosphere/Star Rail/output_log.txt': ['common', 'output_log'],
+        }
 
     def get_installed_version(self):
         try:
             return str(Version(Config.Importers.SRMI.Importer.importer_path / 'Core' / 'SRMI' / 'main.ini'))
         except Exception as e:
             return ''
-
-    def autodetect_game_folders(self) -> List[Path]:
-        paths = self.reg_search_game_folders(['StarRail.exe'])
-
-        common_pattern = re.compile(r'([a-zA-Z]:[^:\"\']*Rail[^:\"\']*)')
-        known_children = ['StarRail_Data']
-
-        # "installPath":"D:\\Games\\Star Rail Games"
-        # "persistentInstallPath":"D:\\Games\\Star Rail Games"
-        hoyoplay_pattern = re.compile(r'\"(?:installPath|persistentInstallPath)\":\"([a-zA-Z]:[^:^\"]*)\"')
-
-        paths += self.get_paths_from_hoyoplay([common_pattern, hoyoplay_pattern], known_children)
-
-        # WwiseUnity: Setting Plugin DLL path to: C:/Games/HonkaiStarRail/DATA/Games/StarRail_Data\Plugins\x86_64
-        # [Subsystems] Discovering subsystems at path C:/Games/HonkaiStarRail/DATA/Games/StarRail_Data/UnitySubsystems
-        player_log_pattern = re.compile(r'([a-zA-Z]:[^:\"\']*)(?:Plugins|UnitySubsystems)')
-
-        player_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'Cognosphere' / 'Star Rail' / 'Player.log'
-        paths += self.find_paths_in_file(player_log_path, [common_pattern, player_log_pattern], known_children)
-
-        player_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'Cognosphere' / 'Star Rail' / 'Player-prev.log'
-        paths += self.find_paths_in_file(player_log_path, [common_pattern, player_log_pattern], known_children)
-
-        # [0314/092021.404:ERROR:cache_util.cc(146)] Unable to move cache folder C:\Games\HonkaiStarRail\DATA\Games\StarRail_Data\webCaches\2.20.0.0\GPUCache to C:\Games\HonkaiStarRail\DATA\Games\StarRail_Data\webCaches\2.20.0.0\old_GPUCache_000
-        output_log_pattern = re.compile(r'([a-zA-Z]:[^:\"\']*)webCaches"')
-
-        output_log_path = Path(os.getenv('APPDATA')).parent / 'LocalLow' / 'Cognosphere' / 'Star Rail' / 'output_log.txt'
-        paths += self.find_paths_in_file(output_log_path, [common_pattern, output_log_pattern], known_children)
-
-        return paths
 
     def validate_game_exe_path(self, game_path: Path) -> Path:
         game_exe_path = game_path / 'StarRail.exe'
