@@ -135,6 +135,7 @@ class LocaleEngine:
     def __init__(self, locales_path: Path):
         self.locales_path = locales_path
         self.strings : Optional[Dict[str, str]] = None
+        self.src_strings : Optional[Dict[str, str]] = None
         self.enable_locale = False
 
     def load_locale(self, locale: LocaleName, tag: str = 'loc'):
@@ -143,6 +144,7 @@ class LocaleEngine:
             return
 
         self.strings = {}
+        self.src_strings = {}
 
         locale_path = self.locales_path / locale.name
 
@@ -170,6 +172,8 @@ class LocaleEngine:
     def translate(self, key: str, string: str) -> str:
         locale_string = self.strings.get(key, None)
         if locale_string is None:
+            locale_string = string
+        elif string != self.src_strings.get(key, ''):
             locale_string = string
         elif isinstance(locale_string, list):
             locale_string = random.choice(locale_string)
@@ -214,6 +218,7 @@ class LocaleEngine:
 
                 if tag == 'loc':
                     self.strings[key] = loc_string
+                    self.src_strings[key] = src_string.strip()
                 else:
                     self.strings[key] = src_string
 
