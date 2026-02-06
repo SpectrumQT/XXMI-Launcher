@@ -42,11 +42,11 @@ class GeneralSettingsFrame(UIScrollableFrame):
         self.put(ProcessOptionsFrame(self)).grid(row=3, column=1, padx=(0, 20), pady=(0, 30), sticky='w', columnspan=3)
 
         # Auto Config
-        if Vars.Launcher.active_importer.get() not in ['SRMI', 'HIMI']:
+        if Vars.Launcher.active_importer.get() not in ['SRMI', 'HIMI', 'EFMI']:
             self.put(AutoConfigLabel(self)).grid(row=4, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
             self.put(AutoConfigFrame(self)).grid(row=4, column=1, padx=(0, 20), pady=(0, 30), sticky='w', columnspan=3)
 
-        if Vars.Launcher.active_importer.get() != 'ZZMI':
+        if Vars.Launcher.active_importer.get() not in ['ZZMI', 'EFMI']:
             
             # Tweaks
             self.put(TweaksLabel(self)).grid(row=5, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
@@ -266,30 +266,16 @@ class GameFolderEntry(UIEntry):
         return True
 
     def get_tooltip(self):
-        if Config.Launcher.active_importer == 'WWMI':
-            return L('general_settings_game_folder_tooltip_wwmi', """
-                Path to folder with "Wuthering Waves.exe" and "Client" & "Engine" subfolders.
-                Usually this folder is named "Wuthering Waves Game" and located inside WuWa installation folder.
-            """)
-        if Config.Launcher.active_importer == 'ZZMI':
-            return L('general_settings_game_folder_tooltip_zzmi', """
-                Path to folder with "ZenlessZoneZero.exe".
-            """)
-        if Config.Launcher.active_importer == 'SRMI':
-            return L('general_settings_game_folder_tooltip_srmi', """
-                Path to folder with "StarRail.exe".
-                Usually this folder is named "Star Rail Games".
-            """)
-        if Config.Launcher.active_importer == 'GIMI':
-            return L('general_settings_game_folder_tooltip_gimi', """
-                Path to folder with "GenshinImpact.exe" or "YuanShen.exe" (CN).
-                Usually this folder is named "Genshin Impact Game".
-            """)
-        if Config.Launcher.active_importer == 'HIMI':
-            return L('general_settings_game_folder_tooltip_himi', """
-                Path to folder with "BH3.exe".
-                Usually this folder is named "Honkai Impact 3rd game".
-            """)
+        return L('general_settings_game_folder_tooltip', """
+            ## Path to the folder containing the game executable
+            * Usually named: {game_folder_names:bold:or_list}.
+            * Contains files: {game_exe_names:bold:or_list}.
+            * Contains folders: {game_folder_children:bold:and_list}.
+        """).format(
+            game_folder_names=Vars.Active.Importer.game_folder_names,
+            game_exe_names=Vars.Active.Importer.game_exe_names,
+            game_folder_children=Vars.Active.Importer.game_folder_children,
+        )
 
 
 class GameFolderErrorLabel(UILabel):
@@ -444,13 +430,13 @@ class LaunchOptionsButton(UIButton):
     def open_docs(self):
         if Config.Launcher.active_importer == 'WWMI':
             webbrowser.open('https://dev.epicgames.com/documentation/en-us/unreal-engine/command-line-arguments?application_version=4.27')
-        elif Config.Launcher.active_importer in ['GIMI', 'SRMI', 'ZZMI', 'HIMI']:
+        elif Config.Launcher.active_importer in ['GIMI', 'SRMI', 'ZZMI', 'HIMI', 'EFMI']:
             webbrowser.open('https://docs.unity3d.com/Manual/PlayerCommandLineArguments.html')
 
     def get_tooltip(self):
         if Config.Launcher.active_importer == 'WWMI':
             engine = 'UE4'
-        elif Config.Launcher.active_importer in ['GIMI', 'SRMI', 'ZZMI', 'HIMI']:
+        elif Config.Launcher.active_importer in ['GIMI', 'SRMI', 'ZZMI', 'HIMI', 'EFMI']:
             engine = 'Unity'
         else:
             raise ValueError(f'Game engine is unknown!')

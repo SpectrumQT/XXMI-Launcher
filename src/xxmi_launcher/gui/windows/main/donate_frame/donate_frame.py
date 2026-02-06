@@ -65,13 +65,13 @@ class DonateFrame(UIFrame):
                 model_importer=model_importer
             ))
         else:
-            if model_importer == 'WWMI':
+            if model_importer in ('WWMI', 'EFMI'):
                 self.introduction.set(L('donate_wwmi_introduction', """
-                    Hello! Thank you for visiting WWMI Appreciation Corner!
+                    Hello! Thank you for visiting {model_importer} Appreciation Corner!
                     
                     This page is a bit unique, since I can't list many names here.
-                    Simply because I'm soloing WWMI and XXMI Launcher development.
-                """))
+                    Simply because I'm soloing {model_importer} and XXMI Launcher development.
+                """).format(model_importer=model_importer))
             else:
                 self.introduction.set(L('donate_other_introduction', """
                     Hello! Thank you for visiting {model_importer} Appreciation Corner!
@@ -80,7 +80,7 @@ class DonateFrame(UIFrame):
                     It's a tough battle — but shader hackers prevail!
                 """).format(model_importer=model_importer))
 
-        if model_importer == 'WWMI':
+        if model_importer in ('WWMI', 'EFMI'):
             self.subject.configure(anchor='n', justify='center')
             self.subject.set(L('donate_wwmi_useful_check', "If you've been finding it useful, consider checking out"))
 
@@ -93,16 +93,16 @@ class DonateFrame(UIFrame):
             self.subject.move(640 - total_width * subject_weight / 2, 345)
 
             my_patreon_weight = 1 - self.my_patreon_button._text_image._width / total_width
-            self.my_patreon_button.move(640 + total_width * my_patreon_weight / 2, 345)
+            self.my_patreon_button.move(640 + total_width * my_patreon_weight / 2 - 5, 345)
 
             self.subject_creators.set('')
             self.subject_maintainers.set('')
 
             self.subject_footer.set(L('donate_wwmi_footer', """
-                It's all about building better tools for the entire WWMI community.
+                It's all about building better tools for the entire {model_importer} community.
                 
                 Who knows — maybe your few bucks could help shape the next big feature!
-            """))
+            """).format(model_importer=model_importer))
             self.subject_footer.configure(anchor='n', justify='center')
             self.subject_footer.move(640, 375)
 
@@ -383,6 +383,7 @@ class MyPatreonButton(LinkButton):
         super().__init__(x=896,
                          y=340,
                          text='my Patreon campaign',
+                         font=('Asap', 22),
                          anchor='n',
                          link='https://patreon.com/SpectrumQT',
                          master=master)

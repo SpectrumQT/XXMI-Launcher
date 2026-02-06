@@ -119,8 +119,8 @@ class LauncherFrame(UIFrame):
 
 class SelectGameText(UIText):
     def __init__(self, master):
-        super().__init__(x=30,
-                         y=495,
+        super().__init__(x=32,
+                         y=505,
                          text=L('launcher_select_games_text', 'Select Games To Mod:'),
                          font=('Microsoft YaHei', 24, 'bold'),
                          fill='white',
@@ -144,19 +144,19 @@ class SelectGameText(UIText):
 class GameTileButton(UIImageButton):
     def __init__(self, master, pos_id, importer_id):
         super().__init__(
-            x=130+pos_id*234,
+            x=125+pos_id*206,
             y=600,
             button_image_path='game-tile-background.png',
-            width=206,
-            height=116,
+            width=184,
+            height=102,
             button_normal_opacity=0.35,
             button_hover_opacity=0.65,
             button_selected_opacity=1,
             button_normal_brightness=1,
             button_selected_brightness=1,
             bg_image_path=f'game-tile-{importer_id.lower()}.png',
-            bg_width=204,
-            bg_height=113,
+            bg_width=180,
+            bg_height=100,
             bg_normal_opacity=0.75,
             bg_hover_opacity=0.75,
             bg_selected_opacity=1,
@@ -166,7 +166,7 @@ class GameTileButton(UIImageButton):
             master=master)
 
         self.eye_button_image = self.put(UIImageButton(
-            x=self._x + 80, y=self._y - 42,
+            x=self._x + 72, y=self._y - 36,
             button_image_path='eye-show.png',
             width=28,
             height=28,
