@@ -16,35 +16,32 @@ class AdvancedSettingsFrame(UIFrame):
         self.grid_columnconfigure((0, 1, 3, 4), weight=1)
         self.grid_columnconfigure(2, weight=100)
 
-        # Update Policy
-        self.put(UpdatePolicyLabel(self)).grid(row=0, column=0, padx=20, pady=(0, 25), sticky='w')
-        self.put(OverwriteIniCheckbox(self)).grid(row=0, column=1, padx=10, pady=(0, 25), sticky='w')
-
-        # Security
-        self.put(UnsafeModeFrame(self)).grid(row=0, column=2, padx=(10, 20), pady=(0, 25), sticky='e', columnspan=3)
-
         # Pre-Launch Command
-        self.put(RunPreLaunchCheckbox(self)).grid(row=3, column=0, padx=(20, 0), pady=(0, 25), sticky='w')
-        self.put(RunPreLaunchEntry(self)).grid(row=3, column=1, padx=(10, 125), pady=(0, 25), sticky='ew', columnspan=4)
-        self.put(RunPreLaunchWaitCheckbox(self)).grid(row=3, column=4, padx=(10, 20), pady=(0, 25), sticky='w')
+        self.put(RunPreLaunchCheckbox(self)).grid(row=0, column=0, padx=(20, 0), pady=(0, 25), sticky='w')
+        self.put(RunPreLaunchEntry(self)).grid(row=0, column=1, padx=(10, 125), pady=(0, 25), sticky='ew', columnspan=4)
+        self.put(RunPreLaunchWaitCheckbox(self)).grid(row=0, column=4, padx=(10, 20), pady=(0, 25), sticky='w')
         self.grab(RunPreLaunchCheckbox).set_tooltip(self.grab(RunPreLaunchEntry))
 
         # Custom Launch Command
-        self.put(CustomLaunchCheckbox(self)).grid(row=4, column=0, padx=(20, 0), pady=(0, 25), sticky='w')
-        self.put(CustomLaunchEntry(self)).grid(row=4, column=1, padx=(10, 125), pady=(0, 25), sticky='ew', columnspan=4)
-        self.put(CustomLaunchInjectModeOptionMenu(self)).grid(row=4, column=4, padx=(10, 20), pady=(0, 25), sticky='w')
+        self.put(CustomLaunchCheckbox(self)).grid(row=1, column=0, padx=(20, 0), pady=(0, 25), sticky='w')
+        self.put(CustomLaunchEntry(self)).grid(row=1, column=1, padx=(10, 125), pady=(0, 25), sticky='ew', columnspan=4)
+        self.put(CustomLaunchInjectModeOptionMenu(self)).grid(row=1, column=4, padx=(10, 20), pady=(0, 25), sticky='w')
         self.grab(CustomLaunchCheckbox).set_tooltip(self.grab(CustomLaunchEntry))
 
         # Post-Load Command
-        self.put(RunPostLoadCheckbox(self)).grid(row=5, column=0, padx=(20, 0), pady=(0, 25), sticky='w')
-        self.put(RunPostLoadEntry(self)).grid(row=5, column=1, padx=(10, 125), pady=(0, 25), sticky='ew', columnspan=4)
-        self.put(RunPostLoadWaitCheckbox(self)).grid(row=5, column=4, padx=(10, 20), pady=(0, 25), sticky='w')
+        self.put(RunPostLoadCheckbox(self)).grid(row=2, column=0, padx=(20, 0), pady=(0, 25), sticky='w')
+        self.put(RunPostLoadEntry(self)).grid(row=2, column=1, padx=(10, 125), pady=(0, 25), sticky='ew', columnspan=4)
+        self.put(RunPostLoadWaitCheckbox(self)).grid(row=2, column=4, padx=(10, 20), pady=(0, 25), sticky='w')
         self.grab(RunPostLoadCheckbox).set_tooltip(self.grab(RunPostLoadEntry))
 
         # Extra Libraries Injection
-        self.put(InjectLibrariesCheckbox(self)).grid(row=6, column=0, padx=(20, 0), pady=(0, 25), sticky='w')
-        self.put(InjectLibrariesTextbox(self)).grid(row=6, column=1, padx=(10, 20), pady=(0, 25), sticky='ew', columnspan=4)
+        self.put(InjectLibrariesCheckbox(self)).grid(row=3, column=0, padx=(20, 0), pady=(0, 25), sticky='w')
+        self.put(InjectLibrariesTextbox(self)).grid(row=3, column=1, padx=(10, 20), pady=(0, 25), sticky='ew', columnspan=4)
         self.grab(InjectLibrariesCheckbox).set_tooltip(self.grab(InjectLibrariesTextbox))
+
+        # Security
+        self.put(SecurityLabel(self)).grid(row=4, column=0, padx=(20, 0), pady=(0, 0), sticky='w')
+        self.put(UnsafeModeFrame(self)).grid(row=4, column=1, padx=(10, 10), pady=(0, 0), sticky='w', columnspan=3)
 
 
 class UnsafeModeFrame(UIFrame):
@@ -53,34 +50,8 @@ class UnsafeModeFrame(UIFrame):
             fg_color='transparent',
             master=master)
 
-        self.grid_columnconfigure(1, weight=100)
-
-        self.put(SecurityLabel(self)).grid(row=0, column=0, padx=(0, 10), pady=(0, 0), sticky='w')
-        self.put(UnsafeModeCheckbox(self)).grid(row=0, column=1, padx=(0, 0), pady=(0, 0), sticky='ew')
-
-
-class UpdatePolicyLabel(UILabel):
-    def __init__(self, master):
-        super().__init__(
-            text=L('advanced_settings_update_policy_label', 'Update Policy:'),
-            font=('Microsoft YaHei', 14, 'bold'),
-            fg_color='transparent',
-            master=master)
-
-
-class OverwriteIniCheckbox(UICheckbox):
-    def __init__(self, master):
-        super().__init__(
-            text=L('advanced_settings_overwrite_ini_checkbox', 'Overwrite d3dx.ini'),
-            variable=Vars.Active.Importer.overwrite_ini,
-            master=master)
-        self.set_tooltip(self.get_tooltip)
-
-    def get_tooltip(self):
-        return L('advanced_settings_overwrite_ini_checkbox_tooltip', """
-            Enabled: {importer} updates will overwrite existing d3dx.ini to ensure its up-to-date state.
-            Disabled: {importer} updates will keep existing d3dx.ini untouched.
-        """).format(importer=Config.Launcher.active_importer)
+        self.grid_columnconfigure(0, weight=100)
+        self.put(UnsafeModeCheckbox(self)).grid(row=0, column=0, padx=(0, 0), pady=(0, 0), sticky='ew')
 
 
 class SecurityLabel(UILabel):

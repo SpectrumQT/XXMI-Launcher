@@ -65,6 +65,8 @@ class UpdatePolicyFrame(UIFrame):
 
         self.grab(UpdateChannelLabel).set_tooltip(self.grab(UpdateChannelOptionMenu))
 
+        self.put(OverwriteIniCheckbox(self)).grid(row=0, column=3, padx=10, pady=0, sticky='w')
+
 
 class ThemeFrame(UIFrame):
     def __init__(self, master):
@@ -270,6 +272,30 @@ class UpdateChannelOptionMenu(UIOptionMenu):
             **MSI**: Use native `.msi` installers to install updates.
             **ZIP**: Use portable `.zip` archives to install updates.
         """))
+
+
+class OverwriteIniCheckbox(UICheckbox):
+    def __init__(self, master):
+        super().__init__(
+            text=L('advanced_settings_overwrite_ini_checkbox', 'Overwrite d3dx.ini'),
+            variable=Vars.Active.Importer.overwrite_ini,
+            master=master)
+        self.set_tooltip(self.get_tooltip)
+
+    def get_tooltip(self):
+        return L('advanced_settings_overwrite_ini_checkbox_tooltip', """
+            Enabled: {importer} updates will overwrite existing d3dx.ini to ensure its up-to-date state.
+            Disabled: {importer} updates will keep existing d3dx.ini untouched.
+        """).format(importer=Config.Launcher.active_importer)
+
+
+class SecurityLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text=L('advanced_settings_security_label', 'Security:'),
+            font=('Microsoft YaHei', 14, 'bold'),
+            fg_color='transparent',
+            master=master)
 
 
 class ThemeLabel(UILabel):
