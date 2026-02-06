@@ -1,0 +1,2722 @@
+[package_release_notes_up_to_date]
+src = """
+# What's new in {package_name} v{new_package_version}:
+{installed_release_notes}
+"""
+loc = """
+# {package_name} v{new_package_version} 的新特性：
+{installed_release_notes}
+"""
+
+[package_release_notes_update_available]
+src = """
+# Update {package_name} to v{new_package_version} for:
+{latest_release_notes}
+"""
+loc = """
+# 更新 {package_name} 到 v{new_package_version} 获得：
+{latest_release_notes}
+"""
+
+[package_release_notes_not_installed]
+src = """
+Press **Install** button to setup the package.
+"""
+loc = """
+点击 **安装** 按钮来设置该包。
+"""
+
+[package_description_launcher]
+src = "*This package is XXMI Launcher App itself and defines its features.*"
+loc = "*此包是 XXMI 启动器应用程序本身，定义了其功能特性。*"
+
+[package_description_xxmi_libraries]
+src = "*XXMI Libraries package is custom 3dmigoto build fiddling with data between GPU and a game process.*"
+loc = "*XXMI 库包是自定义的 3dmigoto 构建，用于处理 GPU 和游戏进程间的数据交互。*"
+
+[package_description_model_importer]
+src = "*Model Importer package offers a set of API functions required for mods to work in given game.*"
+loc = "*模型导入器包提供了一套 API 函数，用于在指定游戏中运行模组。*"
+
+[package_release_notes]
+src = """
+{package_release_notes}
+
+{actions_tooltip}
+<font color=\"#aaaaaa\">{package_description}</font>
+"""
+loc = """
+{package_release_notes}
+
+{actions_tooltip}
+<font color=\"#aaaaaa\">{package_description}</font>
+"""
+
+[package_description_tooltip_open_github_changelog]
+src = """
+<font color=\"#3366ff\">*<u>Left-Click</u> to open {package_name} Dev Blog on Patreon.*</font>
+<font color=\"#3366ff\">*<u>Right-Click</u> to open {package_name} GitHub releases for full changelog.*</font>
+"""
+loc = """
+<font color=\"#3366ff\">*<u>左键点击</u> 在 Patreon 上打开 {package_name} 开发博客。*</font>
+<font color=\"#3366ff\">*<u>右键点击</u> 打开 {package_name} GitHub 发布页面查看完整更新日志。*</font>
+"""
+
+[package_description_tooltip_open_dev_blog]
+src = "<font color=\"#3366ff\">*<u>Left-Click</u> to open {package_name} GitHub releases for full changelog.*</font>"
+loc = "<font color=\"#3366ff\">*<u>左键点击</u> 打开 {package_name} GitHub 发布页面查看完整更新日志。*</font>"
+
+# 更新器包相关
+[error_updater_start_failed]
+src = """
+Failed to start XXMI Updater.exe!
+
+Was it blocked by Antivirus software or security settings?
+"""
+loc = """
+启动XXMI更新器失败！
+
+是否被杀毒软件或安全设置阻止了？
+"""
+
+# 启动器包相关
+[status_waiting_installer]
+src = "Waiting for installer to start..."
+loc = "等待安装程序启动..."
+
+[error_launcher_installer_start_failed]
+src = """
+Failed to start {asset_name}!
+
+Was it blocked by Antivirus software or security settings?
+"""
+loc = """
+启动{asset_name}失败！
+
+是否被杀毒软件或安全设置阻止了？
+"""
+
+[status_removing_old_files]
+src = "Removing old files..."
+loc = "正在删除旧文件..."
+
+[launcher_update_notification_title]
+src = "Update Notification"
+loc = "更新通知"
+
+[launcher_shortcut_description]
+src = "Shortcut to XXMI Launcher"
+loc = "XXMI启动器快捷方式"
+
+# Migoto包相关
+[error_migoto_game_detection_timeout]
+src = """
+Failed to detect game process {process_name}!
+
+If game crashed, try to adjust XXMI Delay in General Settings or clear Mods and ShaderFixes folders.
+
+If game window takes more than {start_timeout} seconds to appear, adjust Timeout in Launcher Settings.
+"""
+loc = """
+检测游戏进程{process_name}失败！
+
+如果游戏崩溃了，请在常规设置中尝试调整XXMI延迟，或者清空模组和ShaderFixes文件夹。
+
+如果游戏窗口出现时间超过{start_timeout}秒，请在启动器设置中调整超时时间。
+"""
+
+[error_migoto_game_start_failed]
+src = "Failed to start {process_name}!"
+loc = "启动{process_name}失败！"
+
+[message_button_restore_model_importer]
+src = "Restore"
+loc = "恢复"
+
+[message_button_cancel]
+src = "Cancel"
+loc = "取消"
+
+[message_text_message_text_model_importer_installation_damaged]
+src = """
+XXMI installation is damaged!
+
+Details: {error_text}
+
+Would you like to restore XXMI automatically?
+"""
+loc = """
+XXMI安装已损坏！
+
+详情：{error_text}
+
+您是否希望自动恢复XXMI？
+"""
+
+[status_ensuring_game_closed]
+src = "Ensuring the game is closed..."
+loc = "确保游戏已关闭..."
+
+[message_text_game_stop_failed]
+src = """
+Failed to stop {process_name}!
+
+Please close the game manually and press [OK] to continue.
+"""
+loc = """
+停止{process_name}失败！
+
+请手动关闭游戏并按[确定]继续。
+"""
+
+[error_xxmi_missing_critical_file]
+src = "XXMI package is missing critical file: {file_name}!"
+loc = "XXMI包缺少关键文件：{file_name}！"
+
+# Model Importer Package Messages
+[error_extra_library_not_found]
+src = """
+Failed to inject extra library {dll_path}:
+File not found!
+Please check Advanced Settings → Inject Libraries.
+"""
+loc = """
+无法注入额外库 {dll_path}：
+文件未找到！
+请检查高级设置 → 注入库。
+"""
+
+[error_model_importer_unknown_command]
+src = "Unknown command {name}!"
+loc = "未知命令 {name}！"
+
+[error_model_importer_command_execution_failed]
+src = """
+Failed to execute `{name} = {value}` of auto_update.xcmd!
+{error_text}
+"""
+loc = """
+执行 auto_update.xcmd 中的 `{name} = {value}` 失败！：
+{error_text}
+"""
+
+[error_model_importer_removal_scope_restricted]
+src = "File or folder removal is allowed only from Core or ShaderFixes folder!"
+loc = "仅允许从 Core 或 ShaderFixes 文件夹中删除文件或文件夹！"
+
+[error_model_importer_removal_forbidden]
+src = "Explicit removal of entire Core or ShaderFixes folder is not allowed!"
+loc = "不允许显式删除整个 Core 或 ShaderFixes 文件夹！"
+
+[error_model_importer_game_folder_not_specified]
+src = "Game installation folder is not specified!"
+loc = "未指定游戏安装文件夹！"
+
+[error_model_importer_game_folder_not_found]
+src = "Specified game installation folder is not found!"
+loc = "未找到指定的游戏安装文件夹！"
+
+[error_launcher_in_game_folder]
+src = """
+
+Launcher must be installed outside of the game folder!
+
+Please reinstall the launcher to another location.
+"""
+loc = """
+
+启动器必须安装在游戏文件夹外！
+
+请将启动器重新安装到其他位置。
+"""
+
+[error_model_importer_in_game_folder]
+src = """
+
+{importer} Folder must be located outside of the Game Folder!
+
+Please chose another location for Settings > {importer} > {importer} Folder.
+"""
+loc = """
+
+{importer} 文件夹必须位于游戏文件夹外！
+
+请为设置 > {importer} > {importer} 文件夹选择其他位置。
+"""
+
+[error_model_importer_installation_failed]
+src = """
+{importer} Installation Failed:
+{error_text}
+"""
+loc = """
+{importer} 安装失败：
+{error_text}
+"""
+
+[status_updating_ini]
+src = "Updating d3dx.ini..."
+loc = "正在更新 d3dx.ini..."
+
+[error_ini_missing_setting]
+src = "Config is missing {setting_name} setting!"
+loc = "配置文件缺少 {setting_name} 设置！"
+
+[error_ini_missing_value]
+src = "Config is missing value for section `{section}` option `{option}` key `{key}`"
+loc = "配置文件缺少节 `{section}` 选项 `{option}` 键 `{key}` 的值"
+
+[error_set_ini_option_failed]
+src = "Failed to set section {section} option {option} to {value}: {error_text}"
+loc = "设置节 {section} 选项 {option} 为 {value} 失败：{error_text}"
+
+[message_text_model_importer_installation_damaged]
+src = """
+{importer} installation is damaged!
+Details: Missing critical file: {file_name}!
+Would you like to restore {importer} automatically?
+"""
+loc = """
+{importer} 安装已损坏！
+详细信息：缺少关键文件：{file_name}！
+您想要自动恢复 {importer} 吗？
+"""
+
+[model_importer_missing_critical_file]
+src = "Missing critical file: {file_name}!"
+loc = "缺少关键文件：{file_name}！"
+
+[model_importer_shortcut_description]
+src = "Start game with {importer} and skip launcher load"
+loc = "使用 {importer} 启动游戏并跳过启动器加载"
+
+[message_text_duplicate_libraries_detected]
+src = """
+Your Mods folder contains some libraries that are already included into {importer}!
+
+Would you like to disable following duplicates automatically (recommended)?
+
+{duplicates}
+"""
+loc = """
+您的 {importer} 安装已包含 Mods 文件夹中存在的一些库！
+
+您想要自动禁用以下重复项（推荐）吗？
+
+{duplicates}
+"""
+
+[message_text_d3dx_ini_in_mods_folder_detected]
+src = """
+Global config file d3dx.ini found inside the Mods folder:
+{path}
+
+It is duplicate file that may cause glitches and crashes.
+
+Would you like to remove it?
+"""
+loc = """
+在 Mods 文件夹中发现全局配置文件 d3dx.ini：
+{path}
+
+这是可能导致故障和崩溃的重复文件。
+
+您想要删除它吗？
+"""
+
+[error_cannot_start_with_d3dx_ini_in_mods]
+src = "Cannot start with d3dx.ini in Mods folder!"
+loc = "Mods 文件夹中有 d3dx.ini 时无法启动！"
+
+[message_button_restore]
+src = "Restore"
+loc = "恢复"
+
+[message_button_disable]
+src = "Disable"
+loc = "禁用"
+
+[message_button_ignore]
+src = "Ignore"
+loc = "忽略"
+
+[message_button_delete_file]
+src = "Delete File"
+loc = "删除文件"
+
+[message_button_abort]
+src = "Abort"
+loc = "中止"
+
+[message_text_game_detection_failed]
+src = """
+Automatic detection of the game installation failed!
+
+Please configure it manually with Game Folder option of General Settings.
+"""
+loc = """
+游戏安装自动检测失败！
+
+请在常规设置中通过游戏文件夹选项手动配置。
+"""
+
+[message_text_game_detected_single]
+src = """
+Detected game installation:
+
+{game_folder}
+
+Please check if it is desired Game Folder or change it in General Settings.
+"""
+loc = """
+检测到游戏安装：
+
+{game_folder}
+
+请检查这是否是所需的游戏文件夹，或在常规设置中更改它。
+"""
+
+[message_text_game_detected_multiple]
+src = """
+Detected game installations:
+
+Select desired Game Folder from the list below or set it in General Settings:
+
+"""
+loc = """
+检测到多个游戏安装：
+
+从下面列表中选择所需的游戏文件夹，或在常规设置中设置：
+
+"""
+
+[message_text_game_folder_not_configured]
+src = """
+Game installation folder is not configured!
+
+Please set it with Game Folder option of General Settings.
+"""
+loc = """
+游戏安装文件夹未配置！
+
+请在常规设置中通过游戏文件夹选项设置。
+"""
+
+[status_autodetecting_game]
+src = "Autodetecting game installation folder..."
+loc = "正在自动检测游戏安装文件夹..."
+
+[message_button_open_settings]
+src = "Open Settings"
+loc = "打开设置"
+
+[message_button_confirm]
+src = "Confirm"
+loc = "确认"
+
+[error_game_exe_not_found]
+src = "Game executable {exe_name} not found!"
+loc = "未找到游戏可执行文件 {exe_name}！"
+
+# SRMI Package Messages
+
+[error_srmi_fps_unlock_failed]
+src = "Failed to force 120 FPS: {error_text}"
+loc = "强制120帧失败：{error_text}"
+
+[error_srmi_registry_key_not_found]
+src = """
+Star Rail registry key is not found!
+
+Please start the game without 120 FPS tweak, change FPS to any value to create the record and try again.
+
+Note: Tweak is supported only for the Global HSR client and will not work for CN.
+"""
+loc = """
+未找到星穹铁道注册表键！
+
+请在不使用120帧调整的情况下启动游戏，将帧率更改为任意值以创建记录，然后重试。
+
+注意：此调整仅支持全球HSR客户端，不适用于国服。
+"""
+
+[error_srmi_graphics_settings_not_found]
+src = """
+Graphics Settings record is not found in HSR registry!
+
+Please start the game without 120 FPS tweak, change FPS to any value to create the record and try again.
+"""
+loc = """
+在HSR注册表中未找到图形设置记录！
+
+请在不使用120帧调整的情况下启动游戏，将帧率更改为任意值以创建记录，然后重试。
+"""
+
+[error_srmi_unknown_graphics_format]
+src = "Unknown Graphics Settings format: Data type {regtype} is not {expected_type} of REG_BINARY!"
+loc = "未知的图形设置格式：数据类型 {regtype} 不是 REG_BINARY 的 {expected_type}！"
+
+[error_srmi_fps_key_not_found]
+src = "Unknown Graphics Settings format: \"FPS\" key no found!"
+loc = "未知的图形设置格式：未找到\"FPS\"键！"
+
+[error_malformed_model_importer_version]
+src = "Malformed {importer} version!"
+loc = "{importer}版本格式错误！"
+
+[error_model_importer_version_not_found]
+src = "Failed to locate {importer} version!"
+loc = "无法找到{importer}版本！"
+
+# ZZMI Package Messages
+
+[error_zzmi_game_config_failed]
+src = """
+Failed to configure in-game settings for ZZMI!
+Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:
+* Graphics > `Character Quality` must be `High`.
+* Graphics > `High-Precision Character Animation` must be `Disabled`.
+
+{error_text}
+"""
+loc = """
+配置ZZMI游戏内设置失败！
+请在启动器通用设置中禁用`配置游戏设置`并检查游戏内设置：
+* 画面 > `角色品质` 必须为`高`。
+* 画面 > `高精度角色动画` 必须为`关闭`。
+
+{error_text}
+"""
+
+[error_zzmi_unknown_settings_format]
+src = "Unknown system settings entry format: {setting}!"
+loc = "未知的系统设置条目格式：{setting}！"
+
+# GIMI Package Messages
+[error_gimi_game_exe_not_found]
+src = "Game executable {game_exe_name} or {game_exe_name_cn} not found!"
+loc = "未找到游戏可执行文件 {game_exe_name} 或 {game_exe_name_cn}！"
+
+[error_gimi_dcr_config_failed]
+src = """
+{error_text}
+
+If nothing helps:
+1. Disable `Configure Game Settings` in launcher's `General Settings`
+2. Configure in-game `Graphics Settings` manually:
+* Graphics > `Dynamic Character Resolution` must be `Off`.
+"""
+loc = """
+{error_text}
+
+如果以上都无法解决：
+1. 在启动器的`通用设置`中禁用`配置游戏设置`
+2. 手动配置游戏内`图形设置`：
+* 图像 > `动态角色分辨率` 必须为`关闭`。
+"""
+
+[error_gimi_fps_unlocker_config_failed]
+src = """
+Failed to configure FPS Unlocker!
+
+{error_text}
+"""
+loc = """
+配置FPS解锁器失败！
+
+{error_text}
+"""
+
+[error_gimi_hdr_enable_failed]
+src = """
+Failed to enable HDR!
+
+{error_text}
+"""
+loc = """
+启用HDR失败！
+
+{error_text}
+"""
+
+[error_gimi_registry_key_not_found]
+src = """
+Genshin Impact registry key is not found!
+
+Please start the game via original launcher to create the key and try again.
+"""
+loc = """
+未找到原神注册表键！
+
+请通过官方启动器启动游戏以创建该键，然后重试。
+"""
+
+[error_gimi_unknown_settings_format]
+src = "Unknown Settings format: Data type {regtype} is not {expected_type} of REG_BINARY!"
+loc = "未知的设置格式：数据类型 {regtype} 不是 REG_BINARY 的 {expected_type}！"
+
+[error_gimi_graphics_settings_not_found]
+src = """
+Graphics Settings record is not found in GI registry!
+
+Please start the game via official launcher to create the record and try again.
+"""
+loc = """
+在原神注册表中未找到图形设置记录！
+
+请通过官方启动器启动游戏以创建该记录，然后重试。
+"""
+
+[error_gimi_graphics_data_key_not_found]
+src = "Unknown Graphics Settings format: \"graphicsData\" key not found!"
+loc = "未知的图形设置格式：未找到\"graphicsData\"键！"
+
+[error_gimi_global_perf_data_key_not_found]
+src = "Unknown Graphics Settings format: \"globalPerfData\" key not found!"
+loc = "未知的图形设置格式：未找到\"globalPerfData\"键！"
+
+[error_gimi_hdr_record_not_found]
+src = """
+HDR record is not found in GI registry!
+
+Please start the game via official launcher to create the record and try again.
+"""
+loc = """
+在原神注册表中未找到HDR记录！
+
+请通过官方启动器启动游戏以创建该记录，然后重试。
+"""
+
+[status_configuring_fps_unlocker]
+src = "Configuring FPS Unlocker..."
+loc = "正在配置FPS解锁器..."
+
+[message_text_fps_unlocker_manual_termination]
+src = """
+Failed to terminate FPS Unlocker!
+
+Please close it manually and press [OK] to continue.
+"""
+loc = """
+终止FPS解锁器失败！
+
+请手动关闭它并按[确定]继续。
+"""
+
+# WWMI Package Messages
+[error_game_path_not_absolute]
+src = "Failed to normalize path {path}: Path is not absolute!"
+loc = "无法标准化路径 {path}：路径不是绝对路径！"
+
+[error_wuthering_waves_exe_not_found]
+src = "Failed to normalize path {path}: Wuthering Waves.exe not found!"
+loc = "无法标准化路径 {path}：未找到 Wuthering Waves.exe！"
+
+[error_wwmi_game_folder_missing_files]
+src = "Game folder must contain `Wuthering Waves.exe` and `Client` & `Engine` folders!"
+loc = "游戏文件夹必须包含 `Wuthering Waves.exe` 以及 `Client` 和 `Engine` 文件夹！"
+
+[message_text_wwmi_invalid_steam_installation]
+src = """
+Invalid Wuthering Waves installation detected for Steam:
+{game_path}
+
+{folder_name} folder with {exe_name} must be directly placed in:
+{common_folder}
+
+Please run game file repair via Steam or fix it manually.
+"""
+loc = """
+检测到Steam的鸣潮安装无效：
+{game_path}
+
+包含 {folder_name} 的 {exe_name} 文件夹必须直接放置在：
+{common_folder}
+
+请通过Steam运行游戏文件修复或手动修复。
+"""
+
+[error_steam_game_repair_required]
+src = "Game installation must be repaired via Steam!"
+loc = "游戏安装必须通过Steam修复！"
+
+[error_game_folder_missing_folder]
+src = "Game folder must contain {dir_name} folder!"
+loc = "游戏文件夹必须包含 {dir_name} 文件夹！"
+
+[status_configuring_settings]
+src = "Configuring in-game settings..."
+loc = "正在配置游戏内设置..."
+
+[message_title_wounded_effect_detected]
+src = "Wounded Effect Detected"
+loc = "检测到受伤效果"
+
+[message_text_wounded_effect_detected]
+src = """
+Looks like Wounded Effect is enabled in game settings.
+It is not supported by most mods and textures will break after few hits taken.
+
+Click `Disable` to turn it Off and ensure proper rendering of modded textures.
+Click `Keep Enabled` if you never get hit or use Injured Effect Remover tool.
+"""
+loc = """
+看起来游戏设置中启用了受伤效果。
+大多数模组不支持此功能，在受到几次攻击后纹理会出现问题。
+
+点击`禁用`关闭它并确保模组纹理正确渲染。
+如果您从不受伤或使用受伤效果移除工具，请点击`保持启用`。
+"""
+
+[error_wwmi_fps_unlock_failed]
+src = """
+Failed to force 120 FPS!
+Please disable `Force 120 FPS` in launcher's General Settings.
+
+{error_text}
+"""
+loc = """
+强制120帧失败！
+请在启动器通用设置中禁用`强制120帧`。
+
+{error_text}
+"""
+
+[error_wwmi_game_config_failed]
+src = """
+Failed to configure in-game settings for WWMI!
+Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:
+* Graphics > `Graphics Quality` must be `Quality`.
+
+{error_text}
+"""
+loc = """
+配置WWMI游戏内设置失败！
+请在启动器通用设置中禁用`配置游戏设置`并检查游戏内设置：
+* 画面 > `画面品质` 必须为`极致`。
+
+{error_text}
+"""
+
+[status_updating_file]
+src = "Updating {file_name}..."
+loc = "正在更新{file_name}..."
+
+[error_local_storage_init_failed]
+src = "Failed to initialize LocalStorage: {error_text}"
+loc = "初始化LocalStorage失败：{error_text}"
+
+# General UI Elements
+
+[message_button_keep_enabled]
+src = "Keep Enabled"
+loc = "保持启用"
+
+# Utils - Proxy Messages
+[error_proxy_host_not_specified]
+src = "Proxy host is not specified!"
+loc = "代理主机未指定！"
+
+[error_proxy_port_not_specified]
+src = "Proxy port is not specified!"
+loc = "代理端口未指定！"
+
+[error_proxy_port_must_be_numeric]
+src = "Proxy port must be numeric value!"
+loc = "代理端口必须是数字值！"
+
+# Utils - GitHub Client Messages
+[error_ssl_certificate_validation_failed]
+src = """
+Failed to validate SSL certificate of GitHub HTTPS connection!
+
+If you trust your proxy, uncheck *Verify SSL* in *Launcher Settings* and try again.
+"""
+loc = """
+验证GitHub HTTPS连接的SSL证书失败！
+
+如果您信任您的代理，请在*启动器设置*中取消选中*验证SSL*然后重试。
+"""
+
+[error_github_connection_failed]
+src = """
+Failed to establish HTTPS connection to GitHub!
+
+Please check your Antivirus, Firewall, Proxy and VPN settings.
+"""
+loc = """
+建立到GitHub的HTTPS连接失败！
+
+请检查您的杀毒软件、防火墙、代理和VPN设置。
+"""
+
+[error_github_rate_limit_exceeded]
+src = "GitHub API rate limit exceeded!"
+loc = "GitHub API速率限制超出！"
+
+[error_github_invalid_token]
+src = """
+GitHub Personal Access Token is invalid!
+
+Please configure correct token in launcher settings.
+"""
+loc = """
+GitHub个人访问令牌无效！
+
+请在启动器设置中配置正确的令牌。
+"""
+
+[error_github_parse_response_failed]
+src = "Failed to parse GitHub response!"
+loc = "解析GitHub响应失败！"
+
+[error_github_parse_version_failed]
+src = "Failed to parse latest release version!"
+loc = "解析最新发布版本失败！"
+
+[error_github_parse_signature_failed]
+src = "Failed to parse signature!"
+loc = "解析签名失败！"
+
+[error_github_asset_not_found]
+src = "Failed to locate asset matching to '{asset_name_format}'!"
+loc = "无法找到与'{asset_name_format}'匹配的资源！"
+
+[error_github_invalid_release_notes]
+src = "<font color=\"red\">⚠ Error! Invalid release notes format! ⚠</font>"
+loc = "<font color=\"red\">⚠ 错误！发布说明格式无效！⚠</font>"
+
+[error_github_unsigned_release]
+src = "<font color=\"red\">☢ Error! Release is unsigned! ☢</font>"
+loc = "<font color=\"red\">☢ 错误！发布未签名！☢</font>"
+
+# Utils - DLL Injector Messages
+[error_dll_injector_file_not_found]
+src = "Injector file not found: {injector_lib_path}!"
+loc = "注入器文件未找到：{injector_lib_path}！"
+
+[error_dll_injector_load_failed]
+src = "Failed to load injector library!"
+loc = "加载注入器库失败！"
+
+[error_dll_injector_setup_failed]
+src = "Failed to setup injector library!"
+loc = "设置注入器库失败！"
+
+[error_dll_injector_unload_failed]
+src = "Failed to unload injector library!"
+loc = "卸载注入器库失败！"
+
+[dll_injector_shell_error_out_of_memory]
+src = "The operating system is out of memory/resources"
+loc = ""
+
+[dll_injector_shell_error_file_not_found]
+src = "File not found"
+loc = ""
+
+[dll_injector_shell_error_path_not_found]
+src = "Path not found"
+loc = ""
+
+[dll_injector_shell_error_access_denied]
+src = "Access denied"
+loc = ""
+
+[dll_injector_shell_error_not_win32_app]
+src = ".exe file is invalid or not a Win32 app"
+loc = ""
+
+[dll_injector_shell_error_sharing_violation]
+src = "Sharing violation"
+loc = ""
+
+[dll_injector_shell_error_no_app_association]
+src = "No application is associated with the file"
+loc = ""
+
+[dll_injector_shell_error_incomplete_app_association]
+src = "File association is incomplete"
+loc = ""
+
+[dll_injector_unknown_shell_error_code]
+src = "Unknown ShellExecute error code {error_code}"
+loc = "未知的ShellExecute错误代码 {error_code}"
+
+[error_dll_injector_process_start_failed]
+src = "Failed to start {process_name}: {error_text}!"
+loc = "启动 {process_name} 失败：{error_text}！"
+
+[error_dll_injector_non_ascii_path]
+src = """
+Please rename all folders from the path using only English letters:
+{dll_path}
+"""
+loc = """
+请使用纯英文字母重命名路径中的所有文件夹：
+{dll_path}
+"""
+
+[error_dll_injector_unknown_start_method]
+src = "Unknown process start method `{start_method}`!"
+loc = "未知的进程启动方法 `{start_method}`！"
+
+[error_dll_injector_injection_failed]
+src = "Failed to inject {dll_paths}!"
+loc = "注入 {dll_paths} 失败！"
+
+[error_dll_injector_unhook_failed]
+src = "Invalid injector usage: {dll_path} was not unhooked!"
+loc = "注入器使用无效：{dll_path} 未解除挂钩！"
+
+[error_dll_injector_another_instance]
+src = "Another instance of 3DMigotoLoader is running!"
+loc = "另一个3DMigotoLoader实例正在运行！"
+
+[error_dll_injector_failed_to_load_dll]
+src = "Failed to load {dll_path}!"
+loc = "加载 {dll_path} 失败！"
+
+[error_dll_injector_missing_entry_point]
+src = "Library {dll_path} is missing expected entry point!"
+loc = "库 {dll_path} 缺少预期的入口点！"
+
+[error_dll_injector_hook_setup_failed]
+src = "Failed to setup windows hook for {dll_path}!"
+loc = "为 {dll_path} 设置Windows挂钩失败！"
+
+[error_dll_injector_unknown_hook_error]
+src = "Unknown error while hooking {dll_path}!"
+loc = "挂钩 {dll_path} 时发生未知错误！"
+
+[error_dll_injector_hook_is_null]
+src = "Hook is NULL for {dll_path}!"
+loc = "{dll_path} 的挂钩为NULL！"
+
+[error_dll_injector_path_not_defined]
+src = "Invalid injector usage: dll path is not defined!"
+loc = "注入器使用无效：dll路径未定义！"
+
+[error_dll_injector_process_not_defined]
+src = "Invalid injector usage: target process is not defined!"
+loc = "注入器使用无效：目标进程未定义！"
+
+[error_dll_injector_dll_not_hooked]
+src = "Invalid injector usage: dll is not hooked!"
+loc = "注入器使用无效：dll未挂钩！"
+
+[error_dll_injector_extra_library_failed]
+src = """
+Failed to inject extra library {dll_path}:
+{error_text}!
+Please check Advanced Settings → Inject Libraries.
+"""
+loc = """
+注入额外库 {dll_path} 失败：
+{error_text}！
+请检查高级设置 → 注入库。
+"""
+
+# Core - Path Manager Messages
+[error_remove_readonly_failed]
+src = "Failed to remove Read Only flag from file {path}: {error_text}!"
+loc = "移除文件 {path} 的只读标志失败：{error_text}！"
+
+[error_file_not_exist]
+src = "File '{path}' does not exist!"
+loc = "文件 '{path}' 不存在！"
+
+[error_not_a_file]
+src = "File '{path}' is not a file!"
+loc = "文件 '{path}' 不是一个文件！"
+
+[error_path_not_absolute]
+src = "File path '{path}' is not absolute!"
+loc = "文件路径 '{path}' 不是绝对路径！"
+
+[error_no_read_access]
+src = "Failed to read '{path}' file!"
+loc = "读取文件 '{path}' 失败！"
+
+[error_file_readonly]
+src = "Failed to write '{path}': file is Read Only!"
+loc = "写入文件 '{path}' 失败：文件为只读！"
+
+[error_no_write_access]
+src = "Failed to write '{path}': no write access!"
+loc = "写入文件 '{path}' 失败：没有写入权限！"
+
+[error_no_exe_access]
+src = "Failed run '{path}': no execute access!"
+loc = "运行文件 '{path}' 失败：没有执行权限！"
+
+[error_dir_not_absolute]
+src = "Directory path '{path}' is not absolute!"
+loc = "目录路径 '{path}' 不是绝对路径！"
+
+[error_cant_read_folder]
+src = "Can't read from '{path}' folder!"
+loc = "无法读取文件夹 '{path}'！"
+
+[error_cant_write_folder]
+src = "Can't write to '{path}' folder!"
+loc = "无法写入文件夹 '{path}'！"
+
+[error_cant_run_exe_folder]
+src = "Can't run .exe in '{path}' folder!"
+loc = "无法在文件夹 '{path}' 中运行.exe！"
+
+[error_cant_access_folder]
+src = "Can't access '{path}' folder!"
+loc = "无法访问文件夹 '{path}'！"
+
+[error_not_a_folder]
+src = "Path '{path}' is not a folder!"
+loc = "路径 '{path}' 不是一个文件夹！"
+
+[error_cannot_set_root_absolute]
+src = "Cannot set root \"{root_path}\" for absolute path \"{path}\"!"
+loc = "无法为绝对路径 \"{root_path}\" 设置根目录 \"{path}\"！"
+
+[error_curly_brackets_error]
+src = """
+Launcher initialization failed!
+
+Curly brackets {{ and }} in launcher path are not supported:
+{root_path}
+
+Please reinstall the launcher to another location.
+
+"""
+loc = """
+启动器初始化失败！
+
+启动器路径中不支持花括号 {{ 和 }}：
+{root_path}
+
+请将启动器重新安装到其他位置。
+
+"""
+
+# Core - Config Manager Messages
+[message_button_reset_unsecure_setting]
+src = "Reset"
+loc = "重置"
+
+[message_button_keep_unsecure_setting]
+src = "Keep"
+loc = "保持"
+
+[message_text_unsecure_setting_validation_failed]
+src = """
+Failed to validate unsecure settings!
+
+{msg}
+"""
+loc = """
+验证不安全设置失败！
+
+{msg}
+"""
+
+[error_theme_resource_not_found]
+src = """
+Resource not found:
+
+{resource_path}
+
+Hint: You can also use other extensions: {extensions}
+"""
+loc = """
+资源未找到：
+
+{resource_path}
+
+提示：您也可以使用其他扩展名：{extensions}
+"""
+
+# Core - Package Manager Messages
+
+[error_package_version_detect_failed]
+src = """
+Failed to detect installed {package_name} version:
+
+{error_text}
+"""
+loc = """
+检测已安装的 {package_name} 版本失败：
+
+{error_text}
+"""
+
+[package_manager_detect_latest_failed]
+src = """
+Failed to detect latest {package_name} version:
+
+{error_text}
+"""
+loc = """
+检测最新的 {package_name} 版本失败：
+
+{error_text}
+"""
+
+[error_downloaded_data_verification_failed]
+src = """
+Downloaded data integrity verification failed!
+Please restart the launcher and try again!
+"""
+loc = """
+下载数据完整性验证失败！
+请重启启动器并重试！
+"""
+
+[package_manager_file_verification_failed]
+src = """
+{asset_name} data integrity verification failed!
+Please restart the launcher and try again!
+"""
+loc = """
+{asset_name} 数据完整性验证失败！
+请重启启动器并重试！
+"""
+
+[error_missing_manifest]
+src = "{package_name} package is missing manifest file!"
+loc = "{package_name} 包缺少清单文件！"
+
+[error_parse_manifest_failed]
+src = "Failed to parse {package_name} manifest file!"
+loc = "解析 {package_name} 清单文件失败！"
+
+[error_missing_critical_file]
+src = "{package_name} package is missing critical file: {file_name}!"
+loc = "{package_name} 包缺少关键文件：{file_name}！"
+
+[error_file_signature_invalid]
+src = "File {file_name} signature is invalid!"
+loc = "文件 {file_name} 签名无效！"
+
+[error_missing_signature]
+src = "{package_name} manifest file is missing signature for {file_name}!"
+loc = "{package_name} 清单文件缺少 {file_name} 的签名！"
+
+[error_download_update_failed]
+src = """
+Failed to download {version} update for {package} package:
+{error_text}
+"""
+loc = """
+为 {package} 包下载 {version} 更新失败：
+{error_text}
+"""
+
+[error_install_update_failed]
+src = """
+Failed to install {version} update for {package} package!
+Please restart the launcher or your PC and try again.
+
+{error_text}
+"""
+loc = """
+为 {package} 包安装 {version} 更新失败！
+请重启启动器或电脑并重试。
+
+{error_text}
+"""
+
+[error_github_api_limit]
+src = """
+Unauthorized GitHub API requests limit reached for your IP!
+
+GitHub servers will ignore further connection attempts for an hour.
+
+Set (another) *Proxy* or *GitHub Token* in *Launcher Settings* for instant access.
+"""
+loc = """
+您的IP已达到GitHub API未授权请求限制！
+
+GitHub服务器将在一小时内忽略进一步的连接尝试。
+
+在*启动器设置*中设置（其他）*代理*或*GitHub令牌*以获得即时访问。
+"""
+
+# Core - Application Messages
+[application_failed_parse_args]
+src = "Failed to parse args: {args}"
+loc = "解析参数失败：{args}"
+
+[message_text_config_was_reset]
+src = "Failed to load configuration! Falling back to defaults."
+loc = "加载配置失败！回退到默认设置。"
+
+[message_text_config_load_failed]
+src = "Failed to load configuration!"
+loc = "加载配置失败！"
+
+[status_initializing_update]
+src = "Initializing update..."
+loc = "正在初始化更新..."
+
+[message_button_load_backup_config]
+src = "Load Backup"
+loc = "加载备份"
+
+[message_button_load_default_config]
+src = "Load Default"
+loc = "加载默认"
+
+[error_unknown_model_importer]
+src = "Unknown model importer {importer}!"
+loc = "未知的模型导入器 {importer}！"
+
+[error_model_importer_auto_select_failed]
+src = """
+Failed to auto-select importer for `{path}`!
+
+Try to add `--nogui --xxmi WWMI` args (or GIMI, SRMI, ZZMI, HIMI).
+"""
+loc = """
+为 `{path}` 自动选择导入器失败！
+
+尝试添加 `--nogui --xxmi WWMI` 参数（或 GIMI、SRMI、ZZMI、HIMI）。
+"""
+
+[error_unknown_model_importer_arg]
+src = "Unknown model importer supplied as command line arg `--xxmi={arg_xxmi}`!"
+loc = "命令行参数 `--xxmi={arg_xxmi}` 提供了未知的模型导入器！"
+
+[error_unknown_model_importer_setting]
+src = "Unknown model importer `{importer}` supplied with `active_importer` setting!"
+loc = "`active_importer` 设置提供了未知的模型导入器 `{importer}`！"
+
+[error_version_list_fetch_failed]
+src = """
+Failed to get latest versions list from GitHub!
+
+{error_text}
+"""
+loc = """
+从 GitHub 获取最新版本列表失败！
+
+{error_text}
+"""
+
+[application_update_found]
+src = "{package} update found: {current} → {latest}"
+loc = "发现 {package} 更新：{current} → {latest}"
+
+[message_title_update_available]
+src = "Update Available"
+loc = "有可用更新"
+
+[message_button_install_update]
+src = "Update"
+loc = "更新"
+
+[message_button_skip_update]
+src = "Skip"
+loc = "跳过"
+
+[message_text_already_up_to_date]
+src = "No updates available!"
+loc = "没有可用更新！"
+
+[error_model_importer_loading_failed]
+src = """
+{importer} Loading Failed:
+{error}
+"""
+loc = """
+{importer} 加载失败：
+{error}
+"""
+
+[message_title_file_write_failed_read_only]
+src = "File Read Only Error"
+loc = "文件只读错误"
+
+[message_text_file_write_failed_read_only]
+src = """
+Failed to write Read Only file {path}!
+
+Press [Confirm] to remove this flag and continue.
+"""
+loc = """
+写入只读文件 {path} 失败！
+
+按 [确认] 移除此标志并继续。
+"""
+
+[error_critical_file_write_failed]
+src = "Failed to write critical file: {path}!"
+loc = "写入关键文件失败：{path}！"
+
+# Application Event UI Texts
+[message_title_message]
+src = "Message"
+loc = "消息"
+
+[message_title_error]
+src = "Error"
+loc = "错误"
+
+[message_title_warning]
+src = "Warning"
+loc = "警告"
+
+[message_title_info]
+src = "Info"
+loc = "信息"
+
+[message_button_ok]
+src = "OK"
+loc = "确定"
+
+# GUI - Widgets Messages
+[error_widgets_failed_parse_font]
+src = "Failed to parse font from {font}!"
+loc = "无法从 {font} 解析字体！"
+
+[widgets_failed_set_checkbox_value]
+src = "Failed to set checkbox to unknown value {}!"
+loc = "无法将复选框设置为未知值 {}！"
+
+[widgets_input_filter_invalid_float]
+src = "Invalid float value for input filter!"
+loc = "输入过滤器的浮点数值无效！"
+
+[widgets_input_filter_invalid_int]
+src = "Invalid integer value for input filter!"
+loc = "输入过滤器的整数值无效！"
+
+# Donate Frame
+[donate_popup_introduction]
+src = """Hey there — just a quick moment, I promise I won't interrupt again!
+
+I'm SpectrumQT, the developer behind XXMI Launcher{importer_info}.
+Looks like you've already enjoyed {num_sessions} {model_importer} sessions — awesome!
+"""
+loc = """嘿 — 只是快速一刻，我保证不会再打扰了！
+
+我是SpectrumQT，XXMI Launcher{importer_info}的开发者。
+看起来你已经享受了{num_sessions}次{model_importer}会话 — 太棒了！
+"""
+
+[donate_and_wwmi]
+src = " and WWMI"
+loc = "和WWMI"
+
+[donate_wwmi_introduction]
+src = """Hello! Thank you for visiting {model_importer} Appreciation Corner!
+
+This page is a bit unique, since I can't list many names here.
+Simply because I'm soloing {model_importer} and XXMI Launcher development.
+"""
+loc = """你好！感谢访问{model_importer}感谢角落！
+
+这个页面有点特殊，因为我不能在这里列出很多名字。
+只是因为我在独自开发{model_importer}和XXMI Launcher。
+"""
+
+[donate_other_introduction]
+src = """Hello! Thank you for visiting {model_importer} Appreciation Corner!
+
+Here you can see the dev team fighting for {model_importer} behind the scenes.
+It's a tough battle — but shader hackers prevail!
+"""
+loc = """你好！感谢访问{model_importer}感谢角落！
+
+在这里你可以看到在幕后为{model_importer}奋战的开发团队。
+这是一场艰苦的战斗 — 但着色器黑客们取得了胜利！
+"""
+
+[donate_wwmi_useful_check]
+src = "If you've been finding it useful, consider checking out"
+loc = "如果你发现它很有用，请考虑查看"
+
+[donate_my_patreon_campaign]
+src = "my Patreon campaign."
+loc = "我的Patreon活动。"
+
+[donate_wwmi_footer]
+src = """It's all about building better tools for the entire {model_importer} community.
+
+Who knows — maybe your few bucks could help shape the next big feature!
+"""
+loc = """这一切都是为了为整个{model_importer}社区构建更好的工具。
+
+谁知道呢 — 也许你的几块钱可以帮助塑造下一个重要功能！
+"""
+
+[donate_support_message]
+src = "Please consider supporting those who work hard every day to make {model_importer} possible!"
+loc = "请考虑支持那些每天努力工作使{model_importer}成为可能的人！"
+
+[donate_creators_single]
+src = "• Creator: "
+loc = "• 创建者："
+
+[donate_creators_multiple]
+src = "• Creators: "
+loc = "• 创建者们："
+
+[donate_maintainers_single]
+src = "• Maintainer:"
+loc = "• 维护者："
+
+[donate_maintainers_multiple]
+src = "• Maintainers:"
+loc = "• 维护者们："
+
+[donate_launcher_handy]
+src = "Also, if the launcher has been handy, I'd appreciate you joining"
+loc = "另外，如果启动器很方便，我希望你能加入"
+
+[donate_my_patreon_short]
+src = "my Patreon."
+loc = "我的Patreon。"
+
+[donate_close_button]
+src = "Close"
+loc = "关闭"
+
+[donate_close_countdown]
+src = "Close ({time_left})"
+loc = "关闭 ({time_left})"
+
+# Launcher Frame UI Messages
+[launcher_select_games_text]
+src = "Select Games To Mod:"
+loc = "选择要模组的游戏："
+
+[launcher_update_button_tooltip]
+src = """
+## Update packages to latest versions:
+{pending_update_message}
+
+<font color=\"#3366ff\">*Hover over versions in the bottom-left corner to view update descriptions.*</font>
+"""
+loc = """
+## 将包更新到最新版本：
+{pending_update_message}
+
+<font color=\"#3366ff\">*将鼠标悬停在左下角的版本上查看更新说明。*</font>
+"""
+
+[launcher_start_button]
+src = "Start"
+loc = "启动"
+
+[launcher_install_button]
+src = "Install"
+loc = "安装"
+
+# Top Bar UI Messages
+[top_bar_xxmi_button_tooltip]
+src = "Manage Model Importers"
+loc = "管理模型导入器"
+
+[top_bar_wwmi_button_tooltip]
+src = "Wuthering Waves Model Importer"
+loc = "鸣潮模型导入器"
+
+[top_bar_zzmi_button_tooltip]
+src = "Zenless Zone Zero Model Importer"
+loc = "绝区零模型导入器"
+
+[top_bar_srmi_button_tooltip]
+src = "Honkai: Star Rail Model Importer"
+loc = "崩坏：星穹铁道模型导入器"
+
+[top_bar_gimi_button_tooltip]
+src = "Genshin Impact Model Importer"
+loc = "原神模型导入器"
+
+[top_bar_himi_button_tooltip]
+src = "Honkai Impact Model Importer"
+loc = "崩坏3模型导入器"
+
+[top_bar_gamebanana_button_tooltip]
+src = "{importer} GameBanana"
+loc = "{importer} GameBanana"
+
+[top_bar_discord_button_tooltip]
+src = "AGMG Modding Community Discord"
+loc = "AGMG模组社区Discord"
+
+[top_bar_github_button_tooltip]
+src = "XXMI Launcher GitHub"
+loc = "XXMI启动器GitHub"
+
+[top_bar_donate_button_tooltip]
+src = "Support {importer}"
+loc = "支持{importer}"
+
+[top_bar_settings_button_tooltip]
+src = "Open Settings"
+loc = "打开设置"
+
+[top_bar_minimize_button_tooltip]
+src = "Minimize"
+loc = "最小化"
+
+[top_bar_close_button_tooltip]
+src = "Close"
+loc = "关闭"
+
+[top_bar_unsafe_mode_text]
+src = "Unsafe Mode"
+loc = "不安全模式"
+
+[top_bar_unsafe_mode_text_tooltip]
+src = """
+Usage of 3-rd party 3dmigoto DLLs is allowed.
+Make sure to use ones only from a trusted source!
+"""
+loc = """
+允许使用第三方3dmigoto DLL。
+确保只使用来自可信来源的DLL！
+"""
+
+# Tool Bar UI Messages
+
+[tool_bar_repair_button]
+src = "Repair {importer}"
+loc = "修复{importer}"
+
+[tool_bar_check_updates_button]
+src = "Check For Updates"
+loc = "检查更新"
+
+[tool_bar_add_shortcut_button]
+src = "Add Desktop Shortcut"
+loc = "添加桌面快捷方式"
+
+[tool_bar_open_mods_button]
+src = "Open Mods Folder"
+loc = "打开Mods文件夹"
+
+# Bottom Bar Status Messages
+[bottom_bar_initializing_launch]
+src = "Initializing game launch..."
+loc = "正在初始化游戏启动..."
+
+[bottom_bar_hooking]
+src = "Hooking {library} to {process}..."
+loc = "正在将{library}挂钩到{process}..."
+
+[bottom_bar_verifying_hook]
+src = "Verifying {library} load into {process}..."
+loc = "正在验证{library}加载到{process}..."
+
+[bottom_bar_injecting]
+src = "Injecting {library} to {process}..."
+loc = "正在将{library}注入到{process}..."
+
+[bottom_bar_launching_game]
+src = "Launching game..."
+loc = "正在启动游戏..."
+
+[bottom_bar_waiting_process]
+src = "Waiting for {process} to start..."
+loc = "正在等待{process}启动..."
+
+[bottom_bar_closing_launcher]
+src = "Closing launcher..."
+loc = "正在关闭启动器..."
+
+[bottom_bar_checking_updates]
+src = "Checking for updates..."
+loc = "正在检查更新..."
+
+[bottom_bar_connecting_github]
+src = "Connecting to GitHub..."
+loc = "正在连接到GitHub..."
+
+[bottom_bar_downloading]
+src = "Downloading {asset}..."
+loc = "正在下载{asset}..."
+
+[bottom_bar_verifying_integrity]
+src = "Verifying {asset} integrity..."
+loc = "正在验证{asset}完整性..."
+
+[bottom_bar_initializing_installation]
+src = "Initializing update installation..."
+loc = "正在初始化更新安装..."
+
+[bottom_bar_writing_file]
+src = "Writing {asset} on disk..."
+loc = "正在将{asset}写入磁盘..."
+
+[bottom_bar_moving_file]
+src = "Moving {asset}..."
+loc = "正在移动{asset}..."
+
+[bottom_bar_unpacking]
+src = "Unpacking {asset}..."
+loc = "正在解压{asset}..."
+
+# Main Window Messages
+[message_text_theme_load_failed_no_folder]
+src = """
+Failed to load {theme} theme:
+
+Theme folder does not exist!
+"""
+loc = """
+加载{theme}主题失败：
+
+主题文件夹不存在！
+"""
+
+[message_text_theme_load_failed_no_file]
+src = """
+Failed to load {theme} theme:
+
+Theme file `custom-tkinter-theme.json` does not exist!
+"""
+loc = """
+加载{theme}主题失败：
+
+主题文件`custom-tkinter-theme.json`不存在！
+"""
+
+[message_title_theme_update_required]
+src = "Theme Update Required"
+loc = "需要更新主题"
+
+[message_button_theme_use_default]
+src = "Use Default"
+loc = "使用默认"
+
+[message_button_patch_theme]
+src = "Patch Theme"
+loc = "修补主题"
+
+[message_text_theme_update_required]
+src = """
+Selected {theme} theme cannot be loaded!
+
+Click `Use Default` to use default theme instead (ensures proper visuals).
+Click `Patch Theme` to replace `custom-tkinter-theme.json` with new one.
+"""
+loc = """
+无法加载所选的{theme}主题！
+
+点击`使用默认`以使用默认主题（确保正确显示）。
+点击`修补主题`以用新版本替换`custom-tkinter-theme.json`。
+"""
+
+# Launcher Settings Frame
+[launcher_settings_start_behavior_label]
+src = "Start Behavior:"
+loc = "启动行为："
+
+[launcher_settings_auto_close_checkbox]
+src = "Close Launcher After Game Start"
+loc = "游戏启动后关闭启动器"
+
+[launcher_settings_auto_close_checkbox_tooltip]
+src = """
+Enabled: Launcher will close itself once the game has started and 3dmigoto injection has been confirmed.
+Disabled: Launcher will keep itself running.
+"""
+loc = """
+启用：游戏启动且3dmigoto注入确认后，启动器将自动关闭。
+禁用：启动器将保持运行。
+"""
+
+[launcher_settings_timeout_label]
+src = "Timeout:"
+loc = "超时："
+
+[launcher_settings_timeout_entry_tooltip]
+src = """
+Controls how long launcher should wait for the game to show its window after launch.
+Game process will be considered as crashed once timeout is met.
+Default value is **30**.
+"""
+loc = """
+控制启动器在游戏启动后等待游戏窗口显示的时间。
+超时后游戏进程将被视为崩溃。
+默认值为**30**。
+"""
+
+[launcher_settings_update_policy_label]
+src = "Update Policy:"
+loc = "更新策略："
+
+[launcher_settings_auto_update_checkbox]
+src = "Auto Update"
+loc = "自动更新"
+
+[launcher_settings_auto_update_checkbox_tooltip]
+src = """
+Enabled: Launcher and {importer} updates will be Downloaded and Installed automatically.
+Disabled: Use special [▲] button next to [Start] button to Download and Install updates manually.
+"""
+loc = """
+启用：启动器和{importer}更新将自动下载和安装。
+禁用：使用[启动]按钮旁边的特殊[▲]按钮手动下载和安装更新。
+"""
+
+[launcher_settings_update_channel_label]
+src = "Channel:"
+loc = "通道："
+
+[launcher_settings_update_channel_option_menu_tooltip]
+src = """
+**Auto**: Detect update installation method automatically.
+**MSI**: Use native `.msi` installers to install updates.
+**ZIP**: Use portable `.zip` archives to install updates.
+"""
+loc = """
+**自动**：自动检测更新安装方法。
+**MSI**：使用原生`.msi`安装程序安装更新。
+**ZIP**：使用便携式`.zip`存档安装更新。
+"""
+
+[launcher_settings_theme_label]
+src = "UI Theme:"
+loc = "UI主题："
+
+[launcher_settings_theme_option_menu_tooltip]
+src = """
+Select launcher GUI theme.
+Warning! `Default` theme will be overwritten by launcher updates!
+To make a custom theme:
+1. Create a duplicate of `Default` folder in `Themes` folder.
+2. Rename the duplicate in a way you want it to be shown in Settings.
+3. Edit or replace any images (valid extensions: webp, jpeg, png, jpg).
+"""
+loc = """
+选择启动器GUI主题。
+警告！`默认`主题将被启动器更新覆盖！
+制作自定义主题：
+1. 在`主题`文件夹中创建`默认`文件夹的副本。
+2. 重命名副本为你希望在设置中显示的名称。
+3. 编辑或替换任何图像（有效扩展名：webp、jpeg、png、jpg）。
+"""
+
+[launcher_settings_apply_theme_button]
+src = "⟲ Apply"
+loc = "⟲ 应用"
+
+[launcher_settings_dev_mode_checkbox]
+src = "Dev Mode"
+loc = "开发模式"
+
+[launcher_settings_dev_mode_checkbox_tooltip]
+src = """
+Enabled: Launcher will track changes in `custom-tkinter-theme.json` and apply them on the fly.
+Disabled: Theme changes will not be tracked.
+"""
+loc = """
+启用：启动器将跟踪`custom-tkinter-theme.json`中的更改并实时应用。
+禁用：不会跟踪主题更改。
+"""
+
+[launcher_settings_connection_label]
+src = "Connection:"
+loc = "连接："
+
+[launcher_settings_github_token_label]
+src = "GitHub Token:"
+loc = "GitHub令牌："
+
+[launcher_settings_github_token_entry_tooltip]
+src = """
+Your **Personal Access Token** on **GitHub** (i.e. `ghp_f7gy3A4eQ97jfy2983mfZu2Hy93yf2P3d798`).
+Allows to combat `GitHub API Requests Limit` error that usually happens with public proxies.
+It is totally free and only requires GitHub registration.
+To create new token:
+1. Click `[?]` button to open token creation webpage.
+2. Use `Generate new token (classic)` button.
+"""
+loc = """
+你在**GitHub**上的**个人访问令牌**（例如`ghp_f7gy3A4eQ97jfy2983mfZu2Hy93yf2P3d798`）。
+可以解决通常在公共代理中出现的`GitHub API请求限制`错误。
+完全免费，只需要GitHub注册。
+创建新令牌：
+1. 点击`[?]`按钮打开令牌创建网页。
+2. 使用`生成新令牌（经典）`按钮。
+"""
+
+[launcher_settings_github_token_create_button]
+src = "Create..."
+loc = "创建..."
+
+[launcher_settings_github_token_create_button_tooltip]
+src = "Open **GitHub Personal Access Token** creation webpage."
+loc = "打开**GitHub个人访问令牌**创建网页。"
+
+[launcher_settings_verify_ssl_checkbox]
+src = "Verify SSL"
+loc = "验证SSL"
+
+[launcher_settings_verify_ssl_checkbox_tooltip]
+src = """
+<font color=\"red\">⚠ Disable only if you trust your proxy or whatever else that breaks SSL. ⚠</font>
+**Enabled**: Validate SLL certificates for GitHub downloads to keep you secure.
+**Disabled**: Allow insecure connection vulnerable to man-in-middle attacks.
+"""
+loc = """
+<font color=\"red\">⚠ 仅在你信任代理或其他破坏SSL的工具时才禁用。⚠</font>
+**启用**：验证GitHub下载的SSL证书以保持安全。
+**禁用**：允许易受中间人攻击的不安全连接。
+"""
+
+[launcher_settings_proxy_enable_checkbox]
+src = "Use Proxy:"
+loc = "使用代理："
+
+[launcher_settings_proxy_enable_checkbox_tooltip]
+src = """
+Controls how launcher connects to GitHub to download packages.
+**Enabled**: Use specified proxy server to access Internet.
+**Disabled**: Use default system Internet connection settings.
+"""
+loc = """
+控制启动器如何连接到GitHub下载包。
+**启用**：使用指定的代理服务器访问互联网。
+**禁用**：使用默认系统互联网连接设置。
+"""
+
+[launcher_settings_proxy_type_label]
+src = "Type:"
+loc = "类型："
+
+[launcher_settings_proxy_type_option_menu_tooltip]
+src = """
+**HTTPS**: Good old proxy protocol. Offers best security.
+**SOCKS5**: Newer and less secure, but excels at bypassing firewalls.
+"""
+loc = """
+**HTTPS**：经典的代理协议。提供最佳安全性。
+**SOCKS5**：较新且安全性较低，但在绕过防火墙方面表现出色。
+"""
+
+[launcher_settings_proxy_dns_checkbox]
+src = "Proxy DNS Via SOCKS5"
+loc = "通过SOCKS5代理DNS"
+
+[launcher_settings_proxy_dns_checkbox_tooltip]
+src = """
+**Enabled**: Use SOCKS5 proxy connection to route DNS requests.
+**Disabled**: DNS requests will be routed through your ISP.
+"""
+loc = """
+**启用**：使用SOCKS5代理连接路由DNS请求。
+**禁用**：DNS请求将通过你的ISP路由。
+"""
+
+[launcher_settings_proxy_host_label]
+src = "Host:"
+loc = "主机："
+
+[launcher_settings_proxy_host_entry_tooltip]
+src = "Proxy IP address (i.e. `123.12.1.231`) or domain name (i.e. `proxyprovider.com`)."
+loc = "代理IP地址（例如`123.12.1.231`）或域名（例如`proxyprovider.com`）。"
+
+[launcher_settings_proxy_port_label]
+src = "Port:"
+loc = "端口："
+
+[launcher_settings_proxy_port_entry_tooltip]
+src = "Proxy port (i.e. `1080`)."
+loc = "代理端口（例如`1080`）。"
+
+[launcher_settings_proxy_credentials_checkbox]
+src = "Proxy Requires Password"
+loc = "代理需要密码"
+
+[launcher_settings_proxy_credentials_checkbox_tooltip]
+src = """
+**Enabled**: Use specified user name and password for the proxy server authentication.
+**Disabled**: Do not use any credentials when accessing a proxy server.
+"""
+loc = """
+**启用**：使用指定的用户名和密码进行代理服务器认证。
+**禁用**：访问代理服务器时不使用任何凭据。
+"""
+
+[launcher_settings_proxy_user_label]
+src = "User:"
+loc = "用户："
+
+[launcher_settings_proxy_user_entry_tooltip]
+src = "User name provided by your proxy service."
+loc = "代理服务提供的用户名。"
+
+[launcher_settings_proxy_password_label]
+src = "Password:"
+loc = "密码："
+
+[launcher_settings_proxy_password_entry_tooltip]
+src = "Password provided by your proxy service."
+loc = "代理服务提供的密码。"
+
+[launcher_settings_language_label]
+src = "Language:"
+loc = "语言："
+
+# General Settings Frame
+[general_settings_game_folder_label]
+src = "Game Folder:"
+loc = "游戏文件夹："
+
+[general_settings_game_folder_error_label]
+src = "Failed to detect Game Folder!"
+loc = "检测游戏文件夹失败！"
+
+[settings_browse_path_button]
+src = "Browse..."
+loc = "浏览..."
+
+[general_settings_detect_game_folder_button_tooltip]
+src = "Try to automatically detect existing installation folders."
+loc = "尝试自动检测现有安装文件夹。"
+
+[general_settings_launch_options_about_button]
+src = "About..."
+loc = "关于..."
+
+[general_settings_launch_options_about_button_tooltip]
+src = """
+Open {engine} command line arguments documentation webpage.
+Note: Game engine is customized by devs and some args may not work.
+"""
+loc = """
+打开{engine}命令行参数文档网页。
+注意：游戏引擎由开发者定制，某些参数可能无效。
+"""
+
+[general_settings_launch_options_label]
+src = "Launch Options:"
+loc = "启动选项："
+
+[general_settings_start_method_label]
+src = "Start Method:"
+loc = "启动方式："
+
+[general_settings_start_method_native]
+src = "Native"
+loc = "Native"
+
+[general_settings_start_method_shell]
+src = "Shell"
+loc = "Shell"
+
+[general_settings_start_method_manual]
+src = "Manual"
+loc = "Manual"
+
+[general_settings_start_method_option_menu_tooltip]
+src = """
+**Native**: Create the game process directly. Usually it's the most reliable way.
+**Shell**: Start the game process via system console. Worth to try if you have some issues with Native.
+**Manual**: Skip launching the game on **Start** button press. Wait for user to launch it manually ({timeout}s timeout).
+"""
+loc = """
+**原生**：直接创建游戏进程。通常是最可靠的方式。
+**Shell**：通过系统控制台启动游戏进程。如果原生方式有问题可以尝试此选项。
+**手动**：按下**启动**按钮时不启动游戏。等待用户手动启动游戏（{timeout}秒超时）。
+"""
+
+[general_settings_xxmi_delay_label]
+src = "XXMI Delay:"
+loc = "XXMI 延迟："
+
+[general_settings_xxmi_delay_entry_tooltip_base]
+src = """
+Delay in milliseconds for how long injected XXMI DLL (3dmigoto) must wait before initialization.
+{tooltip_footer}
+"""
+loc = """
+注入的 XXMI DLL (3dmigoto) 在初始化前需要等待的毫秒数。
+{tooltip_footer}
+"""
+
+[general_settings_xxmi_delay_entry_tooltip_footer_wwmi]
+src = """<font color="red">⚠ Wuthering Waves crashes on launch with wrong delay! ⚠</font>
+<font color="#8B8000">⚠ If default value fails, try to increase or decrease it until WuWa stops crashing. ⚠</font>
+## Known values for Wuthering Waves 2.4:
+- **500**: Default, works for most users.
+- **150**: Minimal known value to work along with ReShade.
+- **50**: Minimal known value to work.
+- **1000+**: Some users need really huge delays."""
+loc = """<font color="red">⚠ 鸣潮在延迟设置错误时会崩溃！⚠</font>
+<font color="#8B8000">⚠ 如果默认值不起作用，请尝试增加或减少数值直到游戏不再崩溃。⚠</font>
+## 鸣潮 2.4 已知可用值：
+- **500**：默认值，适用于大多数用户。
+- **150**：与 ReShade 一起使用时的最小已知值。
+- **50**：可用的最小已知值。
+- **1000+**：某些用户需要非常大的延迟值。"""
+
+[general_settings_xxmi_delay_entry_tooltip_footer_general]
+src = "If game crashes with no mods, try to increase it. Start with steps of 50 and increase them as you go."
+loc = "如果游戏在没有模组的情况下崩溃，请尝试增加此值。从50开始逐步增加。"
+
+[general_settings_process_priority_label]
+src = "Process Priority:"
+loc = "进程优先级："
+
+[general_settings_process_priority_low]
+src = "Low"
+loc = "Low"
+
+[general_settings_process_priority_below_normal]
+src = "Below Normal"
+loc = "Below Normal"
+
+[general_settings_process_priority_normal]
+src = "Normal"
+loc = "Normal"
+
+[general_settings_process_priority_above_normal]
+src = "Above Normal"
+loc = "Above Normal"
+
+[general_settings_process_priority_high]
+src = "High"
+loc = "High"
+
+[general_settings_process_priority_realtime]
+src = "Realtime"
+loc = "Realtime"
+
+[general_settings_process_priority_option_menu_tooltip]
+src = """
+Set process priority for the game exe.
+"""
+loc = """
+设置游戏可执行文件的进程优先级。
+"""
+
+[general_settings_auto_config_label]
+src = "Auto Config:"
+loc = "自动配置："
+
+[general_settings_configure_game_checkbox]
+src = "Configure Game Settings"
+loc = "配置游戏设置"
+
+[general_settings_configure_game_tooltip_gimi]
+src = """
+**Enabled**: Ensure GIMI-compatible in-game **Graphics Settings** before game start:
+
+- `Dynamic Character Resolution: Off`
+
+**Disabled**: In-game settings will not be affected.
+
+<font color=\"red\">⚠ Mods will not work with wrong settings! ⚠</font>
+"""
+loc = """
+**启用**：游戏启动前确保GIMI兼容的游戏内**图形设置**：
+
+- `动态角色分辨率：关闭`
+
+**禁用**：游戏内设置不会受影响。
+
+<font color=\"red\">⚠ 设置错误时模组将无法工作！⚠</font>
+"""
+
+[general_settings_configure_game_tooltip_wwmi]
+src = """
+**Enabled**: Ensure WWMI-compatible in-game **Graphics Settings** before game start:
+
+- `Graphics Quality: Quality`
+
+**Disabled**: In-game settings will not be affected.
+
+<font color=\"red\">⚠ Mods will not work with wrong settings! ⚠</font>
+"""
+loc = """
+**启用**：游戏启动前确保WWMI兼容的游戏内**图形设置**：
+
+- `图形质量：质量`
+
+**禁用**：游戏内设置不会受影响。
+
+<font color=\"red\">⚠ 设置错误时模组将无法工作！⚠</font>
+"""
+
+[general_settings_configure_game_tooltip_zzmi]
+src = """
+**Enabled**: Ensure ZZMI-compatible in-game **Graphics Settings** before game start:
+
+- `Character Quality: High`
+- `High-Precision Character Animation: Disabled`
+
+**Disabled**: In-game settings will not be affected.
+
+<font color=\"red\">⚠ Mods will not work with wrong settings! ⚠</font>
+"""
+loc = """
+**启用**：游戏启动前确保ZZMI兼容的游戏内**图形设置**：
+
+- `角色质量：高`
+- `高精度角色动画：禁用`
+
+**禁用**：游戏内设置不会受影响。
+
+<font color=\"red\">⚠ 设置错误时模组将无法工作！⚠</font>
+"""
+
+[general_settings_open_file_button]
+src = "🔍 Open {file_name}"
+loc = "🔍 打开 {file_name}"
+
+[general_settings_open_file_button_tooltip]
+src = "Open **{file_name}** in default text editor file for manual tweaking."
+loc = "在默认文本编辑器中打开 **{file_name}** 进行手动调整。"
+
+[general_settings_tweaks_label]
+src = "Tweaks:"
+loc = "调整项："
+
+[general_settings_unlock_fps_checkbox_force]
+src = "Force 120 FPS"
+loc = "强制120 FPS"
+
+[general_settings_unlock_fps_checkbox_tooltip_wwmi]
+src = """
+This option allows to set FPS limit to 120 even on not officially supported devices.
+Please do note that with some hardware game refuses to go 120 FPS even with this tweak.
+**Enabled**: Sets `CustomFrameRate` to `120` in `LocalStorage.db` on game start.
+**Disabled**: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.
+"""
+loc = """
+此选项允许在非官方支持的设备上将FPS限制设为120。
+请注意，某些硬件即使使用此调整也可能无法达到120 FPS。
+**启用**：游戏启动时在`LocalStorage.db`中将`CustomFrameRate`设为`120`。
+**禁用**：对FPS设置无影响，使用游戏内设置撤销已强制的120 FPS。
+"""
+
+[general_settings_unlock_fps_checkbox_tooltip_srmi]
+src = """
+This option allows to set FPS limit to 120.
+**Enabled**: Updates Graphics Settings Windows Registry key with 120 FPS value on game start.
+**Disabled**: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.
+**Warning!** Tweak is supported only for the Global HSR client and will not work for CN.
+*Note: Edits `FPS` value in `HKEY_CURRENT_USER/SOFTWARE/Cognosphere/Star Rail/GraphicsSettings_Model_h2986158309`.*
+"""
+loc = """
+此选项允许将FPS限制设为120。
+**启用**：游戏启动时更新Windows注册表图形设置键值为120 FPS。
+**禁用**：对FPS设置无影响，使用游戏内设置撤销已强制的120 FPS。
+**警告！** 此调整仅支持全球HSR客户端，国服无效。
+*注意：编辑`HKEY_CURRENT_USER/SOFTWARE/Cognosphere/Star Rail/GraphicsSettings_Model_h2986158309`中的`FPS`值。*
+"""
+
+[general_settings_unlock_fps_checkbox_tooltip_gimi]
+src = """
+This option allows to set custom FPS limit.
+**Warning!**: To minimize game engine glitches set FPS to 120 / 180 / 240 etc.
+**Enabled**: Launch game via `unlockfps_nc.exe` and let it run in background to keep FPS tweak applied.
+**Disabled**: Launch game via original `.exe` file, has no effect on FPS.
+*Hint: If FPS Unlocker package is outdated, you can manually update \"unlockfps_nc.exe\" from original repository.*
+*Local Path*: `Resources/Packages/GI-FPS-Unlocker/unlockfps_nc.exe`
+*Original Repository*: `https://github.com/34736384/genshin-fps-unlock`
+"""
+loc = """
+此选项允许设置自定义FPS限制。
+**警告!**: 为了最大程度减少游戏引擎的故障，可将帧率设定为120/180/240等。.
+**启用**：通过`unlockfps_nc.exe`启动游戏并让其在后台运行以保持FPS调整生效。
+**禁用**：通过原始`.exe`文件启动游戏，对FPS无影响。
+*提示：如果FPS解锁包过时，可从原始仓库手动更新\"unlockfps_nc.exe\"。*
+*本地路径*：`Resources/Packages/GI-FPS-Unlocker/unlockfps_nc.exe`
+*原始仓库*：`https://github.com/34736384/genshin-fps-unlock`
+"""
+
+[general_settings_unlock_fps_checkbox_tooltip_himi]
+src = """
+This option allows to set custom FPS limit.
+**Enabled**: Updates Graphics Settings Windows Registry key with specified FPS value on game start.
+**Disabled**: Has no effect on FPS settings, use in-game settings to undo already tweaked FPS.
+"""
+loc = """
+此选项允许设置自定义帧率限制。
+**启用**：在游戏启动时更新图形设置Windows注册表键，并设置指定的帧率。
+**禁用**：对帧率设置无影响，使用游戏内设置可撤销已调整的帧率。
+"""
+
+[general_settings_window_mode_windowed]
+src = "Windowed"
+loc = "Windowed"
+
+[general_settings_window_mode_borderless]
+src = "Borderless"
+loc = "Borderless"
+
+[general_settings_window_mode_fullscreen]
+src = "Fullscreen"
+loc = "Fullscreen"
+
+[general_settings_window_mode_exclusive_fullscreen]
+src = "Exclusive Fullscreen"
+loc = "Exclusive Fullscreen"
+
+[general_settings_window_mode_option_menu_tooltip]
+src = "Game window mode when started with FPS Unlocker."
+loc = "使用FPS解锁器启动时的游戏窗口模式。"
+
+[general_settings_apply_tweaks_checkbox]
+src = "Apply Performance Tweaks"
+loc = "应用性能调整"
+
+[general_settings_apply_tweaks_checkbox_tooltip]
+src = """
+**Enabled**: Add list of performance tweaks to `[SystemSettings]` section of `Engine.ini` on game start.
+**Disabled**: Do not add tweaks to `Engine.ini`. Already added ones will have to be removed manually.
+
+List of tweaks:
+{tweaks}
+"""
+loc = """
+**启用**：游戏启动时向`Engine.ini`的`[SystemSettings]`部分添加性能调整列表。
+**禁用**：不向`Engine.ini`添加调整。已添加的需要手动移除。
+
+调整列表：
+{tweaks}
+"""
+
+[general_settings_enable_hdr_checkbox]
+src = "Enable HDR"
+loc = "启用 HDR"
+
+[general_settings_enable_hdr_checkbox_tooltip]
+src = """
+**Warning**! Your monitor must support HDR and `Use HDR` must be enabled in Windows Display settings!
+**Enabled**: Turn HDR On. Creates HDR registry record each time before the game launch.
+**Disabled**: Turn HDR Off. No extra action required, game auto-removes HDR registry record on launch."""
+loc = """
+**警告**！您的显示器必须支持 HDR，且 Windows 显示设置中必须启用`使用 HDR`！
+**启用**：开启 HDR。每次游戏启动前创建 HDR 注册表记录。
+**禁用**：关闭 HDR。无需额外操作，游戏启动时会自动移除 HDR 注册表记录。"""
+
+[error_no_data_available_short]
+src = "N/A"
+loc = "N/A"
+
+[general_settings_disable_wounded_effect_checkbox]
+src = "Disable Wounded Effect"
+loc = "禁用受伤效果"
+
+[general_settings_disable_wounded_effect_checkbox_tooltip]
+src = """
+Most mods do not support this effect, so textures usually break after few hits taken.
+**Enabled**: Turn the effect `Off`. Ensures proper rendering of modded textures.
+**Disabled**: Turn the effect `On`. Select this if you use `Injured Effect Remover` tool.
+"""
+loc = """
+大多数模组不支持此效果，所以在受到几次伤害后纹理通常会损坏。
+**启用**：关闭此效果。确保正确渲染模组纹理。
+**禁用**：开启此效果。如果您使用了`受伤效果移除器`工具，请选择此项。
+"""
+
+[general_settings_texture_boost_label]
+src = "Texture Boost:"
+loc = "纹理加速："
+
+[general_settings_texture_boost_entry_tooltip]
+src = """
+## Controls how aggressively higher resolution textures are pushed to VRAM:
+
+* Start tuning around **30.0** **(default)** for **mid-range PC**.
+    ✅ For slow systems tuning can significantly reduce modded textures loading delay.
+
+* Start tuning around **2.5** for **high end PC**.
+    ✅ For fast systems tuning can completely eliminate modded textures loading delay.
+
+* Set to **1.0** to disable the boost and stick to the default game engine behavior.
+
+⚠️ With low values, try decimals (e.g. `1.1` or `2.5`).
+
+*Applied to ConsoleVariables → r.Streaming.Boost value in Engine.ini*
+"""
+loc = """
+在 **Engine.ini** 中设置 **r.Streaming.Boost** 的值。
+微调此值可以防止切换到模组角色时出现短暂的纹理故障。
+对于低数值，可以尝试使用小数（例如 `1.1` 或 `2.5`）。
+## 鸣潮 2.4 的参考值：
+- **2.75**：RTX 4090。
+- **30.0**：RTX 3070。
+"""
+
+[error_general_settings_file_not_found]
+src = "File does not exist: **{file_name}**!"
+loc = "文件不存在：**{file_name}**！"
+
+[status_reloading_gui]
+src = "Reloading GUI..."
+loc = "Reloading GUI..."
+
+# Advanced Settings Frame
+[advanced_settings_update_policy_label]
+src = "Update Policy:"
+loc = "更新策略："
+
+[advanced_settings_overwrite_ini_checkbox]
+src = "Overwrite d3dx.ini"
+loc = "覆盖d3dx.ini"
+
+[advanced_settings_overwrite_ini_checkbox_tooltip]
+src = """
+Enabled: {importer} updates will overwrite existing d3dx.ini to ensure its up-to-date state.
+Disabled: {importer} updates will keep existing d3dx.ini untouched.
+"""
+loc = """
+启用：{importer}更新将覆盖现有的d3dx.ini以确保其为最新状态。
+禁用：{importer}更新将保持现有d3dx.ini不变。
+"""
+
+[advanced_settings_security_label]
+src = "Security:"
+loc = "安全："
+
+[advanced_settings_unsafe_mode_checkbox]
+src = "Unsafe Mode"
+loc = "不安全模式"
+
+[advanced_settings_unsafe_mode_checkbox_tooltip]
+src = """
+Enabled: Allow 3-rd party 3dmigoto dlls.
+Disabled: Disallow 3-rd party 3dmigoto dlls.
+Note: If 3-rd party d3d11.dll does not support running from nested directories, it will fail to load.
+"""
+loc = """
+启用：允许第三方3dmigoto动态链接库。
+禁用：禁止第三方3dmigoto动态链接库。
+注意：如果第三方d3d11.dll不支持从嵌套目录运行，将无法加载。
+"""
+
+[advanced_settings_option_checkbox_tooltip]
+src = """
+Enabled: Option will have stated effect.
+Disabled: Option will have no effect.
+"""
+loc = """
+启用：选项将生效。
+禁用：选项不生效。
+"""
+
+[advanced_settings_run_pre_launch_checkbox]
+src = "Run Pre-Launch:"
+loc = "运行预启动："
+
+[advanced_settings_run_pre_launch_tooltip]
+src = """
+Windows console command to be executed before game exe launch.
+Note: If something needs to be done before the game start, do it here.
+"""
+loc = """
+游戏可执行文件启动前执行的Windows控制台命令。
+注意：如果需要在游戏启动前执行某些操作，请在此处进行。
+"""
+
+[advanced_settings_wait_checkbox]
+src = "Wait"
+loc = "等待"
+
+[advanced_settings_run_pre_launch_wait_checkbox_tooltip]
+src = "Enabled: Wait for (blocking) command to finish its execution before launching the game exe."
+loc = "启用：等待（阻塞）命令执行完成后再启动游戏可执行文件。"
+
+[advanced_settings_custom_launch_checkbox]
+src = "Custom Launch:"
+loc = "自定义启动："
+
+[advanced_settings_custom_launch_entry_tooltip]
+src = """
+Windows console command to run when Start button is pressed instead of default game exe launch.
+Hint: If you want to change injection method only, just leave this field empty.
+Warning! This command also overrides `Launch Options` from General Settings.
+Note: If you want to start game exe with another custom exe, do it here.
+Example (equivalent for command internally used by launcher to start GI via FPS unlocker):
+`start /d \"C:\\Games\\XXMI Launcher\\Resources\\Packages\\GI-FPS-Unlocker\" unlockfps_nc.exe`
+"""
+loc = """
+按下启动按钮时运行的Windows控制台命令，替代默认游戏可执行文件启动。
+提示：如果只想更改注入方法，请将此字段留空。
+警告！此命令还会覆盖常规设置中的`启动选项`。
+注意：如果想用另一个自定义可执行文件启动游戏可执行文件，请在此处进行。
+示例（相当于启动器内部用于通过FPS解锁器启动GI的命令）：
+`start /d \"C:\\Games\\XXMI Launcher\\Resources\\Packages\\GI-FPS-Unlocker\" unlockfps_nc.exe`
+"""
+
+[advanced_settings_custom_launch_inject_mode_option_menu_tooltip]
+src = """
+Defines the way of 3dmigoto injection into the game process started via Custom Launch.
+* Inject: Use WriteProcessMemory, more reliable but requires direct memory access.
+* Hook: Use SetWindowsHookEx, less reliable, but potentially less prominent for anti-cheats.
+* Bypass: Skip 3dmigoto injection and process only Inject Libraries field.
+"""
+loc = """
+定义通过自定义启动方式启动的游戏进程中3dmigoto注入的方式。
+* 注入：使用WriteProcessMemory，更可靠但需要直接内存访问。
+* 钩子：使用SetWindowsHookEx，可靠性较低，但对反作弊系统的影响可能较小。
+* 绕过：跳过3dmigoto注入，仅处理注入库字段。
+"""
+
+[advanced_settings_run_post_load_checkbox]
+src = "Run Post-Load:"
+loc = "运行加载后："
+
+[advanced_settings_run_post_load_checkbox_tooltip]
+src = """
+Windows console command to be executed after hooking d3d11.dll to launched game exe.
+Note: If something needs to be done after 3dmigoto injection, do it here.
+"""
+loc = """
+将d3d11.dll钩子注入到启动的游戏可执行文件后执行的Windows控制台命令。
+注意：如果需要在3dmigoto注入后执行某些操作，请在此处进行。
+"""
+
+[advanced_settings_run_post_load_wait_checkbox_tooltip]
+src = "Enabled: Wait for (blocking) command to finish its execution before treating the game launch as complete."
+loc = "启用：等待（阻塞）命令执行完成后再将游戏启动视为完成。"
+
+[advanced_settings_inject_libraries_checkbox]
+src = "Inject Libraries:"
+loc = "注入库："
+
+[advanced_settings_inject_libraries_tooltip]
+src = """
+List of additional DLL paths to inject into the game process. 1 path per line.
+injection will be made via WriteProcessMemory method.
+Example (inject ReShade dll):
+`C:\\Games\\ReShade\\ReShade64.dll`
+"""
+loc = """
+要注入到游戏进程中的额外DLL路径列表。每行一个路径。
+注入将通过WriteProcessMemory方法进行。
+示例（注入ReShade动态链接库）：
+`C:\\Games\\ReShade\\ReShade64.dll`
+"""
+
+# Importer Settings Frame
+[importer_settings_shader_hunting_label]
+src = "Shader Hunting:"
+loc = "着色器调试："
+
+[importer_settings_enable_hunting_checkbox]
+src = "Enable Hunting"
+loc = "启用调试"
+
+[importer_settings_enable_hunting_checkbox_tooltip]
+src = """
+Enabled: Allows to toggle Hunting Mode via Numpad [0] hotkey.
+* [d3dx.ini]: hunting = 2
+Disabled: Hunting Mode is hard disabled.
+* [d3dx.ini]: hunting = 0
+"""
+loc = """
+启用：允许通过小键盘[0]热键切换调试模式。
+* [d3dx.ini]: hunting = 2
+禁用：调试模式被完全禁用。
+* [d3dx.ini]: hunting = 0
+"""
+
+[importer_settings_dump_shaders_checkbox]
+src = "Dump Shaders"
+loc = "导出着色器"
+
+[importer_settings_dump_shaders_checkbox_tooltip]
+src = """
+Enabled: Hunting Mode [Copy Hash] key also saves selected shader as file in ShaderFixes.
+* [d3dx.ini]: marking_actions = clipboard hlsl asm regex
+Disabled: Hunting Mode [Copy Hash] only copies hash of selected shader to clipboard.
+* [d3dx.ini]: marking_actions = clipboard
+"""
+loc = """
+启用：调试模式[复制哈希]键还会将选中的着色器保存为ShaderFixes中的文件。
+* [d3dx.ini]: marking_actions = clipboard hlsl asm regex
+禁用：调试模式[复制哈希]仅将选中着色器的哈希复制到剪贴板。
+* [d3dx.ini]: marking_actions = clipboard
+"""
+
+[importer_settings_error_handling_label]
+src = "Error Handling:"
+loc = "错误处理："
+
+[importer_settings_mute_warnings_checkbox]
+src = "Mute Warnings"
+loc = "静音警告"
+
+[importer_settings_mute_warnings_checkbox_tooltip]
+src = """
+Enabled: No error warnings or beeps whatsoever. Ignorance is bliss.
+* [d3dx.ini]: show_warnings = 0
+Disabled: Ini parser error warnings and beeps on F10 will haunt poor souls.
+* [d3dx.ini]: show_warnings = 1
+"""
+loc = """
+启用：不显示任何错误警告或提示音。无知是福。
+* [d3dx.ini]: show_warnings = 0
+禁用：Ini解析器错误警告和F10提示音将困扰用户。
+* [d3dx.ini]: show_warnings = 1
+"""
+
+[importer_settings_calls_logging_checkbox]
+src = "Calls Logging"
+loc = "调用日志"
+
+[importer_settings_calls_logging_checkbox_tooltip]
+src = """
+Enabled: Log API usage.
+* [d3dx.ini]: calls = 1
+Disabled: Do not log calls. Maximum performance.
+* [d3dx.ini]: calls = 0
+"""
+loc = """
+启用：记录API使用情况。
+* [d3dx.ini]: calls = 1
+禁用：不记录调用。最大性能。
+* [d3dx.ini]: calls = 0
+"""
+
+[importer_settings_debug_logging_checkbox]
+src = "Debug Logging"
+loc = "调试日志"
+
+[importer_settings_debug_logging_checkbox_tooltip]
+src = """
+Enabled: Super verbose debug logging.
+* [d3dx.ini]: debug = 1
+Disabled: No debug logging. Maximum performance.
+* [d3dx.ini]: debug = 0
+"""
+loc = """
+启用：超详细调试日志记录。
+* [d3dx.ini]: debug = 1
+禁用：无调试日志记录。最大性能。
+* [d3dx.ini]: debug = 0
+"""
+
+[importer_settings_importer_folder_label]
+src = "Importer Folder:"
+loc = "导入器文件夹："
+
+[importer_settings_importer_folder_label_dynamic]
+src = "{importer} Folder:"
+loc = "{importer}文件夹："
+
+[importer_settings_importer_folder_entry_tooltip]
+src = """
+Path to folder containing `Mods` folder, `d3dx.ini` and other {importer} resources.
+**Absolute**: Set any arbitrary folder, i.e. `C:/Games/{importer}/`.
+**Relative**: Set any folder **inside** the Launcher folder, i.e. `{importer}/` (default).
+"""
+loc = """
+包含`Mods`文件夹、`d3dx.ini`和其他{importer}资源的文件夹路径。
+**绝对路径**：设置任意文件夹，例如`C:/Games/{importer}/`。
+**相对路径**：设置启动器文件夹**内**的任意文件夹，例如`{importer}/`（默认）。
+"""
+
+[importer_settings_ini_protection_label]
+src = "Ini Protection:"
+loc = "Ini保护："
+
+[importer_settings_enforce_rendering_checkbox]
+src = "Enforce Rendering Settings"
+loc = "强制渲染设置"
+
+[importer_settings_enforce_rendering_checkbox_tooltip]
+src = """
+Enabled: Ensure {importer}-compatible [Rendering] section settings.
+* [d3dx.ini]: texture_hash = {texture_hash}
+* [d3dx.ini]: track_texture_updates = {track_texture_updates}
+Disabled: Settings above will not be forced into d3dx.ini.
+"""
+loc = """
+启用：确保{importer}兼容的[渲染]部分设置。
+* [d3dx.ini]: texture_hash = {texture_hash}
+* [d3dx.ini]: track_texture_updates = {track_texture_updates}
+禁用：以上设置不会被强制写入d3dx.ini。
+"""
+
+# Settings Interface Translations (for settings_tabs_frame.py)
+[settings_title]
+src = "Settings"
+loc = "设置"
+
+[settings_tab_general]
+src = "General"
+loc = "通用"
+
+[settings_tab_launcher]
+src = "Launcher"
+loc = "启动器"
+
+[settings_tab_importer]
+src = "MI"
+loc = "模型导入器"
+
+[settings_tab_advanced]
+src = "Advanced"
+loc = "高级"
+
+[general_settings_texture_streaming_pool_size_label]
+src = "Texture Pool Size:"
+loc = "纹理池大小："
+
+[general_settings_texture_streaming_pool_size_entry_tooltip]
+src = """
+## Controls how much VRAM the game can use for textures:
+
+* Set to **0** **(default)** for **automatic control** (based on available VRAM).
+    ✅ Large enough pool eliminates modded textures loading delay after first load.
+
+* Set to specific value (e.g. 4096) for precise VRAM management.
+
+*Applied to ConsoleVariables → r.Streaming.PoolSize value in Engine.ini*"""
+loc = """
+## 控制游戏可以使用的显存量：
+
+* 设为 **0** **（默认值）** 进行**自动控制**（基于可用显存）。
+    ✅ 足够大的池可以消除模组纹理在首次加载后的加载延迟。
+
+* 设置特定值（如4096）以精确管理显存。
+
+*应用于Engine.ini中的ConsoleVariables → r.Streaming.PoolSize值*"""
+
+[general_settings_texture_streaming_limit_pool_checkbox]
+src = "Limit Pool Size To VRAM"
+loc = "限制池大小到显存"
+
+[general_settings_texture_streaming_limit_pool_checkbox_tooltip]
+src = """
+## Sets the upper limit for how much VRAM the game can use for textures:
+
+* **Enabled** **(default)** – Limits texture pool size based on your GPU's available VRAM.
+    ✅ Helps prevent crashes or stuttering on low VRAM systems.
+    ⚠️ May reduce texture quality or cause pop-ins if too restrictive on high-end GPUs.
+
+* **Disabled** – Unlocks maximum texture pool size, even if it exceeds your GPU's safe limits.
+    ✅ Can improve texture quality and reduce pop-ins on powerful systems.
+    ⚠️ Risk of performance drops, stutters, or crashes if VRAM runs out.
+
+*Applied to ConsoleVariables → r.Streaming.LimitPoolSizeToVRAM value in Engine.ini*"""
+loc = """
+## 设置游戏可用于纹理的显存上限：
+
+* **启用** **（默认值）** – 根据GPU可用显存限制纹理池大小。
+    ✅ 有助于防止低显存系统崩溃或卡顿。
+    ⚠️ 在高端GPU上如果限制过严可能降低纹理质量或导致突然加载。
+
+* **禁用** – 解锁最大纹理池大小，即使超过GPU安全限制。
+    ✅ 可以在性能强大的系统上提高纹理质量并减少突然加载。
+    ⚠️ 如果显存耗尽可能导致性能下降、卡顿或崩溃。
+
+*应用于Engine.ini中的ConsoleVariables → r.Streaming.LimitPoolSizeToVRAM值*"""
+
+[general_settings_mesh_lod_distance_label]
+src = "Mesh LOD Distance:"
+loc = "网格LOD距离："
+
+[general_settings_mesh_lod_distance_entry_tooltip]
+src = """
+## Controls how far game replaces full animated meshes with simplified LoDs:
+
+* Set to **24** **(default)** to force full models as far as the game loads animated objects.
+    ✅ With this value mods are applied as far as you can see.
+    ⚠️ Risk of performance drops for low-end GPUs.
+
+* Set to lower value (e.g. `15`) for better performance.
+    ✅ Reduce FPS cost by allowing the game to use LoD meshes for distant animated objects.
+    ⚠️ LoDs may look wrong due to modded textures being applied to original LoD meshes.
+
+*Applied to ConsoleVariables → r.Kuro.SkeletalMesh.LODDistanceScale value in Engine.ini*"""
+loc = """
+## 控制游戏将完整动画网格替换为简化LOD的距离：
+
+* 设为 **24** **（默认值）** 以在游戏加载动画对象的范围内强制使用完整模型。
+    ✅ 使用此值时，模组效果会应用到可见范围内的所有内容。
+    ⚠️ 低端GPU可能出现性能下降。
+
+* 设置较低的值（如`15`）以获得更好的性能。
+    ✅ 通过允许游戏对远处的动画对象使用LOD网格来减少FPS消耗。
+    ⚠️ 由于模组纹理应用到原始LOD网格，LOD可能看起来不正确。
+
+*应用于Engine.ini中的ConsoleVariables → r.Kuro.SkeletalMesh.LODDistanceScale值*"""
+
+[general_settings_engine_settings_label]
+src = "Engine Settings:"
+loc = "引擎设置："
+
+# HIMI Package Messages
+
+[error_himi_registry_key_not_found]
+src = """
+Honkai Impact 3rd registry key is not found!
+
+Please start the game without FPS tweak, change FPS to any value to create the record and try again.
+
+Note: Tweak is supported only for the Global client and will not work for CN.
+"""
+loc = """
+未找到崩坏3注册表项！
+
+请在不使用FPS调整的情况下启动游戏，更改FPS值以创建记录，然后重试。
+
+注意：此调整仅支持国际服客户端，不适用于国服。
+"""
+
+[error_himi_graphics_settings_not_found]
+src = """
+Graphics Settings record is not found in Honkai Impact 3rd registry!
+
+Please start the game without FPS tweak, change FPS to any value to create the record and try again.
+"""
+loc = """
+在崩坏3注册表中未找到图形设置记录！
+
+请在不使用FPS调整的情况下启动游戏，更改FPS值以创建记录，然后重试。
+"""
+
+[error_himi_unknown_graphics_format]
+src = "Unknown Graphics Settings format: Data type {regtype} is not {expected_type} of REG_BINARY!"
+loc = "未知的图形设置格式：数据类型 {regtype} 不是 REG_BINARY 类型的 {expected_type}！"
+
+[error_himi_fps_key_not_found]
+src = "Unknown Graphics Settings format: \"TargetFrameRateForInLevel\" key not found!"
+loc = "未知的图形设置格式：未找到\"TargetFrameRateForInLevel\"键！"
+
+[error_himi_fps_unlock_failed]
+src = "Failed to configure FPS: {error_text}"
+loc = "配置FPS失败：{error_text}"
+
+[general_settings_launch_options_entry_tooltip_wwmi]
+src = """
+**Enabled**: Start game via **Client-Win64-Shipping.exe** with specified command line arguments.
+
+- Disable intro: -SkipSplash
+
+**Disabled (default)**: Start game normally via **Wuthering Waves.exe** (most reliable way).
+<font color="red">⚠ Game may crash with this option enabled! ⚠</font>
+"""
+loc = """
+**启用**：通过 **Client-Win64-Shipping.exe** 使用指定的命令行参数启动游戏。
+
+- 禁用开场动画：-SkipSplash
+
+**禁用（默认）**：通过 **Wuthering Waves.exe** 正常启动游戏（最可靠的方式）。
+<font color="red">⚠ 启用此选项可能导致游戏崩溃！⚠</font>
+"""
+
+[general_settings_launch_options_entry_tooltip_default]
+src = """
+**Enabled**: Start game exe with specified command line arguments.
+**Disabled**: Ignore specified command line arguments and start game exe normally.
+"""
+loc = """
+**启用**：使用指定的命令行参数启动游戏可执行文件。
+**禁用**：忽略指定的命令行参数，正常启动游戏可执行文件。
+"""
+
+[general_settings_unlock_fps_checkbox]
+src = "Unlock FPS:"
+loc = "解锁帧率："

@@ -1,0 +1,250 @@
+[top_bar_efmi_button_tooltip]
+src = "Arknights: Endfield Model Importer"
+loc = "Arknights: Endfield Model Importer"
+
+[general_settings_force_ultra_high_lod_bias_label]
+src = "Max LOD Bias"
+loc = "最大 LOD 偏移"
+
+[general_settings_force_ultra_high_lod_bias_tooltip]
+src = """
+**Enabled**: Set **LOD Bias** to **Ultra High** to force full resolution LOD textures.
+**Disabled**: Keep **LOD Bias** setting untouched. Select this if **Use All Mips** is enabled below.
+"""
+loc = """
+**启用**：将 **LOD 偏移 (LOD Bias)** 设置为 **超高 (Ultra High)**，以强制使用全分辨率的 LOD 纹理。
+**禁用**：保持 **LOD 偏移** 设置不变。如果下方启用了 **使用所有 Mip 级别 (Use All Mips)**，请选择此项。
+"""
+
+[locale_list_conjunction_or]
+src = "or"
+loc = "或"
+
+[locale_list_conjunction_and]
+src = "and"
+loc = "和"
+
+[locale_list_conjunction_spacing]
+src = "\\s"
+loc = ""
+
+[locale_list_separator]
+src = ", "
+loc = "、"
+
+[general_settings_game_folder_tooltip]
+src = """
+## Path to the folder containing the game executable
+* Usually named: {game_folder_names:bold:or_list}.
+* Contains files: {game_exe_names:bold:or_list}.
+* Contains folders: {game_folder_children:bold:and_list}.
+"""
+loc = """
+## 包含游戏可执行文件的文件夹路径
+* 通常命名为：{game_folder_names:bold:or_list}。
+* 包含文件：{game_exe_names:bold:or_list}。
+* 包含文件夹：{game_folder_children:bold:and_list}。
+"""
+
+[general_settings_mesh_lod_offset_label]
+src = "Mesh LOD Offset:"
+loc = "模型 LOD 偏移："
+
+[general_settings_mesh_lod_offset_tooltip]
+src = """
+## Controls LoD meshes deploying behavior (when full animated models are replaced with simplified ones):
+
+* Default is **-10**, known range where full mesh remains always loaded is from **-1** to **-12** (depending on PC).
+* Mods are currently created for full meshes and cannot (easily) be applied to LoDs.
+
+*Applied to CVars=r.Kuro.SkeletalMesh.LODDistanceScaleDeviceOffset value in all sections of DeviceProfiles.ini*
+"""
+loc = """
+## 控制 LOD 模型的切换行为（当完整动画模型被简化模型替换时）：
+
+* 默认值为 **-10**。已知在 **-1** 到 **-12** 的范围内完整模型始终保持加载（取决于电脑性能）。
+* 当前模组仅为完整模型制作，无法（或很难）应用到 LOD 模型。
+
+*应用于 DeviceProfiles.ini 中所有区段的 CVars=r.Kuro.SkeletalMesh.LODDistanceScaleDeviceOffset*
+"""
+
+[general_settings_texture_boost_label]
+src = "Texture Boost:"
+loc = "Ускорение текстур:"
+
+[general_settings_texture_boost_entry_tooltip]
+src = """
+## Controls how aggressively higher-resolution textures are pushed to VRAM:
+
+Serves as a multiplier to streaming priorities configured for textures.
+
+* If modded textures are not loading, try increasing it to **25** or **30**.
+    - ⚡ Too high values may increase VRAM usage and can cause stuttering if the pool is small.
+
+This value may require fine tuning to minimize modded textures loading delay:
+
+* Start tuning with **20.0** **(default)**.
+    - ✅ This baseline value should work for most PCs.
+
+* If modded textures are loading fine, gradually decrease until small textures (like eyes) start breaking.
+    - ✅ A value just above this “breaking point” typically gives minimal texture loading delay while staying VRAM-friendly.
+
+*Applied to CVars=r.Streaming.Boost value in all sections of DeviceProfiles.ini*
+"""
+loc = """
+## 控制高分辨率纹理被推送到显存（VRAM）的激进程度：
+
+作为纹理流送优先级的倍率因子。
+
+* 如果模组纹理未能加载，请尝试提高到 **25** 或 **30**。
+    - ⚡ 数值过高会增加显存占用，当纹理池较小时可能导致卡顿。
+
+该数值可能需要精细调节，以尽量减少模组纹理加载延迟：
+
+* 从 **20.0** **（默认）** 开始调整。
+    - ✅ 该基础值适用于大多数电脑。
+
+* 如果模组纹理加载正常，可逐步降低数值，直到小纹理（如眼睛）开始出现异常。
+    - ✅ 略高于该“临界点”的数值通常能在保持显存友好的同时，将加载延迟降到最低。
+
+*应用于 DeviceProfiles.ini 中所有区段的 CVars=r.Streaming.Boost*
+"""
+
+[general_settings_texture_min_boost_label]
+src = "Minimal Boost:"
+loc = "最小加速："
+
+[general_settings_texture_min_boost_entry_tooltip]
+src = """
+## Defines a minimum streaming priority for textures:
+
+Values above **0** **(default)** set a priority floor that texture streaming priorities cannot go below.
+
+- ⚡ Use only if modded textures aren't loading regardless configured **Texture Boost** value.
+- ⚡ Same as with **Texture Boost**, always look for small textures (like eyes) when tuning the value.
+
+*Applied to CVars=r.Streaming.MinBoost value in all sections of DeviceProfiles.ini*
+"""
+loc = """
+## 定义纹理流送的最小优先级：
+
+高于 **0**（默认）的数值会设定一个下限，纹理流送优先级不会低于该值。
+
+- ⚡ 仅在无论如何调整 **纹理加速（Texture Boost）** 后模组纹理仍无法加载时使用。
+- ⚡ 与 **纹理加速** 相同，调节时应重点观察小纹理（如眼睛）。
+
+*应用于 DeviceProfiles.ini 中所有区段的 CVars=r.Streaming.MinBoost*
+"""
+
+[general_settings_use_all_mips_label]
+src = "Use All Mips"
+loc = "使用所有 Mip 级别"
+
+[general_settings_use_all_mips_tooltip]
+src = """
+## Controls whether texture resolution limits are applied:
+
+* **Enabled** **(default)**: Disable resolution restrictions from LOD Bias.
+    - ✅ Allows to load full resolution textures at cost of higher VRAM usage.
+    - ⚡ If it has no effect or consumes too much VRAM, try to enable **Max LOD Bias** instead.
+
+* **Disabled**: Enable resolution restrictions from LOD Bias.
+    - ⚡ Modded textures won't load if disabled without Max (Ultra High) LOD Bias enabled.
+
+*Applied to CVars=r.Streaming.UseAllMips value in all sections of DeviceProfiles.ini*
+"""
+loc = """
+## 控制是否应用纹理分辨率限制：
+
+* **启用** **（默认）**：移除由 LOD Bias 施加的分辨率限制。
+    - ✅ 允许加载完整分辨率纹理，但会增加显存（VRAM）占用。
+    - ⚡ 如果该选项无效果或占用显存过多，请改为启用 **最大 LOD Bias**。
+
+* **禁用**：启用由 LOD Bias 施加的分辨率限制。
+    - ⚡ 若未启用最大（超高）LOD Bias，模组纹理将无法加载。
+
+*应用于 DeviceProfiles.ini 中所有区段的 CVars=r.Streaming.UseAllMips*
+"""
+
+[general_settings_texture_streaming_pool_size_entry_tooltip]
+src = """
+## Controls how much VRAM the game can use for textures:
+
+* Set to **0** **(default)** for **automatic control** (based on available VRAM).
+* Set to specific value (e.g. 4096) for precise VRAM management.
+
+*Applied to CVars=r.Streaming.PoolSize value in all sections of DeviceProfiles.ini*
+"""
+loc = """
+## 控制游戏可用于纹理的显存（VRAM）容量：
+
+* 设为 **0** **（默认）** 可进行 **自动控制**（基于可用显存）。
+* 设置为具体数值（如 4096）可精确管理显存用量。
+
+*应用于 DeviceProfiles.ini 中所有区段的 CVars=r.Streaming.PoolSize*
+"""
+
+[general_settings_texture_streaming_limit_pool_checkbox]
+src = "Limit Pool Size To VRAM"
+loc = "限制池大小到显存"
+
+[general_settings_texture_streaming_limit_pool_checkbox_tooltip]
+src = """
+## Sets the upper limit for how much VRAM the game can use for textures:
+
+* **Enabled** **(default)** – Limits texture pool size based on your GPU's available VRAM.
+    - ✅ Helps prevent crashes or stuttering on low VRAM systems.
+    - ⚡ May reduce texture quality or cause pop-ins if too restrictive on high-end GPUs.
+
+* **Disabled** – Unlocks maximum texture pool size, even if it exceeds your GPU's safe limits.
+    - ✅ Can improve texture quality and reduce pop-ins on powerful systems.
+    - ⚡ Risk of performance drops, stutters, or crashes if VRAM runs out.
+
+*Applied to CVars=r.Streaming.LimitPoolSizeToVRAM value in all sections of DeviceProfiles.ini*
+"""
+loc = """
+## 设置游戏可用于纹理的显存上限：
+
+* **启用** **（默认）** – 根据显卡可用显存限制纹理池大小。
+    - ✅ 有助于防止低显存系统出现崩溃或卡顿。
+    - ⚡ 在高端显卡上可能降低纹理质量或产生加载弹出。
+
+* **禁用** – 解除纹理池大小限制，即使超过显卡安全显存上限。
+    - ✅ 在高性能系统上可提高纹理质量并减少弹出。
+    - ⚡ 若显存耗尽，可能导致性能下降、卡顿或崩溃。
+
+*应用于 DeviceProfiles.ini 中所有区段的 CVars=r.Streaming.LimitPoolSizeToVRAM*
+"""
+
+[general_settings_texture_streaming_fixed_pool_size_checkbox]
+src = "Use Fixed Pool Size"
+loc = "使用固定纹理池大小"
+
+[general_settings_texture_streaming_fixed_pool_size_checkbox_tooltip]
+src = """
+## Controls automatic pool size grow/shrink capabilities:
+
+* **Enabled** **(default)** – Locks texture pool size to value calculated on game start.
+    - ✅ Eliminates modded textures loading delay by minimizing texture mip levels pop in/out.
+    - ⚡ Pool size is locked on game start, low end GPU users may want to close as much apps as possible.
+
+* **Disabled** – Allows game engine to dynamically resize pool.
+    - ✅ Provides more freedom to both engine (allows mips streaming) and user (no need to close apps).
+    - ⚡ Introduces short delay to modded textures loading unless **Texture Boost** values is perfectly tuned.
+
+*Applied to CVars=r.Streaming.UseFixedPoolSize value in all sections of DeviceProfiles.ini*
+"""
+loc = """
+## 控制纹理池是否允许自动增减大小：
+
+* **启用** **（默认）** – 将纹理池大小锁定为游戏启动时计算的数值。
+    - ✅ 通过减少纹理 Mip 等级频繁切换，消除模组纹理加载延迟。
+    - ⚡ 纹理池大小在启动时固定，低端显卡用户建议在启动前尽量关闭其他程序。
+
+* **禁用** – 允许引擎动态调整纹理池大小。
+    - ✅ 为引擎（Mip 流送）和用户（无需关闭其他程序）提供更大灵活性。
+    - ⚡ 若 **纹理加速（Texture Boost）** 未正确调节，可能会出现短暂的模组纹理加载延迟。
+
+*应用于 DeviceProfiles.ini 中所有区段的 CVars=r.Streaming.UseFixedPoolSize*
+"""
+
