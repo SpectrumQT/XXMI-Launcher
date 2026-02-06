@@ -148,3 +148,8 @@ class UIScrollableFrame(CTkScrollableFrame, UIElementBase):
     def get_resource_path(self, resource_path: str = ''):
         resource_path = self.master.master.master.get_resource_path()
         return f'{resource_path}/{str(self.__class__.__qualname__)}'
+
+    def _show(self):
+        self.bind_all("<MouseWheel>", self._mouse_wheel_all, add="+")
+        super()._show()
+

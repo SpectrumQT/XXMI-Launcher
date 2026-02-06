@@ -35,11 +35,11 @@ class MessageFrame(UIFrame):
         self._offset_x = 0
         self._offset_y = 0
 
-        min_width = 400
-        max_width = 600
+        min_width = int(self._apply_widget_scaling(400))
+        max_width = int(self._apply_widget_scaling(600))
 
-        min_height = 100
-        max_height = 310
+        min_height = int(self._apply_widget_scaling(100))
+        max_height = int(self._apply_widget_scaling(310))
 
         min_button_width = 100
 
@@ -393,10 +393,9 @@ class ContentFrame(UIScrollableFrame):
 
     def destroy(self):
         self.message_widget.unbind_all('<MouseWheel>')
-        self.message_widget.unbind_all('<Button-4>')
-        self.message_widget.unbind_all('<Button-5>')
         self.message_widget.destroy()
         self.message_widget = None
+        super().destroy()
 
 
 class RadioWidget:
