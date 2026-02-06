@@ -14,6 +14,7 @@ class IniHandlerSettings:
     option_value_spacing: bool = True
     inline_comments: bool = False
     add_section_spacing: bool = False
+    right_split: bool = False
 
 
 class IniHandlerSection:
@@ -65,11 +66,19 @@ class IniHandlerSection:
             if flag_modified:
                 self.modified = True
 
-    def remove_option(self, name, value=None):
+    def remove_option(self, name, value=None, not_equal=False):
         if value is None:
+            # Filter out all options with given name
             filter_func = lambda option: option[0] != name
         else:
-            filter_func = lambda option: option[0] != name or (option[0] == name and option[1] != str(value))
+            if not_equal:
+                # Filter out all options with given name but different value
+                # Useful to make sure that section doesn't contain duplicate options with different values
+                filter_func = lambda option: option[0] != name or (option[0] == name and option[1] == str(value))
+            else:
+                # Filter out all options with given name and same value
+                # Useful when ini contains multiple option with same name (deviates from classic format)
+                filter_func = lambda option: option[0] != name or (option[0] == name and option[1] != str(value))
 
         options = list(filter(filter_func, self.options))
 
@@ -112,7 +121,10 @@ class IniHandler:
     def from_file(self, f):
         log.debug(f'Parsing ini...')
         section_pattern = re.compile(r'^\[(.+)\]')
-        option_pattern = re.compile(r'^([\w\.\s$]*)\s*=(?!=)\s*(.+)')
+        if not self.cfg.right_split:
+            option_pattern = re.compile(r'^([\w\.\s$]*)\s*=(?!=)\s*(.+)')
+        else:
+            option_pattern = re.compile(r'^([\w\.\s$=]*)\s*=(?!=)\s*(.+)')
 
         self.sections = {}
         current_section = None
@@ -187,7 +199,7 @@ class IniHandler:
             section = self.add_section(section_name)
         section.set_option(option_name, option_value, flag_modified=modified, overwrite=overwrite, comments=comments)
 
-    def remove_option(self, option_name, section_name=None, option_value=None):
+    def remove_option(self, option_name, section_name=None, option_value=None, not_equal=False):
         if section_name:
             section = self.get_section(section_name)
             sections = [section] if section else []
@@ -195,7 +207,7 @@ class IniHandler:
             sections = self.sections.values()
 
         for section in sections:
-            section.remove_option(option_name, option_value)
+            section.remove_option(option_name, option_value, not_equal)
 
     def get_option_values(self, option_name, section_name=None):
         if section_name:

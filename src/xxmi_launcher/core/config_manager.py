@@ -194,6 +194,16 @@ class AppConfig:
         except:
             pass
 
+    def run_patch_201(self):
+        importer = self.Importers.__dict__['WWMI']
+        try:
+            importer.Importer.force_max_lod_bias = False
+            importer.Importer.texture_streaming_use_all_mips = True
+            importer.Importer.mesh_lod_distance_scale = 1.0
+            importer.Importer.mesh_lod_distance_offset = -10
+        except:
+            pass
+
     def upgrade(self, old_version, new_version):
         # Save config to file and exit early if old version is empty (aka fresh installation)
         if not old_version:
@@ -207,6 +217,7 @@ class AppConfig:
             '1.8.4': self.run_patch_184,
             '1.8.6': self.run_patch_186,
             '1.9.5': self.run_patch_195,
+            '2.0.1': self.run_patch_201,
         }
         applied_patches = []
         for patch_version, patch_func in patches.items():

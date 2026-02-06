@@ -89,12 +89,14 @@ class WWMIConfig(ModelImporterConfig):
             'tick.AllowAsyncTickDispatch': 1,
         }
     })
-    mesh_lod_distance_scale: int = 24
-    mesh_lod_distance_offset: int = -50
+    mesh_lod_distance_scale: float = 1.0
+    mesh_lod_distance_offset: int = -10
     texture_streaming_boost: float = 20.0
+    texture_streaming_min_boost: float = 0.0
     texture_streaming_use_all_mips: bool = True
     texture_streaming_pool_size: int = 0
     texture_streaming_limit_to_vram: bool = True
+    texture_streaming_fixed_pool_size: bool = True
 
 
 @dataclass
@@ -309,18 +311,18 @@ class WWMIPackage(ModelImporterPackage):
                 """).format(error_text=e)) from e
 
     def update_engine_ini(self, game_path: Path):
-        Events.Fire(Events.Application.StatusUpdate(status=L('status_updating_engine_ini', 'Updating Engine.ini...')))
+        Events.Fire(Events.Application.StatusUpdate(status=L('status_updating_engine_ini', 'Updating {file_name}...').format(file_name='DeviceProfiles.ini')))
 
-        engine_ini_path = game_path / 'Client' / 'Saved' / 'Config' / 'WindowsNoEditor' / 'Engine.ini'
+        device_profiles_ini_path = game_path / 'Client' / 'Saved' / 'Config' / 'WindowsNoEditor' / 'DeviceProfiles.ini'
 
-        if not engine_ini_path.exists():
-            Paths.verify_path(engine_ini_path.parent)
-            with open(engine_ini_path, 'w', encoding='utf-8') as f:
+        if not device_profiles_ini_path.exists():
+            Paths.verify_path(device_profiles_ini_path.parent)
+            with open(device_profiles_ini_path, 'w', encoding='utf-8') as f:
                 f.write('')
 
-        Events.Fire(Events.Application.VerifyFileAccess(path=engine_ini_path, write=True))
-        with open(engine_ini_path, 'r', encoding='utf-8') as f:
-            ini = IniHandler(IniHandlerSettings(option_value_spacing=False, inline_comments=True, add_section_spacing=True), f)
+        Events.Fire(Events.Application.VerifyFileAccess(path=device_profiles_ini_path, write=True))
+        with open(device_profiles_ini_path, 'r', encoding='utf-8') as f:
+            ini = IniHandler(IniHandlerSettings(option_value_spacing=False, inline_comments=True, add_section_spacing=True, right_split=True), f)
 
         # if '/Script/Engine.RendererRTXSettings' in Config.Active.Importer.engine_ini.keys():
         #     if ini.get_section('/Script/Engine.RendererRTXSettings') is not None:
@@ -338,23 +340,22 @@ class WWMIPackage(ModelImporterPackage):
                 for option_name, option_value in section_data.items():
                     ini.set_option(section_name, option_name, option_value)
 
-        # Remove UsingNewKuroStreaming option (ancient 3rd-party configs set it to 0 with bad results)
-        ini.remove_option('r.Streaming.UsingNewKuroStreaming')
-
-        # Remove Boost option if it matches configured MinBoost (mostly to clear one from pre-3.0 auto-config)
-        ini.remove_option('r.Streaming.Boost',
-                          section_name='ConsoleVariables',
-                          option_value=Config.Importers.WWMI.Importer.texture_streaming_boost)
+        # # Remove UsingNewKuroStreaming option (ancient 3rd-party configs set it to 0 with bad results)
+        # ini.remove_option('r.Streaming.UsingNewKuroStreaming')
+        #
+        # # Remove Boost option if it matches configured MinBoost (mostly to clear one from pre-3.0 auto-config)
+        # ini.remove_option('r.Streaming.Boost',
+        #                   section_name='ConsoleVariables',
+        #                   option_value=Config.Importers.WWMI.Importer.texture_streaming_boost)
 
         console_variables_options = {
             # Controls how far game starts to replace weighted meshes with LoDs
-            # Mods contain mesh metadata only for original model and won't apply to LoDs
-            'r.Kuro.SkeletalMesh.LODDistanceScale': Config.Importers.WWMI.Importer.mesh_lod_distance_scale,
-            # Controls how far from camera character is replaced with LOD
             'r.Kuro.SkeletalMesh.LODDistanceScaleDeviceOffset': Config.Importers.WWMI.Importer.mesh_lod_distance_offset,
             # Controls how aggressively higher resolution textures are pushed to VRAM
             # Mods contain texture hashes only for original model and won't apply to LoDs
-            'r.Streaming.MinBoost': Config.Importers.WWMI.Importer.texture_streaming_boost,
+            'r.Streaming.Boost': Config.Importers.WWMI.Importer.texture_streaming_boost,
+            # Controls the minimal texture boost floor value
+            'r.Streaming.MinBoost': Config.Importers.WWMI.Importer.texture_streaming_min_boost,
             # Controls whether texture resolution limits imposed by LOD Bias are applied
             'r.Streaming.UseAllMips': int(Config.Importers.WWMI.Importer.texture_streaming_use_all_mips),
             # Controls amount of VRAM used for textures streaming
@@ -362,27 +363,39 @@ class WWMIPackage(ModelImporterPackage):
             'r.Streaming.PoolSize': Config.Importers.WWMI.Importer.texture_streaming_pool_size,
             # Prevents pool size from exceeding VRAM
             # Doesn't explicitly affect mods, but acts as failsafe for low and mid-range GPUs for PoolSize=0
-            'r.Streaming.LimitPoolSizeToVRAM': int(Config.Importers.WWMI.Importer.texture_streaming_limit_to_vram)
+            'r.Streaming.LimitPoolSizeToVRAM': int(Config.Importers.WWMI.Importer.texture_streaming_limit_to_vram),
+            # Controls whether pool size can grow/shrink automatically or is locked to a fixed value
+            # When enabled, minimizes mip levels pop in/out at cost of pool size being locked after game start
+            'r.Streaming.UseFixedPoolSize': int(Config.Importers.WWMI.Importer.texture_streaming_fixed_pool_size),
         }
         log.debug(f'Using console variables: {console_variables_options}')
 
-        for option_name, option_value in console_variables_options.items():
-            # Remove duplicate settings
-            option_values = ini.get_option_values(option_name)
-            if (len(option_values) == 1 and len(option_values.get('ConsoleVariables', {})) != 1) or len(option_values) > 1:
-                ini.remove_option(option_name)
-            # Set option value
-            ini.set_option('ConsoleVariables', option_name, option_value)
+        section_names = [
+            'Windows_Highest DeviceProfile', 'Windows_VeryHigh DeviceProfile', 'Windows_High DeviceProfile',
+            'Windows_Mid DeviceProfile', 'Windows_Low DeviceProfile', 'Windows_Lowest DeviceProfile'
+        ]
+
+        for section_name in section_names:
+
+            for option_name, option_value in console_variables_options.items():
+                # Append `CVars=` "prefix" to option name
+                option_name = f'CVars={option_name}'
+                # Remove duplicate settings
+                option_values = ini.get_option_values(option_name, section_name=section_name)
+                if len(option_values) > 1:
+                    ini.remove_option(option_name, section_name=section_name, option_value=option_value, not_equal=True)
+                # Set option value
+                ini.set_option(section_name, option_name, option_value)
 
         if ini.is_modified():
-            with open(engine_ini_path, 'w', encoding='utf-8') as f:
+            with open(device_profiles_ini_path, 'w', encoding='utf-8') as f:
                 f.write(ini.to_string())
 
     def update_game_user_settings_ini(self, game_path: Path):
         if not Config.Importers.WWMI.Importer.unlock_fps:
             return
 
-        Events.Fire(Events.Application.StatusUpdate(status=L('status_updating_game_user_settings', 'Updating GameUserSettings.ini...')))
+        Events.Fire(Events.Application.StatusUpdate(status=L('status_updating_file', 'Updating {file_name}...').format(file_name='GameUserSettings.ini')))
 
         ini_path = game_path / 'Client' / 'Saved' / 'Config' / 'WindowsNoEditor' / 'GameUserSettings.ini'
 

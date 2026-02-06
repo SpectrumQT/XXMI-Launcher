@@ -49,6 +49,18 @@ def remove_read_only(file_path: Path):
         ).format(path=file_path, error_text=e))
 
 
+def set_read_only(file_path: Path):
+    try:
+        os.chmod(
+            file_path,
+            stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH
+        )
+    except Exception as e:
+        raise NoWriteAccessError(L('error_set_readonly_failed',
+            'Failed to set Read Only flag on file {path}: {error_text}!'
+        ).format(path=file_path, error_text=e))
+
+
 def assert_file_read(file_path: Path, absolute=True):
     if not file_path.exists():
         raise FileNotFound(L('error_file_not_exist', "File '{path}' does not exist!").format(path=file_path))

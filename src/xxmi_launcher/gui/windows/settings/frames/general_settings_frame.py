@@ -69,7 +69,7 @@ class GeneralSettingsFrame(UIScrollableFrame):
             #  Performance Tweaks
             if Vars.Launcher.active_importer.get() == 'WWMI':
                 tweaks_frame.put(ApplyTweaksCheckbox(tweaks_frame)).grid(row=0, column=1, padx=(20, 10), pady=(0, 0), sticky='w')
-                tweaks_frame.put(OpenEngineIniButton(tweaks_frame)).grid(row=0, column=2, padx=(10, 20), pady=(0, 0), sticky='e')
+                tweaks_frame.put(OpenGameConfigButton(tweaks_frame)).grid(row=0, column=2, padx=(10, 20), pady=(0, 0), sticky='e')
 
         if Vars.Launcher.active_importer.get() == 'WWMI':
             self.put(EngineSettingsLabel(self)).grid(row=6, column=0, padx=(20, 10), pady=(0, 20), sticky='w')
@@ -209,24 +209,25 @@ class TextureStreamingFrame(UIFrame):
 
         self.grid_columnconfigure(0, weight=100)
 
-        self.put(MeshLODDistanceLabel(self)).grid(row=0, column=0, padx=(0, 0), pady=(0, 0), sticky='w')
-        self.put(MeshLODDistanceEntry(self)).grid(row=0, column=1, padx=(10, 0), pady=(0, 0), sticky='w')
-        self.grab(MeshLODDistanceLabel).set_tooltip(self.grab(MeshLODDistanceEntry))
+        self.put(TextureStreamingBoostLabel(self)).grid(row=0, column=0, padx=(0, 0), pady=(0, 0), sticky='w')
+        self.put(TextureStreamingBoostEntry(self)).grid(row=0, column=1, padx=(10, 0), pady=(0, 0), sticky='w')
+        self.grab(TextureStreamingBoostLabel).set_tooltip(self.grab(TextureStreamingBoostEntry))
 
         self.put(MeshLODDistanceOffsetLabel(self)).grid(row=0, column=2, padx=(30, 0), pady=(0, 0), sticky='w')
         self.put(MeshLODDistanceOffsetEntry(self)).grid(row=0, column=3, padx=(10, 0), pady=(0, 0), sticky='w')
         self.grab(MeshLODDistanceOffsetLabel).set_tooltip(self.grab(MeshLODDistanceOffsetEntry))
 
-        self.put(TextureStreamingBoostLabel(self)).grid(row=1, column=0, padx=(0, 0), pady=(15, 0), sticky='w')
-        self.put(TextureStreamingBoostEntry(self)).grid(row=1, column=1, padx=(10, 0), pady=(15, 0), sticky='w')
-        self.grab(TextureStreamingBoostLabel).set_tooltip(self.grab(TextureStreamingBoostEntry))
+        self.put(TextureStreamingMinBoostLabel(self)).grid(row=1, column=0, padx=(0, 0), pady=(15, 0), sticky='w')
+        self.put(TextureStreamingMinBoostEntry(self)).grid(row=1, column=1, padx=(10, 0), pady=(15, 0), sticky='w')
+        self.grab(TextureStreamingMinBoostLabel).set_tooltip(self.grab(TextureStreamingMinBoostEntry))
 
         self.put(TextureStreamingUseAllMipsCheckbox(self)).grid(row=1, column=2, padx=(30, 0), pady=(15, 0), sticky='w', columnspan=2)
 
-        self.put(TextureStreamingPoolSizeLabel(self)).grid(row=2, column=0, padx=(0, 0), pady=(15, 0), sticky='w')
-        self.put(TextureStreamingPoolSizeEntry(self)).grid(row=2, column=1, padx=(10, 0), pady=(15, 0), sticky='w')
+        self.put(TextureStreamingPoolSizeLabel(self)).grid(row=2, column=0, padx=(0, 0), pady=(10, 0), sticky='w', rowspan=2)
+        self.put(TextureStreamingPoolSizeEntry(self)).grid(row=2, column=1, padx=(10, 0), pady=(10, 0), sticky='w', rowspan=2)
         self.grab(TextureStreamingPoolSizeLabel).set_tooltip(self.grab(TextureStreamingPoolSizeEntry))
         self.put(TextureStreamingLimitPoolToVramCheckbox(self)).grid(row=2, column=2, padx=(30, 0), pady=(15, 0), sticky='w', columnspan=2)
+        self.put(TextureStreamingFixedPoolSizeCheckbox(self)).grid(row=3, column=2, padx=(30, 0), pady=(15, 0), sticky='w', columnspan=2)
 
 
 class GameFolderLabel(UILabel):
@@ -666,38 +667,38 @@ class DisableWoundedEffectCheckbox(UICheckbox):
             self.configure(state='disabled')
 
 
-class MeshLODDistanceLabel(UILabel):
-    def __init__(self, master):
-        super().__init__(
-            text=L('general_settings_mesh_lod_distance_label', 'Mesh LOD Distance:'),
-            font=('Microsoft YaHei', 14),
-            fg_color='transparent',
-            master=master)
-
-
-class MeshLODDistanceEntry(UIEntry):
-    def __init__(self, master):
-        super().__init__(
-            textvariable=Vars.Active.Importer.mesh_lod_distance_scale,
-            input_filter='INT',
-            width=40,
-            height=36,
-            font=('Arial', 14),
-            master=master)
-
-        self.set_tooltip(L('general_settings_mesh_lod_distance_entry_tooltip', """
-            ## Controls how far game replaces full animated meshes with simplified LoDs:
-
-            * Set to **24** **(default)** to force full models as far as the game loads animated objects.
-                ✅ With this value mods are applied as far as you can see.
-                ⚠️ Risk of performance drops for low-end GPUs.
-
-            * Set to lower value (e.g. `15`) for better performance.
-                ✅ Reduce FPS cost by allowing the game to use LoD meshes for distant animated objects.
-                ⚠️ LoDs may look wrong due to modded textures being applied to original LoD meshes.
-
-            *Applied to ConsoleVariables → r.Kuro.SkeletalMesh.LODDistanceScale value in Engine.ini*
-        """))
+# class MeshLODDistanceLabel(UILabel):
+#     def __init__(self, master):
+#         super().__init__(
+#             text=L('general_settings_mesh_lod_distance_label', 'Mesh LOD Distance:'),
+#             font=('Microsoft YaHei', 14),
+#             fg_color='transparent',
+#             master=master)
+#
+#
+# class MeshLODDistanceEntry(UIEntry):
+#     def __init__(self, master):
+#         super().__init__(
+#             textvariable=Vars.Active.Importer.mesh_lod_distance_scale,
+#             input_filter='FLOAT',
+#             width=40,
+#             height=36,
+#             font=('Arial', 14),
+#             master=master)
+#
+#         self.set_tooltip(L('general_settings_mesh_lod_distance_entry_tooltip', """
+#             ## Controls how far game replaces full animated meshes with simplified LoDs:
+#
+#             * Set to **1** **(default)** to force full models as far as the game loads animated objects.
+#                 - ✅ With this value mods are applied as far as you can see.
+#                 - ⚡ Risk of performance drops for low-end GPUs.
+#
+#             * Set to lower value (e.g. `15`) for better performance.
+#                 - ✅ Reduce FPS cost by allowing the game to use LoD meshes for distant animated objects.
+#                 - ⚡ LoDs may look wrong due to modded textures being applied to original LoD meshes.
+#
+#             *Applied to CVars=r.Kuro.SkeletalMesh.LODDistanceScale value in all sections of DeviceProfiles.ini*
+#         """))
 
 
 class MeshLODDistanceOffsetLabel(UILabel):
@@ -720,11 +721,12 @@ class MeshLODDistanceOffsetEntry(UIEntry):
             master=master)
 
         self.set_tooltip(L('general_settings_mesh_lod_offset_tooltip', """
-            ## Controls how far from camera character is replaced with LOD:
+            ## Controls LoD meshes deploying behavior (when full animated models are replaced with simplified ones):
             
-            * Set to **-50** **(default)** to keep character modded in flight, cutscenes, etc.
+            * Default is **-10**, known range where full mesh remains always loaded is from **-1** to **-12** (depending on PC).
+            * Mods are currently created for full meshes and cannot (easily) be applied to LoDs.
                 
-            *Applied to ConsoleVariables → r.Kuro.SkeletalMesh.LODDistanceScaleDeviceOffset value in Engine.ini*
+            *Applied to CVars=r.Kuro.SkeletalMesh.LODDistanceScaleDeviceOffset value in all sections of DeviceProfiles.ini*
         """))
 
 
@@ -748,19 +750,53 @@ class TextureStreamingBoostEntry(UIEntry):
             master=master)
 
         self.set_tooltip(L('general_settings_texture_boost_entry_tooltip', """
-            ## Controls how aggressively higher resolution textures are pushed to VRAM:
+            ## Controls how aggressively higher-resolution textures are pushed to VRAM:
             
-            This value may require fine tuning to minimize textures loading delay (or to make it work):
+            Serves as a multiplier to streaming priorities configured for textures.
+            
+            * If modded textures are not loading, try increasing it to **25** or **30**.
+                - ⚡ Too high values may increase VRAM usage and can cause stuttering if the pool is small.
+
+            This value may require fine tuning to minimize modded textures loading delay:
             
             * Start tuning with **20.0** **(default)**.
-                ✅ This baseline value should work for most PCs.
-                
-            * If modded textures are not loading, try increasing it to **25** or **30**.
+                - ✅ This baseline value should work for most PCs.
+            
+            * If modded textures are loading fine, gradually decrease until small textures (like eyes) start breaking.
+                - ✅ A value just above this “breaking point” typically gives minimal texture loading delay while staying VRAM-friendly.
+            
+            *Applied to CVars=r.Streaming.Boost value in all sections of DeviceProfiles.ini*
+        """))
 
-            * If modded textures are loading fine, start decreasing it until small textures like eyes break.
-                ✅ Value just above a breaking point should net minimal textures loading delay.
-                
-            *Applied to ConsoleVariables → r.Streaming.MinBoost value in Engine.ini*
+
+class TextureStreamingMinBoostLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text=L('general_settings_texture_min_boost_label', 'Minimal Boost:'),
+            font=('Microsoft YaHei', 14),
+            fg_color='transparent',
+            master=master)
+
+
+class TextureStreamingMinBoostEntry(UIEntry):
+    def __init__(self, master):
+        super().__init__(
+            textvariable=Vars.Active.Importer.texture_streaming_min_boost,
+            input_filter='FLOAT',
+            width=60,
+            height=36,
+            font=('Arial', 14),
+            master=master)
+
+        self.set_tooltip(L('general_settings_texture_min_boost_entry_tooltip', """
+            ## Defines a minimum streaming priority for textures:
+            
+            Values above **0** **(default)** set a priority floor that texture streaming priorities cannot go below.
+
+            - ⚡ Use only if modded textures aren't loading regardless configured **Texture Boost** value.
+            - ⚡ Same as with **Texture Boost**, always look for small textures (like eyes) when tuning the value.
+            
+            *Applied to CVars=r.Streaming.MinBoost value in all sections of DeviceProfiles.ini*
         """))
 
 
@@ -774,13 +810,13 @@ class TextureStreamingUseAllMipsCheckbox(UICheckbox):
             ## Controls whether texture resolution limits are applied:
             
             * **Enabled** **(default)**: Disable resolution restrictions from LOD Bias.
-                ✅ Allows to load full resolution textures at cost of higher VRAM usage.
-                ⚠️ If it has no effect or consumes too much VRAM, try to enable **Max LOD Bias** instead. 
+                - ✅ Allows to load full resolution textures at cost of higher VRAM usage.
+                - ⚡ If it has no effect or consumes too much VRAM, try to enable **Max LOD Bias** instead.
             
             * **Disabled**: Enable resolution restrictions from LOD Bias.
-                ⚠️ Modded textures won't load if disabled without Max (Ultra High) LOD Bias enabled.
+                - ⚡ Modded textures won't load if disabled without Max (Ultra High) LOD Bias enabled.
                 
-            *Applied to ConsoleVariables → r.Streaming.UseAllMips value in Engine.ini*
+            *Applied to CVars=r.Streaming.UseAllMips value in all sections of DeviceProfiles.ini*
         """))
 
 
@@ -807,11 +843,9 @@ class TextureStreamingPoolSizeEntry(UIEntry):
             ## Controls how much VRAM the game can use for textures:
 
             * Set to **0** **(default)** for **automatic control** (based on available VRAM).
-                ✅ Large enough pool eliminates modded textures loading delay after first load.
-
             * Set to specific value (e.g. 4096) for precise VRAM management.
 
-            *Applied to ConsoleVariables → r.Streaming.PoolSize value in Engine.ini*
+            *Applied to CVars=r.Streaming.PoolSize value in all sections of DeviceProfiles.ini*
         """))
 
 
@@ -825,36 +859,57 @@ class TextureStreamingLimitPoolToVramCheckbox(UICheckbox):
             ## Sets the upper limit for how much VRAM the game can use for textures:
 
             * **Enabled** **(default)** – Limits texture pool size based on your GPU's available VRAM.
-                ✅ Helps prevent crashes or stuttering on low VRAM systems.
-                ⚠️ May reduce texture quality or cause pop-ins if too restrictive on high-end GPUs.
+                - ✅ Helps prevent crashes or stuttering on low VRAM systems.
+                - ⚡ May reduce texture quality or cause pop-ins if too restrictive on high-end GPUs.
 
             * **Disabled** – Unlocks maximum texture pool size, even if it exceeds your GPU's safe limits.
-                ✅ Can improve texture quality and reduce pop-ins on powerful systems.
-                ⚠️ Risk of performance drops, stutters, or crashes if VRAM runs out.
+                - ✅ Can improve texture quality and reduce pop-ins on powerful systems.
+                - ⚡ Risk of performance drops, stutters, or crashes if VRAM runs out.
 
-            *Applied to ConsoleVariables → r.Streaming.LimitPoolSizeToVRAM value in Engine.ini*
+            *Applied to CVars=r.Streaming.LimitPoolSizeToVRAM value in all sections of DeviceProfiles.ini*
         """))
 
 
-class OpenEngineIniButton(UIButton):
+class TextureStreamingFixedPoolSizeCheckbox(UICheckbox):
     def __init__(self, master):
         super().__init__(
-            text=L('general_settings_open_engine_ini_button', '🔍 Open Engine.ini'),
+            text=L('general_settings_texture_streaming_fixed_pool_size_checkbox', 'Use Fixed Pool Size'),
+            variable=Vars.Active.Importer.texture_streaming_fixed_pool_size,
+            master=master)
+        self.set_tooltip(L('general_settings_texture_streaming_fixed_pool_size_checkbox_tooltip', """
+            ## Controls automatic pool size grow/shrink capabilities:
+            
+            * **Enabled** **(default)** – Locks texture pool size to value calculated on game start.
+                - ✅ Eliminates modded textures loading delay by minimizing texture mip levels pop in/out.
+                - ⚡ Pool size is locked on game start, low end GPU users may want to close as much apps as possible.
+
+            * **Disabled** – Allows game engine to dynamically resize pool.
+                - ✅ Provides more freedom to both engine (allows mips streaming) and user (no need to close apps).
+                - ⚡ Introduces short delay to modded textures loading unless **Texture Boost** values is perfectly tuned.
+
+            *Applied to CVars=r.Streaming.UseFixedPoolSize value in all sections of DeviceProfiles.ini*
+        """))
+
+
+class OpenGameConfigButton(UIButton):
+    def __init__(self, master):
+        super().__init__(
+            text=L('general_settings_open_file_button', '🔍 Open {file_name}').format(file_name='DeviceProfiles.ini'),
             command=self.open_engine_ini,
             width=140,
             height=36,
             font=('Roboto', 14),
             auto_width=True,
             master=master)
-        self.set_tooltip(L('general_settings_open_engine_ini_button_tooltip', 'Open Engine.ini in default text editor file for manual tweaking.'))
+        self.set_tooltip(L('general_settings_open_file_button_tooltip', 'Open **{file_name}** in default text editor file for manual tweaking.').format(file_name='DeviceProfiles.ini'))
 
     def open_engine_ini(self):
         game_folder = Events.Call(Events.ModelImporter.ValidateGameFolder(Config.Active.Importer.game_folder))
-        engine_ini = game_folder / 'Client' / 'Saved' / 'Config' / 'WindowsNoEditor' / 'Engine.ini'
+        engine_ini = game_folder / 'Client' / 'Saved' / 'Config' / 'WindowsNoEditor' / 'DeviceProfiles.ini'
         if engine_ini.is_file():
             subprocess.Popen([f'{str(engine_ini)}'], shell=True)
         else:
-            raise ValueError(L('error_general_settings_engine_ini_not_found', 'File does not exist: "{engine_ini}"!').format(engine_ini=engine_ini))
+            raise ValueError(L('error_general_settings_file_not_found', 'File does not exist: **{file_name}**!').format(file_name=engine_ini))
 
 
 class TweaksLabel(UILabel):
