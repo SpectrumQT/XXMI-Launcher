@@ -57,8 +57,7 @@ class LauncherFrame(UIFrame):
         # Donate Frame
         self.subscribe(Events.Application.OpenDonationCenter, self.handle_open_donation_center)
 
-        from gui.windows.main.message_frame.message_frame import MessageFrame
-
+        # from gui.windows.main.message_frame.message_frame import MessageFrame
         # text = f"""
         #     <html>
         #     <body>

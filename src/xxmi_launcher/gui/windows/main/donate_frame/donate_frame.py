@@ -101,7 +101,7 @@ class DonateFrame(UIFrame):
             self.subject_footer.set(L('donate_wwmi_footer', """
                 It's all about building better tools for the entire {model_importer} community.
                 
-                Who knows — maybe your few bucks could help shape the next big feature!
+                The more patrons, the stronger is motivation to shape new big features!
             """).format(model_importer=model_importer))
             self.subject_footer.configure(anchor='n', justify='center')
             self.subject_footer.move(640, 375)

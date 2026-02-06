@@ -1,5 +1,5 @@
 import logging
-import time
+import re
 import webbrowser
 import markdown
 
@@ -43,18 +43,21 @@ class MessageFrame(UIFrame):
 
         min_button_width = 100
 
-        content_frame = ContentFrame(self, message, radio_options, min_width, max_width, min_height, max_height)
+        self.content_frame = ContentFrame(self, message, radio_options, min_width, max_width, min_height, max_height)
 
         self.update()
 
-        content_width = int(content_frame.message_widget.winfo_width() / self._apply_widget_scaling(1.0))
-        content_height = int(content_frame.message_widget.winfo_height() / self._apply_widget_scaling(1.0))
+        content_width = int(self.content_frame.message_widget.winfo_width() / self._apply_widget_scaling(1.0))
+        content_height = int(self.content_frame.message_widget.winfo_height() / self._apply_widget_scaling(1.0))
 
         self.update()
 
         if content_width < min_width:
             target_width = min_width + 20 + int(self._apply_widget_scaling(10))
             content_width = min_width
+        # elif content_width > max_width:
+        #     target_width = max_width + 20 + int(self._apply_widget_scaling(10))
+        #     content_width = max_width
         else:
             target_width = content_width + 35 + int(self._apply_widget_scaling(10))
 
@@ -109,11 +112,11 @@ class MessageFrame(UIFrame):
             cancel_y = master.master.cfg.height / 2 + target_height / 2 - 35
             self.cancel_button = self.put(CancelButton(self, cancel_text, cancel_command, cancel_x, cancel_y, button_width))
 
-        self.put(content_frame).pack()
+        self.put(self.content_frame).pack()
 
         scrollbar_width = 0
-        if content_frame._scrollbar.grid_info():
-            scrollbar_width = content_frame._scrollbar._current_width
+        if self.content_frame._scrollbar.grid_info():
+            scrollbar_width = self.content_frame._scrollbar._current_width
         content_frame_width = 6 + content_width + scrollbar_width
 
         self.message_title.move(int(1280/2 - content_frame_width/2 + 7 + 7/self._apply_widget_scaling(1.0)), title_y)
@@ -135,7 +138,6 @@ class MessageFrame(UIFrame):
         pass
 
     def close(self):
-        self.hide()
         self.destroy()
 
 
@@ -263,9 +265,11 @@ class ContentFrame(UIScrollableFrame):
             height=max_height,
             fontscale=1.2 * self._apply_widget_scaling(1.0),
             shrink=True,
+            textwrap=True,
             on_link_click=self.open_in_browser,
             events_enabled=True,
         )
+
         # self.message_widget.html.config(
         #     # Set max width for word wrapping
         #     width=int(self.width * self.widget._apply_widget_scaling(1.0)),
@@ -292,6 +296,8 @@ class ContentFrame(UIScrollableFrame):
 
         html = f"<html>\n{style}\n<body>\n{html}\n</body>\n</html>"
 
+        html = self.insert_space_in_long_words_multiline(html, 64)
+
         # loaded = BooleanVar(value=False)
         #
         # def on_load(event=None):
@@ -315,6 +321,8 @@ class ContentFrame(UIScrollableFrame):
 
         if message_width < min_width:
             self.configure(width=min_width)
+        # elif message_width > max_width:
+        #     self.configure(width=max_width)
         else:
             self.configure(width=message_width)
 
@@ -333,6 +341,18 @@ class ContentFrame(UIScrollableFrame):
 
         # self.message_widget.place(x=0, y=0, width=800, height=500)
         # self.message_widget.place(x=150, y=150)
+
+    @staticmethod
+    def insert_space_in_long_words_multiline(text, max_len):
+        def process_word(word):
+            if len(word) <= max_len:
+                return word
+            parts = [word[i:i + max_len] for i in range(0, len(word), max_len)]
+            return ' '.join(parts)
+
+        tokens = re.findall(r'\S+|\s+', text)
+        processed = [process_word(t) if not t.isspace() else t for t in tokens]
+        return ''.join(processed)
 
     #  html { background-color: #1f2024;}
     def get_style(self):
@@ -370,6 +390,13 @@ class ContentFrame(UIScrollableFrame):
 
     def hide(self, hide=True):
         super().hide(hide=hide)
+
+    def destroy(self):
+        self.message_widget.unbind_all('<MouseWheel>')
+        self.message_widget.unbind_all('<Button-4>')
+        self.message_widget.unbind_all('<Button-5>')
+        self.message_widget.destroy()
+        self.message_widget = None
 
 
 class RadioWidget:

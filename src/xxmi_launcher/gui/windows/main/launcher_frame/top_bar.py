@@ -110,7 +110,7 @@ class ImporterSelectButton(UIImageButton):
             'SRMI': L('top_bar_srmi_button_tooltip', 'Honkai: Star Rail Model Importer'),
             'GIMI': L('top_bar_gimi_button_tooltip', 'Genshin Impact Model Importer'),
             'HIMI': L('top_bar_himi_button_tooltip', 'Honkai Impact Model Importer'),
-            'EFMI': L('top_bar_himi_button_tooltip', 'Arknights: Endfield Model Importer'),
+            'EFMI': L('top_bar_efmi_button_tooltip', 'Arknights: Endfield Model Importer'),
         }
         self.set_tooltip(tooltips[importer_id], delay=0.5)
 
@@ -214,7 +214,7 @@ class GameBananaButton(WebResourceButton):
         elif Config.Launcher.active_importer == 'HIMI':
             webbrowser.open('https://gamebanana.com/tools/16498'),
         elif Config.Launcher.active_importer == 'EFMI':
-            webbrowser.open('https://gamebanana.com/tools/16498'),
+            webbrowser.open('https://gamebanana.com/tools/21846'),
 
     def get_tooltip(self):
         return L('top_bar_gamebanana_button_tooltip', '{importer} GameBanana').format(importer=Config.Launcher.active_importer)

@@ -55,6 +55,7 @@ class MainWindow(UIMainWindow):
                          lambda event: self.show_messagebox(event))
 
         self.launcher_frame = None
+        self.message_frame = None
 
     def load_theme(self, theme: str):
         # Skip loading the same theme
@@ -299,11 +300,14 @@ class MainWindow(UIMainWindow):
                                       cancel_text=event.cancel_text, cancel_command=event.cancel_command,
                                       radio_options=event.radio_options)
 
-            message_frame = self.put(messagebox)
-            message_frame.show()
+            self.message_frame = self.put(messagebox)
+            self.message_frame.show()
 
         if event.modal:
             self.wait_window(messagebox)
+
+        if self.message_frame is not None:
+            self.message_frame = None
 
         if reopen_settings and settings_frame.is_hidden:
             settings_frame.show()
@@ -315,6 +319,8 @@ class MainWindow(UIMainWindow):
 
     def report_callback_exception(self, exc, val, tb):
         # raise exc
+        if self.message_frame is not None:
+            self.message_frame.close()
         self.show_messagebox(Events.Application.ShowError(
             modal=True,
             message=val,
