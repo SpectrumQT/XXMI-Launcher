@@ -173,7 +173,7 @@ class LocaleEngine:
         locale_string = self.strings.get(key, None)
         if locale_string is None:
             locale_string = string
-        elif string != self.src_strings.get(key, ''):
+        elif string.strip() != self.src_strings.get(key, ''):
             locale_string = string
         elif isinstance(locale_string, list):
             locale_string = random.choice(locale_string)
