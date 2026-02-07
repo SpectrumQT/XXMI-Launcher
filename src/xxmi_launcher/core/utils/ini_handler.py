@@ -211,7 +211,11 @@ class IniHandler:
 
     def get_option_values(self, option_name, section_name=None):
         if section_name:
-            sections = [self.get_section(section_name)]
+            section = self.get_section(section_name)
+            if section:
+                sections = [section]
+            else:
+                sections = []
         else:
             sections = self.sections.values()
 

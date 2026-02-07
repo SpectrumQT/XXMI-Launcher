@@ -231,6 +231,7 @@ class WWMIPackage(ModelImporterPackage):
     def initialize_game_launch(self, game_path: Path):
         if Config.Active.Importer.custom_launch_inject_mode != 'Bypass':
             self.update_engine_ini(game_path)
+            self.update_device_profiles_ini(game_path)
             self.update_game_user_settings_ini(game_path)
         self.configure_settings(game_path)
 
@@ -311,17 +312,19 @@ class WWMIPackage(ModelImporterPackage):
                 """).format(error_text=e)) from e
 
     def update_engine_ini(self, game_path: Path):
-        Events.Fire(Events.Application.StatusUpdate(status=L('status_updating_engine_ini', 'Updating {file_name}...').format(file_name='DeviceProfiles.ini')))
+        engine_ini_path = game_path / 'Client' / 'Saved' / 'Config' / 'WindowsNoEditor' / 'Engine.ini'
 
-        device_profiles_ini_path = game_path / 'Client' / 'Saved' / 'Config' / 'WindowsNoEditor' / 'DeviceProfiles.ini'
+        Events.Fire(Events.Application.StatusUpdate(
+            status=L('status_updating_file', 'Updating {file_name}...').format(file_name=engine_ini_path.name))
+        )
 
-        if not device_profiles_ini_path.exists():
-            Paths.verify_path(device_profiles_ini_path.parent)
-            with open(device_profiles_ini_path, 'w', encoding='utf-8') as f:
+        if not engine_ini_path.exists():
+            Paths.verify_path(engine_ini_path.parent)
+            with open(engine_ini_path, 'w', encoding='utf-8') as f:
                 f.write('')
 
-        Events.Fire(Events.Application.VerifyFileAccess(path=device_profiles_ini_path, write=True))
-        with open(device_profiles_ini_path, 'r', encoding='utf-8') as f:
+        Events.Fire(Events.Application.VerifyFileAccess(path=engine_ini_path, write=True))
+        with open(engine_ini_path, 'r', encoding='utf-8') as f:
             ini = IniHandler(IniHandlerSettings(option_value_spacing=False, inline_comments=True, add_section_spacing=True, right_split=True), f)
 
         # if '/Script/Engine.RendererRTXSettings' in Config.Active.Importer.engine_ini.keys():
@@ -339,6 +342,22 @@ class WWMIPackage(ModelImporterPackage):
             for section_name, section_data in Config.Importers.WWMI.Importer.perf_tweaks.items():
                 for option_name, option_value in section_data.items():
                     ini.set_option(section_name, option_name, option_value)
+
+    def update_device_profiles_ini(self, game_path: Path):
+        device_profiles_ini_path = game_path / 'Client' / 'Saved' / 'Config' / 'WindowsNoEditor' / 'DeviceProfiles.ini'
+
+        Events.Fire(Events.Application.StatusUpdate(
+            status=L('status_updating_file', 'Updating {file_name}...').format(file_name=device_profiles_ini_path.name))
+        )
+
+        if not device_profiles_ini_path.exists():
+            Paths.verify_path(device_profiles_ini_path.parent)
+            with open(device_profiles_ini_path, 'w', encoding='utf-8') as f:
+                f.write('')
+
+        Events.Fire(Events.Application.VerifyFileAccess(path=device_profiles_ini_path, write=True))
+        with open(device_profiles_ini_path, 'r', encoding='utf-8') as f:
+            ini = IniHandler(IniHandlerSettings(option_value_spacing=False, inline_comments=True, add_section_spacing=True, right_split=True), f)
 
         # # Remove UsingNewKuroStreaming option (ancient 3rd-party configs set it to 0 with bad results)
         # ini.remove_option('r.Streaming.UsingNewKuroStreaming')
@@ -421,6 +440,8 @@ class SettingsManager:
         self.db: Optional[LocalStorage] = None
 
     def __enter__(self):
+        Paths.verify_path(self.path)
+
         default_db_path = self.path / 'LocalStorage.db'
 
         # Locate the most recently modified db file
