@@ -239,7 +239,7 @@ class MigotoPackage(Package):
                 Details: {error_text}
                 
                 Would you like to restore XXMI automatically?
-            """).format(error_text=e.strip()),
+            """).format(error_text=str(e).strip()),
         ))
 
         if not user_requested_restore:
