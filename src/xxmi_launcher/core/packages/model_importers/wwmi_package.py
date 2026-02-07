@@ -229,8 +229,9 @@ class WWMIPackage(ModelImporterPackage):
             return game_path / 'Wuthering Waves.exe', ['-dx11'], str(game_path)
 
     def initialize_game_launch(self, game_path: Path):
-        if Config.Active.Importer.custom_launch_inject_mode != 'Bypass':
+        if Config.Active.Importer.apply_perf_tweaks:
             self.update_engine_ini(game_path)
+        if Config.Active.Importer.custom_launch_inject_mode != 'Bypass':
             self.update_device_profiles_ini(game_path)
             self.update_game_user_settings_ini(game_path)
         self.configure_settings(game_path)
