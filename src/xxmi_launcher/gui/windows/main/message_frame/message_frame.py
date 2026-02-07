@@ -36,7 +36,7 @@ class MessageFrame(UIFrame):
         self._offset_y = 0
 
         min_width = int(self._apply_widget_scaling(400))
-        max_width = int(self._apply_widget_scaling(600))
+        max_width = int(self._apply_widget_scaling(800))
 
         min_height = int(self._apply_widget_scaling(100))
         max_height = int(self._apply_widget_scaling(310))

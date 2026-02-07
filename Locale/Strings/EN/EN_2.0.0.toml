@@ -506,7 +506,7 @@ Please disable `Configure Game Settings` in launcher's General Settings and chec
 """
 
 [status_updating_file]
-loc = "Updating {file_name}}..."
+loc = "Updating {file_name}..."
 
 [error_local_storage_init_failed]
 loc = "Failed to initialize LocalStorage: {error_text}"
