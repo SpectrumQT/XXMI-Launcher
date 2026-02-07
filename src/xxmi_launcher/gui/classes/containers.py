@@ -109,6 +109,9 @@ class UIScrollableFrame(CTkScrollableFrame, UIElementBase):
         self._original_button_color = None
         self._original_button_hover_color = None
 
+        self._scrollbar_hidden = False
+        self._scrollbar_hidden_color = None
+
         self._apply_theme()
 
         # Call grid manager to workaround customtkinter bug that causes content to overlap with scrollbar
@@ -124,12 +127,15 @@ class UIScrollableFrame(CTkScrollableFrame, UIElementBase):
             total_content_height = sum(widget.winfo_height() for widget in self.winfo_children())
             if total_content_height <= round(self._apply_widget_scaling(self.height)):
                 # self._scrollbar.grid_forget()
+                if self._scrollbar_hidden_color is None:
+                    self._scrollbar_hidden_color = self._parent_frame._fg_color
                 self._original_button_color = self._scrollbar._button_color
                 self._original_button_hover_color = self._scrollbar._button_hover_color
                 self._scrollbar.configure(
-                    button_color=self._parent_frame._fg_color,
-                    button_hover_color=self._parent_frame._fg_color,
+                    button_color=self._scrollbar_hidden_color,
+                    button_hover_color=self._scrollbar_hidden_color,
                 )
+                self._scrollbar_hidden = True
             else:
                 # self._scrollbar.grid()
                 if self._original_button_color is not None:
@@ -137,6 +143,7 @@ class UIScrollableFrame(CTkScrollableFrame, UIElementBase):
                         button_color=self._original_button_color,
                         button_hover_color=self._original_button_hover_color,
                     )
+                    self._scrollbar_hidden = False
 
     def check_if_master_is_canvas(self, widget):
         if widget is None:

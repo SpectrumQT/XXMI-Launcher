@@ -18,6 +18,7 @@ from gui.classes.widgets import UILabel, UIButton, UIEntry, UICheckbox,  UIOptio
 class GeneralSettingsFrame(UIScrollableFrame):
     def __init__(self, master, fix_grid=False):
         super().__init__(master, height=410, corner_radius=0, border_width=0, hide_scrollbar=True, fix_grid=fix_grid)
+        self._scrollbar_hidden_color = master._fg_color
 
         self.grid_columnconfigure((0, 2, 3), weight=1)
         self.grid_columnconfigure(1, weight=100)
