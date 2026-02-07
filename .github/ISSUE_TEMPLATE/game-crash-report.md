@@ -65,11 +65,8 @@ Please don't forget to include the **launcher log**  — it is essential for und
 
 > 🕒 Crash reports without logs take way more time to handle.
 
-- **GIMI (Genshin Impact)**  
-  https://github.com/SilentNightSound/GIMI-Package/issues
-
-- **SRMI (Star Rail)**  
-  https://github.com/SpectrumQT/SRMI-Package/issues
+- **EFMI (Arknights: Endfield)**  
+  https://github.com/SpectrumQT/EFMI-package/issues
 
 - **WWMI (Wuthering Waves)**  
   https://github.com/SpectrumQT/WWMI-Package/issues
@@ -77,5 +74,11 @@ Please don't forget to include the **launcher log**  — it is essential for und
 - **ZZMI (Zenless Zone Zero)**  
   https://github.com/leotorrez/ZZMI-package/issues
 
-- **HIMI (Zenless Zone Zero)**  
+- **SRMI (Star Rail)**  
+  https://github.com/SpectrumQT/SRMI-Package/issues
+
+- **GIMI (Genshin Impact)**  
+  https://github.com/SilentNightSound/GIMI-Package/issues
+
+- **HIMI (Honkai Impact)**  
   https://github.com/leotorrez/HIMI-package/issues

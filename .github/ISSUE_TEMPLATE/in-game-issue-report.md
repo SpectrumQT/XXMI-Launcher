@@ -33,11 +33,8 @@ If the issue only happens when using certain mods, please **check the following 
 
 If your issue is confirmed to be Model Importer–related, please **report it to the correct Model Importer repository below**.
 
-- **GIMI (Genshin Impact)**  
-  https://github.com/SilentNightSound/GIMI-Package/issues
-
-- **SRMI (Star Rail)**  
-  https://github.com/SpectrumQT/SRMI-Package/issues
+- **EFMI (Arknights: Endfield)**  
+  https://github.com/SpectrumQT/EFMI-package/issues
 
 - **WWMI (Wuthering Waves)**  
   https://github.com/SpectrumQT/WWMI-Package/issues
@@ -45,5 +42,11 @@ If your issue is confirmed to be Model Importer–related, please **report it to
 - **ZZMI (Zenless Zone Zero)**  
   https://github.com/leotorrez/ZZMI-package/issues
 
-- **HIMI (Zenless Zone Zero)**  
+- **SRMI (Star Rail)**  
+  https://github.com/SpectrumQT/SRMI-Package/issues
+
+- **GIMI (Genshin Impact)**  
+  https://github.com/SilentNightSound/GIMI-Package/issues
+
+- **HIMI (Honkai Impact)**  
   https://github.com/leotorrez/HIMI-package/issues
