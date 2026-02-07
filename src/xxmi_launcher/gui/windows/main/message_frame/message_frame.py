@@ -269,6 +269,7 @@ class ContentFrame(UIScrollableFrame):
             on_link_click=self.open_in_browser,
             events_enabled=True,
         )
+        self.message_widget.unbind_all('<MouseWheel>')
 
         # self.message_widget.html.config(
         #     # Set max width for word wrapping
@@ -392,7 +393,6 @@ class ContentFrame(UIScrollableFrame):
         super().hide(hide=hide)
 
     def destroy(self):
-        self.message_widget.unbind_all('<MouseWheel>')
         self.message_widget.destroy()
         self.message_widget = None
         super().destroy()
