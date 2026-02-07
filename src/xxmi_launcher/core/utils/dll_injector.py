@@ -2,6 +2,7 @@ import logging
 import time
 import psutil
 import subprocess
+import win32api
 
 import ctypes as ct
 import ctypes.wintypes as wt
@@ -23,6 +24,14 @@ class DllInjector:
         self.target_process = None
         self.hook = None
         self.mutex = None
+
+    @staticmethod
+    def get_short_path(path: Path) -> str:
+        try:
+            full_path = str(path.resolve())
+            return win32api.GetShortPathName(full_path)
+        except Exception as e:
+            return str(path.resolve())
 
     @staticmethod
     def load(injector_lib_path):
@@ -98,15 +107,15 @@ class DllInjector:
         start_method = start_method.upper()
 
         # Pyinjector fails with non-ascii paths
-        if dll_paths:
-            for dll_path in dll_paths:
-                try:
-                    str(dll_path).encode('ascii')
-                except Exception as e:
-                    raise ValueError(L('error_dll_injector_non_ascii_path', """
-                        Please rename all folders from the path using only English letters:
-                        {dll_path}
-                    """).format(dll_path)) from e
+        # if dll_paths:
+            # for dll_path in dll_paths:
+                # try:
+                    # str(dll_path).encode('ascii')
+                # except Exception as e:
+                    # raise ValueError(L('error_dll_injector_non_ascii_path', """
+                        # Please rename all folders from the path using only English letters:
+                        # {dll_path}
+                    # """).format(dll_path=dll_path)) from e
 
         if start_method == 'NATIVE':
             if cmd is None:
@@ -203,8 +212,9 @@ class DllInjector:
                 try:
                     if process.name() == process_name or process.pid == pid:
                         for dll_path in dll_paths:
+                            safe_path = self.get_short_path(dll_path)
                             try:
-                                inject(process.pid, str(dll_path))
+                                inject(process.pid, safe_path)
                             except Exception as e:
                                 raise ValueError(L('error_dll_injector_extra_library_failed', """
                                     Failed to inject extra library {dll_path}:
