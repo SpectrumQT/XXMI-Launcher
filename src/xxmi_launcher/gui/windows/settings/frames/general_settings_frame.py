@@ -8,7 +8,7 @@ import core.config_manager as Config
 import core.path_manager as Paths
 import gui.vars as Vars
 
-from core.locale_manager import L, LocaleName
+from core.locale_manager import L, Locale
 from core.application import Application
 
 from gui.classes.containers import UIFrame, UIScrollableFrame
@@ -92,14 +92,13 @@ class LanguageOptionMenu(UIOptionMenu):
             height=36,
             font=('Arial', 14),
             dropdown_font=('Arial', 14),
-            values={e.name: e.value for e in LocaleName},
+            values={l.name: l.display_name for l in Locale.get_indexed_locales()},
             variable=Vars.Launcher.locale,
             command=self.handle_language_change,
             master=master)
 
     def handle_language_change(self, value):
-        from core.locale_manager import Locale
-        Locale.set_active_locale(LocaleName[Vars.Launcher.locale.get()])
+        Locale.set_active_locale(Vars.Launcher.locale.get())
         Events.Fire(Events.Application.CloseSettings(save=True))
         Events.Fire(Events.GUI.ReloadGUI())
         Events.Fire(Events.Application.Busy())

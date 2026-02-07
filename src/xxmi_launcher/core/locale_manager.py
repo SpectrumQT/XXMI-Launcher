@@ -6,46 +6,15 @@ import re
 
 from pathlib import Path
 from textwrap import dedent
-from typing import Optional, Dict, Callable
-from enum import Enum
+from typing import Optional, Union, List, Dict, BinaryIO
+from dataclasses import dataclass
 
 log = logging.getLogger(__name__)
 
 
-class LocaleName(Enum):
-    EN = 'English'
-    CN = '中文'
-    RU = 'Русский'
-
-
-def get_os_locale() -> LocaleName:
-    language, codepage = locale.getlocale()
-
-    if language:
-        keywords = {
-            LocaleName.CN: ['zh_CN', 'Chinese', 'China'],
-            LocaleName.RU: ['ru_RU', 'Russian', 'Russia'],
-        }
-        for locale_name, locale_keywords in keywords.items():
-            for locale_keyword in locale_keywords:
-                if locale_keyword in language:
-                    return locale_name
-
-    if codepage:
-        codepages = {
-            LocaleName.CN: '936',
-            LocaleName.RU: '1252',
-        }
-        for locale_name, locale_codepage in codepages.items():
-            if locale_codepage in codepage:
-                return locale_name
-
-    return LocaleName.EN
-
-
 class Default(dict):
     def __missing__(self, key):
-        return '{'+key+'}'
+        return '{' + key + '}'
 
 
 FORMATTERS = {}
@@ -73,8 +42,7 @@ def list_formatter(value, conjunction):
         return value
 
     separator = L('locale_list_separator', ', ')
-    spacing = L('locale_list_conjunction_spacing', '\s').replace('\s', ' ')
-
+    spacing = L('locale_list_conjunction_spacing', r'\s').replace(r'\s', ' ')
     if len(value) == 1:
         return str(value[0])
 
@@ -133,20 +101,20 @@ class LocaleString(str):
 
 class LocaleEngine:
     def __init__(self, locales_path: Path):
-        self.locales_path = locales_path
-        self.strings : Optional[Dict[str, str]] = None
-        self.src_strings : Optional[Dict[str, str]] = None
+        self.locales_path: Path = locales_path
+        self.strings: Optional[Dict[str, Union[str, List[str]]]] = None
+        self.src_strings: Optional[Dict[str, str]] = None
         self.enable_locale = False
 
-    def load_locale(self, locale: LocaleName, tag: str = 'loc'):
-        if locale == LocaleName.EN:
+    def load_locale(self, locale_name: str, tag: str = 'loc'):
+        if locale_name == 'EN':
             self.enable_locale = False
             return
 
         self.strings = {}
         self.src_strings = {}
 
-        locale_path = self.locales_path / locale.name
+        locale_path = self.locales_path / locale_name
 
         try:
             for path in sorted(locale_path.iterdir()):
@@ -182,15 +150,13 @@ class LocaleEngine:
     def load_file_strings(self, path: Path, tag: str = 'loc'):
         with open(path, 'rb') as f:
             data = tomllib.load(f)
-
-            for key, locale in data.items():
-
+            for key, locale_strings in data.items():
                 loc_string = None
                 src_string = None
                 alt_strings = None
 
                 try:
-                    for loc_tag, loc_line in locale.items():
+                    for loc_tag, loc_line in locale_strings.items():
                         if loc_tag == 'src':
                             src_string = loc_line
                         elif loc_tag == 'loc':
@@ -222,95 +188,160 @@ class LocaleEngine:
                 else:
                     self.strings[key] = src_string
 
-    def validate_locale(self, source_locale: 'LocaleEngine'):
-        # Load source strings from current locale
-        src_lines_locale = LocaleEngine(self.locales_path)
-        src_lines_locale.load_locale('src')
-        # Check if all original source keys exist in current locale
-        for key in source_locale.strings.keys():
-            string = self.strings.get(key, None)
-            if string is None:
-                raise Exception()
-        # Check if all english strings in current locale are equal to original english locale
-        for key, string in self.strings.items():
-            if string != src_lines_locale.strings[key]:
-                raise Exception()
+
+@dataclass
+class LocaleData:
+    name: str
+    display_name: str
+    keywords: List[str]
+    codepage: str
 
 
-class GuideChan:
-    def __init__(self, locales_path: Path):
-        self.locales_path = locales_path
-        self.locale = LocaleEngine(locales_path)
-        self.load_locale('English')
+@dataclass
+class LocaleIndex:
+    locales: Dict[str, LocaleData]
 
-    def load_locale(self, locale: str):
-        self.locale.load_locale(locale, 'loc')
+    def get_locale(self, locale_name: str) -> LocaleData:
+        return self.locales.get(locale_name, self.get_default_locale())
 
-    def get_string(self, key: str, string: str) -> str:
-        txt = self.locale.get_string(key, '')
-        if not txt:
-            return string
-        if string.find('{guide_chan}') != -1:
-            return string.replace('{guide_chan}', txt)
-        else:
-            return txt + '\n' + string
+    @staticmethod
+    def get_default_locale() -> LocaleData:
+        return LocaleData(
+            name="EN",
+            display_name="English",
+            keywords=["en_US", "English", "USA"],
+            codepage="1252",
+        )
 
-    # def validate_locale(self):
-    #     self.locale.validate_locale(Paths.App.Resources / 'Packages' / 'Locale' / 'GuideChan')
+    def get_names(self) -> List[str]:
+        return list(self.locales.keys())
+
+    def get_locales(self) -> List[LocaleData]:
+        return list(self.locales.values())
+
+    @classmethod
+    def from_toml_file(cls, f: BinaryIO) -> "LocaleIndex":
+        data = tomllib.load(f)
+        locales = {}
+        for name, info in data.items():
+            locales[name] = LocaleData(
+                name=name,
+                display_name=info["display_name"],
+                keywords=info["keywords"],
+                codepage=info["codepage"]
+            )
+        if 'EN' not in locales.keys():
+            locales['EN'] = cls.get_default_locale()
+        return cls(locales=locales)
+
+    @classmethod
+    def from_default(cls) -> "LocaleIndex":
+        default_locale = cls.get_default_locale()
+        return cls(locales={default_locale.name: default_locale})
 
 
 class LocaleManager:
     def __init__(self):
-        self.package_path = None
-        self.locale = None
-        self.active_locale = LocaleName.EN
-        # self.guide_chan = GuideChan(Paths.App.Resources / 'Packages' / 'Locale' / 'GuideChan')
-        # self.enable_guide_chan = False
-
-    def set_root_path(self, root_path: Path):
-        self.package_path = root_path / 'Locale'
-        self.locale = LocaleEngine(self.package_path / 'Strings')
-
-    def read_active_locale(self) -> Optional[LocaleName]:
-        try:
-            with open(self.package_path / 'active_locale.cfg', 'r') as f:
-                locale = f.read()
-                for lang in LocaleName:
-                    if lang.name == locale:
-                        return lang
-        except:
-            pass
-        return None
-
-    def set_active_locale(self, locale: LocaleName, save_to_file = True):
-        if locale == self.active_locale:
-            return
-        if save_to_file:
-            with open(self.package_path / 'active_locale.cfg', 'w') as f:
-                f.write(locale.name)
-        self.load_locale(locale)
-        self.active_locale = locale
-
-    def load_locale(self, locale: LocaleName):
-        self.locale.load_locale(locale)
-        # self.guide_chan.load_locale(locale)
+        self.package_path: Optional[Path] = None
+        self.locale_engine: Optional[LocaleEngine] = None
+        self.locale_index: Optional[LocaleIndex] = None
+        self.active_locale: Optional[LocaleData] = None
 
     def get_string(self, key: str, string: str) -> 'LocaleString':
-        string = self.locale.get_string(key, string)
+        string = self.locale_engine.get_string(key, string)
         # if self.enable_guide_chan:
         #     string = self.guide_chan.get_string(key, string)
         return LocaleString(string, key)
 
+    def get_indexed_names(self) -> List[str]:
+        return self.locale_index.get_names()
+
+    def get_indexed_locales(self) -> List[LocaleData]:
+        return self.locale_index.get_locales()
+
+    def initialize(self, root_path: Path):
+        self.set_root_path(root_path)
+        self.load_locale_index()
+        self.active_locale = self.locale_index.get_locale('EN')
+        detected_locale = self.auto_detect_locale()
+        self.set_active_locale(detected_locale, save_to_file=False)
+
+    def auto_detect_locale(self) -> LocaleData:
+        # Read last used locale from file
+        active_locale = self.read_active_locale()
+        if active_locale is not None:
+            return active_locale
+        # Read current OS locale
+        active_locale = self.get_os_locale()
+        if active_locale is not None:
+            return active_locale
+        # Fallback to default EN locale
+        return self.locale_index.get_default_locale()
+
+    def set_root_path(self, root_path: Path):
+        self.package_path = root_path / 'Locale'
+        self.locale_engine = LocaleEngine(self.package_path / 'Strings')
+
+    def load_locale_index(self):
+        config_path = self.package_path / 'locale_index.toml'
+        try:
+            with open(config_path, 'rb') as f:
+                self.locale_index = LocaleIndex.from_toml_file(f)
+        except Exception as e:
+            log.error(f'Failed to load locale index from {config_path}: {str(e)}')
+            self.locale_index = LocaleIndex.from_default()
+
+    def read_active_locale(self) -> Optional[LocaleData]:
+        config_path = self.package_path / 'active_locale.cfg'
+        try:
+            with open(config_path, 'r') as f:
+                locale_name = f.read().strip()
+                return self.locale_index.get_locale(locale_name)
+        except Exception as e:
+            log.error(f'Failed to read active locale from {config_path}: {str(e)}')
+        return None
+
+    def get_os_locale(self) -> Optional[LocaleData]:
+        # Read raw locale data
+        language, codepage = locale.getlocale()
+        # Lookup locale by keywords
+        if language:
+            for locale_data in self.locale_index.locales.values():
+                for keyword in locale_data.keywords:
+                    if keyword in language:
+                        return locale_data
+        # Lookup locale by codepage
+        if codepage:
+            for locale_data in self.locale_index.locales.values():
+                if locale_data.codepage in codepage:
+                    return locale_data
+        return None
+
+    def load_locale(self, locale_name: str):
+        self.locale_engine.load_locale(locale_name)
+        # self.guide_chan.load_locale(locale)
+
+    def set_active_locale(self, locale_data: Union[str, LocaleData], save_to_file=True):
+        # Get locale by name
+        if isinstance(locale_data, str):
+            locale_data = self.locale_index.get_locale(locale_data)
+        # Make sure locale exists in the index
+        locale_name = locale_data.name
+        # Skip loading same locale
+        if locale_name == self.active_locale.name:
+            return
+        # Load locale
+        self.load_locale(locale_name)
+        # Remember loaded locale
+        self.active_locale = locale_data
+        if save_to_file:
+            with open(self.package_path / 'active_locale.cfg', 'w') as f:
+                f.write(locale_name)
+
 
 Locale = LocaleManager()
-
-
 L = Locale.get_string
 
 
 def initialize(root_path: Path):
-    Locale.set_root_path(root_path)
-    active_locale = Locale.read_active_locale()
-    if active_locale is None:
-        active_locale = get_os_locale()
-    Locale.set_active_locale(active_locale, save_to_file=False)
+    Locale.initialize(root_path)

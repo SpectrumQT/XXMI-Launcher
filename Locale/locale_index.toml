@@ -1,0 +1,14 @@
+[EN]
+display_name = "English"
+keywords = ["en_US", "English", "USA"]
+codepage = "1252"
+
+[CN]
+display_name = "中文"
+keywords = ["zh_CN", "Chinese", "China"]
+codepage = "936"
+
+[RU]
+display_name = "Русский"
+keywords = ["ru_RU", "Russian", "Russia"]
+codepage = "1251"

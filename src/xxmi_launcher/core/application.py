@@ -20,7 +20,7 @@ import core.config_manager as Config
 
 import core.utils.system_info as system_info
 
-from core.locale_manager import L, LocaleName
+from core.locale_manager import L
 from core.package_manager import PackageManager
 
 from core.packages.launcher_package import LauncherPackage
@@ -261,7 +261,7 @@ class Application:
                 Config.Launcher.locale = Locale.Locale.active_locale.name
             else:
                 # Use locale specified by config
-                Locale.Locale.set_active_locale(LocaleName[Config.Launcher.locale])
+                Locale.Locale.set_active_locale(Config.Launcher.locale)
         except Exception as error:
             logging.exception(error)
 
