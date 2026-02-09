@@ -1,0 +1,1757 @@
+[message_title_message]
+loc = "Mensaje"
+
+[message_button_ok]
+loc = "Aceptar"
+
+[message_title_error]
+loc = "Error"
+
+[message_title_warning]
+loc = "Advertencia"
+
+[message_title_info]
+loc = "Información"
+
+[message_button_confirm]
+loc = "Confirmar"
+
+[message_button_cancel]
+loc = "Cancelar"
+
+[application_failed_parse_args]
+loc = "Error al analizar los argumentos: {args}"
+
+[message_text_config_was_reset]
+loc = "¡Error al cargar la configuración! Volviendo a los valores predeterminados."
+
+[status_initializing_update]
+loc = "Inicializando actualización..."
+
+[message_button_load_backup_config]
+loc = "Cargar copia de seguridad"
+
+[message_button_load_default_config]
+loc = "Cargar valores predeterminados"
+
+[message_text_config_load_failed]
+loc = "¡Error al cargar la configuración!"
+
+[error_unknown_model_importer]
+loc = "¡Importador de modelos desconocido {importer}!"
+
+[error_invalid_model_importer_package]
+loc = "¡El paquete {package} no es ModelImporterPackage!"
+
+[error_model_importer_auto_select_failed]
+loc = """
+¡Error al seleccionar automáticamente el importador para `{path}`!
+
+Intente añadir los argumentos `--nogui --xxmi WWMI` (o GIMI, SRMI, ZZMI, HIMI).
+"""
+
+[error_unknown_model_importer_arg]
+loc = "¡Se ha proporcionado un importador de modelos desconocido como argumento de línea de comandos `--xxmi={arg_xxmi}`!"
+
+[error_unknown_model_importer_setting]
+loc = "¡Se ha proporcionado un importador de modelos desconocido `{importer}` con la configuración `active_importer`!"
+
+[error_version_list_fetch_failed]
+loc = """
+¡No se ha podido obtener la lista de últimas versiones de GitHub!
+
+{error_text}
+"""
+
+[application_update_found]
+loc = "Se ha encontrado una actualización de {package}: {current} -> {latest}"
+
+[message_title_update_available]
+loc = "Actualización disponible"
+
+[message_button_install_update]
+loc = "Actualizar"
+
+[message_button_skip_update]
+loc = "Omitir"
+
+[message_text_already_up_to_date]
+loc = "¡No hay actualizaciones disponibles!"
+
+[error_model_importer_loading_failed]
+loc = """
+{importer} Error al cargar:
+{error}
+"""
+
+[message_title_file_write_failed_read_only]
+loc = "Error de archivo de solo lectura"
+
+[message_text_file_write_failed_read_only]
+loc = """
+¡Error al escribir el archivo de solo lectura {path}!
+
+Pulse [Confirmar] para eliminar esta marca y continuar.
+"""
+
+[error_critical_file_write_failed]
+loc = "¡Error al escribir el archivo crítico: {path}!"
+
+[message_button_reset_unsecure_setting]
+loc = "Restablecer"
+
+[message_button_keep_unsecure_setting]
+loc = "Mantener"
+
+[message_text_unsecure_setting_validation_failed]
+loc = """
+¡Error al validar la configuración no segura!
+
+{msg}
+"""
+
+[error_theme_resource_not_found]
+loc = """
+Recurso no encontrado:
+
+{resource_path}
+
+Sugerencia: también puede utilizar otras extensiones: {extensions}
+"""
+
+[status_waiting_installer]
+loc = "Esperando a que se inicie el instalador..."
+
+[error_launcher_installer_start_failed]
+loc = """
+¡Error al iniciar {asset_name}!
+
+¿Ha sido bloqueado por el software antivirus o la configuración de seguridad?
+"""
+
+[launcher_shortcut_description]
+loc = "Acceso directo a XXMI Launcher"
+
+[error_migoto_game_detection_timeout]
+loc = """
+¡No se ha podido detectar el proceso del juego {process_name}!
+
+Si el juego se ha bloqueado, intente ajustar el retraso XXMI en la configuración general o borre las carpetas Mods y ShaderFixes.
+
+Si la ventana del juego tarda más de {start_timeout} segundos en aparecer, ajuste el tiempo de espera en la configuración del lanzador.
+"""
+
+[error_migoto_game_start_failed]
+loc = "¡No se ha podido iniciar {process_name}!"
+
+[message_button_restore_model_importer]
+loc = "Restaurar"
+
+[message_text_message_text_model_importer_installation_damaged]
+loc = """
+¡La instalación de XXMI está dañada!
+
+Detalles: {error_text}
+
+¿Desea restaurar XXMI automáticamente?
+"""
+
+[status_ensuring_game_closed]
+loc = "Asegurando que el juego esté cerrado..."
+
+[message_text_game_stop_failed]
+loc = """
+¡No se pudo detener {process_name}!
+
+Cierre el juego manualmente y presione [Aceptar] para continuar.
+"""
+
+[error_xxmi_missing_critical_file]
+loc = "¡El paquete XXMI no tiene un archivo crítico: {file_name}!"
+
+[error_gimi_game_exe_not_found]
+loc = "¡No se encuentra el ejecutable del juego {game_exe_name} o {game_exe_name_cn}!"
+
+[error_gimi_dcr_config_failed]
+loc = """
+{error_text}
+
+Si nada funciona:
+1. Desactiva "Configurar ajustes del juego" en "Ajustes generales" del lanzador.
+2. Configura manualmente los "Ajustes gráficos" del juego:
+* Gráficos > "Resolución dinámica de personajes" debe estar "Desactivado".
+"""
+
+[error_gimi_fps_unlocker_config_failed]
+loc = """
+¡No se ha podido configurar el desbloqueador de FPS!
+
+{error_text}
+"""
+
+[error_gimi_hdr_enable_failed]
+loc = """
+¡No se ha podido habilitar HDR!
+
+{error_text}
+"""
+
+[error_gimi_registry_key_not_found]
+loc = """
+¡No se ha encontrado la clave de registro de Genshin Impact!
+
+Inicie el juego a través del lanzador original para crear la clave e inténtelo de nuevo.
+"""
+
+[error_gimi_unknown_settings_format]
+loc = "Formato de configuración desconocido: ¡El tipo de datos {regtype} no es {expected_type} de REG_BINARY!"
+
+[error_gimi_graphics_settings_not_found]
+loc = """
+¡No se encuentra el registro de configuración gráfica en el registro GI!
+
+Inicie el juego a través del lanzador oficial para crear el registro e inténtelo de nuevo.
+"""
+
+[error_gimi_graphics_data_key_not_found]
+loc = "Formato de configuración gráfica desconocido: ¡No se encuentra la clave \"graphicsData\"!"
+
+[error_gimi_global_perf_data_key_not_found]
+loc = "Formato de configuración gráfica desconocido: ¡No se encuentra la clave \"globalPerfData\"!"
+
+[error_gimi_hdr_record_not_found]
+loc = """
+¡No se encuentra el registro HDR en el registro GI!
+
+Inicie el juego a través del lanzador oficial para crear el registro e inténtelo de nuevo.
+"""
+
+[status_configuring_fps_unlocker]
+loc = "Configurando FPS Unlocker..."
+
+[message_text_fps_unlocker_manual_termination]
+loc = """
+¡No se ha podido cerrar FPS Unlocker!
+
+Cierre el programa manualmente y pulse [Aceptar] para continuar.
+"""
+
+[error_game_exe_not_found]
+loc = "¡No se ha encontrado el ejecutable del juego {exe_name}!"
+
+[error_himi_fps_unlock_failed]
+loc = "Error al configurar FPS: {error_text}"
+
+[error_himi_registry_key_not_found]
+loc = """
+¡No se encuentra la clave de registro de Honkai Impact 3rd!
+
+Inicie el juego sin ajustar los FPS, cambie los FPS a cualquier valor para crear el registro e inténtelo de nuevo.
+
+Nota: El ajuste solo es compatible con el cliente global y no funcionará para CN.
+"""
+
+[error_himi_graphics_settings_not_found]
+loc = """
+¡No se encuentra el registro de configuración gráfica en el registro de Honkai Impact 3rd!
+
+Inicie el juego sin ajustar los FPS, cambie los FPS a cualquier valor para crear el registro e inténtelo de nuevo.
+"""
+
+[error_himi_unknown_graphics_format]
+loc = "Formato de configuración gráfica desconocido: ¡El tipo de datos {regtype} no es {expected_type} de REG_BINARY!"
+
+[error_himi_fps_key_not_found]
+loc = "Formato de configuración gráfica desconocido: ¡No se encuentra la clave \"TargetFrameRateForInLevel\"!"
+
+[error_extra_library_not_found]
+loc = """
+Error al inyectar la biblioteca adicional {dll_path}:
+¡Archivo no encontrado!
+Comprueba Configuración avanzada -> Inyectar bibliotecas.
+"""
+
+[error_model_importer_unknown_command]
+loc = "Comando desconocido {name}"
+
+[error_model_importer_command_execution_failed]
+loc = """
+Error al ejecutar "{name} = {value}" de auto_update.xcmd.
+{error_text}
+"""
+
+[error_model_importer_removal_scope_restricted]
+loc = "¡Solo se permite eliminar archivos o carpetas de la carpeta Core o ShaderFixes!"
+
+[error_model_importer_removal_forbidden]
+loc = "¡No se permite la eliminación explícita de toda la carpeta Core o ShaderFixes!"
+
+[error_model_importer_game_folder_not_specified]
+loc = "¡No se ha especificado la carpeta de instalación del juego!"
+
+[error_model_importer_game_folder_not_found]
+loc = "¡No se ha encontrado la carpeta de instalación del juego especificada!"
+
+[message_text_game_detection_failed]
+loc = """
+¡Ha fallado la detección automática de la instalación del juego!
+
+Configúrela manualmente con la opción Carpeta del juego de la configuración general.
+"""
+
+[message_button_open_settings]
+loc = "Abrir configuración"
+
+[message_text_game_detected_single]
+loc = """
+Instalación del juego detectada:
+
+{game_folder}
+
+Compruebe si es la carpeta del juego deseada o cámbiela en la configuración general.
+"""
+
+[message_text_game_detected_multiple]
+loc = """
+Instalaciones del juego detectadas:
+
+Seleccione la carpeta del juego deseada de la lista siguiente o configúrela en la configuración general:
+
+"""
+
+[message_text_game_folder_not_configured]
+loc = """
+¡La carpeta de instalación del juego no está configurada!
+
+Configúrela con la opción Carpeta del juego de la configuración general.
+"""
+
+[status_autodetecting_game]
+loc = "Detectando automáticamente la carpeta de instalación del juego..."
+
+[error_launcher_in_game_folder]
+loc = """
+
+¡El lanzador debe estar instalado fuera de la carpeta del juego!
+
+Vuelva a instalar el lanzador en otra ubicación.
+"""
+
+[error_model_importer_in_game_folder]
+loc = """
+
+¡La carpeta {importer} debe estar fuera de la carpeta del juego!
+
+Elija otra ubicación para Configuración > {importer} > Carpeta {importer}.
+"""
+
+[error_model_importer_installation_failed]
+loc = """
+Error en la instalación de {importer}:
+{error_text}
+"""
+
+[status_updating_ini]
+loc = "Actualizando d3dx.ini..."
+
+[error_ini_missing_setting]
+loc = "¡Falta la configuración {setting_name} en la configuración!"
+
+[error_ini_missing_value]
+loc = "Falta el valor de la configuración para la sección `{section}`, opción `{option}`, clave `{key}`"
+
+[error_set_ini_option_failed]
+loc = "No se ha podido establecer la opción {option} de la sección {section} en {value}: {error_text}"
+
+[message_button_restore]
+loc = "Restaurar"
+
+[message_text_model_importer_installation_damaged]
+loc = """
+¡La instalación de {importer} está dañada!
+Detalles: Falta un archivo crítico: {file_name}!
+¿Desea restaurar {importer} automáticamente?
+"""
+
+[model_importer_missing_critical_file]
+loc = "¡Falta un archivo crítico: {file_name}!"
+
+[model_importer_shortcut_description]
+loc = "Inicie el juego con {importer} y omita la carga del lanzador"
+
+[message_button_disable]
+loc = "Desactivar"
+
+[message_button_ignore]
+loc = "Ignorar"
+
+[message_text_duplicate_libraries_detected]
+loc = """
+¡Tu instalación de {importer} ya incluye algunas bibliotecas presentes en la carpeta Mods!
+
+¿Deseas desactivar automáticamente los siguientes duplicados (recomendado)?
+
+{duplicates}
+"""
+
+[message_button_delete_file]
+loc = "Eliminar archivo"
+
+[message_button_abort]
+loc = "Abortar"
+
+[message_text_d3dx_ini_in_mods_folder_detected]
+loc = """
+Archivo de configuración global d3dx.ini encontrado dentro de la carpeta Mods:
+{path}
+
+Es un archivo duplicado que puede causar fallos y bloqueos.
+
+¿Desea eliminarlo?
+"""
+
+[error_cannot_start_with_d3dx_ini_in_mods]
+loc = "¡No se puede iniciar con d3dx.ini en la carpeta Mods!"
+
+[error_malformed_model_importer_version]
+loc = "¡Versión {importer} mal formada!"
+
+[error_model_importer_version_not_found]
+loc = "¡No se ha podido localizar la versión {importer}!"
+
+[error_srmi_fps_unlock_failed]
+loc = "No se ha podido forzar 120 FPS: {error_text}"
+
+[error_srmi_registry_key_not_found]
+loc = """
+¡No se encuentra la clave de registro de Star Rail!
+
+Inicie el juego sin el ajuste de 120 FPS, cambie los FPS a cualquier valor para crear el registro e inténtelo de nuevo.
+
+Nota: El ajuste solo es compatible con el cliente HSR global y no funcionará para CN.
+"""
+
+[error_srmi_graphics_settings_not_found]
+loc = """
+¡No se encuentra el registro de configuración gráfica en el registro HSR!
+
+Inicie el juego sin el ajuste de 120 FPS, cambie los FPS a cualquier valor para crear el registro e inténtelo de nuevo.
+"""
+
+[error_srmi_unknown_graphics_format]
+loc = "Formato de configuración de gráficos desconocido: ¡El tipo de datos {regtype} no es {expected_type} de REG_BINARY!"
+
+[error_srmi_fps_key_not_found]
+loc = "Formato de configuración gráfica desconocido: ¡No se encuentra la clave \"FPS\"!"
+
+[error_game_path_not_absolute]
+loc = "Error al normalizar la ruta {path}: ¡La ruta no es absoluta!"
+
+[error_wuthering_waves_exe_not_found]
+loc = "No se ha podido normalizar la ruta {path}: ¡No se ha encontrado Wuthering Waves.exe!"
+
+[error_wwmi_game_folder_missing_files]
+loc = "¡La carpeta del juego debe contener las carpetas `Wuthering Waves.exe`, `Client` y `Engine`!"
+
+[message_text_wwmi_invalid_steam_installation]
+loc = """
+Se ha detectado una instalación no válida de Wuthering Waves para Steam:
+{game_path}
+
+La carpeta {folder_name} con {exe_name} debe colocarse directamente en:
+{common_folder}
+
+Ejecute la reparación de archivos del juego a través de Steam o corríjalo manualmente.
+"""
+
+[error_steam_game_repair_required]
+loc = "¡La instalación del juego debe repararse a través de Steam!"
+
+[error_game_folder_missing_folder]
+loc = "¡La carpeta del juego debe contener la carpeta {dir_name}!"
+
+[status_configuring_settings]
+loc = "Configurando los ajustes del juego..."
+
+[message_title_wounded_effect_detected]
+loc = "Efecto de herido detectado"
+
+[message_button_keep_enabled]
+loc = "Mantener habilitado"
+
+[message_text_wounded_effect_detected]
+loc = """
+Parece que el efecto de herido está habilitado en la configuración del juego.
+No es compatible con la mayoría de los mods y las texturas se romperán tras recibir varios golpes.
+
+Haz clic en "Desactivar" para desactivarlo y garantizar una representación adecuada de las texturas modificadas.
+Haz clic en "Mantener activado" si nunca recibes golpes o utilizas la herramienta Eliminador de efectos de heridas.
+"""
+
+[error_wwmi_fps_unlock_failed]
+loc = """
+¡No se ha podido forzar 120 FPS!
+Desactiva "Forzar 120 FPS" en la configuración general del lanzador.
+
+{error_text}
+"""
+
+[error_wwmi_game_config_failed]
+loc = """
+¡No se han podido configurar los ajustes del juego para WWMI!
+Desactiva "Configurar ajustes del juego" en los ajustes generales del lanzador y comprueba los ajustes del juego:
+* Gráficos > "Calidad de los gráficos" debe estar en "Calidad".
+
+{error_text}
+"""
+
+[status_updating_file]
+loc = "Actualizando {file_name}..."
+
+[error_local_storage_init_failed]
+loc = "Error al inicializar LocalStorage: {error_text}"
+
+[error_zzmi_game_config_failed]
+loc = """
+¡Error al configurar los ajustes del juego para ZZMI!
+Desactive "Configurar ajustes del juego" en los ajustes generales del lanzador y compruebe los ajustes del juego:
+* Gráficos > "Calidad de los personajes" debe estar en "Alta".
+* Gráficos > "Animación de personajes de alta precisión" debe estar "Desactivada".
+
+{error_text}
+"""
+
+[error_zzmi_unknown_settings_format]
+loc = "Formato de entrada de ajustes del sistema desconocido: {ajuste}"
+
+[error_updater_start_failed]
+loc = """
+¡Error al iniciar XXMI Updater.exe!
+
+¿Ha sido bloqueado por el software antivirus o la configuración de seguridad?
+"""
+
+[error_package_version_detect_failed]
+loc = """
+Error al detectar la versión instalada de {package_name}:
+
+{error_text}
+"""
+
+[package_manager_detect_latest_failed]
+loc = """
+No se ha podido detectar la última versión de {package_name}:
+
+{error_text}
+"""
+
+[error_downloaded_data_verification_failed]
+loc = """
+¡Error al verificar la integridad de los datos descargados!
+¡Reinicie el lanzador e inténtelo de nuevo!
+"""
+
+[package_manager_file_verification_failed]
+loc = """
+¡Error al verificar la integridad de los datos de {asset_name}!
+¡Reinicie el lanzador e inténtelo de nuevo!
+"""
+
+[error_missing_manifest]
+loc = "¡El paquete {package_name} no tiene el archivo de manifiesto!"
+
+[error_parse_manifest_failed]
+loc = "¡No se ha podido analizar el archivo de manifiesto {package_name}!"
+
+[error_missing_critical_file]
+loc = "¡El paquete {package_name} no tiene el archivo crítico: {file_name}!"
+
+[error_file_signature_invalid]
+loc = "¡La firma del archivo {file_name} no es válida!"
+
+[error_missing_signature]
+loc = "¡El archivo de manifiesto {package_name} no tiene la firma de {file_name}!"
+
+[error_download_update_failed]
+loc = """
+Error al descargar la actualización {versión} para el paquete {paquete}:
+{error_text}
+"""
+
+[error_install_update_failed]
+loc = """
+Error al instalar la actualización {versión} para el paquete {paquete}.
+Reinicie el lanzador o su PC e inténtelo de nuevo.
+
+{error_text}
+"""
+
+[error_github_api_limit]
+loc = """
+¡Se ha alcanzado el límite de solicitudes no autorizadas a la API de GitHub para tu IP!
+
+Los servidores de GitHub ignorarán cualquier intento de conexión durante una hora.
+
+Configura (otro) *proxy* o *token de GitHub* en *Configuración del lanzador* para obtener acceso inmediato.
+"""
+
+[error_remove_readonly_failed]
+loc = "¡No se ha podido eliminar la marca de solo lectura del archivo {path}: {error_text}!"
+
+[error_file_not_exist]
+loc = "¡El archivo '{path}' no existe!"
+
+[error_not_a_file]
+loc = "¡El archivo '{path}' no es un archivo!"
+
+[error_path_not_absolute]
+loc = "¡La ruta del archivo '{path}' no es absoluta!"
+
+[error_no_read_access]
+loc = "¡No se ha podido leer el archivo '{path}'!"
+
+[error_file_readonly]
+loc = "No se ha podido escribir en '{path}': ¡el archivo es de solo lectura!"
+
+[error_no_write_access]
+loc = "No se pudo escribir '{path}': ¡no hay acceso de escritura!"
+
+[error_no_exe_access]
+loc = "No se pudo ejecutar '{path}': ¡no hay acceso de ejecución!"
+
+[error_dir_not_absolute]
+loc = "¡La ruta del directorio '{path}' no es absoluta!"
+
+[error_cant_read_folder]
+loc = "No se puede leer desde la carpeta '{path}'"
+
+[error_cant_write_folder]
+loc = "No se puede escribir en la carpeta '{path}'"
+
+[error_cant_run_exe_folder]
+loc = "No se puede ejecutar .exe en la carpeta '{path}'"
+
+[error_cant_access_folder]
+loc = "¡No se puede acceder a la carpeta '{path}'!"
+
+[error_not_a_folder]
+loc = "¡La ruta '{path}' no es una carpeta!"
+
+[error_cannot_set_root_absolute]
+loc = "¡No se puede establecer la raíz \"{root_path}\" para la ruta absoluta \"{path}\"!"
+
+[error_curly_brackets_error]
+loc = """
+¡Error al inicializar el lanzador!
+
+Las llaves {{ y }} en la ruta del lanzador no son compatibles:
+{root_path}
+
+Vuelva a instalar el lanzador en otra ubicación.
+
+"""
+
+[error_dll_injector_file_not_found]
+loc = "¡No se ha encontrado el archivo del inyector: {injector_lib_path}!"
+
+[error_dll_injector_load_failed]
+loc = "¡Error al cargar la biblioteca del inyector!"
+
+[error_dll_injector_setup_failed]
+loc = "¡Error al configurar la biblioteca del inyector!"
+
+[error_dll_injector_unload_failed]
+loc = "¡Error al descargar la biblioteca del inyector!"
+
+[dll_injector_shell_error_out_of_memory]
+loc = "El sistema operativo se ha quedado sin memoria/recursos"
+
+[dll_injector_shell_error_file_not_found]
+loc = "Archivo no encontrado"
+
+[dll_injector_shell_error_path_not_found]
+loc = "No se ha encontrado la ruta"
+
+[dll_injector_shell_error_access_denied]
+loc = "Acceso denegado"
+
+[dll_injector_shell_error_not_win32_app]
+loc = "El archivo .exe no es válido o no es una aplicación Win32"
+
+[dll_injector_shell_error_sharing_violation]
+loc = "Violación de uso compartido"
+
+[dll_injector_shell_error_no_app_association]
+loc = "No hay ninguna aplicación asociada al archivo"
+
+[dll_injector_shell_error_incomplete_app_association]
+loc = "La asociación de archivos está incompleta"
+
+[dll_injector_unknown_shell_error_code]
+loc = "Código de error ShellExecute desconocido {error_code}"
+
+[error_dll_injector_process_start_failed]
+loc = "Error al iniciar {process_name}: {error_text}!"
+
+[error_dll_injector_non_ascii_path]
+loc = """
+Cambie el nombre de todas las carpetas de la ruta utilizando solo letras inglesas:
+{dll_path}
+"""
+
+[error_dll_injector_unknown_start_method]
+loc = "Método de inicio de proceso desconocido `{start_method}`!"
+
+[error_dll_injector_injection_failed]
+loc = "¡Error al inyectar {dll_paths}!"
+
+[error_dll_injector_unhook_failed]
+loc = "Uso incorrecto del inyector: ¡{dll_path} no se ha desenganchado!"
+
+[error_dll_injector_another_instance]
+loc = "¡Hay otra instancia de 3DMigotoLoader en ejecución!"
+
+[error_dll_injector_failed_to_load_dll]
+loc = "¡Error al cargar {dll_path}!"
+
+[error_dll_injector_missing_entry_point]
+loc = "¡La biblioteca {dll_path} no tiene el punto de entrada esperado!"
+
+[error_dll_injector_hook_setup_failed]
+loc = "¡No se ha podido configurar el gancho de Windows para {dll_path}!"
+
+[error_dll_injector_unknown_hook_error]
+loc = "¡Error desconocido al enganchar {dll_path}!"
+
+[error_dll_injector_hook_is_null]
+loc = "¡El gancho es NULL para {dll_path}!"
+
+[error_dll_injector_path_not_defined]
+loc = "Uso incorrecto del inyector: ¡la ruta dll no está definida!"
+
+[error_dll_injector_process_not_defined]
+loc = "Uso incorrecto del inyector: ¡el proceso de destino no está definido!"
+
+[error_dll_injector_dll_not_hooked]
+loc = "Uso incorrecto del inyector: ¡dll no está conectado!"
+
+[error_dll_injector_extra_library_failed]
+loc = """
+Error al inyectar la biblioteca adicional {dll_path}:
+{error_text}!
+Comprueba Configuración avanzada -> Inyectar bibliotecas.
+"""
+
+[error_ssl_certificate_validation_failed]
+loc = """
+¡Error al validar el certificado SSL de la conexión HTTPS de GitHub!
+
+Si confía en su proxy, desmarque *Verificar SSL* en *Configuración del lanzador* e inténtelo de nuevo.
+"""
+
+[error_github_connection_failed]
+loc = """
+¡Error al establecer la conexión HTTPS con GitHub!
+
+Compruebe la configuración de su antivirus, cortafuegos, proxy y VPN.
+"""
+
+[error_github_rate_limit_exceeded]
+loc = "¡Se ha superado el límite de la API de GitHub!"
+
+[error_github_invalid_token]
+loc = """
+¡El token de acceso personal de GitHub no es válido!
+
+Configura el token correcto en la configuración del lanzador.
+"""
+
+[error_github_parse_response_failed]
+loc = "¡Error al analizar la respuesta de GitHub!"
+
+[error_github_parse_version_failed]
+loc = "¡No se ha podido analizar la última versión publicada!"
+
+[error_github_parse_signature_failed]
+loc = "¡No se ha podido analizar la firma!"
+
+[error_github_asset_not_found]
+loc = "¡No se ha podido localizar el activo que coincide con '{asset_name_format}'!"
+
+[error_github_invalid_release_notes]
+loc = "<font color=\"red\">⚠ ¡Error! ¡Formato de notas de la versión no válido! ⚠</font>"
+
+[error_github_unsigned_release]
+loc = "<font color=\"red\">☢ ¡Error! ¡La versión no está firmada! ☢</font>"
+
+[error_proxy_host_not_specified]
+loc = "¡No se ha especificado el host del proxy!"
+
+[error_proxy_port_not_specified]
+loc = "¡No se ha especificado el puerto del proxy!"
+
+[error_proxy_port_must_be_numeric]
+loc = "¡El puerto del proxy debe ser un valor numérico!"
+
+[donate_and_wwmi]
+loc = " y WWMI"
+
+[donate_popup_introduction]
+loc = """
+Hola, solo un momento, ¡prometo que no volveré a interrumpir!
+
+Soy SpectrumQT, el desarrollador detrás de XXMI Launcher{importer_info}.
+Parece que ya has disfrutado de {num_sessions} sesiones de {model_importer}, ¡genial!
+"""
+
+[donate_wwmi_introduction]
+loc = """
+¡Hola! ¡Gracias por visitar el rincón de agradecimiento de {model_importer}!
+
+Esta página es un poco especial, ya que no puedo incluir muchos nombres aquí.
+Simplemente porque estoy desarrollando {model_importer} y XXMI Launcher en solitario.
+"""
+
+[donate_other_introduction]
+loc = """
+¡Hola! ¡Gracias por visitar el rincón de agradecimiento de {model_importer}!
+
+Aquí puedes ver al equipo de desarrollo luchando por {model_importer} entre bastidores.
+Es una batalla difícil, ¡pero los hackers de sombreadores prevalecen!
+"""
+
+[donate_wwmi_useful_check]
+loc = "Si te ha resultado útil, considera echar un vistazo a"
+
+[donate_my_patreon_campaign]
+loc = "mi campaña de Patreon"
+
+[donate_wwmi_footer]
+loc = """
+Se trata de crear mejores herramientas para toda la comunidad {model_importer}.
+
+Quién sabe, ¡quizás tus pocos dólares puedan ayudar a dar forma a la próxima gran función!
+"""
+
+[donate_support_message]
+loc = "¡Por favor, considera apoyar a quienes trabajan duro cada día para hacer posible {model_importer}!"
+
+[donate_creators_single]
+loc = "• Creador: "
+
+[donate_creators_multiple]
+loc = "• Creadores: "
+
+[donate_maintainers_single]
+loc = "• Mantenedor:"
+
+[donate_maintainers_multiple]
+loc = "• Mantenedores:"
+
+[donate_launcher_handy]
+loc = "Además, si el lanzador te ha resultado útil, te agradecería que te unieras a"
+
+[donate_my_patreon_short]
+loc = "mi Patreon"
+
+[donate_close_button]
+loc = "Cerrar"
+
+[donate_close_countdown]
+loc = "Cerrar ({time_left})"
+
+[bottom_bar_initializing_launch]
+loc = "Inicializando el inicio del juego..."
+
+[bottom_bar_hooking]
+loc = "Conectando {library} a {process}... "
+
+[bottom_bar_verifying_hook]
+loc = "Verificando carga de {biblioteca} en {proceso}..."
+
+[bottom_bar_injecting]
+loc = "Inyectando {biblioteca} en {proceso}..."
+
+[bottom_bar_launching_game]
+loc = "Iniciando juego..."
+
+[bottom_bar_waiting_process]
+loc = "Esperando a que se inicie {proceso}..."
+
+[bottom_bar_closing_launcher]
+loc = "Cerrando el lanzador..."
+
+[bottom_bar_checking_updates]
+loc = "Buscando actualizaciones..."
+
+[bottom_bar_connecting_github]
+loc = "Conectando con GitHub..."
+
+[bottom_bar_downloading]
+loc = "Descargando {asset}..."
+
+[bottom_bar_verifying_integrity]
+loc = "Verificando la integridad de {asset}..."
+
+[bottom_bar_initializing_installation]
+loc = "Inicializando la instalación de la actualización..."
+
+[barra_inferior_escribiendo_archivo]
+loc = "Escribiendo {activo} en el disco..."
+
+[barra_inferior_moviendo_archivo]
+loc = "Moviendo {activo}..."
+
+[barra_inferior_descomprimiendo]
+loc = "Descomprimiendo {activo}..."
+
+[launcher_select_games_text]
+loc = "Seleccionar juegos para modificar:"
+
+[launcher_update_button_tooltip]
+loc = """
+## Actualizar paquetes a las últimas versiones:
+{pending_update_message}
+
+<font color=\"#3366ff\">*Pase el cursor por encima de las versiones en la esquina inferior izquierda para ver las descripciones de las actualizaciones.*</font>
+"""
+
+[launcher_start_button]
+loc = "Iniciar"
+
+[launcher_install_button]
+loc = "Instalar"
+
+[package_release_notes_up_to_date]
+loc = """
+# Novedades en {package_name} v{new_package_version}:
+{installed_release_notes}
+"""
+
+[package_release_notes_update_available]
+loc = """
+# Actualiza {package_name} a la versión v{new_package_version} para:
+{latest_release_notes}
+"""
+
+[package_release_notes_not_installed]
+loc = """
+Pulsa el botón **Instalar** para configurar el paquete.
+"""
+
+[package_description_launcher]
+loc = """
+*Este paquete es la propia aplicación XXMI Launcher y define sus características.*
+"""
+
+[package_description_xxmi_libraries]
+loc = """
+*El paquete XXMI Libraries es una compilación personalizada de 3dmigoto que manipula los datos entre la GPU y un proceso del juego.*
+"""
+
+[package_description_model_importer]
+loc = """
+*El paquete Model Importer ofrece un conjunto de funciones API necesarias para que los mods funcionen en un juego determinado.*
+"""
+
+[package_description_tooltip_open_github_changelog]
+loc = """
+<font color=\"#3366ff\">*<u>Haga clic con el botón izquierdo</u> para abrir el blog de desarrollo de {package_name} en Patreon.*</font>
+<font color=\"#3366ff\">*<u>Haga clic con el botón derecho</u> para abrir las versiones de {package_name} en GitHub y ver el registro completo de cambios.*</font>
+"""
+
+[package_description_tooltip_open_dev_blog]
+loc = """
+<font color=\"#3366ff\">*<u>Haga clic con el botón izquierdo</u> para abrir las versiones de {package_name} en GitHub y ver el registro completo de cambios.*</font>
+"""
+
+[package_release_notes]
+loc = """
+{package_release_notes}
+
+{actions_tooltip}
+<font color=\"#aaaaaa\">{package_description}</font>
+"""
+
+[tool_bar_repair_button]
+loc = "Reparar {importer}"
+
+[tool_bar_check_updates_button]
+loc = "Buscar actualizaciones"
+
+[tool_bar_add_shortcut_button]
+loc = "Añadir acceso directo al escritorio"
+
+[tool_bar_open_mods_button]
+loc = "Abrir carpeta de mods"
+
+[top_bar_xxmi_button_tooltip]
+loc = "Gestionar importadores de modelos"
+
+[top_bar_wwmi_button_tooltip]
+loc = "Importador de modelos Wuthering Waves"
+
+[top_bar_zzmi_button_tooltip]
+loc = "Importador de modelos Zenless Zone Zero"
+
+[top_bar_srmi_button_tooltip]
+loc = "Importador de modelos Honkai: Star Rail"
+
+[top_bar_gimi_button_tooltip]
+loc = "Importador de modelos de Genshin Impact"
+
+[top_bar_himi_button_tooltip]
+loc = "Importador de modelos de Honkai Impact"
+
+[top_bar_gamebanana_button_tooltip]
+loc = "{importador} GameBanana"
+
+[top_bar_discord_button_tooltip]
+loc = "AGMG Modding Community Discord"
+
+[top_bar_github_button_tooltip]
+loc = "XXMI Launcher GitHub"
+
+[top_bar_donate_button_tooltip]
+loc = "Apoya a {importer}"
+
+[top_bar_settings_button_tooltip]
+loc = "Abrir configuración"
+
+[top_bar_minimize_button_tooltip]
+loc = "Minimizar"
+
+[top_bar_close_button_tooltip]
+loc = "Cerrar"
+
+[top_bar_unsafe_mode_text]
+loc = "Modo no seguro"
+
+[top_bar_unsafe_mode_text_tooltip]
+loc = """
+Se permite el uso de DLL 3dmigoto de terceros.
+¡Asegúrate de utilizar solo aquellas que provengan de una fuente fiable!
+"""
+
+[message_text_theme_load_failed_no_folder]
+loc = """
+Error al cargar el tema {theme}:
+
+¡La carpeta del tema no existe!
+"""
+
+[message_text_theme_load_failed_no_file]
+loc = """
+Error al cargar el tema {theme}:
+
+¡El archivo del tema `custom-tkinter-theme.json` no existe!
+"""
+
+[message_title_theme_update_required]
+loc = "Se requiere actualización del tema"
+
+[message_button_theme_use_default]
+loc = "Usar predeterminado"
+
+[message_button_patch_theme]
+loc = "Parchear tema"
+
+[message_text_theme_update_required]
+loc = """
+¡No se puede cargar el tema {theme} seleccionado!
+
+Haga clic en "Usar predeterminado" para utilizar el tema predeterminado (garantiza una visualización adecuada).
+Haga clic en "Parchear tema" para sustituir "custom-tkinter-theme.json" por uno nuevo.
+"""
+
+[status_reloading_gui]
+loc = "Recargando GUI..."
+
+[advanced_settings_update_policy_label]
+loc = "Política de actualización:"
+
+[advanced_settings_overwrite_ini_checkbox]
+loc = "Sobrescribir d3dx.ini"
+
+[advanced_settings_overwrite_ini_checkbox_tooltip]
+loc = """
+Habilitado: las actualizaciones de {importer} sobrescribirán el archivo d3dx.ini existente para garantizar que esté actualizado.
+Desactivado: las actualizaciones de {importer} mantendrán el archivo d3dx.ini existente sin cambios.
+"""
+
+[advanced_settings_security_label]
+loc = "Seguridad:"
+
+[advanced_settings_unsafe_mode_checkbox]
+loc = "Modo no seguro"
+
+[advanced_settings_unsafe_mode_checkbox_tooltip]
+loc = """
+Habilitado: permite dlls 3dmigoto de terceros.
+Deshabilitado: no permite dlls 3dmigoto de terceros.
+Nota: si el archivo d3d11.dll de terceros no admite la ejecución desde directorios anidados, no se cargará.
+"""
+
+[advanced_settings_run_pre_launch_checkbox]
+loc = "Ejecutar antes del inicio:"
+
+[advanced_settings_option_checkbox_tooltip]
+loc = """
+Habilitado: la opción tendrá el efecto indicado.
+Desactivada: la opción no tendrá ningún efecto.
+"""
+
+[advanced_settings_run_pre_launch_tooltip]
+loc = """
+Comando de la consola de Windows que se ejecutará antes del inicio del ejecutable del juego.
+Nota: Si hay que hacer algo antes de iniciar el juego, hágalo aquí.
+"""
+
+[advanced_settings_wait_checkbox]
+loc = "Esperar"
+
+[advanced_settings_run_pre_launch_wait_checkbox_tooltip]
+loc = """
+Habilitado: Espera a que el comando (bloqueante) termine su ejecución antes de iniciar el ejecutable del juego.
+"""
+
+[advanced_settings_custom_launch_checkbox]
+loc = "Inicio personalizado:"
+
+[advanced_settings_custom_launch_entry_tooltip]
+loc = """
+Comando de la consola de Windows que se ejecutará al pulsar el botón Iniciar en lugar del lanzamiento predeterminado del ejecutable del juego.
+Sugerencia: si solo desea cambiar el método de inyección, deje este campo vacío.
+¡Advertencia! Este comando también anula las "Opciones de inicio" de la configuración general.
+Nota: Si desea iniciar el ejecutable del juego con otro ejecutable personalizado, hágalo aquí.
+Ejemplo (equivalente al comando utilizado internamente por el lanzador para iniciar GI a través del desbloqueador de FPS):
+`start /d \"C:\\Games\\XXMI Launcher\\Resources\\Packages\\GI-FPS-Unlocker\" unlockfps_nc.exe`
+"""
+
+[advanced_settings_custom_launch_inject_mode_option_menu_tooltip]
+loc = """
+Define la forma de inyección de 3dmigoto en el proceso del juego iniciado a través de Inicio personalizado.
+* Inyectar: utiliza WriteProcessMemory, más fiable pero requiere acceso directo a la memoria.
+* Enganchar: utiliza SetWindowsHookEx, menos fiable, pero potencialmente menos visible para los anticheats.
+* Omitir: omite la inyección de 3dmigoto y procesa solo el campo Inyectar bibliotecas.
+"""
+
+[advanced_settings_run_post_load_checkbox]
+loc = "Ejecutar después de la carga:"
+
+[advanced_settings_run_post_load_checkbox_tooltip]
+loc = """
+Comando de la consola de Windows que se ejecutará después de conectar d3d11.dll al archivo ejecutable del juego iniciado.
+Nota: Si hay que hacer algo después de la inyección de 3dmigoto, hágalo aquí.
+"""
+
+[advanced_settings_run_post_load_wait_checkbox_tooltip]
+loc = """
+Habilitado: Espera a que el comando (bloqueante) termine su ejecución antes de considerar completado el inicio del juego.
+"""
+
+[advanced_settings_inject_libraries_checkbox]
+loc = "Inyectar bibliotecas:"
+
+[advanced_settings_inject_libraries_tooltip]
+loc = """
+Lista de rutas DLL adicionales para inyectar en el proceso del juego. Una ruta por línea.
+La inyección se realizará mediante el método WriteProcessMemory.
+Ejemplo (inyectar dll ReShade):
+`C:\\Games\\ReShade\\ReShade64.dll`
+"""
+
+[launcher_settings_language_label]
+loc = "Idioma:"
+
+[general_settings_engine_settings_label]
+loc = "Configuración del motor:"
+
+[general_settings_game_folder_label]
+loc = "Carpeta del juego:"
+
+[general_settings_game_folder_error_label]
+loc = "¡No se ha podido detectar la carpeta del juego!"
+
+[settings_browse_path_button]
+loc = "Examinar..."
+
+[general_settings_detect_game_folder_button_tooltip]
+loc = "Intentar detectar automáticamente las carpetas de instalación existentes."
+
+[general_settings_launch_options_label]
+loc = "Opciones de inicio:"
+
+[general_settings_launch_options_entry_tooltip_wwmi]
+loc = """
+**Habilitado**: Inicia el juego a través de **Client-Win64-Shipping.exe** con los argumentos de línea de comandos especificados.
+
+- Desactivar introducción: -SkipSplash
+
+**Desactivado (predeterminado)**: Inicia el juego normalmente a través de **Wuthering Waves.exe** (la forma más fiable).
+<font color=\"red\">⚠ ¡El juego puede bloquearse con esta opción habilitada! ⚠</font>
+"""
+
+[general_settings_launch_options_entry_tooltip_default]
+loc = """
+**Habilitado**: Inicia el ejecutable del juego con los argumentos de línea de comandos especificados.
+**Deshabilitado**: Ignora los argumentos de línea de comandos especificados e inicia el ejecutable del juego normalmente.
+"""
+
+[general_settings_launch_options_about_button]
+loc = "Acerca de..."
+
+[general_settings_launch_options_about_button_tooltip]
+loc = """
+Abre la página web de documentación de los argumentos de la línea de comandos de {engine}.
+Nota: El motor del juego está personalizado por los desarrolladores y es posible que algunos argumentos no funcionen.
+"""
+
+[general_settings_start_method_label]
+loc = "Método de inicio:"
+
+[general_settings_start_method_option_menu_tooltip]
+loc = """
+**Nativo**: Crea el proceso del juego directamente. Suele ser la forma más fiable.
+**Shell**: Inicia el proceso del juego a través de la consola del sistema. Vale la pena probarlo si tienes algún problema con Nativo.
+**Manual**: Omite el inicio del juego al pulsar el botón **Inicio**. Espera a que el usuario lo inicie manualmente (tiempo de espera {timeout}s).
+"""
+
+[general_settings_xxmi_delay_label]
+loc = "Retardo XXMI:"
+
+[general_settings_xxmi_delay_entry_tooltip_base]
+loc = """
+Retardo en milisegundos durante el cual el DLL XXMI inyectado (3dmigoto) debe esperar antes de la inicialización.
+{tooltip_footer}
+"""
+
+[general_settings_xxmi_delay_entry_tooltip_footer_wwmi]
+loc = """
+<font color=\"red\">⚠ ¡Wuthering Waves se bloquea al iniciarse con un retardo incorrecto! ⚠</font>
+<font color=\"#8B8000\">⚠ Si el valor predeterminado falla, intenta aumentarlo o disminuirlo hasta que WuWa deje de bloquearse. ⚠</font>
+## Valores conocidos para Wuthering Waves 2.4:
+- **500**: Predeterminado, funciona para la mayoría de los usuarios.
+- **150**: valor mínimo conocido que funciona con ReShade.
+- **50**: valor mínimo conocido que funciona.
+- **1000+**: algunos usuarios necesitan retrasos realmente grandes.
+"""
+
+[general_settings_xxmi_delay_entry_tooltip_footer_general]
+loc = """
+Si el juego se bloquea sin mods, intenta aumentarlo. Empieza con pasos de 50 y ve aumentándolos a medida que avanzas.
+"""
+
+[general_settings_process_priority_label]
+loc = "Prioridad del proceso:"
+
+[general_settings_process_priority_option_menu_tooltip]
+loc = """
+Establece la prioridad del proceso para el ejecutable del juego.
+**¡Advertencia!** ¡El método de inicio **Shell** no admite la prioridad del proceso!
+"""
+
+[general_settings_auto_config_label]
+loc = "Configuración automática:"
+
+[general_settings_configure_game_checkbox]
+loc = "Configurar los ajustes del juego"
+
+[general_settings_configure_game_tooltip_gimi]
+loc = """
+**Habilitado**: Asegúrate de que la **configuración gráfica** del juego sea compatible con GIMI antes de iniciar el juego:
+
+- `Resolución dinámica de personajes: Desactivada`
+
+**Deshabilitado**: La configuración del juego no se verá afectada.
+
+<font color=\"red\">⚠ ¡Los mods no funcionarán con una configuración incorrecta! ⚠</font>
+"""
+
+[general_settings_configure_game_tooltip_wwmi]
+loc = """
+**Habilitado**: Asegúrate de que la **configuración gráfica** del juego sea compatible con WWMI antes de iniciar el juego:
+
+- `Calidad gráfica: Calidad`
+
+**Deshabilitado**: La configuración del juego no se verá afectada.
+
+<font color=\"red\">⚠ ¡Los mods no funcionarán con una configuración incorrecta! ⚠</font>
+"""
+
+[general_settings_configure_game_tooltip_zzmi]
+loc = """
+**Habilitado**: Asegúrate de que la **configuración gráfica** del juego sea compatible con ZZMI antes de iniciar el juego:
+
+- `Calidad de los personajes: Alta`
+- `Animación de personajes de alta precisión: Desactivada`
+
+**Desactivado**: La configuración del juego no se verá afectada.
+
+<font color=\"red\">⚠ ¡Los mods no funcionarán con una configuración incorrecta! ⚠</font>
+"""
+
+[error_no_data_available_short]
+loc = "N/A"
+
+[general_settings_force_ultra_high_lod_bias_label]
+loc = "Sesgo LOD máximo"
+
+[general_settings_force_ultra_high_lod_bias_tooltip]
+loc = """
+**Habilitado**: establece el **sesgo LOD** en **ultra alto** para forzar texturas LOD con resolución completa.
+**Desactivado**: Mantiene la configuración de **LOD Bias** sin cambios. Selecciona esta opción si **Use All Mips** está activado más abajo.
+"""
+
+[general_settings_disable_wounded_effect_checkbox]
+loc = "Desactivar efecto de herido"
+
+[general_settings_disable_wounded_effect_checkbox_tooltip]
+loc = """
+La mayoría de los mods no admiten este efecto, por lo que las texturas suelen romperse tras recibir varios golpes.
+**Habilitado**: Desactiva el efecto. Garantiza el renderizado adecuado de las texturas modificadas.
+**Deshabilitado**: Activa el efecto. Selecciona esta opción si utilizas la herramienta "Injured Effect Remover".
+"""
+
+[general_settings_texture_boost_label]
+loc = "Mejora de texturas:"
+
+[general_settings_texture_boost_entry_tooltip]
+loc = """
+## Controla la intensidad con la que se envían las texturas de mayor resolución a la VRAM:
+
+Es posible que sea necesario ajustar este valor para minimizar el retraso en la carga de las texturas (o para que funcione):
+
+* Comienza el ajuste con **20,0** **(predeterminado)**.
+    ✅ Este valor de referencia debería funcionar en la mayoría de los PC.
+    
+* Si las texturas modificadas no se cargan, prueba a aumentarlo a **25** o **30**.
+
+* Si las texturas modificadas se cargan correctamente, empieza a reducirlo hasta que las texturas pequeñas, como los ojos, dejen de funcionar.
+    ✅ El valor justo por encima del punto de ruptura debería suponer un retraso mínimo en la carga de texturas.
+    
+*Aplicado a ConsoleVariables → valor r.Streaming.MinBoost en Engine.ini*
+"""
+
+[general_settings_use_all_mips_label]
+loc = "Usar todos los Mips"
+
+[general_settings_use_all_mips_tooltip]
+loc = """
+## Controla si se aplican los límites de resolución de texturas:
+
+* **Habilitado** **(predeterminado)**: deshabilita las restricciones de resolución de LOD Bias.
+    ✅ Permite cargar texturas a resolución completa a costa de un mayor uso de VRAM.
+    ⚠️ Si no tiene ningún efecto o consume demasiada VRAM, prueba a habilitar **Max LOD Bias** en su lugar. 
+
+* **Deshabilitado**: habilita las restricciones de resolución de LOD Bias.
+    ⚠️ Las texturas modificadas no se cargarán si se deshabilita sin Max (Ultra High) LOD Bias habilitado.
+    
+*Aplicado a ConsoleVariables → r.Streaming.UseAllMips valor en Engine.ini*
+"""
+
+
+
+[general_settings_texture_streaming_pool_size_label]
+loc = "Tamaño del grupo de texturas:"
+
+[general_settings_texture_streaming_pool_size_entry_tooltip]
+loc = """
+## Controla cuánta VRAM puede usar el juego para las texturas:
+
+* Establece en **0** **(predeterminado)** para **control automático** (basado en la VRAM disponible).
+    ✅ Un grupo lo suficientemente grande elimina el retraso en la carga de texturas modificadas después de la primera carga.
+
+* Establece un valor específico (por ejemplo, 4096) para una gestión precisa de la VRAM.
+
+*Se aplica a ConsoleVariables → valor r.Streaming.PoolSize en Engine.ini*
+"""
+
+[general_settings_texture_streaming_limit_pool_checkbox]
+loc = "Limitar el tamaño del grupo a la VRAM"
+
+[general_settings_texture_streaming_limit_pool_checkbox_tooltip]
+loc = """
+## Establece el límite superior de la cantidad de VRAM que el juego puede usar para las texturas:
+
+* **Habilitado** **(predeterminado)**: limita el tamaño del grupo de texturas en función de la VRAM disponible de la GPU.
+    ✅ Ayuda a evitar bloqueos o interrupciones en sistemas con poca VRAM.
+    ⚠️ Puede reducir la calidad de las texturas o provocar apariciones repentinas si es demasiado restrictivo en GPU de gama alta.
+
+* **Desactivado**: desbloquea el tamaño máximo del grupo de texturas, incluso si supera los límites de seguridad de la GPU.
+    ✅ Puede mejorar la calidad de las texturas y reducir las apariciones repentinas en sistemas potentes.
+    ⚠️ Riesgo de caídas de rendimiento, interrupciones o fallos si se agota la VRAM.
+
+*Aplicado a ConsoleVariables → r.Streaming.LimitPoolSizeToVRAM valor en Engine.ini*
+"""
+
+[general_settings_mesh_lod_distance_label]
+loc = "Distancia LOD de malla:"
+
+[general_settings_mesh_lod_distance_entry_tooltip]
+loc = """
+## Controla hasta qué punto el juego sustituye las mallas animadas completas por LoD simplificados:
+
+* Establece el valor en **24** **(predeterminado)** para forzar los modelos completos en la medida en que el juego carga objetos animados.
+    ✅ Con este valor, los mods se aplican en la medida en que se pueden ver.
+    ⚠️ Riesgo de caída del rendimiento para GPU de gama baja.
+
+* Establece un valor más bajo (por ejemplo, `15`) para obtener un mejor rendimiento.
+    ✅ Reduce el coste de FPS al permitir que el juego utilice mallas LoD para objetos animados distantes.
+    ⚠️ Los LoD pueden verse mal debido a que se aplican texturas modificadas a las mallas LoD originales.
+
+*Aplicado a ConsoleVariables → r.Kuro.SkeletalMesh.LODDistanceScale valor en Engine.ini*
+"""
+
+[general_settings_mesh_lod_offset_label]
+loc = "Desplazamiento de LOD de malla:"
+
+[general_settings_mesh_lod_offset_tooltip]
+loc = """
+## Controla a qué distancia de la cámara se sustituye el personaje por LOD:
+
+* Establece **-50** **(predeterminado)** para mantener el personaje modificado en vuelo, escenas cinemáticas, etc.
+
+*Se aplica al valor ConsoleVariables → r.Kuro.SkeletalMesh.LODDistanceScaleDeviceOffset en Engine.ini*
+"""
+
+[general_settings_open_file_button]
+loc = "🔍 Abrir {file_name}"
+
+[general_settings_open_file_button_tooltip]
+loc = "Abrir {file_name} en el editor de texto predeterminado para realizar ajustes manuales."
+
+[error_general_settings_file_not_found]
+loc = "El archivo no existe: **{file_name}**!"
+
+[general_settings_tweaks_label]
+loc = "Ajustes:"
+
+[general_settings_unlock_fps_checkbox_force]
+loc = "Forzar 120 FPS"
+
+[general_settings_unlock_fps_checkbox]
+loc = "Desbloquear FPS:"
+
+[general_settings_unlock_fps_checkbox_tooltip_wwmi]
+loc = """
+Esta opción permite establecer el límite de FPS en 120 incluso en dispositivos que no son oficialmente compatibles.
+Ten en cuenta que, con algunos equipos, el juego se niega a alcanzar los 120 FPS incluso con este ajuste.
+**Habilitado**: Establece `CustomFrameRate` en `120` en `LocalStorage.db` al iniciar el juego.
+**Deshabilitado**: No tiene ningún efecto en la configuración de FPS. Utiliza la configuración del juego para deshacer los 120 FPS ya forzados.
+"""
+
+[general_settings_unlock_fps_checkbox_tooltip_srmi]
+loc = """
+Esta opción permite establecer el límite de FPS en 120.
+**Habilitado**: Actualiza la clave del Registro de Windows de la configuración gráfica con un valor de 120 FPS al iniciar el juego.
+**Deshabilitado**: No tiene ningún efecto en la configuración de FPS, utiliza la configuración del juego para deshacer los 120 FPS ya forzados.
+**¡Advertencia!** El ajuste solo es compatible con el cliente HSR global y no funcionará para CN.
+*Nota: Edita el valor `FPS` en `HKEY_CURRENT_USER/SOFTWARE/Cognosphere/Star Rail/GraphicsSettings_Model_h2986158309`.*
+"""
+
+[general_settings_unlock_fps_checkbox_tooltip_gimi]
+loc = """
+Esta opción permite establecer un límite de FPS personalizado.
+**¡Advertencia!**: Para minimizar los fallos del motor del juego, establece los FPS en 120 / 180 / 240, etc.
+**Habilitado**: Inicia el juego a través de `unlockfps_nc.exe` y déjalo ejecutarse en segundo plano para mantener aplicado el ajuste de FPS.
+**Desactivado**: Inicie el juego a través del archivo `.exe` original, no tiene ningún efecto sobre los FPS.
+*Sugerencia: Si el paquete FPS Unlocker está desactualizado, puede actualizar manualmente "unlockfps_nc.exe" desde el repositorio original.*
+*Ruta local*: `Resources/Packages/GI-FPS-Unlocker/unlockfps_nc.exe`
+*Repositorio original*: `https://github.com/34736384/genshin-fps-unlock`
+"""
+
+[general_settings_unlock_fps_checkbox_tooltip_himi]
+loc = """
+Esta opción permite establecer un límite de FPS personalizado.
+**Habilitado**: actualiza la clave del Registro de Windows de configuración gráfica con el valor de FPS especificado al iniciar el juego.
+**Deshabilitado**: no tiene ningún efecto en la configuración de FPS; utiliza la configuración del juego para deshacer los ajustes de FPS ya realizados.
+"""
+
+[general_settings_window_mode_option_menu_tooltip]
+loc = "Modo de ventana del juego cuando se inicia con FPS Unlocker."
+
+[general_settings_apply_tweaks_checkbox]
+loc = "Aplicar ajustes de rendimiento"
+
+[general_settings_apply_tweaks_checkbox_tooltip]
+loc = """
+**Habilitado**: Añade una lista de ajustes de rendimiento a la sección `[SystemSettings]` de `Engine.ini` al iniciar el juego.
+**Desactivado**: No añadir ajustes a `Engine.ini`. Los que ya se hayan añadido deberán eliminarse manualmente.
+
+Lista de ajustes:
+{tweaks}
+"""
+
+[general_settings_enable_hdr_checkbox]
+loc = "Habilitar HDR"
+
+[general_settings_enable_hdr_checkbox_tooltip]
+loc = """
+**Advertencia**. Tu monitor debe ser compatible con HDR y la opción "Usar HDR" debe estar habilitada en la configuración de pantalla de Windows.
+**Habilitado**: activa HDR. Crea un registro HDR cada vez antes de iniciar el juego.
+**Deshabilitado**: desactiva HDR. No se requiere ninguna acción adicional, el juego elimina automáticamente el registro HDR al iniciarse.
+"""
+
+[importer_settings_shader_hunting_label]
+loc = "Búsqueda de sombreadores:"
+
+[importer_settings_enable_hunting_checkbox]
+loc = "Habilitar búsqueda"
+
+[importer_settings_enable_hunting_checkbox_tooltip]
+loc = """
+Habilitado: permite activar o desactivar el modo de búsqueda mediante la tecla de acceso rápido [0] del teclado numérico.
+* [d3dx.ini]: hunting = 2
+Desactivado: el modo de búsqueda está desactivado.
+* [d3dx.ini]: hunting = 0
+"""
+
+[importer_settings_dump_shaders_checkbox]
+loc = "Volcar sombreadores"
+
+[importer_settings_dump_shaders_checkbox_tooltip]
+loc = """
+Habilitado: La tecla del modo de búsqueda [Copiar hash] también guarda el sombreador seleccionado como archivo en ShaderFixes.
+* [d3dx.ini]: marking_actions = clipboard hlsl asm regex
+Deshabilitado: El modo de búsqueda [Copiar hash] solo copia el hash del sombreador seleccionado al portapapeles.
+* [d3dx.ini]: marking_actions = clipboard
+"""
+
+[importer_settings_error_handling_label]
+loc = "Gestión de errores:"
+
+[importer_settings_mute_warnings_checkbox]
+loc = "Silenciar advertencias"
+
+[importer_settings_mute_warnings_checkbox_tooltip]
+loc = """
+Habilitado: No se muestran advertencias de error ni se emiten pitidos. La ignorancia es felicidad.
+* [d3dx.ini]: show_warnings = 0
+Desactivado: las advertencias de error del analizador Ini y los pitidos en F10 atormentarán a las pobres almas.
+* [d3dx.ini]: show_warnings = 1
+"""
+
+[importer_settings_calls_logging_checkbox]
+loc = "Registro de llamadas"
+
+[importer_settings_calls_logging_checkbox_tooltip]
+loc = """
+Habilitado: registra el uso de la API.
+* [d3dx.ini]: calls = 1
+Deshabilitado: no registra las llamadas. Rendimiento máximo.
+* [d3dx.ini]: calls = 0
+"""
+
+[importer_settings_debug_logging_checkbox]
+loc = "Registro de depuración"
+
+[importer_settings_debug_logging_checkbox_tooltip]
+loc = """
+Habilitado: Registro de depuración muy detallado.
+* [d3dx.ini]: debug = 1
+Deshabilitado: Sin registro de depuración. Rendimiento máximo.
+* [d3dx.ini]: debug = 0
+"""
+
+[importer_settings_importer_folder_label]
+loc = "Carpeta del importador:"
+
+[importer_settings_importer_folder_label_dynamic]
+loc = "Carpeta {importer}:"
+
+[importer_settings_importer_folder_entry_tooltip]
+loc = """
+Ruta a la carpeta que contiene la carpeta "Mods", "d3dx.ini" y otros recursos {importer}.
+**Absoluta**: establece cualquier carpeta arbitraria, por ejemplo, "C:/Games/{importer}/".
+**Relativo**: Establece cualquier carpeta **dentro** de la carpeta del lanzador, por ejemplo, `{importer}/` (predeterminado).
+"""
+
+[importer_settings_ini_protection_label]
+loc = "Protección Ini:"
+
+[importer_settings_enforce_rendering_checkbox]
+loc = "Aplicar configuración de renderizado"
+
+[importer_settings_enforce_rendering_checkbox_tooltip]
+loc = """
+Habilitado: Asegura la compatibilidad de {importer} con la configuración de la sección [Renderizado].
+* [d3dx.ini]: texture_hash = {texture_hash}
+* [d3dx.ini]: track_texture_updates = {track_texture_updates}
+Desactivado: la configuración anterior no se aplicará en d3dx.ini.
+"""
+
+[launcher_settings_start_behavior_label]
+loc = "Comportamiento de inicio:"
+
+[launcher_settings_auto_close_checkbox]
+loc = "Cerrar el lanzador después de iniciar el juego"
+
+[launcher_settings_auto_close_checkbox_tooltip]
+loc = """
+Habilitado: El lanzador se cerrará una vez que el juego haya comenzado y se haya confirmado la inyección de 3dmigoto.
+Deshabilitado: El lanzador seguirá ejecutándose.
+"""
+
+[launcher_settings_timeout_label]
+loc = "Tiempo de espera:"
+
+[launcher_settings_timeout_entry_tooltip]
+loc = """
+Controla cuánto tiempo debe esperar el lanzador a que el juego muestre su ventana después del inicio.
+El proceso del juego se considerará bloqueado una vez que se alcance el tiempo de espera.
+El valor predeterminado es **30**.
+"""
+
+[launcher_settings_update_policy_label]
+loc = "Política de actualización:"
+
+[launcher_settings_auto_update_checkbox]
+loc = "Actualización automática"
+
+[launcher_settings_auto_update_checkbox_tooltip]
+loc = """
+Habilitado: las actualizaciones del lanzador y del {importador} se descargarán e instalarán automáticamente.
+Deshabilitado: utilice el botón especial [▲] situado junto al botón [Iniciar] para descargar e instalar las actualizaciones manualmente.
+"""
+
+[launcher_settings_update_channel_label]
+loc = "Canal:"
+
+[launcher_settings_update_channel_option_menu_tooltip]
+loc = """
+**Automático**: detecta automáticamente el método de instalación de actualizaciones.
+**MSI**: utiliza instaladores nativos `.msi` para instalar actualizaciones.
+**ZIP**: utiliza archivos portátiles `.zip` para instalar actualizaciones.
+"""
+
+[launcher_settings_theme_label]
+loc = "Tema de la interfaz de usuario:"
+
+[launcher_settings_theme_option_menu_tooltip]
+loc = """
+Selecciona el tema de la interfaz gráfica de usuario del lanzador.
+¡Advertencia! ¡El tema `Predeterminado` se sobrescribirá con las actualizaciones del lanzador!
+Para crear un tema personalizado:
+1. Crea una copia de la carpeta `Predeterminado` en la carpeta `Temas`.
+2. Cambie el nombre del duplicado de la forma en que desee que aparezca en Configuración.
+3. Edite o sustituya cualquier imagen (extensiones válidas: webp, jpeg, png, jpg).
+"""
+
+[launcher_settings_dev_mode_checkbox]
+loc = "Modo de desarrollo"
+
+[launcher_settings_dev_mode_checkbox_tooltip]
+loc = """
+Habilitado: El lanzador rastreará los cambios en `custom-tkinter-theme.json` y los aplicará sobre la marcha.
+Deshabilitado: No se rastrearán los cambios en el tema.
+"""
+
+[launcher_settings_connection_label]
+loc = "Conexión:"
+
+[launcher_settings_github_token_label]
+loc = "Token de GitHub:"
+
+[launcher_settings_github_token_entry_tooltip]
+loc = """
+Tu **token de acceso personal** en **GitHub** (es decir, `ghp_f7gy3A4eQ97jfy2983mfZu2Hy93yf2P3d798`).
+Permite combatir el error `Límite de solicitudes de la API de GitHub` que suele producirse con los proxies públicos.
+Es totalmente gratuito y solo requiere registrarse en GitHub.
+Para crear un nuevo token:
+1. Haga clic en el botón `[?]` para abrir la página web de creación de tokens.
+2. Utilice el botón `Generar nuevo token (clásico)`.
+"""
+
+[launcher_settings_github_token_create_button]
+loc = "Crear..."
+
+[launcher_settings_github_token_create_button_tooltip]
+loc = "Abrir la página web de creación de **tokens de acceso personal de GitHub**."
+
+[launcher_settings_verify_ssl_checkbox]
+loc = "Verificar SSL"
+
+[launcher_settings_verify_ssl_checkbox_tooltip]
+loc = """
+<font color=\"red\">⚠ Desactiva solo si confías en tu proxy o cualquier otro elemento que rompa SSL. ⚠</font>
+**Habilitado**: valida los certificados SSL para las descargas de GitHub con el fin de garantizar tu seguridad.
+**Desactivado**: permite conexiones inseguras vulnerables a ataques de intermediarios.
+"""
+
+[launcher_settings_proxy_enable_checkbox]
+loc = "Usar proxy:"
+
+[launcher_settings_proxy_enable_checkbox_tooltip]
+loc = """
+Controla cómo el lanzador se conecta a GitHub para descargar paquetes.
+**Habilitado**: utiliza el servidor proxy especificado para acceder a Internet.
+**Deshabilitado**: utiliza la configuración predeterminada de conexión a Internet del sistema.
+"""
+
+[launcher_settings_proxy_type_label]
+loc = "Tipo:"
+
+[launcher_settings_proxy_type_option_menu_tooltip]
+loc = """
+**HTTPS**: El buen protocolo proxy de siempre. Ofrece la mejor seguridad.
+**SOCKS5**: Más nuevo y menos seguro, pero excelente para eludir cortafuegos.
+"""
+
+[launcher_settings_proxy_dns_checkbox]
+loc = "Proxy DNS a través de SOCKS5"
+
+[launcher_settings_proxy_dns_checkbox_tooltip]
+loc = """
+**Habilitado**: utiliza la conexión proxy SOCKS5 para enrutar las solicitudes DNS.
+**Deshabilitado**: las solicitudes DNS se enrutarán a través de tu ISP.
+"""
+
+[launcher_settings_proxy_host_label]
+loc = "Host:"
+
+[launcher_settings_proxy_host_entry_tooltip]
+loc = "Dirección IP del proxy (por ejemplo, `123.12.1.231`) o nombre de dominio (por ejemplo, `proxyprovider.com`)."
+
+[launcher_settings_proxy_port_label]
+loc = "Puerto:"
+
+[launcher_settings_proxy_port_entry_tooltip]
+loc = "Puerto del proxy (por ejemplo, `1080`)."
+
+[launcher_settings_proxy_credentials_checkbox]
+loc = "El proxy requiere contraseña"
+
+[launcher_settings_proxy_credentials_checkbox_tooltip]
+loc = """
+**Habilitado**: Utiliza el nombre de usuario y la contraseña especificados para la autenticación del servidor proxy.
+**Deshabilitado**: No utiliza ninguna credencial al acceder a un servidor proxy.
+"""
+
+[launcher_settings_proxy_user_label]
+loc = "Usuario:"
+
+[launcher_settings_proxy_user_entry_tooltip]
+loc = "Nombre de usuario proporcionado por su servicio proxy."
+
+[launcher_settings_proxy_password_label]
+loc = "Contraseña:"
+
+[launcher_settings_proxy_password_entry_tooltip]
+loc = "Contraseña proporcionada por su servicio proxy."
+
+[settings_tab_general]
+loc = "General"
+
+[settings_tab_launcher]
+loc = "Iniciador"
+
+[settings_tab_importer]
+loc = "MI"
+
+[settings_tab_advanced]
+loc = "Avanzado"
+
+[settings_title]
+loc = "Configuración"
+
