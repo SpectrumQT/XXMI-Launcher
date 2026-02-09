@@ -12,3 +12,8 @@ codepage = "936"
 display_name = "Русский"
 keywords = ["ru_RU", "Russian", "Russia"]
 codepage = "1251"
+
+[ES_MX]
+display_name = "Español (Latinoamérica)"
+keywords = ["es_MX", "Spanish", "Latinoamérica"]
+codepage = "65001"
