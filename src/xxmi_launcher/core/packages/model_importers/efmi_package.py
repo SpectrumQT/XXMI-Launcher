@@ -1,12 +1,7 @@
 import re
-import os
 import logging
-import shutil
-import winreg
-import json
 
 from dataclasses import dataclass, field
-from enum import Enum
 from typing import Dict, Union, Tuple, Optional, List
 from pathlib import Path
 
@@ -17,8 +12,7 @@ import core.config_manager as Config
 from core.locale_manager import L
 from core.package_manager import PackageMetadata
 
-from core.utils.ini_handler import IniHandler, IniHandlerSettings
-from core.utils.process_tracker import wait_for_process_exit, WaitResult, ProcessPriority
+from core.mod_manager import IniSanitizer
 from core.packages.model_importers.model_importer import ModelImporterPackage, ModelImporterConfig, Version
 from core.packages.migoto_package import MigotoManagerConfig
 
@@ -132,5 +126,16 @@ class EFMIPackage(ModelImporterPackage):
 
     def initialize_game_launch(self, game_path: Path):
         # if Config.Active.Importer.custom_launch_inject_mode != 'Bypass':
-        pass
 
+        Events.Fire(Events.Application.StatusUpdate(status=L('sanitizing_mods_folder', 'Sanitizing invalid INI files in Mods folder...')))
+
+        exclude_patterns = self.ini.get_option_values('exclude_recursive', section_name='Include').get('Include', {})
+
+        ini_sanitizer = IniSanitizer()
+        ini_sanitizer.sanitize_mods_folder(
+            mods_path=Config.Active.Importer.importer_path / 'Mods',
+            cache_path=Paths.App.Resources / 'Cache' / 'Ini Sanitizer' / f'{self.metadata.package_name}.json',
+            dry_run=False,
+            use_cache=True,
+            exclude_patterns=exclude_patterns.values() or ['DISABLED*'],
+        )
