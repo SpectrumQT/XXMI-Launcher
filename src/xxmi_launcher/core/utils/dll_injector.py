@@ -9,7 +9,6 @@ import ctypes.wintypes as wt
 
 from typing import List, Optional
 from pathlib import Path
-from pyinjector import inject
 
 from core.locale_manager import L
 
@@ -52,6 +51,9 @@ class DllInjector:
 
             lib.UnhookLibrary.argtypes = (ct.POINTER(wt.HHOOK), ct.POINTER(wt.HANDLE))
             lib.UnhookLibrary.restype = ct.c_int
+
+            lib.Inject.argtypes = (wt.DWORD, wt.LPCWSTR)
+            lib.Inject.restype = ct.c_int
         except Exception as e:
             raise ValueError(L('error_dll_injector_setup_failed', 'Failed to setup injector library!')) from e
 
@@ -197,7 +199,14 @@ class DllInjector:
         return True
 
     def inject_libraries(self, dll_paths: List[Path], process_name: str = None, pid: int = None, timeout: int = 15):
-
+        error_strings = {
+            100: 'Process {pid} not found',
+            200: 'Failed to allocate memory',
+            300: 'Failed to write DLL path to process memory',
+            400: 'Failed to create injection thread',
+            500: 'Injection thread timed out',
+            600: 'DLL injection failed'
+        }
         time_start = time.time()
 
         while True:
@@ -212,15 +221,14 @@ class DllInjector:
                 try:
                     if process.name() == process_name or process.pid == pid:
                         for dll_path in dll_paths:
-                            safe_path = self.get_short_path(dll_path)
-                            try:
-                                inject(process.pid, safe_path)
-                            except Exception as e:
+                            wide_dll_path = wt.LPCWSTR(str(dll_path.resolve()))
+                            ret = self.lib.Inject(process.pid, wide_dll_path)
+                            if ret != 0:
                                 raise ValueError(L('error_dll_injector_extra_library_failed', """
                                     Failed to inject extra library {dll_path}:
                                     {error_text}!
                                     Please check Advanced Settings → Inject Libraries.
-                                """).format(dll_path=dll_path, error_text=e)) from e
+                                """).format(dll_path=dll_path, error_text=error_strings[ret].format(pid=process.pid)))
                         return process.pid
                 except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                     pass
