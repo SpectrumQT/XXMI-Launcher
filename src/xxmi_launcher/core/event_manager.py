@@ -1,5 +1,6 @@
 import logging
 
+from core import path_manager
 from core import application
 from core import package_manager
 from core.packages import updater_package
@@ -10,6 +11,8 @@ from gui import events as gui_events
 
 log = logging.getLogger(__name__)
 
+
+PathManager = path_manager.PathManagerEvents
 Application = application.ApplicationEvents
 PackageManager = package_manager.PackageManagerEvents
 LauncherManager = launcher_package.LauncherManagerEvents

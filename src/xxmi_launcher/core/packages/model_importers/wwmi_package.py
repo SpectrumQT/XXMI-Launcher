@@ -140,7 +140,7 @@ class WWMIPackage(ModelImporterPackage):
 
         game_path_original = game_path
 
-        for path in self.scan_directory(game_path):
+        for path in game_path.rglob('*.exe'):
             if path.is_file() and path.name == 'Wuthering Waves.exe':
                 return Path(path).parent
 
@@ -321,10 +321,9 @@ class WWMIPackage(ModelImporterPackage):
 
         if not engine_ini_path.exists():
             Paths.verify_path(engine_ini_path.parent)
-            with open(engine_ini_path, 'w', encoding='utf-8') as f:
-                f.write('')
+            Paths.App.write_file(engine_ini_path, '')
 
-        Events.Fire(Events.Application.VerifyFileAccess(path=engine_ini_path, write=True))
+        Events.Fire(Events.PathManager.VerifyFileAccess(path=engine_ini_path, write=True))
         with open(engine_ini_path, 'r', encoding='utf-8') as f:
             ini = IniHandler(IniHandlerSettings(option_value_spacing=False, inline_comments=True, add_section_spacing=True, right_split=True), f)
 
@@ -344,6 +343,9 @@ class WWMIPackage(ModelImporterPackage):
                 for option_name, option_value in section_data.items():
                     ini.set_option(section_name, option_name, option_value)
 
+        if ini.is_modified():
+            Paths.App.write_file(engine_ini_path, ini.to_string())
+
     def update_device_profiles_ini(self, game_path: Path):
         device_profiles_ini_path = game_path / 'Client' / 'Saved' / 'Config' / 'WindowsNoEditor' / 'DeviceProfiles.ini'
 
@@ -353,10 +355,9 @@ class WWMIPackage(ModelImporterPackage):
 
         if not device_profiles_ini_path.exists():
             Paths.verify_path(device_profiles_ini_path.parent)
-            with open(device_profiles_ini_path, 'w', encoding='utf-8') as f:
-                f.write('')
+            Paths.App.write_file(device_profiles_ini_path, '')
 
-        Events.Fire(Events.Application.VerifyFileAccess(path=device_profiles_ini_path, write=True))
+        Events.Fire(Events.PathManager.VerifyFileAccess(path=device_profiles_ini_path, write=True))
         with open(device_profiles_ini_path, 'r', encoding='utf-8') as f:
             ini = IniHandler(IniHandlerSettings(option_value_spacing=False, inline_comments=True, add_section_spacing=True, right_split=True), f)
 
@@ -408,8 +409,7 @@ class WWMIPackage(ModelImporterPackage):
                 ini.set_option(section_name, option_name, option_value)
 
         if ini.is_modified():
-            with open(device_profiles_ini_path, 'w', encoding='utf-8') as f:
-                f.write(ini.to_string())
+            Paths.App.write_file(device_profiles_ini_path, ini.to_string())
 
     def update_game_user_settings_ini(self, game_path: Path):
         if not Config.Importers.WWMI.Importer.unlock_fps:
@@ -421,18 +421,16 @@ class WWMIPackage(ModelImporterPackage):
 
         if not ini_path.exists():
             Paths.verify_path(ini_path.parent)
-            with open(ini_path, 'w', encoding='utf-8') as f:
-                f.write('')
+            Paths.App.write_file(ini_path, '')
 
-        Events.Fire(Events.Application.VerifyFileAccess(path=ini_path, write=True))
+        Events.Fire(Events.PathManager.VerifyFileAccess(path=ini_path, write=True))
         with open(ini_path, 'r', encoding='utf-8') as f:
             ini = IniHandler(IniHandlerSettings(option_value_spacing=False, inline_comments=True, add_section_spacing=True), f)
 
         ini.set_option('/Script/Engine.GameUserSettings', 'FrameRateLimit', 120.000000)
 
         if ini.is_modified():
-            with open(ini_path, 'w', encoding='utf-8') as f:
-                f.write(ini.to_string())
+            Paths.App.write_file(ini_path, ini.to_string())
 
 
 class SettingsManager:
@@ -554,11 +552,11 @@ class SettingsManager:
             if not db_path.is_file() or not db_path.name.startswith('LocalStorage') or db_path.suffix != '.db':
                 continue
             # Make sure we can write db file
-            Events.Fire(Events.Application.VerifyFileAccess(path=db_path, write=True))
+            Events.Fire(Events.PathManager.VerifyFileAccess(path=db_path, write=True))
             # Make sure we can write journal file if it exists
             journal_path = db_path.with_suffix('.db-journal')
             if journal_path.is_file():
-                Events.Fire(Events.Application.VerifyFileAccess(path=journal_path, write=True))
+                Events.Fire(Events.PathManager.VerifyFileAccess(path=journal_path, write=True))
             # Search for the most recently modified file
             if active_db_path is None or db_path.stat().st_mtime > active_db_path.stat().st_mtime:
                 active_db_path = db_path

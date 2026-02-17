@@ -58,10 +58,10 @@ class Manifest:
         return json.dumps(asdict(self), indent=4)
 
     def from_json(self, file_path: Path):
-        with open(file_path, 'r', encoding='utf-8') as f:
-            for key, value in from_dict(data_class=Manifest, data=json.load(f)).__dict__.items():
-                if hasattr(self, key):
-                    setattr(self, key, value)
+        file_data = Paths.App.read_text(file_path)
+        for key, value in from_dict(data_class=Manifest, data=json.loads(file_data)).__dict__.items():
+            if hasattr(self, key):
+                setattr(self, key, value)
 
 
 class Package:
@@ -175,17 +175,16 @@ class Package:
 
         Events.Fire(Events.PackageManager.StartFileWrite(asset_name=asset_path.name))
 
-        with open(asset_path, 'wb') as f:
-            f.write(data)
+        Paths.App.write_file(asset_path, data)
 
         Events.Fire(Events.PackageManager.StartIntegrityVerification(asset_name=asset_path.name))
 
-        with open(asset_path, 'rb') as f:
-            if not self.security.verify(self.signature, f.read()):
-                raise ValueError(L('package_manager_file_verification_failed', """
-                    {asset_name} data integrity verification failed!
-                    Please restart the launcher and try again!
-                """).format(asset_name=asset_path.name))
+        asset_bytes = Paths.App.read_bytes(asset_path)
+        if not self.security.verify(self.signature, asset_bytes):
+            raise ValueError(L('package_manager_file_verification_failed', """
+                {asset_name} data integrity verification failed!
+                Please restart the launcher and try again!
+            """).format(asset_name=asset_path.name))
 
         return asset_path
 
@@ -217,8 +216,7 @@ class Package:
 
         if manifest_data is not None:
             # Use manifest from repo
-            with open(self.package_path / f'Manifest.json', 'wb') as f:
-                f.write(manifest_data)
+            Paths.App.write_file(self.package_path / f'Manifest.json', manifest_data)
         elif manifest_path.is_file():
             # Use manifest from zip
             self.move(manifest_path, self.package_path / manifest_path.name)
@@ -234,8 +232,7 @@ class Package:
             version=str(version),
             signatures={asset_path.name: signature},
         )
-        with open(self.package_path / f'Manifest.json', 'w', encoding='utf-8') as f:
-            f.write(manifest.as_json())
+        Paths.App.write_file(self.package_path / f'Manifest.json', manifest.as_json())
 
     def load_manifest(self):
         manifest = Manifest()
@@ -253,11 +250,11 @@ class Package:
             self.load_manifest()
         if not file_path.exists():
             raise ValueError(L('error_missing_critical_file', '{package_name} package is missing critical file: {file_name}!').format(package_name=self.metadata.package_name, file_name=file_path.name))
-        with open(file_path, 'rb') as f:
-            if self.security.verify(self.get_signature(file_path), f.read()):
-                return True
-            else:
-                raise ValueError(L('error_file_signature_invalid', 'File {file_name} signature is invalid!').format(file_name=file_path.name))
+        file_bytes = Paths.App.read_bytes(file_path)
+        if self.security.verify(self.get_signature(file_path), file_bytes):
+            return True
+        else:
+            raise ValueError(L('error_file_signature_invalid', 'File {file_name} signature is invalid!').format(file_name=file_path.name))
 
     def get_signature(self, file_path: Path):
         if self.manifest is None:
@@ -283,40 +280,15 @@ class Package:
                 timestamp = time.mktime(zip_info.date_time + (0, 0, -1))
                 os.utime(extracted_file_path, (timestamp, timestamp))
 
-        file_path.unlink()
+        Paths.App.remove_path(file_path)
 
     def move(self, source_path: Path, destination_path: Path):
         Events.Fire(Events.PackageManager.StartFileMove(asset_name=source_path.name))
-        if destination_path.exists():
-            time.sleep(0.001)
-            destination_path.unlink()
-        time.sleep(0.001)
-        shutil.move(source_path, destination_path)
+        Paths.App.rename_path(source_path, destination_path, keep_existing_files=False)
 
     def move_contents(self, source_path: Path, destination_path: Path):
         Paths.verify_path(destination_path)
-        for src_path in list(source_path.iterdir()):
-            if src_path.is_file():
-                self.move(src_path, destination_path / src_path.name)
-            else:
-                self.move_contents(src_path, destination_path / src_path.name)
-        time.sleep(0.001)
-        shutil.rmtree(source_path)
-
-    @staticmethod
-    def should_exclude(name, exclude_patterns):
-        for exclude_str, exclude_func in exclude_patterns:
-            if exclude_func(name.lower(), exclude_str):
-                return True
-        return False
-
-    def scan_directory(self, root_dir, exclude_patterns=None):
-        for entry in os.scandir(root_dir):
-            if exclude_patterns and self.should_exclude(entry.name, exclude_patterns):
-                continue
-            if entry.is_dir():
-                yield from self.scan_directory(entry.path, exclude_patterns)
-            yield entry
+        Paths.App.rename_path(source_path, destination_path)
 
     def get_parent_directory(self, path, folder_name):
         parts = list(path.parts)

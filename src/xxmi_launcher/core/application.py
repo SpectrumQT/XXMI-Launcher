@@ -146,7 +146,6 @@ class ApplicationEvents:
     @dataclass
     class ShowMessage:
         modal: bool = False
-        icon: str = 'info-icon.ico'
         title: str = field(default_factory=lambda: L('message_title_message', 'Message'))
         message: str = '< Text >'
         confirm_text: str = field(default_factory=lambda: L('message_button_ok', 'OK'))
@@ -154,36 +153,24 @@ class ApplicationEvents:
         cancel_text: str = ''
         cancel_command: Optional[Callable] = None
         radio_options: Optional[List[str]] = None
-        lock_master: bool = None
-        screen_center: bool = None
+        checkbox_options: Optional[List[str]] = None
 
     @dataclass
     class ShowError(ShowMessage):
-        icon: str = 'error-icon.ico'
         title: str = field(default_factory=lambda: L('message_title_error', 'Error'))
 
     @dataclass
     class ShowWarning(ShowMessage):
-        icon: str = 'warning-icon.ico'
         title: str = field(default_factory=lambda: L('message_title_warning', 'Warning'))
 
     @dataclass
     class ShowInfo(ShowMessage):
-        icon: str = 'info-icon.ico'
         title: str = field(default_factory=lambda: L('message_title_info', 'Info'))
 
     @dataclass
     class ShowDialogue(ShowMessage):
         confirm_text: str = field(default_factory=lambda: L('message_button_confirm', 'Confirm'))
         cancel_text: str = field(default_factory=lambda: L('message_button_cancel', 'Cancel'))
-
-    @dataclass
-    class VerifyFileAccess:
-        path: Path
-        abs_path: bool = True
-        read: bool = True
-        write: bool = False
-        exe: bool = False
 
     @dataclass
     class OpenDonationCenter:
@@ -204,19 +191,7 @@ class Application:
         self.error_queue = Queue()
         # App state flag for watchdog thread
         self.is_alive = True
-        # Wrap further initialization to show errors in less scary message window of our minimal gui
-        try:
-            self.initialize()
-        except BaseException as e:
-            logging.exception(e)
-            self.gui.show_messagebox(Events.Application.ShowError(
-                modal=True,
-                screen_center=True,
-                lock_master=False,
-                message=str(e),
-            ))
 
-    def initialize(self):
         # Parse console args
         parser = argparse.ArgumentParser(add_help=False)
         parser.add_argument('exe_path', nargs='?', default='', help='Path to game .exe file.')
@@ -249,8 +224,6 @@ class Application:
             logging.exception(error)
             self.gui.show_messagebox(Events.Application.ShowError(
                 modal=True,
-                screen_center=not self.gui.is_shown(),
-                lock_master=self.gui.is_shown(),
                 message=L('message_text_config_was_reset', 'Failed to load configuration! Falling back to defaults.'),
             ))
 
@@ -325,8 +298,6 @@ class Application:
 
         Events.Fire(Events.Application.LoadImporter(importer_id=Config.Launcher.active_importer))
 
-        Events.Subscribe(Events.Application.VerifyFileAccess,
-                         self.handle_verify_file_access)
         Events.Subscribe(Events.Application.Update,
                          lambda event: self.run_as_thread(self.package_manager.update_packages, **event.__dict__))
         Events.Subscribe(Events.Application.CheckForUpdates,
@@ -360,13 +331,11 @@ class Application:
             Config.Config.load()
             # Backup last successfully loaded config
             if Config.Config.config_path.is_file():
-                shutil.copy2(Config.Config.config_path, cfg_backup_path)
+                Paths.App.copy_file(Config.Config.config_path, cfg_backup_path)
         except Exception as e:
             if Config.Config.config_path.is_file():
                 error_dialogue = Events.Application.ShowError(
                     modal=True,
-                    screen_center=not self.gui.is_shown(),
-                    lock_master=self.gui.is_shown(),
                     confirm_text=L('message_button_load_backup_config', 'Load Backup'),
                     cancel_text=L('message_button_load_default_config', 'Load Default'),
                     message=L('message_text_config_load_failed', 'Failed to load configuration!'),
@@ -526,9 +495,6 @@ class Application:
 
         update_dialogue = Events.Application.ShowDialogue(
             modal=True,
-            screen_center=not self.gui.is_shown(),
-            lock_master=self.gui.is_shown(),
-            icon='update-icon.ico',
             title=L('message_title_update_available', 'Update Available'),
             confirm_text=L('message_button_install_update', 'Update'),
             cancel_text=L('message_button_skip_update', 'Skip'),
@@ -713,36 +679,6 @@ class Application:
         if Config.Launcher.auto_close:
             Events.Fire(Events.Application.Close(delay=1000))
 
-    def handle_verify_file_access(self, event: ApplicationEvents.VerifyFileAccess):
-        if event.read:
-            Paths.assert_file_read(event.path, absolute=event.abs_path)
-        if event.write:
-            try:
-                Paths.assert_file_write(event.path)
-            except Paths.FileReadOnlyError:
-                user_requested_flag_remove = self.gui.show_messagebox(Events.Application.ShowDialogue(
-                    modal=True,
-                    screen_center=not self.gui.is_shown(),
-                    lock_master=self.gui.is_shown(),
-                    icon='error-icon.ico',
-                    title=L('message_title_file_write_failed_read_only', 'File Read Only Error'),
-                    message=L('message_text_file_write_failed_read_only', """
-                        Failed to write Read Only file {path}!
-                        
-                        Press [Confirm] to remove this flag and continue.
-                    """).format(path=event.path)
-                ))
-                if user_requested_flag_remove:
-                    logging.debug(f'Removing Read-Only flag from {event.path}...')
-                    Paths.remove_read_only(event.path)
-                    Paths.assert_file_write(event.path)
-                else:
-                    raise ValueError(L('error_critical_file_write_failed',
-                        'Failed to write critical file: {path}!'
-                   ).format(path=event.path))
-        if event.exe:
-            Paths.assert_file_read(event.path)
-
     def wrap_errors(self, callback, *args, **kwargs):
         try:
             callback(*args, **kwargs)
@@ -783,8 +719,6 @@ class Application:
         logging.error(trace)
         self.gui.show_messagebox(Events.Application.ShowError(
             modal=True,
-            screen_center=not self.gui.is_shown(),
-            lock_master=self.gui.is_shown(),
             message=str(error),
         ))
         if self.gui.is_shown():

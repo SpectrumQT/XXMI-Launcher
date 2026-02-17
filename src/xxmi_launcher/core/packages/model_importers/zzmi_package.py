@@ -174,7 +174,7 @@ class SettingsManager:
 
     def load_settings(self):
         if self.path.is_file():
-            Events.Fire(Events.Application.VerifyFileAccess(path=self.path, write=True))
+            Events.Fire(Events.PathManager.VerifyFileAccess(path=self.path, write=True))
             content = self.sleepy.read_file(self.path, self.magic)
             self.settings = json.loads(content)
         else:

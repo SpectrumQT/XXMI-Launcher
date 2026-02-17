@@ -121,8 +121,7 @@ class AppConfig:
     def from_json(self, config_path: Path):
         cfg = self.as_dict(self)
         if config_path.is_file():
-            with open(config_path, 'r', encoding='utf-8') as f:
-                cfg.update(json.load(f))
+            cfg.update(json.loads(Paths.App.read_text(config_path)))
         for key, value in from_dict(data_class=AppConfig, data=cfg).__dict__.items():
             if hasattr(self, key):
                 setattr(self, key, value)
@@ -144,47 +143,7 @@ class AppConfig:
             Importers = self.Importers
 
     def save(self):
-        cfg = Config.as_json()
-        with open(self.config_path, 'w', encoding='utf-8') as f:
-            return f.write(cfg)
-
-    def run_patch_184(self):
-        for package_name, importer in self.Importers.__dict__.items():
-            # Detect existing System > dll_initialization_delay
-            dll_initialization_delay = 0
-            try:
-                from core.utils.ini_handler import IniHandler, IniHandlerSettings
-                ini_path = importer.Importer.importer_path / 'd3dx.ini'
-                Events.Fire(Events.Application.VerifyFileAccess(path=ini_path, write=True))
-                with open(ini_path, 'r', encoding='utf-8') as f:
-                    ini = IniHandler(IniHandlerSettings(ignore_comments=True), f)
-                    dll_initialization_delay = ini.get_section('System').get_option('dll_initialization_delay')
-                    if dll_initialization_delay is not None:
-                        dll_initialization_delay = int(dll_initialization_delay)
-                        log.debug(f'Detected existing dll_initialization_delay in for {package_name}: {dll_initialization_delay}')
-                    else:
-                        dll_initialization_delay = 0
-            except Exception as e:
-                log.debug(f'Failed to detect existing dll_initialization_delay in for {package_name}: {e}')
-
-            # Reset Unsafe Mode for WWMI
-            if package_name == 'WWMI':
-                importer.Migoto.unsafe_mode = False
-                importer.Migoto.unsafe_mode_signature = ''
-                if dll_initialization_delay == 0:
-                    dll_initialization_delay = 500
-
-            # Keep existing dll_initialization_delay
-            importer.Importer.xxmi_dll_init_delay = dll_initialization_delay
-
-            log.debug(f'Set xxmi_dll_init_delay for {package_name} to {dll_initialization_delay}')
-
-    def run_patch_186(self):
-        importer = self.Importers.__dict__['WWMI']
-        try:
-            del importer.Importer.perf_tweaks['SystemSettings']['r.Streaming.LimitPoolSizeToVRAM']
-        except:
-            pass
+        Paths.App.write_file(self.config_path, Config.as_json())
 
     def run_patch_195(self):
         importer = self.Importers.__dict__['WWMI']
@@ -214,8 +173,6 @@ class AppConfig:
 
         # Apply patches
         patches = {
-            '1.8.4': self.run_patch_184,
-            '1.8.6': self.run_patch_186,
             '1.9.5': self.run_patch_195,
             '2.0.1': self.run_patch_201,
         }
@@ -300,8 +257,6 @@ class AppConfigSecurity:
             msg = '\n'.join([f'{k}: "{v}"' for k, v in wrong_signatures.items()])
             user_requested_reset = Events.Call(Events.Application.ShowError(
                 modal=True,
-                lock_master=False,
-                screen_center=True,
                 confirm_text=L('message_button_reset_unsecure_setting', 'Reset'),
                 cancel_text=L('message_button_keep_unsecure_setting', 'Keep'),
                 message=L('message_text_unsecure_setting_validation_failed', """
