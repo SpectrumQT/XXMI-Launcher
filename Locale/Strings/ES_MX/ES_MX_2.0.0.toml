@@ -750,7 +750,7 @@ Desactive \"Configurar ajustes del juego\" en los ajustes generales del lanzador
 
 [error_zzmi_unknown_settings_format]
 src = "Unknown system settings entry format: {setting}!"
-loc = "Formato de entrada de ajustes del sistema desconocido: {ajuste}"
+loc = "Formato de entrada de ajustes del sistema desconocido: {setting}"
 
 [error_updater_start_failed]
 src = """
@@ -834,7 +834,7 @@ Failed to download {version} update for {package} package:
 {error_text}
 """
 loc = """
-Error al descargar la actualización {versión} para el paquete {paquete}:
+Error al descargar la actualización {version} para el paquete {package}:
 {error_text}
 """
 
@@ -846,7 +846,7 @@ Please restart the launcher or your PC and try again.
 {error_text}
 """
 loc = """
-Error al instalar la actualización {versión} para el paquete {paquete}.
+Error al instalar la actualización {version} para el paquete {package}.
 Reinicie el lanzador o su PC e inténtelo de nuevo.
 
 {error_text}
@@ -1240,11 +1240,11 @@ loc = "Conectando {library} a {process}... "
 
 [bottom_bar_verifying_hook]
 src = "Verifying {library} load into {process}..."
-loc = "Verificando carga de {biblioteca} en {proceso}..."
+loc = "Verificando carga de {library} en {process}..."
 
 [bottom_bar_injecting]
 src = "Injecting {library} to {process}..."
-loc = "Inyectando {biblioteca} en {proceso}..."
+loc = "Inyectando {library} en {process}..."
 
 [bottom_bar_launching_game]
 src = "Launching game..."
@@ -1252,7 +1252,7 @@ loc = "Iniciando juego..."
 
 [bottom_bar_waiting_process]
 src = "Waiting for {process} to start..."
-loc = "Esperando a que se inicie {proceso}..."
+loc = "Esperando a que se inicie {process}..."
 
 [bottom_bar_closing_launcher]
 src = "Closing launcher..."
@@ -1280,15 +1280,15 @@ loc = "Inicializando la instalación de la actualización..."
 
 [bottom_bar_writing_file]
 src = "Writing {asset} on disk..."
-loc = "Escribiendo {activo} en el disco..."
+loc = "Escribiendo {asset} en el disco..."
 
 [bottom_bar_moving_file]
 src = "Moving {asset}..."
-loc = "Moviendo {activo}..."
+loc = "Moviendo {asset}..."
 
 [bottom_bar_unpacking]
 src = "Unpacking {asset}..."
-loc = "Descomprimiendo {activo}..."
+loc = "Descomprimiendo {asset}..."
 
 [launcher_select_games_text]
 src = "Select Games To Mod:"
@@ -1442,7 +1442,7 @@ loc = "Importador de modelos de Honkai Impact"
 
 [top_bar_gamebanana_button_tooltip]
 src = "{importer} GameBanana"
-loc = "{importador} GameBanana"
+loc = "{importer} GameBanana"
 
 [top_bar_discord_button_tooltip]
 src = "AGMG Modding Community Discord"
@@ -2234,7 +2234,7 @@ Enabled: Launcher and {importer} updates will be Downloaded and Installed automa
 Disabled: Use special [▲] button next to [Start] button to Download and Install updates manually.
 """
 loc = """
-Habilitado: las actualizaciones del lanzador y del {importador} se descargarán e instalarán automáticamente.
+Habilitado: las actualizaciones del lanzador y del {importer} se descargarán e instalarán automáticamente.
 Deshabilitado: utilice el botón especial [▲] situado junto al botón [Iniciar] para descargar e instalar las actualizaciones manualmente.
 """
 
