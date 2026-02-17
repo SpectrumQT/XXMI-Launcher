@@ -42,7 +42,7 @@ def list_formatter(value, conjunction):
         return value
 
     separator = L('locale_list_separator', ', ')
-    spacing = L('locale_list_conjunction_spacing', r'\s').replace(r'\s', ' ')
+    spacing = L('locale_list_conjunction_spacing', '\\s').replace('\\s', ' ')
     if len(value) == 1:
         return str(value[0])
 
@@ -57,6 +57,11 @@ def fmt_or_list(value):
 @formatter('and_list')
 def fmt_and_list(value):
     return list_formatter(value, L('locale_list_conjunction_and', 'and'))
+
+
+@formatter('md_list')
+def fmt_and_list(value):
+    return '\n'.join([f'- {v}' for v in value])
 
 
 class LocaleString(str):
@@ -328,8 +333,8 @@ class LocaleManager:
         # Make sure locale exists in the index
         locale_name = locale_data.name
         # Skip loading same locale
-        if locale_name == self.active_locale.name:
-            return
+        # if locale_name == self.active_locale.name:
+        #     return
         # Load locale
         self.load_locale(locale_name)
         # Remember loaded locale
