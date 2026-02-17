@@ -17,13 +17,17 @@ from gui.windows.settings.settings_frame import SettingsFrame
 
 
 class LauncherFrame(UIFrame):
-    def __init__(self, master):
+    def __init__(self, master, minimal=False):
         super().__init__(master, width=master.cfg.width, height=master.cfg.height, fg_color='transparent')
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
         self.canvas.grid(row=0, column=0)
+
+        if minimal:
+            self.set_background_image(f'background-image-xxmi.webp', width=master.cfg.width,height=master.cfg.height)
+            return
 
         # Background
         self.update_background(Config.Launcher.active_importer)
@@ -57,37 +61,10 @@ class LauncherFrame(UIFrame):
         # Donate Frame
         self.subscribe(Events.Application.OpenDonationCenter, self.handle_open_donation_center)
 
-        # from gui.windows.main.message_frame.message_frame import MessageFrame
-        # text = f"""
-        #     <html>
-        #     <body>
-        #     <h1>This is a heading</h1>
-        #     <p>This is a paragraph.</p>
-        #
-        #     <img src='file:///{Config.get_resource_path(self, 'SilverWolfHeyYou.png')}' width='128'> <br>
-        #     <a href="https://www.python.org" target="_blank">Go to Python.org</a>
-        #     <h3>Select:</h3>
-        #     {{radio_widget}}
-        #
-        #     This is some text
-        #     <br><br>
-        #     More text
-        #     <br>
-        #     Even more text xD
-        #
-        #     </body>
-        #     </html>
-        # """
-
-        # from textwrap import dedent
-        # text = dedent("""
-        # Launcher update found: 0.0.0 → 1.9.5 Launcher update found: 0.0.0 → 1.9.5
-        # XXMI update found: 0.6.8 → 0.7.1
-        # WWMI update found: 0.9.1 → 0.9.8
-        # Launcher update found: 0.0.0 → 1.9.5
-        # """)
-
-        # message_frame = self.put(MessageFrame(self, self.canvas, title='Message Title', message=text, confirm_text='Confirm 1', cancel_text='Cancel 1', radio_options=['Option 1', 'Option 2']))
+        # message_frame = self.put(MessageFrame(
+        #     self, self.canvas, title='Performance Notification', message=text,
+        #     checkbox_options=checkbox_options,
+        #     confirm_text='Disable Selected', cancel_text='Ignore'))
         # message_frame.show()
 
         # Application Events
@@ -304,15 +281,17 @@ class StartButton(MainActionButton):
             width=32,
             height=32,
             button_image_path='button-start.png',
-            button_x_offset=-14,
+            button_x_offset=17,
             bg_image_path='button-start-background.png',
             bg_width=340,
             bg_height=64,
             text=L('launcher_start_button', 'Start'),
-            text_x_offset=36,
+            text_x_offset=17,
             text_y_offset=-1,
             font=('Microsoft YaHei', 23, 'bold'),
             command=lambda: Events.Fire(Events.Application.Launch()),
+            auto_offset='center',
+            auto_offset_pad=7,
             master=master)
         self.tools_button = tools_button
         self.stage = None

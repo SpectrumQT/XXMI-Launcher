@@ -530,6 +530,8 @@ class UIImageButton(UICanvasWidget, CTkBaseClass):
                  activefill: str = 'black',
                  disabledfill: str = 'black',
                  canvas=None,
+                 auto_offset=None,
+                 auto_offset_pad: int = 10,
                  **kwargs):
 
         CTkBaseClass.__init__(self, master=master)
@@ -580,6 +582,12 @@ class UIImageButton(UICanvasWidget, CTkBaseClass):
         self.selected = False
 
         self._apply_theme()
+
+        if auto_offset == 'center' and button_image_path is not None and text is not None:
+            button_offset = -(self._text_image.winfo_width() + auto_offset_pad) / 2
+            text_offset = +(self._button_image.winfo_width() + auto_offset_pad) / 2
+            self._button_image.move(x=x+button_x_offset+button_offset, y=y+button_y_offset)
+            self._text_image.move(x=x+text_x_offset+text_offset, y=y+text_y_offset)
 
         self.bind("<ButtonPress-1>", self._handle_button_press)
         self.bind("<ButtonRelease-1>", self._handle_button_release)
