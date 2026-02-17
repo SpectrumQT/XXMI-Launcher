@@ -69,6 +69,8 @@ class UIFrame(UIElementBase, CTkFrame):
         super()._show()
 
     def get_resource_path(self, resource_path: str = ''):
+        if self.resource_override is not None:
+            return self.resource_override
         resource_path = self.master.get_resource_path()
         return f'{resource_path}/{str(self.__class__.__qualname__)}'
 
@@ -153,6 +155,8 @@ class UIScrollableFrame(CTkScrollableFrame, UIElementBase):
         return super().check_if_master_is_canvas(widget)
 
     def get_resource_path(self, resource_path: str = ''):
+        if self.resource_override is not None:
+            return self.resource_override
         resource_path = self.master.master.master.get_resource_path()
         return f'{resource_path}/{str(self.__class__.__qualname__)}'
 

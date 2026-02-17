@@ -14,6 +14,7 @@ class UIElement:
         self.tooltip = None
         self.enabled = True
         self.is_hidden = False
+        self.resource_override = None
 
     def put(self, element: 'UIElement'):
         element._id = f'{element.__class__}_{len(self.elements)}'
@@ -21,9 +22,14 @@ class UIElement:
         return element
 
     def grab(self, cls):
-        for element in self.elements.values():
-            if isinstance(element, cls):
-                return element
+        if isinstance(cls, str):
+            for element in self.elements.values():
+                if element.__class__.__name__ == cls:
+                    return element
+        else:
+            for element in self.elements.values():
+                if isinstance(element, cls):
+                    return element
         return None
 
     def subscribe(self, event, callback):

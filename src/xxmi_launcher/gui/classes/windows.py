@@ -246,4 +246,6 @@ class UIToplevel(UIWindow, CTkToplevel):
             return False
 
     def get_resource_path(self, resource_path: str = ''):
+        if self.resource_override is not None:
+            return self.resource_override
         return f'{str(self.__class__.__qualname__)}'
