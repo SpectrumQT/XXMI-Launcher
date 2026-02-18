@@ -99,7 +99,7 @@ class LanguageOptionMenu(UIOptionMenu):
             master=master)
 
     def handle_language_change(self, value):
-        Locale.set_active_locale(Vars.Launcher.locale.get())
+        Events.Fire(Events.Application.LoadLocale(locale_name=Vars.Launcher.locale.get(), skip_reload=False))
         Events.Fire(Events.Application.CloseSettings(save=True))
         Events.Fire(Events.GUI.ReloadGUI())
         Events.Fire(Events.Application.Busy())

@@ -107,17 +107,25 @@ class LocaleString(str):
 class LocaleEngine:
     def __init__(self, locales_path: Path):
         self.locales_path: Path = locales_path
+
         self.strings: Optional[Dict[str, Union[str, List[str]]]] = None
         self.src_strings: Optional[Dict[str, str]] = None
+        self.locale_errors: list[str] = []
+
+        self.var_pattern = re.compile(r"(?<!\{)\{([^{}]+)\}(?!\})")
+        self.md_link_pattern = re.compile(r'\]\(([^)]+)\)')
+        self.html_link_pattern = re.compile(r'\b(?:href|src)\s*=\s*["\']([^"\']+)["\']', re.IGNORECASE)
+
         self.enable_locale = False
 
     def load_locale(self, locale_name: str, tag: str = 'loc'):
-        if locale_name == 'EN':
-            self.enable_locale = False
-            return
-
         self.strings = {}
         self.src_strings = {}
+        self.locale_errors = []
+
+        # if locale_name == 'EN':
+        #     self.enable_locale = False
+        #     return
 
         locale_path = self.locales_path / locale_name
 
@@ -131,6 +139,9 @@ class LocaleEngine:
             raise Exception(f'Failed to load locale: {e}')
 
         self.enable_locale = True
+
+    def extract_vars(self, s: str) -> list[str]:
+        return self.var_pattern.findall(s)
 
     def get_string(self, key: str, string: str) -> str:
         string = dedent(string)
@@ -159,7 +170,6 @@ class LocaleEngine:
                 loc_string = None
                 src_string = None
                 alt_strings = None
-
                 try:
                     for loc_tag, loc_line in locale_strings.items():
                         if loc_tag == 'src':
@@ -172,16 +182,35 @@ class LocaleEngine:
                             else:
                                 alt_strings.append(loc_line)
                         else:
-                            raise ValueError(f'Locale key `{key}` has unknown `{loc_tag}` locale string tag!')
+                            raise ValueError(f'unknown locale string tag `{loc_tag}`')
+
+                    # Consistency: force localized string to contain all placeholders from original
+                    if '{' in src_string:
+                        src_vars = self.extract_vars(src_string)
+                        loc_vars = self.extract_vars(loc_string)
+                        for var in src_vars:
+                            if var not in loc_vars:
+                                raise ValueError(f'localized string is missing `{{{var}}}` placeholder')
+
+                    # Safety: limit markdown link target [text](target) to placeholder
+                    for target in self.md_link_pattern.findall(loc_string):
+                        if not (target.startswith('{') and target.endswith('}')):
+                            raise ValueError(f'localized string link target `{target}` is not a placeholder')
+
+                    # Safety: limit HTML href/src target to placeholder
+                    for target in self.html_link_pattern.findall(loc_string):
+                        if not (target.startswith('{') and target.endswith('}')):
+                            raise ValueError(f'localized string link target `{target}` is not a placeholder')
 
                     if loc_string is None:
-                        raise ValueError(f'Locale key `{key}` is missing `loc` locale string!')
+                        raise ValueError(f'missing `loc` locale string')
 
                     if src_string is None:
-                        raise ValueError(f'Locale key `{key}` is missing `src` locale string!')
+                        raise ValueError(f'missing `src` locale string')
 
                 except Exception as e:
                     log.error(f'Malformed locale string: {e} in file {path}')
+                    self.locale_errors.append(f'[{path.name}][{key}]: {str(e)}.')
                     continue
 
                 if alt_strings is not None:
@@ -326,15 +355,15 @@ class LocaleManager:
         self.locale_engine.load_locale(locale_name)
         # self.guide_chan.load_locale(locale)
 
-    def set_active_locale(self, locale_data: Union[str, LocaleData], save_to_file=True):
+    def set_active_locale(self, locale_data: Union[str, LocaleData], skip_reload=False, save_to_file=True):
         # Get locale by name
         if isinstance(locale_data, str):
             locale_data = self.locale_index.get_locale(locale_data)
         # Make sure locale exists in the index
         locale_name = locale_data.name
         # Skip loading same locale
-        # if locale_name == self.active_locale.name:
-        #     return
+        if locale_name == self.active_locale.name and skip_reload:
+            return
         # Load locale
         self.load_locale(locale_name)
         # Remember loaded locale

@@ -107,6 +107,11 @@ class ApplicationEvents:
         delay: int = 0
 
     @dataclass
+    class LoadLocale:
+        locale_name: str
+        skip_reload: bool = False
+
+    @dataclass
     class Update:
         no_install: bool = False
         no_check: bool = False
@@ -228,13 +233,14 @@ class Application:
             ))
 
         # Configure locale
+        Events.Subscribe(Events.Application.LoadLocale, self.handle_load_locale)
         try:
             if not Config.Launcher.locale:
                 # Write detected OS locale to config
                 Config.Launcher.locale = Locale.Locale.active_locale.name
             else:
                 # Use locale specified by config
-                Locale.Locale.set_active_locale(Config.Launcher.locale)
+                Events.Fire(Events.Application.LoadLocale(locale_name=Config.Launcher.locale, skip_reload=True))
         except Exception as error:
             logging.exception(error)
 
@@ -345,6 +351,21 @@ class Application:
                     Config.Config.load(cfg_backup_path)
             else:
                 raise e
+
+    def handle_load_locale(self, event: ApplicationEvents.LoadLocale):
+        Locale.Locale.set_active_locale(event.locale_name, skip_reload=event.skip_reload)
+        # Notify user about locale errors
+        if Locale.Locale.locale_engine.locale_errors:
+            self.gui.show_messagebox(Events.Application.ShowWarning(
+                modal=True,
+                message=L('message_text_locale_errors', """
+                    Detected errors in active localization files:
+                    
+                    {locale_errors:md_list}
+                """).format(
+                    locale_errors=Locale.Locale.locale_engine.locale_errors,
+                ),
+            ))
 
     def validate_importer_name(self, importer_name: str) -> str:
         importer_name = importer_name.upper()
