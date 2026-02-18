@@ -466,6 +466,9 @@ class Application:
         self.package_manager.update_packages(no_check=True, force=self.args.update, silent=False)
         # This flag is supposed to affect only the first auto-update after launcher start, so lets remove it here
         self.args.update = False
+        # Resume interrupted Quick Start
+        if self.args.nogui:
+            Events.Fire(Events.Application.Launch())
 
     def load_importer(self, importer_id, update=True, reload=False):
         # Unload package of other MI if there's one loaded
@@ -697,7 +700,7 @@ class Application:
         Config.Active.Importer.launch_count += 1
 
         # Close the launcher or reset its UI state
-        if Config.Launcher.auto_close:
+        if Config.Launcher.auto_close or self.args.nogui:
             Events.Fire(Events.Application.Close(delay=1000))
 
     def wrap_errors(self, callback, *args, **kwargs):
