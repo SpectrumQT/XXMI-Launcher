@@ -3,6 +3,7 @@ import re
 import webbrowser
 import markdown
 import os
+import math
 
 from typing import List, Optional
 from textwrap import dedent
@@ -59,8 +60,8 @@ class MessageFrame(UIFrame):
 
         self.update()
 
-        content_width = int(self.content_frame.message_widget.winfo_width() / self._apply_widget_scaling(1.0))
-        content_height = int(self.content_frame.message_widget.winfo_height() / self._apply_widget_scaling(1.0))
+        content_width = math.ceil(self.content_frame.message_widget.winfo_width() / self._apply_widget_scaling(1.0))
+        content_height = math.ceil(self.content_frame.message_widget.winfo_height() / self._apply_widget_scaling(1.0))
 
         self.update()
 
@@ -354,8 +355,8 @@ class ContentFrame(UIScrollableFrame):
 
         self.update()
 
-        message_width = int(self.message_widget.winfo_width() / self._apply_widget_scaling(1.0))
-        message_height = int(self.message_widget.winfo_height() / self._apply_widget_scaling(1.0))
+        message_width = math.ceil(self.message_widget.winfo_width() / self._apply_widget_scaling(1.0))
+        message_height = math.ceil(self.message_widget.winfo_height() / self._apply_widget_scaling(1.0))
 
         if message_width < min_width:
             self.configure(width=min_width)

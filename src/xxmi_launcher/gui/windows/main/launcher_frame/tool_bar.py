@@ -36,6 +36,7 @@ class ToolBarFrame(UIFrame):
         self.put(OpenModsFolderButton(self))
 
         width = max(e.winfo_width() for e in self.elements.values() if isinstance(e, ToolsBarButton)) + 30
+        width = int(width / self._apply_widget_scaling(1.0))
         self.background_image.configure(width=width)
         for element in self.elements.values():
             if isinstance(element, ToolsBarButton):
