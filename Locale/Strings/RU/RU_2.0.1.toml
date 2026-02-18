@@ -24,10 +24,6 @@ loc = "или"
 src = "and"
 loc = "и"
 
-[locale_list_conjunction_spacing]
-src = "\\s"
-loc = "\\s"
-
 [locale_list_separator]
 src = ", "
 loc = ", "

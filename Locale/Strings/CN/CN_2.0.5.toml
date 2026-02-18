@@ -1,0 +1,361 @@
+[error_msvc_integrity_verification_failed_md]
+src = """
+**Microsoft Visual C++ Redistributable** is damaged or not installed!
+
+Please try to reinstall it from [Microsoft Website]({page_link}) ([direct download]({direct_link})).
+
+Log file: {log_path}
+
+Error: {error_text}
+"""
+loc = """
+**Microsoft Visual C++ Redistributable** 已损坏或未安装！
+
+请从 [Microsoft 官网]({page_link})（[直接下载]({direct_link})）重新安装。
+
+日志文件：{log_path}
+
+错误：{error_text}
+"""
+
+[error_launcher_crashed_on_init]
+src = """
+Launcher has crashed during initialization:
+
+Log file: {log_path}
+
+Error: {error_text}
+"""
+loc = """
+启动器在初始化过程中发生崩溃：
+
+日志文件：{log_path}
+
+错误：{error_text}
+"""
+
+[message_title_fatal_error]
+src = "Fatal Error"
+loc = "Fatal Error"
+
+[error_msvc_integrity_verification_failed_plain]
+src = """
+Microsoft Visual V C++ Redistributable is damaged or not installed!
+
+Please reinstall it from https://aka.ms/vs/17/release/vc_redist.x64.exe
+
+Log file: {log_path}
+
+Error: {error_text}
+"""
+loc = """
+Microsoft Visual C++ Redistributable 已损坏或未安装！
+
+请从 https://aka.ms/vs/17/release/vc_redist.x64.exe 重新安装。
+
+日志文件：{log_path}
+
+错误：{error_text}
+"""
+
+[error_model_importer_auto_select_failed]
+src = """
+Failed to auto-select importer for `{path}`!
+
+Try to add `--nogui --xxmi WWMI` args (or GIMI, SRMI, ZZMI, HIMI, EFMI).
+"""
+loc = """
+为 `{path}` 自动选择导入器失败！
+
+尝试添加 `--nogui --xxmi WWMI` 参数（或 GIMI、SRMI、ZZMI、HIMI、EFMI）。
+"""
+
+[locale_list_conjunction_spacing]
+src = "\\\\s"
+loc = ""
+
+[message_title_rogue_ini_notification]
+src = "Stability Warning"
+loc = "稳定性警告"
+
+[message_text_rogue_ini_in_mods_detected]
+src = """
+Detected mods with ini files containing **d3dx.ini**-exclusive options:
+
+{mod_list}
+
+Listed files [usually cause]({link_wiki_d3dx_ini_shipping}) silent errors, glitches and crashes.
+"""
+loc = """
+检测到包含 **d3dx.ini** 专用选项的模组 ini 文件：
+
+{mod_list}
+
+这些文件[通常会导致]({link_wiki_d3dx_ini_shipping}) 无提示错误、画面异常和崩溃。
+"""
+
+[message_button_disable_ini_files]
+src = "Disable Ini Files"
+loc = "禁用 Ini 文件"
+
+[message_title_performance_notification]
+src = "Performance Notification"
+loc = "性能提示"
+
+[message_text_global_triggers_in_mods_detected]
+src = """
+Detected mods with notable global performance impact:
+
+{checkbox_widget}
+
+Listed mods are using [unlimited resource slot triggers]({link_wiki_global_triggers_usage}).
+"""
+loc = """
+检测到对全局性能有明显影响的模组：
+
+{checkbox_widget}
+
+这些模组正在使用[无限资源槽触发器]({link_wiki_global_triggers_usage})。
+"""
+
+[message_button_disable_selected]
+src = "Disable Selected"
+loc = "禁用所选项"
+
+[optimizing_ini_files_in_folder]
+src = "Optimizing INI files in {folder_name} folder..."
+loc = "正在优化 {folder_name} 文件夹中的 INI 文件..."
+
+[optimization_results_disabled_mods]
+src = "Disabled {disabled_mods_count} mods."
+loc = "已禁用 {disabled_mods_count} 个模组。"
+
+[optimization_results_disabled_files]
+src = "Disabled {disabled_files_count} INI files."
+loc = "已禁用 {disabled_files_count} 个 INI 文件。"
+
+[optimization_results_edited_lines]
+src = "Edited {edited_lines_count} lines in {edited_files_count} INI files."
+loc = "已在 {edited_files_count} 个 INI 文件中修改 {edited_lines_count} 行。"
+
+[message_text_optimization_results]
+src = """
+Successfully introduced following optimizations:
+
+{optimization_results:md_list}
+
+Check out {log_link} for more details.
+"""
+loc = """
+已成功应用以下优化：
+
+{optimization_results:md_list}
+
+详情请查看 {log_link}。
+"""
+
+[message_text_optimization_no_results]
+src = "All supported optimizations are already applied!"
+loc = "所有支持的优化已全部应用！"
+
+[message_title_optimization_results]
+src = "Optimization Results"
+loc = "优化结果"
+
+[error_set_readonly_failed]
+src = "Failed to set Read Only flag on file {path}: {error_text}!"
+loc = "无法为文件 {path} 设置只读标志：{error_text}！!"
+
+[message_button_remove_flag]
+src = "Remove Flag"
+loc = "移除标志"
+
+[error_unknown_error_code]
+src = "Unknown error code {error_code}"
+loc = "未知错误代码 {error_code}"
+
+[error_dll_inject_process_not_found]
+src = "Process {pid} not found"
+loc = "未找到进程 {pid}"
+
+[error_dll_inject_invalid_dll_path]
+src = "Invalid DLL path {dll_path}"
+loc = "无效的 DLL 路径 {dll_path}"
+
+[error_dll_inject_kernel32_fail]
+src = "Failed to resolve kernel32.dll"
+loc = "无法解析 kernel32.dll"
+
+[error_dll_inject_loadlibrary_fail]
+src = "Failed to resolve LoadLibraryW"
+loc = "无法解析 LoadLibraryW"
+
+[error_dll_inject_remote_alloc_fail]
+src = "Failed to allocate remote memory"
+loc = "无法分配远程内存"
+
+[error_dll_inject_write_memory_fail]
+src = "Failed to write DLL path to process memory"
+loc = "无法将 DLL 路径写入进程内存"
+
+[error_dll_inject_thread_fail]
+src = "Failed to create remote thread"
+loc = "无法创建远程线程"
+
+[error_dll_inject_thread_timeout]
+src = "Injection thread timed out"
+loc = "注入线程超时"
+
+[error_dll_inject_thread_wait_fail]
+src = "Injection thread wait failed"
+loc = "等待注入线程失败"
+
+[error_dll_inject_injection_failed]
+src = "DLL injection failed"
+loc = "DLL 注入失败"
+
+[error_dll_inject_unknown_error]
+src = "Unknown low level error"
+loc = "未知底层错误"
+
+[error_dll_injector_failed]
+src = """
+Failed to inject {dll_path}:
+{error_text}!
+"""
+loc = """
+无法注入 {dll_path}：
+{error_text}！
+"""
+
+[donate_wwmi_footer]
+src = """
+It's all about building better tools for the entire {model_importer} community.
+
+The more patrons, the stronger is motivation to shape new big features!
+"""
+loc = """
+这一切都是为了为整个{model_importer}社区构建更好的工具。
+
+用户越多，我们开发新功能的动力就越强！
+"""
+
+[package_description_launcher]
+src = """
+*This package is XXMI Launcher App itself and defines its features.*
+"""
+loc = """
+*此包是 XXMI 启动器应用程序本身，定义了其功能特性。*
+"""
+
+[package_description_xxmi_libraries]
+src = """
+*XXMI Libraries package is custom 3dmigoto build fiddling with data between GPU and a game process.*
+"""
+loc = """
+*XXMI 库包是自定义的 3dmigoto 构建，用于处理 GPU 和游戏进程间的数据交互。*
+"""
+
+[package_description_model_importer]
+src = """
+*Model Importer package offers a set of API functions required for mods to work in given game.*
+"""
+loc = """
+*模型导入器包提供了一套 API 函数，用于在指定游戏中运行模组。*
+"""
+
+[package_description_tooltip_open_dev_blog]
+src = """
+<font color=\"#3366ff\">*<u>Left-Click</u> to open {package_name} GitHub releases for full changelog.*</font>
+"""
+loc = """
+<font color=\"#3366ff\">*<u>左键点击</u> 打开 {package_name} GitHub 发布页面查看完整更新日志。*</font>
+"""
+
+[tool_bar_optimize_mods_button]
+src = "Optimize Mods"
+loc = "优化模组"
+
+[advanced_settings_run_pre_launch_wait_checkbox_tooltip]
+src = """
+Enabled: Wait for (blocking) command to finish its execution before launching the game exe.
+"""
+loc = """
+启用：等待（阻塞）命令执行完成后再启动游戏可执行文件。
+"""
+
+[advanced_settings_run_post_load_wait_checkbox_tooltip]
+src = """
+Enabled: Wait for (blocking) command to finish its execution before treating the game launch as complete.
+"""
+loc = """
+启用：等待（阻塞）命令执行完成后再将游戏启动视为完成。
+"""
+
+[general_settings_xxmi_delay_entry_tooltip_footer_wwmi]
+src = """
+<font color=\"red\">⚠ Wuthering Waves crashes on launch with wrong delay! ⚠</font>
+<font color=\"#8B8000\">⚠ If default value fails, try to increase or decrease it until WuWa stops crashing. ⚠</font>
+## Known values for Wuthering Waves 2.4:
+- **500**: Default, works for most users.
+- **150**: Minimal known value to work along with ReShade.
+- **50**: Minimal known value to work.
+- **1000+**: Some users need really huge delays.
+"""
+loc = """
+<font color=\"red\">⚠ 鸣潮在延迟设置错误时会崩溃！⚠</font>
+<font color=\"#8B8000\">⚠ 如果默认值不起作用，请尝试增加或减少数值直到游戏不再崩溃。⚠</font>
+## 鸣潮 2.4 已知可用值：
+- **500**：默认值，适用于大多数用户。
+- **150**：与 ReShade 一起使用时的最小已知值。
+- **50**：可用的最小已知值。
+- **1000+**：某些用户需要非常大的延迟值。
+"""
+
+[general_settings_xxmi_delay_entry_tooltip_footer_general]
+src = """
+If game crashes with no mods, try to increase it. Start with steps of 50 and increase them as you go.
+"""
+loc = """
+如果游戏在没有模组的情况下崩溃，请尝试增加此值。从50开始逐步增加。
+"""
+
+[general_settings_enable_hdr_checkbox_tooltip]
+src = """
+**Warning**! Your monitor must support HDR and `Use HDR` must be enabled in Windows Display settings!
+**Enabled**: Turn HDR On. Creates HDR registry record each time before the game launch.
+**Disabled**: Turn HDR Off. No extra action required, game auto-removes HDR registry record on launch.
+"""
+loc = """
+**警告**！您的显示器必须支持 HDR，且 Windows 显示设置中必须启用`使用 HDR`！
+**启用**：开启 HDR。每次游戏启动前创建 HDR 注册表记录。
+**禁用**：关闭 HDR。无需额外操作，游戏启动时会自动移除 HDR 注册表记录。
+"""
+
+[error_migoto_game_detection_timeout]
+src = """
+Failed to detect window of game process {process_name}!
+
+If game window takes more than {start_timeout} seconds to appear, adjust **Timeout** in **General Settings**.
+
+If game crashed, try to follow the [Crash Isolation Checklist]({checklist_link}).
+"""
+loc = """
+无法检测到游戏进程 {process_name} 的窗口！
+
+如果游戏窗口超过 {start_timeout} 秒仍未出现，请在 **常规设置** 中调整 **超时时间**。
+
+如果游戏已崩溃，请尝试按照 [Crash Isolation Checklist]({checklist_link}) 进行操作。
+"""
+
+[message_text_locale_errors]
+src = """
+Detected errors in active localization files:
+
+{locale_errors:md_list}
+"""
+loc = """
+检测到活动本地化文件中的错误：
+
+{locale_errors:md_list}
+"""

@@ -24,10 +24,6 @@ loc = "或"
 src = "and"
 loc = "和"
 
-[locale_list_conjunction_spacing]
-src = "\\s"
-loc = ""
-
 [locale_list_separator]
 src = ", "
 loc = "、"

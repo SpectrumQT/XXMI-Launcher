@@ -1,28 +1,40 @@
 [top_bar_efmi_button_tooltip]
+src = "Arknights: Endfield Model Importer"
 loc = "Arknights: Endfield Model Importer"
 
 [general_settings_force_ultra_high_lod_bias_label]
+src = "Max LOD Bias"
 loc = "Max LOD Bias"
 
 [general_settings_force_ultra_high_lod_bias_tooltip]
+src = """
+**Enabled**: Set **LOD Bias** to **Ultra High** to force full resolution LOD textures.
+**Disabled**: Keep **LOD Bias** setting untouched. Select this if **Use All Mips** is enabled below.
+"""
 loc = """
 **Enabled**: Set **LOD Bias** to **Ultra High** to force full resolution LOD textures.
 **Disabled**: Keep **LOD Bias** setting untouched. Select this if **Use All Mips** is enabled below.
 """
 
 [locale_list_conjunction_or]
+src = "or"
 loc = "or"
 
 [locale_list_conjunction_and]
+src = "and"
 loc = "and"
 
-[locale_list_conjunction_spacing]
-loc = "\\s"
-
 [locale_list_separator]
+src = ", "
 loc = ", "
 
 [general_settings_game_folder_tooltip]
+src = """
+## Path to the folder containing the game executable
+* Usually named: {game_folder_names:bold:or_list}.
+* Contains files: {game_exe_names:bold:or_list}.
+* Contains folders: {game_folder_children:bold:and_list}.
+"""
 loc = """
 ## Path to the folder containing the game executable
 * Usually named: {game_folder_names:bold:or_list}.
@@ -31,6 +43,14 @@ loc = """
 """
 
 [general_settings_mesh_lod_offset_tooltip]
+src = """
+## Controls LoD meshes deploying behavior (when full animated models are replaced with simplified ones):
+
+* Default is **-10**, known range where full mesh remains always loaded is from **-1** to **-12** (depending on PC).
+* Mods are currently created for full meshes and cannot (easily) be applied to LoDs.
+
+*Applied to CVars=r.Kuro.SkeletalMesh.LODDistanceScaleDeviceOffset value in all sections of DeviceProfiles.ini*
+"""
 loc = """
 ## Controls LoD meshes deploying behavior (when full animated models are replaced with simplified ones):
 
@@ -41,6 +61,24 @@ loc = """
 """
 
 [general_settings_texture_boost_entry_tooltip]
+src = """
+## Controls how aggressively higher-resolution textures are pushed to VRAM:
+
+Serves as a multiplier to streaming priorities configured for textures.
+
+* If modded textures are not loading, try increasing it to **25** or **30**.
+    - ⚡ Too high values may increase VRAM usage and can cause stuttering if the pool is small.
+
+This value may require fine tuning to minimize modded textures loading delay:
+
+* Start tuning with **20.0** **(default)**.
+    - ✅ This baseline value should work for most PCs.
+
+* If modded textures are loading fine, gradually decrease until small textures (like eyes) start breaking.
+    - ✅ A value just above this “breaking point” typically gives minimal texture loading delay while staying VRAM-friendly.
+
+*Applied to CVars=r.Streaming.Boost value in all sections of DeviceProfiles.ini*
+"""
 loc = """
 ## Controls how aggressively higher-resolution textures are pushed to VRAM:
 
@@ -61,9 +99,20 @@ This value may require fine tuning to minimize modded textures loading delay:
 """
 
 [general_settings_texture_min_boost_label]
+src = "Minimal Boost:"
 loc = "Minimal Boost:"
 
 [general_settings_texture_min_boost_entry_tooltip]
+src = """
+## Defines a minimum streaming priority for textures:
+
+Values above **0** **(default)** set a priority floor that texture streaming priorities cannot go below.
+
+- ⚡ Use only if modded textures aren't loading regardless configured **Texture Boost** value.
+- ⚡ Same as with **Texture Boost**, always look for small textures (like eyes) when tuning the value.
+
+*Applied to CVars=r.Streaming.MinBoost value in all sections of DeviceProfiles.ini*
+"""
 loc = """
 ## Defines a minimum streaming priority for textures:
 
@@ -76,6 +125,18 @@ Values above **0** **(default)** set a priority floor that texture streaming pri
 """
 
 [general_settings_use_all_mips_tooltip]
+src = """
+## Controls whether texture resolution limits are applied:
+
+* **Enabled** **(default)**: Disable resolution restrictions from LOD Bias.
+    - ✅ Allows to load full resolution textures at cost of higher VRAM usage.
+    - ⚡ If it has no effect or consumes too much VRAM, try to enable **Max LOD Bias** instead.
+
+* **Disabled**: Enable resolution restrictions from LOD Bias.
+    - ⚡ Modded textures won't load if disabled without Max (Ultra High) LOD Bias enabled.
+
+*Applied to CVars=r.Streaming.UseAllMips value in all sections of DeviceProfiles.ini*
+"""
 loc = """
 ## Controls whether texture resolution limits are applied:
 
@@ -90,6 +151,14 @@ loc = """
 """
 
 [general_settings_texture_streaming_pool_size_entry_tooltip]
+src = """
+## Controls how much VRAM the game can use for textures:
+
+* Set to **0** **(default)** for **automatic control** (based on available VRAM).
+* Set to specific value (e.g. 4096) for precise VRAM management.
+
+*Applied to CVars=r.Streaming.PoolSize value in all sections of DeviceProfiles.ini*
+"""
 loc = """
 ## Controls how much VRAM the game can use for textures:
 
@@ -100,6 +169,19 @@ loc = """
 """
 
 [general_settings_texture_streaming_limit_pool_checkbox_tooltip]
+src = """
+## Sets the upper limit for how much VRAM the game can use for textures:
+
+* **Enabled** **(default)** – Limits texture pool size based on your GPU's available VRAM.
+    - ✅ Helps prevent crashes or stuttering on low VRAM systems.
+    - ⚡ May reduce texture quality or cause pop-ins if too restrictive on high-end GPUs.
+
+* **Disabled** – Unlocks maximum texture pool size, even if it exceeds your GPU's safe limits.
+    - ✅ Can improve texture quality and reduce pop-ins on powerful systems.
+    - ⚡ Risk of performance drops, stutters, or crashes if VRAM runs out.
+
+*Applied to CVars=r.Streaming.LimitPoolSizeToVRAM value in all sections of DeviceProfiles.ini*
+"""
 loc = """
 ## Sets the upper limit for how much VRAM the game can use for textures:
 
@@ -115,9 +197,23 @@ loc = """
 """
 
 [general_settings_texture_streaming_fixed_pool_size_checkbox]
+src = "Use Fixed Pool Size"
 loc = "Use Fixed Pool Size"
 
 [general_settings_texture_streaming_fixed_pool_size_checkbox_tooltip]
+src = """
+## Controls automatic pool size grow/shrink capabilities:
+
+* **Enabled** **(default)** – Locks texture pool size to value calculated on game start.
+    - ✅ Eliminates modded textures loading delay by minimizing texture mip levels pop in/out.
+    - ⚡ Pool size is locked on game start, low end GPU users may want to close as much apps as possible.
+
+* **Disabled** – Allows game engine to dynamically resize pool.
+    - ✅ Provides more freedom to both engine (allows mips streaming) and user (no need to close apps).
+    - ⚡ Introduces short delay to modded textures loading unless **Texture Boost** values is perfectly tuned.
+
+*Applied to CVars=r.Streaming.UseFixedPoolSize value in all sections of DeviceProfiles.ini*
+"""
 loc = """
 ## Controls automatic pool size grow/shrink capabilities:
 
@@ -131,3 +227,4 @@ loc = """
 
 *Applied to CVars=r.Streaming.UseFixedPoolSize value in all sections of DeviceProfiles.ini*
 """
+

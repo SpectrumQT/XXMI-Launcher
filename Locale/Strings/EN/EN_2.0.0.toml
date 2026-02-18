@@ -1,93 +1,115 @@
 [message_title_message]
+src = "Message"
 loc = "Message"
 
 [message_button_ok]
+src = "OK"
 loc = "OK"
 
 [message_title_error]
+src = "Error"
 loc = "Error"
 
 [message_title_warning]
+src = "Warning"
 loc = "Warning"
 
 [message_title_info]
+src = "Info"
 loc = "Info"
 
 [message_button_confirm]
+src = "Confirm"
 loc = "Confirm"
 
 [message_button_cancel]
+src = "Cancel"
 loc = "Cancel"
 
 [application_failed_parse_args]
+src = "Failed to parse args: {args}"
 loc = "Failed to parse args: {args}"
 
 [message_text_config_was_reset]
+src = "Failed to load configuration! Falling back to defaults."
 loc = "Failed to load configuration! Falling back to defaults."
 
 [status_initializing_update]
+src = "Initializing update..."
 loc = "Initializing update..."
 
 [message_button_load_backup_config]
+src = "Load Backup"
 loc = "Load Backup"
 
 [message_button_load_default_config]
+src = "Load Default"
 loc = "Load Default"
 
 [message_text_config_load_failed]
+src = "Failed to load configuration!"
 loc = "Failed to load configuration!"
 
 [error_unknown_model_importer]
+src = "Unknown model importer {importer}!"
 loc = "Unknown model importer {importer}!"
 
-[error_invalid_model_importer_package]
-loc = "Package {package} is not ModelImporterPackage!"
-
-[error_model_importer_auto_select_failed]
-loc = """
-Failed to auto-select importer for `{path}`!
-
-Try to add `--nogui --xxmi WWMI` args (or GIMI, SRMI, ZZMI, HIMI).
-"""
-
 [error_unknown_model_importer_arg]
+src = "Unknown model importer supplied as command line arg `--xxmi={arg_xxmi}`!"
 loc = "Unknown model importer supplied as command line arg `--xxmi={arg_xxmi}`!"
 
 [error_unknown_model_importer_setting]
+src = "Unknown model importer `{importer}` supplied with `active_importer` setting!"
 loc = "Unknown model importer `{importer}` supplied with `active_importer` setting!"
 
 [error_version_list_fetch_failed]
+src = """
+Failed to get latest versions list from GitHub!
+
+{error_text}
+"""
 loc = """
 Failed to get latest versions list from GitHub!
 
 {error_text}
 """
 
-[application_update_found]
-loc = "{package} update found: {current} -> {latest}"
-
 [message_title_update_available]
+src = "Update Available"
 loc = "Update Available"
 
 [message_button_install_update]
+src = "Update"
 loc = "Update"
 
 [message_button_skip_update]
+src = "Skip"
 loc = "Skip"
 
 [message_text_already_up_to_date]
+src = "No updates available!"
 loc = "No updates available!"
 
 [error_model_importer_loading_failed]
+src = """
+{importer} Loading Failed:
+{error}
+"""
 loc = """
 {importer} Loading Failed:
 {error}
 """
 
 [message_title_file_write_failed_read_only]
+src = "File Read Only Error"
 loc = "File Read Only Error"
 
 [message_text_file_write_failed_read_only]
+src = """
+Failed to write Read Only file {path}!
+
+Press [Confirm] to remove this flag and continue.
+"""
 loc = """
 Failed to write Read Only file {path}!
 
@@ -95,15 +117,23 @@ Press [Confirm] to remove this flag and continue.
 """
 
 [error_critical_file_write_failed]
+src = "Failed to write critical file: {path}!"
 loc = "Failed to write critical file: {path}!"
 
 [message_button_reset_unsecure_setting]
+src = "Reset"
 loc = "Reset"
 
 [message_button_keep_unsecure_setting]
+src = "Keep"
 loc = "Keep"
 
 [message_text_unsecure_setting_validation_failed]
+src = """
+Failed to validate unsecure settings!
+
+{msg}
+"""
 loc = """
 Failed to validate unsecure settings!
 
@@ -111,6 +141,13 @@ Failed to validate unsecure settings!
 """
 
 [error_theme_resource_not_found]
+src = """
+Resource not found:
+
+{resource_path}
+
+Hint: You can also use other extensions: {extensions}
+"""
 loc = """
 Resource not found:
 
@@ -120,9 +157,15 @@ Hint: You can also use other extensions: {extensions}
 """
 
 [status_waiting_installer]
+src = "Waiting for installer to start..."
 loc = "Waiting for installer to start..."
 
 [error_launcher_installer_start_failed]
+src = """
+Failed to start {asset_name}!
+
+Was it blocked by Antivirus software or security settings?
+"""
 loc = """
 Failed to start {asset_name}!
 
@@ -130,24 +173,25 @@ Was it blocked by Antivirus software or security settings?
 """
 
 [launcher_shortcut_description]
+src = "Shortcut to XXMI Launcher"
 loc = "Shortcut to XXMI Launcher"
 
-[error_migoto_game_detection_timeout]
-loc = """
-Failed to detect game process {process_name}!
-
-If game crashed, try to adjust XXMI Delay in General Settings or clear Mods and ShaderFixes folders.
-
-If game window takes more than {start_timeout} seconds to appear, adjust Timeout in Launcher Settings.
-"""
-
 [error_migoto_game_start_failed]
+src = "Failed to start {process_name}!"
 loc = "Failed to start {process_name}!"
 
 [message_button_restore_model_importer]
+src = "Restore"
 loc = "Restore"
 
 [message_text_message_text_model_importer_installation_damaged]
+src = """
+XXMI installation is damaged!
+
+Details: {error_text}
+
+Would you like to restore XXMI automatically?
+"""
 loc = """
 XXMI installation is damaged!
 
@@ -157,9 +201,15 @@ Would you like to restore XXMI automatically?
 """
 
 [status_ensuring_game_closed]
+src = "Ensuring the game is closed..."
 loc = "Ensuring the game is closed..."
 
 [message_text_game_stop_failed]
+src = """
+Failed to stop {process_name}!
+
+Please close the game manually and press [OK] to continue.
+"""
 loc = """
 Failed to stop {process_name}!
 
@@ -167,12 +217,22 @@ Please close the game manually and press [OK] to continue.
 """
 
 [error_xxmi_missing_critical_file]
+src = "XXMI package is missing critical file: {file_name}!"
 loc = "XXMI package is missing critical file: {file_name}!"
 
 [error_gimi_game_exe_not_found]
+src = "Game executable {game_exe_name} or {game_exe_name_cn} not found!"
 loc = "Game executable {game_exe_name} or {game_exe_name_cn} not found!"
 
 [error_gimi_dcr_config_failed]
+src = """
+{error_text}
+
+If nothing helps:
+1. Disable `Configure Game Settings` in launcher's `General Settings`
+2. Configure in-game `Graphics Settings` manually:
+* Graphics > `Dynamic Character Resolution` must be `Off`.
+"""
 loc = """
 {error_text}
 
@@ -183,6 +243,11 @@ If nothing helps:
 """
 
 [error_gimi_fps_unlocker_config_failed]
+src = """
+Failed to configure FPS Unlocker!
+
+{error_text}
+"""
 loc = """
 Failed to configure FPS Unlocker!
 
@@ -190,6 +255,11 @@ Failed to configure FPS Unlocker!
 """
 
 [error_gimi_hdr_enable_failed]
+src = """
+Failed to enable HDR!
+
+{error_text}
+"""
 loc = """
 Failed to enable HDR!
 
@@ -197,6 +267,11 @@ Failed to enable HDR!
 """
 
 [error_gimi_registry_key_not_found]
+src = """
+Genshin Impact registry key is not found!
+
+Please start the game via original launcher to create the key and try again.
+"""
 loc = """
 Genshin Impact registry key is not found!
 
@@ -204,9 +279,15 @@ Please start the game via original launcher to create the key and try again.
 """
 
 [error_gimi_unknown_settings_format]
+src = "Unknown Settings format: Data type {regtype} is not {expected_type} of REG_BINARY!"
 loc = "Unknown Settings format: Data type {regtype} is not {expected_type} of REG_BINARY!"
 
 [error_gimi_graphics_settings_not_found]
+src = """
+Graphics Settings record is not found in GI registry!
+
+Please start the game via official launcher to create the record and try again.
+"""
 loc = """
 Graphics Settings record is not found in GI registry!
 
@@ -214,12 +295,19 @@ Please start the game via official launcher to create the record and try again.
 """
 
 [error_gimi_graphics_data_key_not_found]
+src = "Unknown Graphics Settings format: \"graphicsData\" key not found!"
 loc = "Unknown Graphics Settings format: \"graphicsData\" key not found!"
 
 [error_gimi_global_perf_data_key_not_found]
+src = "Unknown Graphics Settings format: \"globalPerfData\" key not found!"
 loc = "Unknown Graphics Settings format: \"globalPerfData\" key not found!"
 
 [error_gimi_hdr_record_not_found]
+src = """
+HDR record is not found in GI registry!
+
+Please start the game via official launcher to create the record and try again.
+"""
 loc = """
 HDR record is not found in GI registry!
 
@@ -227,9 +315,15 @@ Please start the game via official launcher to create the record and try again.
 """
 
 [status_configuring_fps_unlocker]
+src = "Configuring FPS Unlocker..."
 loc = "Configuring FPS Unlocker..."
 
 [message_text_fps_unlocker_manual_termination]
+src = """
+Failed to terminate FPS Unlocker!
+
+Please close it manually and press [OK] to continue.
+"""
 loc = """
 Failed to terminate FPS Unlocker!
 
@@ -237,12 +331,21 @@ Please close it manually and press [OK] to continue.
 """
 
 [error_game_exe_not_found]
+src = "Game executable {exe_name} not found!"
 loc = "Game executable {exe_name} not found!"
 
 [error_himi_fps_unlock_failed]
+src = "Failed to configure FPS: {error_text}"
 loc = "Failed to configure FPS: {error_text}"
 
 [error_himi_registry_key_not_found]
+src = """
+Honkai Impact 3rd registry key is not found!
+
+Please start the game without FPS tweak, change FPS to any value to create the record and try again.
+
+Note: Tweak is supported only for the Global client and will not work for CN.
+"""
 loc = """
 Honkai Impact 3rd registry key is not found!
 
@@ -252,6 +355,11 @@ Note: Tweak is supported only for the Global client and will not work for CN.
 """
 
 [error_himi_graphics_settings_not_found]
+src = """
+Graphics Settings record is not found in Honkai Impact 3rd registry!
+
+Please start the game without FPS tweak, change FPS to any value to create the record and try again.
+"""
 loc = """
 Graphics Settings record is not found in Honkai Impact 3rd registry!
 
@@ -259,40 +367,49 @@ Please start the game without FPS tweak, change FPS to any value to create the r
 """
 
 [error_himi_unknown_graphics_format]
+src = "Unknown Graphics Settings format: Data type {regtype} is not {expected_type} of REG_BINARY!"
 loc = "Unknown Graphics Settings format: Data type {regtype} is not {expected_type} of REG_BINARY!"
 
 [error_himi_fps_key_not_found]
+src = "Unknown Graphics Settings format: \"TargetFrameRateForInLevel\" key not found!"
 loc = "Unknown Graphics Settings format: \"TargetFrameRateForInLevel\" key not found!"
 
-[error_extra_library_not_found]
-loc = """
-Failed to inject extra library {dll_path}:
-File not found!
-Please check Advanced Settings -> Inject Libraries.
-"""
-
 [error_model_importer_unknown_command]
+src = "Unknown command {name}!"
 loc = "Unknown command {name}!"
 
 [error_model_importer_command_execution_failed]
+src = """
+Failed to execute `{name} = {value}` of auto_update.xcmd!
+{error_text}
+"""
 loc = """
 Failed to execute `{name} = {value}` of auto_update.xcmd!
 {error_text}
 """
 
 [error_model_importer_removal_scope_restricted]
+src = "File or folder removal is allowed only from Core or ShaderFixes folder!"
 loc = "File or folder removal is allowed only from Core or ShaderFixes folder!"
 
 [error_model_importer_removal_forbidden]
+src = "Explicit removal of entire Core or ShaderFixes folder is not allowed!"
 loc = "Explicit removal of entire Core or ShaderFixes folder is not allowed!"
 
 [error_model_importer_game_folder_not_specified]
+src = "Game installation folder is not specified!"
 loc = "Game installation folder is not specified!"
 
 [error_model_importer_game_folder_not_found]
+src = "Specified game installation folder is not found!"
 loc = "Specified game installation folder is not found!"
 
 [message_text_game_detection_failed]
+src = """
+Automatic detection of the game installation failed!
+
+Please configure it manually with Game Folder option of General Settings.
+"""
 loc = """
 Automatic detection of the game installation failed!
 
@@ -300,9 +417,17 @@ Please configure it manually with Game Folder option of General Settings.
 """
 
 [message_button_open_settings]
+src = "Open Settings"
 loc = "Open Settings"
 
 [message_text_game_detected_single]
+src = """
+Detected game installation:
+
+{game_folder}
+
+Please check if it is desired Game Folder or change it in General Settings.
+"""
 loc = """
 Detected game installation:
 
@@ -312,6 +437,12 @@ Please check if it is desired Game Folder or change it in General Settings.
 """
 
 [message_text_game_detected_multiple]
+src = """
+Detected game installations:
+
+Select desired Game Folder from the list below or set it in General Settings:
+
+"""
 loc = """
 Detected game installations:
 
@@ -320,6 +451,11 @@ Select desired Game Folder from the list below or set it in General Settings:
 """
 
 [message_text_game_folder_not_configured]
+src = """
+Game installation folder is not configured!
+
+Please set it with Game Folder option of General Settings.
+"""
 loc = """
 Game installation folder is not configured!
 
@@ -327,9 +463,16 @@ Please set it with Game Folder option of General Settings.
 """
 
 [status_autodetecting_game]
+src = "Autodetecting game installation folder..."
 loc = "Autodetecting game installation folder..."
 
 [error_launcher_in_game_folder]
+src = """
+
+Launcher must be installed outside of the game folder!
+
+Please reinstall the launcher to another location.
+"""
 loc = """
 
 Launcher must be installed outside of the game folder!
@@ -338,6 +481,12 @@ Please reinstall the launcher to another location.
 """
 
 [error_model_importer_in_game_folder]
+src = """
+
+{importer} Folder must be located outside of the Game Folder!
+
+Please chose another location for Settings > {importer} > {importer} Folder.
+"""
 loc = """
 
 {importer} Folder must be located outside of the Game Folder!
@@ -346,27 +495,41 @@ Please chose another location for Settings > {importer} > {importer} Folder.
 """
 
 [error_model_importer_installation_failed]
+src = """
+{importer} Installation Failed:
+{error_text}
+"""
 loc = """
 {importer} Installation Failed:
 {error_text}
 """
 
 [status_updating_ini]
+src = "Updating d3dx.ini..."
 loc = "Updating d3dx.ini..."
 
 [error_ini_missing_setting]
+src = "Config is missing {setting_name} setting!"
 loc = "Config is missing {setting_name} setting!"
 
 [error_ini_missing_value]
+src = "Config is missing value for section `{section}` option `{option}` key `{key}`"
 loc = "Config is missing value for section `{section}` option `{option}` key `{key}`"
 
 [error_set_ini_option_failed]
+src = "Failed to set section {section} option {option} to {value}: {error_text}"
 loc = "Failed to set section {section} option {option} to {value}: {error_text}"
 
 [message_button_restore]
+src = "Restore"
 loc = "Restore"
 
 [message_text_model_importer_installation_damaged]
+src = """
+{importer} installation is damaged!
+Details: Missing critical file: {file_name}!
+Would you like to restore {importer} automatically?
+"""
 loc = """
 {importer} installation is damaged!
 Details: Missing critical file: {file_name}!
@@ -374,55 +537,49 @@ Would you like to restore {importer} automatically?
 """
 
 [model_importer_missing_critical_file]
+src = "Missing critical file: {file_name}!"
 loc = "Missing critical file: {file_name}!"
 
 [model_importer_shortcut_description]
+src = "Start game with {importer} and skip launcher load"
 loc = "Start game with {importer} and skip launcher load"
 
 [message_button_disable]
+src = "Disable"
 loc = "Disable"
 
 [message_button_ignore]
+src = "Ignore"
 loc = "Ignore"
 
-[message_text_duplicate_libraries_detected]
-loc = """
-Your {importer} installation already includes some libraries present in the Mods folder!
-
-Would you like to disable following duplicates automatically (recommended)?
-
-{duplicates}
-"""
-
-[message_button_delete_file]
-loc = "Delete File"
-
 [message_button_abort]
+src = "Abort"
 loc = "Abort"
 
-[message_text_d3dx_ini_in_mods_folder_detected]
-loc = """
-Global config file d3dx.ini found inside the Mods folder:
-{path}
-
-It is duplicate file that may cause glitches and crashes.
-
-Would you like to remove it?
-"""
-
 [error_cannot_start_with_d3dx_ini_in_mods]
+src = "Cannot start with d3dx.ini in Mods folder!"
 loc = "Cannot start with d3dx.ini in Mods folder!"
 
 [error_malformed_model_importer_version]
+src = "Malformed {importer} version!"
 loc = "Malformed {importer} version!"
 
 [error_model_importer_version_not_found]
+src = "Failed to locate {importer} version!"
 loc = "Failed to locate {importer} version!"
 
 [error_srmi_fps_unlock_failed]
+src = "Failed to force 120 FPS: {error_text}"
 loc = "Failed to force 120 FPS: {error_text}"
 
 [error_srmi_registry_key_not_found]
+src = """
+Star Rail registry key is not found!
+
+Please start the game without 120 FPS tweak, change FPS to any value to create the record and try again.
+
+Note: Tweak is supported only for the Global HSR client and will not work for CN.
+"""
 loc = """
 Star Rail registry key is not found!
 
@@ -432,6 +589,11 @@ Note: Tweak is supported only for the Global HSR client and will not work for CN
 """
 
 [error_srmi_graphics_settings_not_found]
+src = """
+Graphics Settings record is not found in HSR registry!
+
+Please start the game without 120 FPS tweak, change FPS to any value to create the record and try again.
+"""
 loc = """
 Graphics Settings record is not found in HSR registry!
 
@@ -439,21 +601,35 @@ Please start the game without 120 FPS tweak, change FPS to any value to create t
 """
 
 [error_srmi_unknown_graphics_format]
+src = "Unknown Graphics Settings format: Data type {regtype} is not {expected_type} of REG_BINARY!"
 loc = "Unknown Graphics Settings format: Data type {regtype} is not {expected_type} of REG_BINARY!"
 
 [error_srmi_fps_key_not_found]
+src = "Unknown Graphics Settings format: \"FPS\" key no found!"
 loc = "Unknown Graphics Settings format: \"FPS\" key no found!"
 
 [error_game_path_not_absolute]
+src = "Failed to normalize path {path}: Path is not absolute!"
 loc = "Failed to normalize path {path}: Path is not absolute!"
 
 [error_wuthering_waves_exe_not_found]
+src = "Failed to normalize path {path}: Wuthering Waves.exe not found!"
 loc = "Failed to normalize path {path}: Wuthering Waves.exe not found!"
 
 [error_wwmi_game_folder_missing_files]
+src = "Game folder must contain `Wuthering Waves.exe` and `Client` & `Engine` folders!"
 loc = "Game folder must contain `Wuthering Waves.exe` and `Client` & `Engine` folders!"
 
 [message_text_wwmi_invalid_steam_installation]
+src = """
+Invalid Wuthering Waves installation detected for Steam:
+{game_path}
+
+{folder_name} folder with {exe_name} must be directly placed in:
+{common_folder}
+
+Please run game file repair via Steam or fix it manually.
+"""
 loc = """
 Invalid Wuthering Waves installation detected for Steam:
 {game_path}
@@ -465,21 +641,33 @@ Please run game file repair via Steam or fix it manually.
 """
 
 [error_steam_game_repair_required]
+src = "Game installation must be repaired via Steam!"
 loc = "Game installation must be repaired via Steam!"
 
 [error_game_folder_missing_folder]
+src = "Game folder must contain {dir_name} folder!"
 loc = "Game folder must contain {dir_name} folder!"
 
 [status_configuring_settings]
+src = "Configuring in-game settings..."
 loc = "Configuring in-game settings..."
 
 [message_title_wounded_effect_detected]
+src = "Wounded Effect Detected"
 loc = "Wounded Effect Detected"
 
 [message_button_keep_enabled]
+src = "Keep Enabled"
 loc = "Keep Enabled"
 
 [message_text_wounded_effect_detected]
+src = """
+Looks like Wounded Effect is enabled in game settings.
+It is not supported by most mods and textures will break after few hits taken.
+
+Click `Disable` to turn it Off and ensure proper rendering of modded textures.
+Click `Keep Enabled` if you never get hit or use Injured Effect Remover tool.
+"""
 loc = """
 Looks like Wounded Effect is enabled in game settings.
 It is not supported by most mods and textures will break after few hits taken.
@@ -489,6 +677,12 @@ Click `Keep Enabled` if you never get hit or use Injured Effect Remover tool.
 """
 
 [error_wwmi_fps_unlock_failed]
+src = """
+Failed to force 120 FPS!
+Please disable `Force 120 FPS` in launcher's General Settings.
+
+{error_text}
+"""
 loc = """
 Failed to force 120 FPS!
 Please disable `Force 120 FPS` in launcher's General Settings.
@@ -497,6 +691,13 @@ Please disable `Force 120 FPS` in launcher's General Settings.
 """
 
 [error_wwmi_game_config_failed]
+src = """
+Failed to configure in-game settings for WWMI!
+Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:
+* Graphics > `Graphics Quality` must be `Quality`.
+
+{error_text}
+"""
 loc = """
 Failed to configure in-game settings for WWMI!
 Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:
@@ -506,12 +707,22 @@ Please disable `Configure Game Settings` in launcher's General Settings and chec
 """
 
 [status_updating_file]
+src = "Updating {file_name}..."
 loc = "Updating {file_name}..."
 
 [error_local_storage_init_failed]
+src = "Failed to initialize LocalStorage: {error_text}"
 loc = "Failed to initialize LocalStorage: {error_text}"
 
 [error_zzmi_game_config_failed]
+src = """
+Failed to configure in-game settings for ZZMI!
+Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:
+* Graphics > `Character Quality` must be `High`.
+* Graphics > `High-Precision Character Animation` must be `Disabled`.
+
+{error_text}
+"""
 loc = """
 Failed to configure in-game settings for ZZMI!
 Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:
@@ -522,9 +733,15 @@ Please disable `Configure Game Settings` in launcher's General Settings and chec
 """
 
 [error_zzmi_unknown_settings_format]
+src = "Unknown system settings entry format: {setting}!"
 loc = "Unknown system settings entry format: {setting}!"
 
 [error_updater_start_failed]
+src = """
+Failed to start XXMI Updater.exe!
+
+Was it blocked by Antivirus software or security settings?
+"""
 loc = """
 Failed to start XXMI Updater.exe!
 
@@ -532,6 +749,11 @@ Was it blocked by Antivirus software or security settings?
 """
 
 [error_package_version_detect_failed]
+src = """
+Failed to detect installed {package_name} version:
+
+{error_text}
+"""
 loc = """
 Failed to detect installed {package_name} version:
 
@@ -539,6 +761,11 @@ Failed to detect installed {package_name} version:
 """
 
 [package_manager_detect_latest_failed]
+src = """
+Failed to detect latest {package_name} version:
+
+{error_text}
+"""
 loc = """
 Failed to detect latest {package_name} version:
 
@@ -546,39 +773,62 @@ Failed to detect latest {package_name} version:
 """
 
 [error_downloaded_data_verification_failed]
+src = """
+Downloaded data integrity verification failed!
+Please restart the launcher and try again!
+"""
 loc = """
 Downloaded data integrity verification failed!
 Please restart the launcher and try again!
 """
 
 [package_manager_file_verification_failed]
+src = """
+{asset_name} data integrity verification failed!
+Please restart the launcher and try again!
+"""
 loc = """
 {asset_name} data integrity verification failed!
 Please restart the launcher and try again!
 """
 
 [error_missing_manifest]
+src = "{package_name} package is missing manifest file!"
 loc = "{package_name} package is missing manifest file!"
 
 [error_parse_manifest_failed]
+src = "Failed to parse {package_name} manifest file!"
 loc = "Failed to parse {package_name} manifest file!"
 
 [error_missing_critical_file]
+src = "{package_name} package is missing critical file: {file_name}!"
 loc = "{package_name} package is missing critical file: {file_name}!"
 
 [error_file_signature_invalid]
+src = "File {file_name} signature is invalid!"
 loc = "File {file_name} signature is invalid!"
 
 [error_missing_signature]
+src = "{package_name} manifest file is missing signature for {file_name}!"
 loc = "{package_name} manifest file is missing signature for {file_name}!"
 
 [error_download_update_failed]
+src = """
+Failed to download {version} update for {package} package:
+{error_text}
+"""
 loc = """
 Failed to download {version} update for {package} package:
 {error_text}
 """
 
 [error_install_update_failed]
+src = """
+Failed to install {version} update for {package} package!
+Please restart the launcher or your PC and try again.
+
+{error_text}
+"""
 loc = """
 Failed to install {version} update for {package} package!
 Please restart the launcher or your PC and try again.
@@ -587,6 +837,13 @@ Please restart the launcher or your PC and try again.
 """
 
 [error_github_api_limit]
+src = """
+Unauthorized GitHub API requests limit reached for your IP!
+
+GitHub servers will ignore further connection attempts for an hour.
+
+Set (another) *Proxy* or *GitHub Token* in *Launcher Settings* for instant access.
+"""
 loc = """
 Unauthorized GitHub API requests limit reached for your IP!
 
@@ -596,51 +853,75 @@ Set (another) *Proxy* or *GitHub Token* in *Launcher Settings* for instant acces
 """
 
 [error_remove_readonly_failed]
+src = "Failed to remove Read Only flag from file {path}: {error_text}!"
 loc = "Failed to remove Read Only flag from file {path}: {error_text}!"
 
 [error_file_not_exist]
+src = "File '{path}' does not exist!"
 loc = "File '{path}' does not exist!"
 
 [error_not_a_file]
+src = "File '{path}' is not a file!"
 loc = "File '{path}' is not a file!"
 
 [error_path_not_absolute]
+src = "File path '{path}' is not absolute!"
 loc = "File path '{path}' is not absolute!"
 
 [error_no_read_access]
+src = "Failed to read '{path}' file!"
 loc = "Failed to read '{path}' file!"
 
 [error_file_readonly]
+src = "Failed to write '{path}': file is Read Only!"
 loc = "Failed to write '{path}': file is Read Only!"
 
 [error_no_write_access]
+src = "Failed to write '{path}': no write access!"
 loc = "Failed to write '{path}': no write access!"
 
 [error_no_exe_access]
+src = "Failed run '{path}': no execute access!"
 loc = "Failed run '{path}': no execute access!"
 
 [error_dir_not_absolute]
+src = "Directory path '{path}' is not absolute!"
 loc = "Directory path '{path}' is not absolute!"
 
 [error_cant_read_folder]
+src = "Can't read from '{path}' folder!"
 loc = "Can't read from '{path}' folder!"
 
 [error_cant_write_folder]
+src = "Can't write to '{path}' folder!"
 loc = "Can't write to '{path}' folder!"
 
 [error_cant_run_exe_folder]
+src = "Can't run .exe in '{path}' folder!"
 loc = "Can't run .exe in '{path}' folder!"
 
 [error_cant_access_folder]
+src = "Can't access '{path}' folder!"
 loc = "Can't access '{path}' folder!"
 
 [error_not_a_folder]
+src = "Path '{path}' is not a folder!"
 loc = "Path '{path}' is not a folder!"
 
 [error_cannot_set_root_absolute]
+src = "Cannot set root \"{root_path}\" for absolute path \"{path}\"!"
 loc = "Cannot set root \"{root_path}\" for absolute path \"{path}\"!"
 
 [error_curly_brackets_error]
+src = """
+Launcher initialization failed!
+
+Curly brackets {{ and }} in launcher path are not supported:
+{root_path}
+
+Please reinstall the launcher to another location.
+
+"""
 loc = """
 Launcher initialization failed!
 
@@ -652,97 +933,115 @@ Please reinstall the launcher to another location.
 """
 
 [error_dll_injector_file_not_found]
+src = "Injector file not found: {injector_lib_path}!"
 loc = "Injector file not found: {injector_lib_path}!"
 
 [error_dll_injector_load_failed]
+src = "Failed to load injector library!"
 loc = "Failed to load injector library!"
 
 [error_dll_injector_setup_failed]
+src = "Failed to setup injector library!"
 loc = "Failed to setup injector library!"
 
 [error_dll_injector_unload_failed]
+src = "Failed to unload injector library!"
 loc = "Failed to unload injector library!"
 
 [dll_injector_shell_error_out_of_memory]
+src = "The operating system is out of memory/resources"
 loc = "The operating system is out of memory/resources"
 
 [dll_injector_shell_error_file_not_found]
+src = "File not found"
 loc = "File not found"
 
 [dll_injector_shell_error_path_not_found]
+src = "Path not found"
 loc = "Path not found"
 
 [dll_injector_shell_error_access_denied]
+src = "Access denied"
 loc = "Access denied"
 
 [dll_injector_shell_error_not_win32_app]
+src = ".exe file is invalid or not a Win32 app"
 loc = ".exe file is invalid or not a Win32 app"
 
 [dll_injector_shell_error_sharing_violation]
+src = "Sharing violation"
 loc = "Sharing violation"
 
 [dll_injector_shell_error_no_app_association]
+src = "No application is associated with the file"
 loc = "No application is associated with the file"
 
 [dll_injector_shell_error_incomplete_app_association]
+src = "File association is incomplete"
 loc = "File association is incomplete"
 
 [dll_injector_unknown_shell_error_code]
+src = "Unknown ShellExecute error code {error_code}"
 loc = "Unknown ShellExecute error code {error_code}"
 
 [error_dll_injector_process_start_failed]
+src = "Failed to start {process_name}: {error_text}!"
 loc = "Failed to start {process_name}: {error_text}!"
 
-[error_dll_injector_non_ascii_path]
-loc = """
-Please rename all folders from the path using only English letters:
-{dll_path}
-"""
-
 [error_dll_injector_unknown_start_method]
+src = "Unknown process start method `{start_method}`!"
 loc = "Unknown process start method `{start_method}`!"
 
 [error_dll_injector_injection_failed]
+src = "Failed to inject {dll_paths}!"
 loc = "Failed to inject {dll_paths}!"
 
 [error_dll_injector_unhook_failed]
+src = "Invalid injector usage: {dll_path} was not unhooked!"
 loc = "Invalid injector usage: {dll_path} was not unhooked!"
 
 [error_dll_injector_another_instance]
+src = "Another instance of 3DMigotoLoader is running!"
 loc = "Another instance of 3DMigotoLoader is running!"
 
 [error_dll_injector_failed_to_load_dll]
+src = "Failed to load {dll_path}!"
 loc = "Failed to load {dll_path}!"
 
 [error_dll_injector_missing_entry_point]
+src = "Library {dll_path} is missing expected entry point!"
 loc = "Library {dll_path} is missing expected entry point!"
 
 [error_dll_injector_hook_setup_failed]
+src = "Failed to setup windows hook for {dll_path}!"
 loc = "Failed to setup windows hook for {dll_path}!"
 
 [error_dll_injector_unknown_hook_error]
+src = "Unknown error while hooking {dll_path}!"
 loc = "Unknown error while hooking {dll_path}!"
 
 [error_dll_injector_hook_is_null]
+src = "Hook is NULL for {dll_path}!"
 loc = "Hook is NULL for {dll_path}!"
 
 [error_dll_injector_path_not_defined]
+src = "Invalid injector usage: dll path is not defined!"
 loc = "Invalid injector usage: dll path is not defined!"
 
 [error_dll_injector_process_not_defined]
+src = "Invalid injector usage: target process is not defined!"
 loc = "Invalid injector usage: target process is not defined!"
 
 [error_dll_injector_dll_not_hooked]
+src = "Invalid injector usage: dll is not hooked!"
 loc = "Invalid injector usage: dll is not hooked!"
 
-[error_dll_injector_extra_library_failed]
-loc = """
-Failed to inject extra library {dll_path}:
-{error_text}!
-Please check Advanced Settings -> Inject Libraries.
-"""
-
 [error_ssl_certificate_validation_failed]
+src = """
+Failed to validate SSL certificate of GitHub HTTPS connection!
+
+If you trust your proxy, uncheck *Verify SSL* in *Launcher Settings* and try again.
+"""
 loc = """
 Failed to validate SSL certificate of GitHub HTTPS connection!
 
@@ -750,6 +1049,11 @@ If you trust your proxy, uncheck *Verify SSL* in *Launcher Settings* and try aga
 """
 
 [error_github_connection_failed]
+src = """
+Failed to establish HTTPS connection to GitHub!
+
+Please check your Antivirus, Firewall, Proxy and VPN settings.
+"""
 loc = """
 Failed to establish HTTPS connection to GitHub!
 
@@ -757,9 +1061,15 @@ Please check your Antivirus, Firewall, Proxy and VPN settings.
 """
 
 [error_github_rate_limit_exceeded]
+src = "GitHub API rate limit exceeded!"
 loc = "GitHub API rate limit exceeded!"
 
 [error_github_invalid_token]
+src = """
+GitHub Personal Access Token is invalid!
+
+Please configure correct token in launcher settings.
+"""
 loc = """
 GitHub Personal Access Token is invalid!
 
@@ -767,36 +1077,52 @@ Please configure correct token in launcher settings.
 """
 
 [error_github_parse_response_failed]
+src = "Failed to parse GitHub response!"
 loc = "Failed to parse GitHub response!"
 
 [error_github_parse_version_failed]
+src = "Failed to parse latest release version!"
 loc = "Failed to parse latest release version!"
 
 [error_github_parse_signature_failed]
+src = "Failed to parse signature!"
 loc = "Failed to parse signature!"
 
 [error_github_asset_not_found]
+src = "Failed to locate asset matching to '{asset_name_format}'!"
 loc = "Failed to locate asset matching to '{asset_name_format}'!"
 
 [error_github_invalid_release_notes]
+src = "<font color=\"red\">⚠ Error! Invalid release notes format! ⚠</font>"
 loc = "<font color=\"red\">⚠ Error! Invalid release notes format! ⚠</font>"
 
 [error_github_unsigned_release]
+src = "<font color=\"red\">☢ Error! Release is unsigned! ☢</font>"
 loc = "<font color=\"red\">☢ Error! Release is unsigned! ☢</font>"
 
 [error_proxy_host_not_specified]
+src = "Proxy host is not specified!"
 loc = "Proxy host is not specified!"
 
 [error_proxy_port_not_specified]
+src = "Proxy port is not specified!"
 loc = "Proxy port is not specified!"
 
 [error_proxy_port_must_be_numeric]
+src = "Proxy port must be numeric value!"
 loc = "Proxy port must be numeric value!"
 
 [donate_and_wwmi]
+src = " and WWMI"
 loc = " and WWMI"
 
 [donate_popup_introduction]
+src = """
+Hey there — just a quick moment, I promise I won't interrupt again!
+
+I'm SpectrumQT, the developer behind XXMI Launcher{importer_info}.
+Looks like you've already enjoyed {num_sessions} {model_importer} sessions — awesome!
+"""
 loc = """
 Hey there — just a quick moment, I promise I won't interrupt again!
 
@@ -805,6 +1131,12 @@ Looks like you've already enjoyed {num_sessions} {model_importer} sessions — a
 """
 
 [donate_wwmi_introduction]
+src = """
+Hello! Thank you for visiting {model_importer} Appreciation Corner!
+
+This page is a bit unique, since I can't list many names here.
+Simply because I'm soloing {model_importer} and XXMI Launcher development.
+"""
 loc = """
 Hello! Thank you for visiting {model_importer} Appreciation Corner!
 
@@ -813,6 +1145,12 @@ Simply because I'm soloing {model_importer} and XXMI Launcher development.
 """
 
 [donate_other_introduction]
+src = """
+Hello! Thank you for visiting {model_importer} Appreciation Corner!
+
+Here you can see the dev team fighting for {model_importer} behind the scenes.
+It's a tough battle — but shader hackers prevail!
+"""
 loc = """
 Hello! Thank you for visiting {model_importer} Appreciation Corner!
 
@@ -821,94 +1159,120 @@ It's a tough battle — but shader hackers prevail!
 """
 
 [donate_wwmi_useful_check]
+src = "If you've been finding it useful, consider checking out"
 loc = "If you've been finding it useful, consider checking out"
 
 [donate_my_patreon_campaign]
+src = "my Patreon campaign."
 loc = "my Patreon campaign."
 
-[donate_wwmi_footer]
-loc = """
-It's all about building better tools for the entire {model_importer} community.
-
-Who knows — maybe your few bucks could help shape the next big feature!
-"""
-
 [donate_support_message]
+src = "Please consider supporting those who work hard every day to make {model_importer} possible!"
 loc = "Please consider supporting those who work hard every day to make {model_importer} possible!"
 
 [donate_creators_single]
+src = "• Creator: "
 loc = "• Creator: "
 
 [donate_creators_multiple]
+src = "• Creators: "
 loc = "• Creators: "
 
 [donate_maintainers_single]
+src = "• Maintainer:"
 loc = "• Maintainer:"
 
 [donate_maintainers_multiple]
+src = "• Maintainers:"
 loc = "• Maintainers:"
 
 [donate_launcher_handy]
+src = "Also, if the launcher has been handy, I'd appreciate you joining"
 loc = "Also, if the launcher has been handy, I'd appreciate you joining"
 
 [donate_my_patreon_short]
+src = "my Patreon."
 loc = "my Patreon."
 
 [donate_close_button]
+src = "Close"
 loc = "Close"
 
 [donate_close_countdown]
+src = "Close ({time_left})"
 loc = "Close ({time_left})"
 
 [bottom_bar_initializing_launch]
+src = "Initializing game launch..."
 loc = "Initializing game launch..."
 
 [bottom_bar_hooking]
+src = "Hooking {library} to {process}..."
 loc = "Hooking {library} to {process}..."
 
 [bottom_bar_verifying_hook]
+src = "Verifying {library} load into {process}..."
 loc = "Verifying {library} load into {process}..."
 
 [bottom_bar_injecting]
+src = "Injecting {library} to {process}..."
 loc = "Injecting {library} to {process}..."
 
 [bottom_bar_launching_game]
+src = "Launching game..."
 loc = "Launching game..."
 
 [bottom_bar_waiting_process]
+src = "Waiting for {process} to start..."
 loc = "Waiting for {process} to start..."
 
 [bottom_bar_closing_launcher]
+src = "Closing launcher..."
 loc = "Closing launcher..."
 
 [bottom_bar_checking_updates]
+src = "Checking for updates..."
 loc = "Checking for updates..."
 
 [bottom_bar_connecting_github]
+src = "Connecting to GitHub..."
 loc = "Connecting to GitHub..."
 
 [bottom_bar_downloading]
+src = "Downloading {asset}..."
 loc = "Downloading {asset}..."
 
 [bottom_bar_verifying_integrity]
+src = "Verifying {asset} integrity..."
 loc = "Verifying {asset} integrity..."
 
 [bottom_bar_initializing_installation]
+src = "Initializing update installation..."
 loc = "Initializing update installation..."
 
 [bottom_bar_writing_file]
+src = "Writing {asset} on disk..."
 loc = "Writing {asset} on disk..."
 
 [bottom_bar_moving_file]
+src = "Moving {asset}..."
 loc = "Moving {asset}..."
 
 [bottom_bar_unpacking]
+src = "Unpacking {asset}..."
 loc = "Unpacking {asset}..."
 
 [launcher_select_games_text]
+src = "Select Games To Mod:"
 loc = "Select Games To Mod:"
 
 [launcher_update_button_tooltip]
+src = """
+## Update packages to latest versions:
+{pending_update_message}
+
+<font color=\"#3366ff\">*Hover over versions in the bottom-left corner to view update descriptions.*</font>
+"""
 loc = """
 ## Update packages to latest versions:
 {pending_update_message}
@@ -917,55 +1281,90 @@ loc = """
 """
 
 [launcher_start_button]
+src = "Start"
 loc = "Start"
 
 [launcher_install_button]
+src = "Install"
 loc = "Install"
 
 [package_release_notes_up_to_date]
+src = """
+# What's new in {package_name} v{new_package_version}:
+{installed_release_notes}
+"""
 loc = """
 # What's new in {package_name} v{new_package_version}:
 {installed_release_notes}
 """
 
 [package_release_notes_update_available]
+src = """
+# Update {package_name} to v{new_package_version} for:
+{latest_release_notes}
+"""
 loc = """
 # Update {package_name} to v{new_package_version} for:
 {latest_release_notes}
 """
 
 [package_release_notes_not_installed]
+src = """
+Press **Install** button to setup the package.
+"""
 loc = """
 Press **Install** button to setup the package.
 """
 
 [package_description_launcher]
+src = """
+*This package is XXMI Launcher App itself and defines its features.*
+"""
 loc = """
 *This package is XXMI Launcher App itself and defines its features.*
 """
 
 [package_description_xxmi_libraries]
+src = """
+*XXMI Libraries package is custom 3dmigoto build fiddling with data between GPU and a game process.*
+"""
 loc = """
 *XXMI Libraries package is custom 3dmigoto build fiddling with data between GPU and a game process.*
 """
 
 [package_description_model_importer]
+src = """
+*Model Importer package offers a set of API functions required for mods to work in given game.*
+"""
 loc = """
 *Model Importer package offers a set of API functions required for mods to work in given game.*
 """
 
 [package_description_tooltip_open_github_changelog]
+src = """
+<font color=\"#3366ff\">*<u>Left-Click</u> to open {package_name} Dev Blog on Patreon.*</font>
+<font color=\"#3366ff\">*<u>Right-Click</u> to open {package_name} GitHub releases for full changelog.*</font>
+"""
 loc = """
 <font color=\"#3366ff\">*<u>Left-Click</u> to open {package_name} Dev Blog on Patreon.*</font>
 <font color=\"#3366ff\">*<u>Right-Click</u> to open {package_name} GitHub releases for full changelog.*</font>
 """
 
 [package_description_tooltip_open_dev_blog]
+src = """
+<font color=\"#3366ff\">*<u>Left-Click</u> to open {package_name} GitHub releases for full changelog.*</font>
+"""
 loc = """
 <font color=\"#3366ff\">*<u>Left-Click</u> to open {package_name} GitHub releases for full changelog.*</font>
 """
 
 [package_release_notes]
+src = """
+{package_release_notes}
+
+{actions_tooltip}
+<font color=\"#aaaaaa\">{package_description}</font>
+"""
 loc = """
 {package_release_notes}
 
@@ -974,66 +1373,93 @@ loc = """
 """
 
 [tool_bar_repair_button]
+src = "Repair {importer}"
 loc = "Repair {importer}"
 
 [tool_bar_check_updates_button]
+src = "Check For Updates"
 loc = "Check For Updates"
 
 [tool_bar_add_shortcut_button]
+src = "Add Desktop Shortcut"
 loc = "Add Desktop Shortcut"
 
 [tool_bar_open_mods_button]
+src = "Open Mods Folder"
 loc = "Open Mods Folder"
 
 [top_bar_xxmi_button_tooltip]
+src = "Manage Model Importers"
 loc = "Manage Model Importers"
 
 [top_bar_wwmi_button_tooltip]
+src = "Wuthering Waves Model Importer"
 loc = "Wuthering Waves Model Importer"
 
 [top_bar_zzmi_button_tooltip]
+src = "Zenless Zone Zero Model Importer"
 loc = "Zenless Zone Zero Model Importer"
 
 [top_bar_srmi_button_tooltip]
+src = "Honkai: Star Rail Model Importer"
 loc = "Honkai: Star Rail Model Importer"
 
 [top_bar_gimi_button_tooltip]
+src = "Genshin Impact Model Importer"
 loc = "Genshin Impact Model Importer"
 
 [top_bar_himi_button_tooltip]
+src = "Honkai Impact Model Importer"
 loc = "Honkai Impact Model Importer"
 
 [top_bar_gamebanana_button_tooltip]
+src = "{importer} GameBanana"
 loc = "{importer} GameBanana"
 
 [top_bar_discord_button_tooltip]
+src = "AGMG Modding Community Discord"
 loc = "AGMG Modding Community Discord"
 
 [top_bar_github_button_tooltip]
+src = "XXMI Launcher GitHub"
 loc = "XXMI Launcher GitHub"
 
 [top_bar_donate_button_tooltip]
+src = "Support {importer}"
 loc = "Support {importer}"
 
 [top_bar_settings_button_tooltip]
+src = "Open Settings"
 loc = "Open Settings"
 
 [top_bar_minimize_button_tooltip]
+src = "Minimize"
 loc = "Minimize"
 
 [top_bar_close_button_tooltip]
+src = "Close"
 loc = "Close"
 
 [top_bar_unsafe_mode_text]
+src = "Unsafe Mode"
 loc = "Unsafe Mode"
 
 [top_bar_unsafe_mode_text_tooltip]
+src = """
+Usage of 3-rd party 3dmigoto DLLs is allowed.
+Make sure to use ones only from a trusted source!
+"""
 loc = """
 Usage of 3-rd party 3dmigoto DLLs is allowed.
 Make sure to use ones only from a trusted source!
 """
 
 [message_text_theme_load_failed_no_folder]
+src = """
+Failed to load {theme} theme:
+
+Theme folder does not exist!
+"""
 loc = """
 Failed to load {theme} theme:
 
@@ -1041,6 +1467,11 @@ Theme folder does not exist!
 """
 
 [message_text_theme_load_failed_no_file]
+src = """
+Failed to load {theme} theme:
+
+Theme file `custom-tkinter-theme.json` does not exist!
+"""
 loc = """
 Failed to load {theme} theme:
 
@@ -1048,15 +1479,24 @@ Theme file `custom-tkinter-theme.json` does not exist!
 """
 
 [message_title_theme_update_required]
+src = "Theme Update Required"
 loc = "Theme Update Required"
 
 [message_button_theme_use_default]
+src = "Use Default"
 loc = "Use Default"
 
 [message_button_patch_theme]
+src = "Patch Theme"
 loc = "Patch Theme"
 
 [message_text_theme_update_required]
+src = """
+Selected {theme} theme cannot be loaded!
+
+Click `Use Default` to use default theme instead (ensures proper visuals).
+Click `Patch Theme` to replace `custom-tkinter-theme.json` with new one.
+"""
 loc = """
 Selected {theme} theme cannot be loaded!
 
@@ -1065,27 +1505,37 @@ Click `Patch Theme` to replace `custom-tkinter-theme.json` with new one.
 """
 
 [status_reloading_gui]
+src = "Reloading GUI..."
 loc = "Reloading GUI..."
 
-[advanced_settings_update_policy_label]
-loc = "Update Policy:"
-
 [advanced_settings_overwrite_ini_checkbox]
+src = "Overwrite d3dx.ini"
 loc = "Overwrite d3dx.ini"
 
 [advanced_settings_overwrite_ini_checkbox_tooltip]
+src = """
+Enabled: {importer} updates will overwrite existing d3dx.ini to ensure its up-to-date state.
+Disabled: {importer} updates will keep existing d3dx.ini untouched.
+"""
 loc = """
 Enabled: {importer} updates will overwrite existing d3dx.ini to ensure its up-to-date state.
 Disabled: {importer} updates will keep existing d3dx.ini untouched.
 """
 
 [advanced_settings_security_label]
+src = "Security:"
 loc = "Security:"
 
 [advanced_settings_unsafe_mode_checkbox]
+src = "Unsafe Mode"
 loc = "Unsafe Mode"
 
 [advanced_settings_unsafe_mode_checkbox_tooltip]
+src = """
+Enabled: Allow 3-rd party 3dmigoto dlls.
+Disabled: Disallow 3-rd party 3dmigoto dlls.
+Note: If 3-rd party d3d11.dll does not support running from nested directories, it will fail to load.
+"""
 loc = """
 Enabled: Allow 3-rd party 3dmigoto dlls.
 Disabled: Disallow 3-rd party 3dmigoto dlls.
@@ -1093,32 +1543,54 @@ Note: If 3-rd party d3d11.dll does not support running from nested directories, 
 """
 
 [advanced_settings_run_pre_launch_checkbox]
+src = "Run Pre-Launch:"
 loc = "Run Pre-Launch:"
 
 [advanced_settings_option_checkbox_tooltip]
+src = """
+Enabled: Option will have stated effect.
+Disabled: Option will have no effect.
+"""
 loc = """
 Enabled: Option will have stated effect.
 Disabled: Option will have no effect.
 """
 
 [advanced_settings_run_pre_launch_tooltip]
+src = """
+Windows console command to be executed before game exe launch.
+Note: If something needs to be done before the game start, do it here.
+"""
 loc = """
 Windows console command to be executed before game exe launch.
 Note: If something needs to be done before the game start, do it here.
 """
 
 [advanced_settings_wait_checkbox]
+src = "Wait"
 loc = "Wait"
 
 [advanced_settings_run_pre_launch_wait_checkbox_tooltip]
+src = """
+Enabled: Wait for (blocking) command to finish its execution before launching the game exe.
+"""
 loc = """
 Enabled: Wait for (blocking) command to finish its execution before launching the game exe.
 """
 
 [advanced_settings_custom_launch_checkbox]
+src = "Custom Launch:"
 loc = "Custom Launch:"
 
 [advanced_settings_custom_launch_entry_tooltip]
+src = """
+Windows console command to run when Start button is pressed instead of default game exe launch.
+Hint: If you want to change injection method only, just leave this field empty.
+Warning! This command also overrides `Launch Options` from General Settings.
+Note: If you want to start game exe with another custom exe, do it here.
+Example (equivalent for command internally used by launcher to start GI via FPS unlocker):
+`start /d \"C:\\Games\\XXMI Launcher\\Resources\\Packages\\GI-FPS-Unlocker\" unlockfps_nc.exe`
+"""
 loc = """
 Windows console command to run when Start button is pressed instead of default game exe launch.
 Hint: If you want to change injection method only, just leave this field empty.
@@ -1129,6 +1601,12 @@ Example (equivalent for command internally used by launcher to start GI via FPS 
 """
 
 [advanced_settings_custom_launch_inject_mode_option_menu_tooltip]
+src = """
+Defines the way of 3dmigoto injection into the game process started via Custom Launch.
+* Inject: Use WriteProcessMemory, more reliable but requires direct memory access.
+* Hook: Use SetWindowsHookEx, less reliable, but potentially less prominent for anti-cheats.
+* Bypass: Skip 3dmigoto injection and process only Inject Libraries field.
+"""
 loc = """
 Defines the way of 3dmigoto injection into the game process started via Custom Launch.
 * Inject: Use WriteProcessMemory, more reliable but requires direct memory access.
@@ -1137,23 +1615,38 @@ Defines the way of 3dmigoto injection into the game process started via Custom L
 """
 
 [advanced_settings_run_post_load_checkbox]
+src = "Run Post-Load:"
 loc = "Run Post-Load:"
 
 [advanced_settings_run_post_load_checkbox_tooltip]
+src = """
+Windows console command to be executed after hooking d3d11.dll to launched game exe.
+Note: If something needs to be done after 3dmigoto injection, do it here.
+"""
 loc = """
 Windows console command to be executed after hooking d3d11.dll to launched game exe.
 Note: If something needs to be done after 3dmigoto injection, do it here.
 """
 
 [advanced_settings_run_post_load_wait_checkbox_tooltip]
+src = """
+Enabled: Wait for (blocking) command to finish its execution before treating the game launch as complete.
+"""
 loc = """
 Enabled: Wait for (blocking) command to finish its execution before treating the game launch as complete.
 """
 
 [advanced_settings_inject_libraries_checkbox]
+src = "Inject Libraries:"
 loc = "Inject Libraries:"
 
 [advanced_settings_inject_libraries_tooltip]
+src = """
+List of additional DLL paths to inject into the game process. 1 path per line.
+injection will be made via WriteProcessMemory method.
+Example (inject ReShade dll):
+`C:\\Games\\ReShade\\ReShade64.dll`
+"""
 loc = """
 List of additional DLL paths to inject into the game process. 1 path per line.
 injection will be made via WriteProcessMemory method.
@@ -1162,27 +1655,42 @@ Example (inject ReShade dll):
 """
 
 [launcher_settings_language_label]
+src = "Language:"
 loc = "Language:"
 
 [general_settings_engine_settings_label]
+src = "Engine Settings:"
 loc = "Engine Settings:"
 
 [general_settings_game_folder_label]
+src = "Game Folder:"
 loc = "Game Folder:"
 
 [general_settings_game_folder_error_label]
+src = "Failed to detect Game Folder!"
 loc = "Failed to detect Game Folder!"
 
 [settings_browse_path_button]
+src = "Browse..."
 loc = "Browse..."
 
 [general_settings_detect_game_folder_button_tooltip]
+src = "Try to automatically detect existing installation folders."
 loc = "Try to automatically detect existing installation folders."
 
 [general_settings_launch_options_label]
+src = "Launch Options:"
 loc = "Launch Options:"
 
 [general_settings_launch_options_entry_tooltip_wwmi]
+src = """
+**Enabled**: Start game via **Client-Win64-Shipping.exe** with specified command line arguments.
+
+- Disable intro: -SkipSplash
+
+**Disabled (default)**: Start game normally via **Wuthering Waves.exe** (most reliable way).
+<font color=\"red\">⚠ Game may crash with this option enabled! ⚠</font>
+"""
 loc = """
 **Enabled**: Start game via **Client-Win64-Shipping.exe** with specified command line arguments.
 
@@ -1193,24 +1701,39 @@ loc = """
 """
 
 [general_settings_launch_options_entry_tooltip_default]
+src = """
+**Enabled**: Start game exe with specified command line arguments.
+**Disabled**: Ignore specified command line arguments and start game exe normally.
+"""
 loc = """
 **Enabled**: Start game exe with specified command line arguments.
 **Disabled**: Ignore specified command line arguments and start game exe normally.
 """
 
 [general_settings_launch_options_about_button]
+src = "About..."
 loc = "About..."
 
 [general_settings_launch_options_about_button_tooltip]
+src = """
+Open {engine} command line arguments documentation webpage.
+Note: Game engine is customized by devs and some args may not work.
+"""
 loc = """
 Open {engine} command line arguments documentation webpage.
 Note: Game engine is customized by devs and some args may not work.
 """
 
 [general_settings_start_method_label]
+src = "Start Method:"
 loc = "Start Method:"
 
 [general_settings_start_method_option_menu_tooltip]
+src = """
+**Native**: Create the game process directly. Usually it's the most reliable way.
+**Shell**: Start the game process via system console. Worth to try if you have some issues with Native.
+**Manual**: Skip launching the game on **Start** button press. Wait for user to launch it manually ({timeout}s timeout).
+"""
 loc = """
 **Native**: Create the game process directly. Usually it's the most reliable way.
 **Shell**: Start the game process via system console. Worth to try if you have some issues with Native.
@@ -1218,15 +1741,29 @@ loc = """
 """
 
 [general_settings_xxmi_delay_label]
+src = "XXMI Delay:"
 loc = "XXMI Delay:"
 
 [general_settings_xxmi_delay_entry_tooltip_base]
+src = """
+Delay in milliseconds for how long injected XXMI DLL (3dmigoto) must wait before initialization.
+{tooltip_footer}
+"""
 loc = """
 Delay in milliseconds for how long injected XXMI DLL (3dmigoto) must wait before initialization.
 {tooltip_footer}
 """
 
 [general_settings_xxmi_delay_entry_tooltip_footer_wwmi]
+src = """
+<font color=\"red\">⚠ Wuthering Waves crashes on launch with wrong delay! ⚠</font>
+<font color=\"#8B8000\">⚠ If default value fails, try to increase or decrease it until WuWa stops crashing. ⚠</font>
+## Known values for Wuthering Waves 2.4:
+- **500**: Default, works for most users.
+- **150**: Minimal known value to work along with ReShade.
+- **50**: Minimal known value to work.
+- **1000+**: Some users need really huge delays.
+"""
 loc = """
 <font color=\"red\">⚠ Wuthering Waves crashes on launch with wrong delay! ⚠</font>
 <font color=\"#8B8000\">⚠ If default value fails, try to increase or decrease it until WuWa stops crashing. ⚠</font>
@@ -1238,26 +1775,35 @@ loc = """
 """
 
 [general_settings_xxmi_delay_entry_tooltip_footer_general]
+src = """
+If game crashes with no mods, try to increase it. Start with steps of 50 and increase them as you go.
+"""
 loc = """
 If game crashes with no mods, try to increase it. Start with steps of 50 and increase them as you go.
 """
 
 [general_settings_process_priority_label]
+src = "Process Priority:"
 loc = "Process Priority:"
 
-[general_settings_process_priority_option_menu_tooltip]
-loc = """
-Set process priority for the game exe.
-**Warning!** **Shell** start method does not support process priority!
-"""
-
 [general_settings_auto_config_label]
+src = "Auto Config:"
 loc = "Auto Config:"
 
 [general_settings_configure_game_checkbox]
+src = "Configure Game Settings"
 loc = "Configure Game Settings"
 
 [general_settings_configure_game_tooltip_gimi]
+src = """
+**Enabled**: Ensure GIMI-compatible in-game **Graphics Settings** before game start:
+
+- `Dynamic Character Resolution: Off`
+
+**Disabled**: In-game settings will not be affected.
+
+<font color=\"red\">⚠ Mods will not work with wrong settings! ⚠</font>
+"""
 loc = """
 **Enabled**: Ensure GIMI-compatible in-game **Graphics Settings** before game start:
 
@@ -1269,6 +1815,15 @@ loc = """
 """
 
 [general_settings_configure_game_tooltip_wwmi]
+src = """
+**Enabled**: Ensure WWMI-compatible in-game **Graphics Settings** before game start:
+
+- `Graphics Quality: Quality`
+
+**Disabled**: In-game settings will not be affected.
+
+<font color=\"red\">⚠ Mods will not work with wrong settings! ⚠</font>
+"""
 loc = """
 **Enabled**: Ensure WWMI-compatible in-game **Graphics Settings** before game start:
 
@@ -1280,6 +1835,16 @@ loc = """
 """
 
 [general_settings_configure_game_tooltip_zzmi]
+src = """
+**Enabled**: Ensure ZZMI-compatible in-game **Graphics Settings** before game start:
+
+- `Character Quality: High`
+- `High-Precision Character Animation: Disabled`
+
+**Disabled**: In-game settings will not be affected.
+
+<font color=\"red\">⚠ Mods will not work with wrong settings! ⚠</font>
+"""
 loc = """
 **Enabled**: Ensure ZZMI-compatible in-game **Graphics Settings** before game start:
 
@@ -1292,21 +1857,19 @@ loc = """
 """
 
 [error_no_data_available_short]
+src = "N/A"
 loc = "N/A"
 
-[general_settings_force_ultra_high_lod_bias_label]
-loc = "Max LOD Bias"
-
-[general_settings_force_ultra_high_lod_bias_tooltip]
-loc = """
-**Enabled**: Set **LOD Bias** to **Ultra High** to force full resolution LOD textures.
-**Disabled**: Keep **LOD Bias** setting untouched. Select this if **Use All Mips** is enabled below.
-"""
-
 [general_settings_disable_wounded_effect_checkbox]
+src = "Disable Wounded Effect"
 loc = "Disable Wounded Effect"
 
 [general_settings_disable_wounded_effect_checkbox_tooltip]
+src = """
+Most mods do not support this effect, so textures usually break after few hits taken.
+**Enabled**: Turn the effect `Off`. Ensures proper rendering of modded textures.
+**Disabled**: Turn the effect `On`. Select this if you use `Injured Effect Remover` tool.
+"""
 loc = """
 Most mods do not support this effect, so textures usually break after few hits taken.
 **Enabled**: Turn the effect `Off`. Ensures proper rendering of modded textures.
@@ -1314,126 +1877,52 @@ Most mods do not support this effect, so textures usually break after few hits t
 """
 
 [general_settings_texture_boost_label]
+src = "Texture Boost:"
 loc = "Texture Boost:"
 
-[general_settings_texture_boost_entry_tooltip]
-loc = """
-## Controls how aggressively higher resolution textures are pushed to VRAM:
-
-This value may require fine tuning to minimize textures loading delay (or to make it work):
-
-* Start tuning with **20.0** **(default)**.
-    ✅ This baseline value should work for most PCs.
-    
-* If modded textures are not loading, try increasing it to **25** or **30**.
-
-* If modded textures are loading fine, start decreasing it until small textures like eyes break.
-    ✅ Value just above a breaking point should net minimal textures loading delay.
-    
-*Applied to ConsoleVariables → r.Streaming.MinBoost value in Engine.ini*
-"""
-
 [general_settings_use_all_mips_label]
+src = "Use All Mips"
 loc = "Use All Mips"
 
-[general_settings_use_all_mips_tooltip]
-loc = """
-## Controls whether texture resolution limits are applied:
-
-* **Enabled** **(default)**: Disable resolution restrictions from LOD Bias.
-    ✅ Allows to load full resolution textures at cost of higher VRAM usage.
-    ⚠️ If it has no effect or consumes too much VRAM, try to enable **Max LOD Bias** instead. 
-
-* **Disabled**: Enable resolution restrictions from LOD Bias.
-    ⚠️ Modded textures won't load if disabled without Max (Ultra High) LOD Bias enabled.
-    
-*Applied to ConsoleVariables → r.Streaming.UseAllMips value in Engine.ini*
-"""
-
-
-
 [general_settings_texture_streaming_pool_size_label]
+src = "Texture Pool Size:"
 loc = "Texture Pool Size:"
 
-[general_settings_texture_streaming_pool_size_entry_tooltip]
-loc = """
-## Controls how much VRAM the game can use for textures:
-
-* Set to **0** **(default)** for **automatic control** (based on available VRAM).
-    ✅ Large enough pool eliminates modded textures loading delay after first load.
-
-* Set to specific value (e.g. 4096) for precise VRAM management.
-
-*Applied to ConsoleVariables → r.Streaming.PoolSize value in Engine.ini*
-"""
-
 [general_settings_texture_streaming_limit_pool_checkbox]
+src = "Limit Pool Size To VRAM"
 loc = "Limit Pool Size To VRAM"
 
-[general_settings_texture_streaming_limit_pool_checkbox_tooltip]
-loc = """
-## Sets the upper limit for how much VRAM the game can use for textures:
-
-* **Enabled** **(default)** – Limits texture pool size based on your GPU's available VRAM.
-    ✅ Helps prevent crashes or stuttering on low VRAM systems.
-    ⚠️ May reduce texture quality or cause pop-ins if too restrictive on high-end GPUs.
-
-* **Disabled** – Unlocks maximum texture pool size, even if it exceeds your GPU's safe limits.
-    ✅ Can improve texture quality and reduce pop-ins on powerful systems.
-    ⚠️ Risk of performance drops, stutters, or crashes if VRAM runs out.
-
-*Applied to ConsoleVariables → r.Streaming.LimitPoolSizeToVRAM value in Engine.ini*
-"""
-
-[general_settings_mesh_lod_distance_label]
-loc = "Mesh LOD Distance:"
-
-[general_settings_mesh_lod_distance_entry_tooltip]
-loc = """
-## Controls how far game replaces full animated meshes with simplified LoDs:
-
-* Set to **24** **(default)** to force full models as far as the game loads animated objects.
-    ✅ With this value mods are applied as far as you can see.
-    ⚠️ Risk of performance drops for low-end GPUs.
-
-* Set to lower value (e.g. `15`) for better performance.
-    ✅ Reduce FPS cost by allowing the game to use LoD meshes for distant animated objects.
-    ⚠️ LoDs may look wrong due to modded textures being applied to original LoD meshes.
-
-*Applied to ConsoleVariables → r.Kuro.SkeletalMesh.LODDistanceScale value in Engine.ini*
-"""
-
 [general_settings_mesh_lod_offset_label]
+src = "Mesh LOD Offset:"
 loc = "Mesh LOD Offset:"
 
-[general_settings_mesh_lod_offset_tooltip]
-loc = """
-## Controls how far from camera character is replaced with LOD:
-
-* Set to **-50** **(default)** to keep character modded in flight, cutscenes, etc.
-
-*Applied to ConsoleVariables → r.Kuro.SkeletalMesh.LODDistanceScaleDeviceOffset value in Engine.ini*
-"""
-
 [general_settings_open_file_button]
+src = "🔍 Open {file_name}"
 loc = "🔍 Open {file_name}"
 
-[general_settings_open_file_button_tooltip]
-loc = "Open {file_name} in default text editor file for manual tweaking."
-
 [error_general_settings_file_not_found]
+src = "File does not exist: **{file_name}**!"
 loc = "File does not exist: **{file_name}**!"
 
 [general_settings_tweaks_label]
+src = "Tweaks:"
 loc = "Tweaks:"
 
 [general_settings_unlock_fps_checkbox_force]
+src = "Force 120 FPS"
 loc = "Force 120 FPS"
 
 [general_settings_unlock_fps_checkbox]
+src = "Unlock FPS:"
 loc = "Unlock FPS:"
 
 [general_settings_unlock_fps_checkbox_tooltip_wwmi]
+src = """
+This option allows to set FPS limit to 120 even on not officially supported devices.
+Please do note that with some hardware game refuses to go 120 FPS even with this tweak.
+**Enabled**: Sets `CustomFrameRate` to `120` in `LocalStorage.db` on game start.
+**Disabled**: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.
+"""
 loc = """
 This option allows to set FPS limit to 120 even on not officially supported devices.
 Please do note that with some hardware game refuses to go 120 FPS even with this tweak.
@@ -1442,6 +1931,13 @@ Please do note that with some hardware game refuses to go 120 FPS even with this
 """
 
 [general_settings_unlock_fps_checkbox_tooltip_srmi]
+src = """
+This option allows to set FPS limit to 120.
+**Enabled**: Updates Graphics Settings Windows Registry key with 120 FPS value on game start.
+**Disabled**: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.
+**Warning!** Tweak is supported only for the Global HSR client and will not work for CN.
+*Note: Edits `FPS` value in `HKEY_CURRENT_USER/SOFTWARE/Cognosphere/Star Rail/GraphicsSettings_Model_h2986158309`.*
+"""
 loc = """
 This option allows to set FPS limit to 120.
 **Enabled**: Updates Graphics Settings Windows Registry key with 120 FPS value on game start.
@@ -1451,6 +1947,15 @@ This option allows to set FPS limit to 120.
 """
 
 [general_settings_unlock_fps_checkbox_tooltip_gimi]
+src = """
+This option allows to set custom FPS limit.
+**Warning!**: To minimize game engine glitches set FPS to 120 / 180 / 240 etc.
+**Enabled**: Launch game via `unlockfps_nc.exe` and let it run in background to keep FPS tweak applied.
+**Disabled**: Launch game via original `.exe` file, has no effect on FPS.
+*Hint: If FPS Unlocker package is outdated, you can manually update \"unlockfps_nc.exe\" from original repository.*
+*Local Path*: `Resources/Packages/GI-FPS-Unlocker/unlockfps_nc.exe`
+*Original Repository*: `https://github.com/34736384/genshin-fps-unlock`
+"""
 loc = """
 This option allows to set custom FPS limit.
 **Warning!**: To minimize game engine glitches set FPS to 120 / 180 / 240 etc.
@@ -1462,6 +1967,11 @@ This option allows to set custom FPS limit.
 """
 
 [general_settings_unlock_fps_checkbox_tooltip_himi]
+src = """
+This option allows to set custom FPS limit.
+**Enabled**: Updates Graphics Settings Windows Registry key with specified FPS value on game start.
+**Disabled**: Has no effect on FPS settings, use in-game settings to undo already tweaked FPS.
+"""
 loc = """
 This option allows to set custom FPS limit.
 **Enabled**: Updates Graphics Settings Windows Registry key with specified FPS value on game start.
@@ -1469,12 +1979,21 @@ This option allows to set custom FPS limit.
 """
 
 [general_settings_window_mode_option_menu_tooltip]
+src = "Game window mode when started with FPS Unlocker."
 loc = "Game window mode when started with FPS Unlocker."
 
 [general_settings_apply_tweaks_checkbox]
+src = "Apply Performance Tweaks"
 loc = "Apply Performance Tweaks"
 
 [general_settings_apply_tweaks_checkbox_tooltip]
+src = """
+**Enabled**: Add list of performance tweaks to `[SystemSettings]` section of `Engine.ini` on game start.
+**Disabled**: Do not add tweaks to `Engine.ini`. Already added ones will have to be removed manually.
+
+List of tweaks:
+{tweaks}
+"""
 loc = """
 **Enabled**: Add list of performance tweaks to `[SystemSettings]` section of `Engine.ini` on game start.
 **Disabled**: Do not add tweaks to `Engine.ini`. Already added ones will have to be removed manually.
@@ -1484,9 +2003,15 @@ List of tweaks:
 """
 
 [general_settings_enable_hdr_checkbox]
+src = "Enable HDR"
 loc = "Enable HDR"
 
 [general_settings_enable_hdr_checkbox_tooltip]
+src = """
+**Warning**! Your monitor must support HDR and `Use HDR` must be enabled in Windows Display settings!
+**Enabled**: Turn HDR On. Creates HDR registry record each time before the game launch.
+**Disabled**: Turn HDR Off. No extra action required, game auto-removes HDR registry record on launch.
+"""
 loc = """
 **Warning**! Your monitor must support HDR and `Use HDR` must be enabled in Windows Display settings!
 **Enabled**: Turn HDR On. Creates HDR registry record each time before the game launch.
@@ -1494,12 +2019,20 @@ loc = """
 """
 
 [importer_settings_shader_hunting_label]
+src = "Shader Hunting:"
 loc = "Shader Hunting:"
 
 [importer_settings_enable_hunting_checkbox]
+src = "Enable Hunting"
 loc = "Enable Hunting"
 
 [importer_settings_enable_hunting_checkbox_tooltip]
+src = """
+Enabled: Allows to toggle Hunting Mode via Numpad [0] hotkey.
+* [d3dx.ini]: hunting = 2
+Disabled: Hunting Mode is hard disabled.
+* [d3dx.ini]: hunting = 0
+"""
 loc = """
 Enabled: Allows to toggle Hunting Mode via Numpad [0] hotkey.
 * [d3dx.ini]: hunting = 2
@@ -1508,9 +2041,16 @@ Disabled: Hunting Mode is hard disabled.
 """
 
 [importer_settings_dump_shaders_checkbox]
+src = "Dump Shaders"
 loc = "Dump Shaders"
 
 [importer_settings_dump_shaders_checkbox_tooltip]
+src = """
+Enabled: Hunting Mode [Copy Hash] key also saves selected shader as file in ShaderFixes.
+* [d3dx.ini]: marking_actions = clipboard hlsl asm regex
+Disabled: Hunting Mode [Copy Hash] only copies hash of selected shader to clipboard.
+* [d3dx.ini]: marking_actions = clipboard
+"""
 loc = """
 Enabled: Hunting Mode [Copy Hash] key also saves selected shader as file in ShaderFixes.
 * [d3dx.ini]: marking_actions = clipboard hlsl asm regex
@@ -1519,12 +2059,20 @@ Disabled: Hunting Mode [Copy Hash] only copies hash of selected shader to clipbo
 """
 
 [importer_settings_error_handling_label]
+src = "Error Handling:"
 loc = "Error Handling:"
 
 [importer_settings_mute_warnings_checkbox]
+src = "Mute Warnings"
 loc = "Mute Warnings"
 
 [importer_settings_mute_warnings_checkbox_tooltip]
+src = """
+Enabled: No error warnings or beeps whatsoever. Ignorance is bliss.
+* [d3dx.ini]: show_warnings = 0
+Disabled: Ini parser error warnings and beeps on F10 will haunt poor souls.
+* [d3dx.ini]: show_warnings = 1
+"""
 loc = """
 Enabled: No error warnings or beeps whatsoever. Ignorance is bliss.
 * [d3dx.ini]: show_warnings = 0
@@ -1533,9 +2081,16 @@ Disabled: Ini parser error warnings and beeps on F10 will haunt poor souls.
 """
 
 [importer_settings_calls_logging_checkbox]
+src = "Calls Logging"
 loc = "Calls Logging"
 
 [importer_settings_calls_logging_checkbox_tooltip]
+src = """
+Enabled: Log API usage.
+* [d3dx.ini]: calls = 1
+Disabled: Do not log calls. Maximum performance.
+* [d3dx.ini]: calls = 0
+"""
 loc = """
 Enabled: Log API usage.
 * [d3dx.ini]: calls = 1
@@ -1544,9 +2099,16 @@ Disabled: Do not log calls. Maximum performance.
 """
 
 [importer_settings_debug_logging_checkbox]
+src = "Debug Logging"
 loc = "Debug Logging"
 
 [importer_settings_debug_logging_checkbox_tooltip]
+src = """
+Enabled: Super verbose debug logging.
+* [d3dx.ini]: debug = 1
+Disabled: No debug logging. Maximum performance.
+* [d3dx.ini]: debug = 0
+"""
 loc = """
 Enabled: Super verbose debug logging.
 * [d3dx.ini]: debug = 1
@@ -1555,12 +2117,19 @@ Disabled: No debug logging. Maximum performance.
 """
 
 [importer_settings_importer_folder_label]
+src = "Importer Folder:"
 loc = "Importer Folder:"
 
 [importer_settings_importer_folder_label_dynamic]
+src = "{importer} Folder:"
 loc = "{importer} Folder:"
 
 [importer_settings_importer_folder_entry_tooltip]
+src = """
+Path to folder containing `Mods` folder, `d3dx.ini` and other {importer} resources.
+**Absolute**: Set any arbitrary folder, i.e. `C:/Games/{importer}/`.
+**Relative**: Set any folder **inside** the Launcher folder, i.e. `{importer}/` (default).
+"""
 loc = """
 Path to folder containing `Mods` folder, `d3dx.ini` and other {importer} resources.
 **Absolute**: Set any arbitrary folder, i.e. `C:/Games/{importer}/`.
@@ -1568,12 +2137,20 @@ Path to folder containing `Mods` folder, `d3dx.ini` and other {importer} resourc
 """
 
 [importer_settings_ini_protection_label]
+src = "Ini Protection:"
 loc = "Ini Protection:"
 
 [importer_settings_enforce_rendering_checkbox]
+src = "Enforce Rendering Settings"
 loc = "Enforce Rendering Settings"
 
 [importer_settings_enforce_rendering_checkbox_tooltip]
+src = """
+Enabled: Ensure {importer}-compatible [Rendering] section settings.
+* [d3dx.ini]: texture_hash = {texture_hash}
+* [d3dx.ini]: track_texture_updates = {track_texture_updates}
+Disabled: Settings above will not be forced into d3dx.ini.
+"""
 loc = """
 Enabled: Ensure {importer}-compatible [Rendering] section settings.
 * [d3dx.ini]: texture_hash = {texture_hash}
@@ -1582,21 +2159,33 @@ Disabled: Settings above will not be forced into d3dx.ini.
 """
 
 [launcher_settings_start_behavior_label]
+src = "Start Behavior:"
 loc = "Start Behavior:"
 
 [launcher_settings_auto_close_checkbox]
+src = "Close Launcher After Game Start"
 loc = "Close Launcher After Game Start"
 
 [launcher_settings_auto_close_checkbox_tooltip]
+src = """
+Enabled: Launcher will close itself once the game has started and 3dmigoto injection has been confirmed.
+Disabled: Launcher will keep itself running.
+"""
 loc = """
 Enabled: Launcher will close itself once the game has started and 3dmigoto injection has been confirmed.
 Disabled: Launcher will keep itself running.
 """
 
 [launcher_settings_timeout_label]
+src = "Timeout:"
 loc = "Timeout:"
 
 [launcher_settings_timeout_entry_tooltip]
+src = """
+Controls how long launcher should wait for the game to show its window after launch.
+Game process will be considered as crashed once timeout is met.
+Default value is **30**.
+"""
 loc = """
 Controls how long launcher should wait for the game to show its window after launch.
 Game process will be considered as crashed once timeout is met.
@@ -1604,21 +2193,33 @@ Default value is **30**.
 """
 
 [launcher_settings_update_policy_label]
+src = "Update Policy:"
 loc = "Update Policy:"
 
 [launcher_settings_auto_update_checkbox]
+src = "Auto Update"
 loc = "Auto Update"
 
 [launcher_settings_auto_update_checkbox_tooltip]
+src = """
+Enabled: Launcher and {importer} updates will be Downloaded and Installed automatically.
+Disabled: Use special [▲] button next to [Start] button to Download and Install updates manually.
+"""
 loc = """
 Enabled: Launcher and {importer} updates will be Downloaded and Installed automatically.
 Disabled: Use special [▲] button next to [Start] button to Download and Install updates manually.
 """
 
 [launcher_settings_update_channel_label]
+src = "Channel:"
 loc = "Channel:"
 
 [launcher_settings_update_channel_option_menu_tooltip]
+src = """
+**Auto**: Detect update installation method automatically.
+**MSI**: Use native `.msi` installers to install updates.
+**ZIP**: Use portable `.zip` archives to install updates.
+"""
 loc = """
 **Auto**: Detect update installation method automatically.
 **MSI**: Use native `.msi` installers to install updates.
@@ -1626,9 +2227,18 @@ loc = """
 """
 
 [launcher_settings_theme_label]
+src = "UI Theme:"
 loc = "UI Theme:"
 
 [launcher_settings_theme_option_menu_tooltip]
+src = """
+Select launcher GUI theme.
+Warning! `Default` theme will be overwritten by launcher updates!
+To make a custom theme:
+1. Create a duplicate of `Default` folder in `Themes` folder.
+2. Rename the duplicate in a way you want it to be shown in Settings.
+3. Edit or replace any images (valid extensions: webp, jpeg, png, jpg).
+"""
 loc = """
 Select launcher GUI theme.
 Warning! `Default` theme will be overwritten by launcher updates!
@@ -1639,21 +2249,36 @@ To make a custom theme:
 """
 
 [launcher_settings_dev_mode_checkbox]
+src = "Dev Mode"
 loc = "Dev Mode"
 
 [launcher_settings_dev_mode_checkbox_tooltip]
+src = """
+Enabled: Launcher will track changes in `custom-tkinter-theme.json` and apply them on the fly.
+Disabled: Theme changes will not be tracked.
+"""
 loc = """
 Enabled: Launcher will track changes in `custom-tkinter-theme.json` and apply them on the fly.
 Disabled: Theme changes will not be tracked.
 """
 
 [launcher_settings_connection_label]
+src = "Connection:"
 loc = "Connection:"
 
 [launcher_settings_github_token_label]
+src = "GitHub Token:"
 loc = "GitHub Token:"
 
 [launcher_settings_github_token_entry_tooltip]
+src = """
+Your **Personal Access Token** on **GitHub** (i.e. `ghp_f7gy3A4eQ97jfy2983mfZu2Hy93yf2P3d798`).
+Allows to combat `GitHub API Requests Limit` error that usually happens with public proxies.
+It is totally free and only requires GitHub registration.
+To create new token:
+1. Click `[?]` button to open token creation webpage.
+2. Use `Generate new token (classic)` button.
+"""
 loc = """
 Your **Personal Access Token** on **GitHub** (i.e. `ghp_f7gy3A4eQ97jfy2983mfZu2Hy93yf2P3d798`).
 Allows to combat `GitHub API Requests Limit` error that usually happens with public proxies.
@@ -1664,15 +2289,23 @@ To create new token:
 """
 
 [launcher_settings_github_token_create_button]
+src = "Create..."
 loc = "Create..."
 
 [launcher_settings_github_token_create_button_tooltip]
+src = "Open **GitHub Personal Access Token** creation webpage."
 loc = "Open **GitHub Personal Access Token** creation webpage."
 
 [launcher_settings_verify_ssl_checkbox]
+src = "Verify SSL"
 loc = "Verify SSL"
 
 [launcher_settings_verify_ssl_checkbox_tooltip]
+src = """
+<font color=\"red\">⚠ Disable only if you trust your proxy or whatever else that breaks SSL. ⚠</font>
+**Enabled**: Validate SLL certificates for GitHub downloads to keep you secure.
+**Disabled**: Allow insecure connection vulnerable to man-in-middle attacks.
+"""
 loc = """
 <font color=\"red\">⚠ Disable only if you trust your proxy or whatever else that breaks SSL. ⚠</font>
 **Enabled**: Validate SLL certificates for GitHub downloads to keep you secure.
@@ -1680,9 +2313,15 @@ loc = """
 """
 
 [launcher_settings_proxy_enable_checkbox]
+src = "Use Proxy:"
 loc = "Use Proxy:"
 
 [launcher_settings_proxy_enable_checkbox_tooltip]
+src = """
+Controls how launcher connects to GitHub to download packages.
+**Enabled**: Use specified proxy server to access Internet.
+**Disabled**: Use default system Internet connection settings.
+"""
 loc = """
 Controls how launcher connects to GitHub to download packages.
 **Enabled**: Use specified proxy server to access Internet.
@@ -1690,68 +2329,96 @@ Controls how launcher connects to GitHub to download packages.
 """
 
 [launcher_settings_proxy_type_label]
+src = "Type:"
 loc = "Type:"
 
 [launcher_settings_proxy_type_option_menu_tooltip]
+src = """
+**HTTPS**: Good old proxy protocol. Offers best security.
+**SOCKS5**: Newer and less secure, but excels at bypassing firewalls.
+"""
 loc = """
 **HTTPS**: Good old proxy protocol. Offers best security.
 **SOCKS5**: Newer and less secure, but excels at bypassing firewalls.
 """
 
 [launcher_settings_proxy_dns_checkbox]
+src = "Proxy DNS Via SOCKS5"
 loc = "Proxy DNS Via SOCKS5"
 
 [launcher_settings_proxy_dns_checkbox_tooltip]
+src = """
+**Enabled**: Use SOCKS5 proxy connection to route DNS requests.
+**Disabled**: DNS requests will be routed through your ISP.
+"""
 loc = """
 **Enabled**: Use SOCKS5 proxy connection to route DNS requests.
 **Disabled**: DNS requests will be routed through your ISP.
 """
 
 [launcher_settings_proxy_host_label]
+src = "Host:"
 loc = "Host:"
 
 [launcher_settings_proxy_host_entry_tooltip]
+src = "Proxy IP address (i.e. `123.12.1.231`) or domain name (i.e. `proxyprovider.com`)."
 loc = "Proxy IP address (i.e. `123.12.1.231`) or domain name (i.e. `proxyprovider.com`)."
 
 [launcher_settings_proxy_port_label]
+src = "Port:"
 loc = "Port:"
 
 [launcher_settings_proxy_port_entry_tooltip]
+src = "Proxy port (i.e. `1080`)."
 loc = "Proxy port (i.e. `1080`)."
 
 [launcher_settings_proxy_credentials_checkbox]
+src = "Proxy Requires Password"
 loc = "Proxy Requires Password"
 
 [launcher_settings_proxy_credentials_checkbox_tooltip]
+src = """
+**Enabled**: Use specified user name and password for the proxy server authentication.
+**Disabled**: Do not use any credentials when accessing a proxy server.
+"""
 loc = """
 **Enabled**: Use specified user name and password for the proxy server authentication.
 **Disabled**: Do not use any credentials when accessing a proxy server.
 """
 
 [launcher_settings_proxy_user_label]
+src = "User:"
 loc = "User:"
 
 [launcher_settings_proxy_user_entry_tooltip]
+src = "User name provided by your proxy service."
 loc = "User name provided by your proxy service."
 
 [launcher_settings_proxy_password_label]
+src = "Password:"
 loc = "Password:"
 
 [launcher_settings_proxy_password_entry_tooltip]
+src = "Password provided by your proxy service."
 loc = "Password provided by your proxy service."
 
 [settings_tab_general]
+src = "General"
 loc = "General"
 
 [settings_tab_launcher]
+src = "Launcher"
 loc = "Launcher"
 
 [settings_tab_importer]
+src = "MI"
 loc = "MI"
 
 [settings_tab_advanced]
+src = "Advanced"
 loc = "Advanced"
 
 [settings_title]
+src = "Settings"
 loc = "Settings"
 

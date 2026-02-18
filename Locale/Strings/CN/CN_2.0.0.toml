@@ -26,18 +26,6 @@ loc = """
 点击 **安装** 按钮来设置该包。
 """
 
-[package_description_launcher]
-src = "*This package is XXMI Launcher App itself and defines its features.*"
-loc = "*此包是 XXMI 启动器应用程序本身，定义了其功能特性。*"
-
-[package_description_xxmi_libraries]
-src = "*XXMI Libraries package is custom 3dmigoto build fiddling with data between GPU and a game process.*"
-loc = "*XXMI 库包是自定义的 3dmigoto 构建，用于处理 GPU 和游戏进程间的数据交互。*"
-
-[package_description_model_importer]
-src = "*Model Importer package offers a set of API functions required for mods to work in given game.*"
-loc = "*模型导入器包提供了一套 API 函数，用于在指定游戏中运行模组。*"
-
 [package_release_notes]
 src = """
 {package_release_notes}
@@ -62,11 +50,6 @@ loc = """
 <font color=\"#3366ff\">*<u>右键点击</u> 打开 {package_name} GitHub 发布页面查看完整更新日志。*</font>
 """
 
-[package_description_tooltip_open_dev_blog]
-src = "<font color=\"#3366ff\">*<u>Left-Click</u> to open {package_name} GitHub releases for full changelog.*</font>"
-loc = "<font color=\"#3366ff\">*<u>左键点击</u> 打开 {package_name} GitHub 发布页面查看完整更新日志。*</font>"
-
-# 更新器包相关
 [error_updater_start_failed]
 src = """
 Failed to start XXMI Updater.exe!
@@ -79,7 +62,6 @@ loc = """
 是否被杀毒软件或安全设置阻止了？
 """
 
-# 启动器包相关
 [status_waiting_installer]
 src = "Waiting for installer to start..."
 loc = "等待安装程序启动..."
@@ -96,34 +78,9 @@ loc = """
 是否被杀毒软件或安全设置阻止了？
 """
 
-[status_removing_old_files]
-src = "Removing old files..."
-loc = "正在删除旧文件..."
-
-[launcher_update_notification_title]
-src = "Update Notification"
-loc = "更新通知"
-
 [launcher_shortcut_description]
 src = "Shortcut to XXMI Launcher"
 loc = "XXMI启动器快捷方式"
-
-# Migoto包相关
-[error_migoto_game_detection_timeout]
-src = """
-Failed to detect game process {process_name}!
-
-If game crashed, try to adjust XXMI Delay in General Settings or clear Mods and ShaderFixes folders.
-
-If game window takes more than {start_timeout} seconds to appear, adjust Timeout in Launcher Settings.
-"""
-loc = """
-检测游戏进程{process_name}失败！
-
-如果游戏崩溃了，请在常规设置中尝试调整XXMI延迟，或者清空模组和ShaderFixes文件夹。
-
-如果游戏窗口出现时间超过{start_timeout}秒，请在启动器设置中调整超时时间。
-"""
 
 [error_migoto_game_start_failed]
 src = "Failed to start {process_name}!"
@@ -173,7 +130,6 @@ loc = """
 src = "XXMI package is missing critical file: {file_name}!"
 loc = "XXMI包缺少关键文件：{file_name}！"
 
-# Model Importer Package Messages
 [error_extra_library_not_found]
 src = """
 Failed to inject extra library {dll_path}:
@@ -306,24 +262,6 @@ loc = """
 {duplicates}
 """
 
-[message_text_d3dx_ini_in_mods_folder_detected]
-src = """
-Global config file d3dx.ini found inside the Mods folder:
-{path}
-
-It is duplicate file that may cause glitches and crashes.
-
-Would you like to remove it?
-"""
-loc = """
-在 Mods 文件夹中发现全局配置文件 d3dx.ini：
-{path}
-
-这是可能导致故障和崩溃的重复文件。
-
-您想要删除它吗？
-"""
-
 [error_cannot_start_with_d3dx_ini_in_mods]
 src = "Cannot start with d3dx.ini in Mods folder!"
 loc = "Mods 文件夹中有 d3dx.ini 时无法启动！"
@@ -339,10 +277,6 @@ loc = "禁用"
 [message_button_ignore]
 src = "Ignore"
 loc = "忽略"
-
-[message_button_delete_file]
-src = "Delete File"
-loc = "删除文件"
 
 [message_button_abort]
 src = "Abort"
@@ -418,8 +352,6 @@ loc = "确认"
 src = "Game executable {exe_name} not found!"
 loc = "未找到游戏可执行文件 {exe_name}！"
 
-# SRMI Package Messages
-
 [error_srmi_fps_unlock_failed]
 src = "Failed to force 120 FPS: {error_text}"
 loc = "强制120帧失败：{error_text}"
@@ -468,8 +400,6 @@ loc = "{importer}版本格式错误！"
 src = "Failed to locate {importer} version!"
 loc = "无法找到{importer}版本！"
 
-# ZZMI Package Messages
-
 [error_zzmi_game_config_failed]
 src = """
 Failed to configure in-game settings for ZZMI!
@@ -492,7 +422,6 @@ loc = """
 src = "Unknown system settings entry format: {setting}!"
 loc = "未知的系统设置条目格式：{setting}！"
 
-# GIMI Package Messages
 [error_gimi_game_exe_not_found]
 src = "Game executable {game_exe_name} or {game_exe_name_cn} not found!"
 loc = "未找到游戏可执行文件 {game_exe_name} 或 {game_exe_name_cn}！"
@@ -603,7 +532,6 @@ loc = """
 请手动关闭它并按[确定]继续。
 """
 
-# WWMI Package Messages
 [error_game_path_not_absolute]
 src = "Failed to normalize path {path}: Path is not absolute!"
 loc = "无法标准化路径 {path}：路径不是绝对路径！"
@@ -706,13 +634,10 @@ loc = "正在更新{file_name}..."
 src = "Failed to initialize LocalStorage: {error_text}"
 loc = "初始化LocalStorage失败：{error_text}"
 
-# General UI Elements
-
 [message_button_keep_enabled]
 src = "Keep Enabled"
 loc = "保持启用"
 
-# Utils - Proxy Messages
 [error_proxy_host_not_specified]
 src = "Proxy host is not specified!"
 loc = "代理主机未指定！"
@@ -725,7 +650,6 @@ loc = "代理端口未指定！"
 src = "Proxy port must be numeric value!"
 loc = "代理端口必须是数字值！"
 
-# Utils - GitHub Client Messages
 [error_ssl_certificate_validation_failed]
 src = """
 Failed to validate SSL certificate of GitHub HTTPS connection!
@@ -790,7 +714,6 @@ loc = "<font color=\"red\">⚠ 错误！发布说明格式无效！⚠</font>"
 src = "<font color=\"red\">☢ Error! Release is unsigned! ☢</font>"
 loc = "<font color=\"red\">☢ 错误！发布未签名！☢</font>"
 
-# Utils - DLL Injector Messages
 [error_dll_injector_file_not_found]
 src = "Injector file not found: {injector_lib_path}!"
 loc = "注入器文件未找到：{injector_lib_path}！"
@@ -846,16 +769,6 @@ loc = "未知的ShellExecute错误代码 {error_code}"
 [error_dll_injector_process_start_failed]
 src = "Failed to start {process_name}: {error_text}!"
 loc = "启动 {process_name} 失败：{error_text}！"
-
-[error_dll_injector_non_ascii_path]
-src = """
-Please rename all folders from the path using only English letters:
-{dll_path}
-"""
-loc = """
-请使用纯英文字母重命名路径中的所有文件夹：
-{dll_path}
-"""
 
 [error_dll_injector_unknown_start_method]
 src = "Unknown process start method `{start_method}`!"
@@ -917,7 +830,6 @@ loc = """
 请检查高级设置 → 注入库。
 """
 
-# Core - Path Manager Messages
 [error_remove_readonly_failed]
 src = "Failed to remove Read Only flag from file {path}: {error_text}!"
 loc = "移除文件 {path} 的只读标志失败：{error_text}！"
@@ -998,7 +910,6 @@ loc = """
 
 """
 
-# Core - Config Manager Messages
 [message_button_reset_unsecure_setting]
 src = "Reset"
 loc = "重置"
@@ -1034,8 +945,6 @@ loc = """
 
 提示：您也可以使用其他扩展名：{extensions}
 """
-
-# Core - Package Manager Messages
 
 [error_package_version_detect_failed]
 src = """
@@ -1141,7 +1050,6 @@ GitHub服务器将在一小时内忽略进一步的连接尝试。
 在*启动器设置*中设置（其他）*代理*或*GitHub令牌*以获得即时访问。
 """
 
-# Core - Application Messages
 [application_failed_parse_args]
 src = "Failed to parse args: {args}"
 loc = "解析参数失败：{args}"
@@ -1169,18 +1077,6 @@ loc = "加载默认"
 [error_unknown_model_importer]
 src = "Unknown model importer {importer}!"
 loc = "未知的模型导入器 {importer}！"
-
-[error_model_importer_auto_select_failed]
-src = """
-Failed to auto-select importer for `{path}`!
-
-Try to add `--nogui --xxmi WWMI` args (or GIMI, SRMI, ZZMI, HIMI).
-"""
-loc = """
-为 `{path}` 自动选择导入器失败！
-
-尝试添加 `--nogui --xxmi WWMI` 参数（或 GIMI、SRMI、ZZMI、HIMI）。
-"""
 
 [error_unknown_model_importer_arg]
 src = "Unknown model importer supplied as command line arg `--xxmi={arg_xxmi}`!"
@@ -1252,7 +1148,6 @@ loc = """
 src = "Failed to write critical file: {path}!"
 loc = "写入关键文件失败：{path}！"
 
-# Application Event UI Texts
 [message_title_message]
 src = "Message"
 loc = "消息"
@@ -1273,31 +1168,15 @@ loc = "信息"
 src = "OK"
 loc = "确定"
 
-# GUI - Widgets Messages
-[error_widgets_failed_parse_font]
-src = "Failed to parse font from {font}!"
-loc = "无法从 {font} 解析字体！"
-
-[widgets_failed_set_checkbox_value]
-src = "Failed to set checkbox to unknown value {}!"
-loc = "无法将复选框设置为未知值 {}！"
-
-[widgets_input_filter_invalid_float]
-src = "Invalid float value for input filter!"
-loc = "输入过滤器的浮点数值无效！"
-
-[widgets_input_filter_invalid_int]
-src = "Invalid integer value for input filter!"
-loc = "输入过滤器的整数值无效！"
-
-# Donate Frame
 [donate_popup_introduction]
-src = """Hey there — just a quick moment, I promise I won't interrupt again!
+src = """
+Hey there — just a quick moment, I promise I won't interrupt again!
 
 I'm SpectrumQT, the developer behind XXMI Launcher{importer_info}.
 Looks like you've already enjoyed {num_sessions} {model_importer} sessions — awesome!
 """
-loc = """嘿 — 只是快速一刻，我保证不会再打扰了！
+loc = """
+嘿 — 只是快速一刻，我保证不会再打扰了！
 
 我是SpectrumQT，XXMI Launcher{importer_info}的开发者。
 看起来你已经享受了{num_sessions}次{model_importer}会话 — 太棒了！
@@ -1308,24 +1187,28 @@ src = " and WWMI"
 loc = "和WWMI"
 
 [donate_wwmi_introduction]
-src = """Hello! Thank you for visiting {model_importer} Appreciation Corner!
+src = """
+Hello! Thank you for visiting {model_importer} Appreciation Corner!
 
 This page is a bit unique, since I can't list many names here.
 Simply because I'm soloing {model_importer} and XXMI Launcher development.
 """
-loc = """你好！感谢访问{model_importer}感谢角落！
+loc = """
+你好！感谢访问{model_importer}感谢角落！
 
 这个页面有点特殊，因为我不能在这里列出很多名字。
 只是因为我在独自开发{model_importer}和XXMI Launcher。
 """
 
 [donate_other_introduction]
-src = """Hello! Thank you for visiting {model_importer} Appreciation Corner!
+src = """
+Hello! Thank you for visiting {model_importer} Appreciation Corner!
 
 Here you can see the dev team fighting for {model_importer} behind the scenes.
 It's a tough battle — but shader hackers prevail!
 """
-loc = """你好！感谢访问{model_importer}感谢角落！
+loc = """
+你好！感谢访问{model_importer}感谢角落！
 
 在这里你可以看到在幕后为{model_importer}奋战的开发团队。
 这是一场艰苦的战斗 — 但着色器黑客们取得了胜利！
@@ -1338,16 +1221,6 @@ loc = "如果你发现它很有用，请考虑查看"
 [donate_my_patreon_campaign]
 src = "my Patreon campaign."
 loc = "我的Patreon活动。"
-
-[donate_wwmi_footer]
-src = """It's all about building better tools for the entire {model_importer} community.
-
-Who knows — maybe your few bucks could help shape the next big feature!
-"""
-loc = """这一切都是为了为整个{model_importer}社区构建更好的工具。
-
-谁知道呢 — 也许你的几块钱可以帮助塑造下一个重要功能！
-"""
 
 [donate_support_message]
 src = "Please consider supporting those who work hard every day to make {model_importer} possible!"
@@ -1385,7 +1258,6 @@ loc = "关闭"
 src = "Close ({time_left})"
 loc = "关闭 ({time_left})"
 
-# Launcher Frame UI Messages
 [launcher_select_games_text]
 src = "Select Games To Mod:"
 loc = "选择要模组的游戏："
@@ -1412,7 +1284,6 @@ loc = "启动"
 src = "Install"
 loc = "安装"
 
-# Top Bar UI Messages
 [top_bar_xxmi_button_tooltip]
 src = "Manage Model Importers"
 loc = "管理模型导入器"
@@ -1479,8 +1350,6 @@ loc = """
 确保只使用来自可信来源的DLL！
 """
 
-# Tool Bar UI Messages
-
 [tool_bar_repair_button]
 src = "Repair {importer}"
 loc = "修复{importer}"
@@ -1497,7 +1366,6 @@ loc = "添加桌面快捷方式"
 src = "Open Mods Folder"
 loc = "打开Mods文件夹"
 
-# Bottom Bar Status Messages
 [bottom_bar_initializing_launch]
 src = "Initializing game launch..."
 loc = "正在初始化游戏启动..."
@@ -1558,7 +1426,6 @@ loc = "正在移动{asset}..."
 src = "Unpacking {asset}..."
 loc = "正在解压{asset}..."
 
-# Main Window Messages
 [message_text_theme_load_failed_no_folder]
 src = """
 Failed to load {theme} theme:
@@ -1609,7 +1476,6 @@ loc = """
 点击`修补主题`以用新版本替换`custom-tkinter-theme.json`。
 """
 
-# Launcher Settings Frame
 [launcher_settings_start_behavior_label]
 src = "Start Behavior:"
 loc = "启动行为："
@@ -1699,10 +1565,6 @@ loc = """
 2. 重命名副本为你希望在设置中显示的名称。
 3. 编辑或替换任何图像（有效扩展名：webp、jpeg、png、jpg）。
 """
-
-[launcher_settings_apply_theme_button]
-src = "⟲ Apply"
-loc = "⟲ 应用"
 
 [launcher_settings_dev_mode_checkbox]
 src = "Dev Mode"
@@ -1862,7 +1724,6 @@ loc = "代理服务提供的密码。"
 src = "Language:"
 loc = "语言："
 
-# General Settings Frame
 [general_settings_game_folder_label]
 src = "Game Folder:"
 loc = "游戏文件夹："
@@ -1938,26 +1799,6 @@ loc = """
 注入的 XXMI DLL (3dmigoto) 在初始化前需要等待的毫秒数。
 {tooltip_footer}
 """
-
-[general_settings_xxmi_delay_entry_tooltip_footer_wwmi]
-src = """<font color="red">⚠ Wuthering Waves crashes on launch with wrong delay! ⚠</font>
-<font color="#8B8000">⚠ If default value fails, try to increase or decrease it until WuWa stops crashing. ⚠</font>
-## Known values for Wuthering Waves 2.4:
-- **500**: Default, works for most users.
-- **150**: Minimal known value to work along with ReShade.
-- **50**: Minimal known value to work.
-- **1000+**: Some users need really huge delays."""
-loc = """<font color="red">⚠ 鸣潮在延迟设置错误时会崩溃！⚠</font>
-<font color="#8B8000">⚠ 如果默认值不起作用，请尝试增加或减少数值直到游戏不再崩溃。⚠</font>
-## 鸣潮 2.4 已知可用值：
-- **500**：默认值，适用于大多数用户。
-- **150**：与 ReShade 一起使用时的最小已知值。
-- **50**：可用的最小已知值。
-- **1000+**：某些用户需要非常大的延迟值。"""
-
-[general_settings_xxmi_delay_entry_tooltip_footer_general]
-src = "If game crashes with no mods, try to increase it. Start with steps of 50 and increase them as you go."
-loc = "如果游戏在没有模组的情况下崩溃，请尝试增加此值。从50开始逐步增加。"
 
 [general_settings_process_priority_label]
 src = "Process Priority:"
@@ -2187,16 +2028,6 @@ loc = """
 src = "Enable HDR"
 loc = "启用 HDR"
 
-[general_settings_enable_hdr_checkbox_tooltip]
-src = """
-**Warning**! Your monitor must support HDR and `Use HDR` must be enabled in Windows Display settings!
-**Enabled**: Turn HDR On. Creates HDR registry record each time before the game launch.
-**Disabled**: Turn HDR Off. No extra action required, game auto-removes HDR registry record on launch."""
-loc = """
-**警告**！您的显示器必须支持 HDR，且 Windows 显示设置中必须启用`使用 HDR`！
-**启用**：开启 HDR。每次游戏启动前创建 HDR 注册表记录。
-**禁用**：关闭 HDR。无需额外操作，游戏启动时会自动移除 HDR 注册表记录。"""
-
 [error_no_data_available_short]
 src = "N/A"
 loc = "N/A"
@@ -2217,35 +2048,6 @@ loc = """
 **禁用**：开启此效果。如果您使用了`受伤效果移除器`工具，请选择此项。
 """
 
-[general_settings_texture_boost_label]
-src = "Texture Boost:"
-loc = "纹理加速："
-
-[general_settings_texture_boost_entry_tooltip]
-src = """
-## Controls how aggressively higher resolution textures are pushed to VRAM:
-
-* Start tuning around **30.0** **(default)** for **mid-range PC**.
-    ✅ For slow systems tuning can significantly reduce modded textures loading delay.
-
-* Start tuning around **2.5** for **high end PC**.
-    ✅ For fast systems tuning can completely eliminate modded textures loading delay.
-
-* Set to **1.0** to disable the boost and stick to the default game engine behavior.
-
-⚠️ With low values, try decimals (e.g. `1.1` or `2.5`).
-
-*Applied to ConsoleVariables → r.Streaming.Boost value in Engine.ini*
-"""
-loc = """
-在 **Engine.ini** 中设置 **r.Streaming.Boost** 的值。
-微调此值可以防止切换到模组角色时出现短暂的纹理故障。
-对于低数值，可以尝试使用小数（例如 `1.1` 或 `2.5`）。
-## 鸣潮 2.4 的参考值：
-- **2.75**：RTX 4090。
-- **30.0**：RTX 3070。
-"""
-
 [error_general_settings_file_not_found]
 src = "File does not exist: **{file_name}**!"
 loc = "文件不存在：**{file_name}**！"
@@ -2253,11 +2055,6 @@ loc = "文件不存在：**{file_name}**！"
 [status_reloading_gui]
 src = "Reloading GUI..."
 loc = "Reloading GUI..."
-
-# Advanced Settings Frame
-[advanced_settings_update_policy_label]
-src = "Update Policy:"
-loc = "更新策略："
 
 [advanced_settings_overwrite_ini_checkbox]
 src = "Overwrite d3dx.ini"
@@ -2321,10 +2118,6 @@ loc = """
 src = "Wait"
 loc = "等待"
 
-[advanced_settings_run_pre_launch_wait_checkbox_tooltip]
-src = "Enabled: Wait for (blocking) command to finish its execution before launching the game exe."
-loc = "启用：等待（阻塞）命令执行完成后再启动游戏可执行文件。"
-
 [advanced_settings_custom_launch_checkbox]
 src = "Custom Launch:"
 loc = "自定义启动："
@@ -2375,10 +2168,6 @@ loc = """
 注意：如果需要在3dmigoto注入后执行某些操作，请在此处进行。
 """
 
-[advanced_settings_run_post_load_wait_checkbox_tooltip]
-src = "Enabled: Wait for (blocking) command to finish its execution before treating the game launch as complete."
-loc = "启用：等待（阻塞）命令执行完成后再将游戏启动视为完成。"
-
 [advanced_settings_inject_libraries_checkbox]
 src = "Inject Libraries:"
 loc = "注入库："
@@ -2397,7 +2186,6 @@ loc = """
 `C:\\Games\\ReShade\\ReShade64.dll`
 """
 
-# Importer Settings Frame
 [importer_settings_shader_hunting_label]
 src = "Shader Hunting:"
 loc = "着色器调试："
@@ -2538,7 +2326,6 @@ loc = """
 禁用：以上设置不会被强制写入d3dx.ini。
 """
 
-# Settings Interface Translations (for settings_tabs_frame.py)
 [settings_title]
 src = "Settings"
 loc = "设置"
@@ -2563,91 +2350,9 @@ loc = "高级"
 src = "Texture Pool Size:"
 loc = "纹理池大小："
 
-[general_settings_texture_streaming_pool_size_entry_tooltip]
-src = """
-## Controls how much VRAM the game can use for textures:
-
-* Set to **0** **(default)** for **automatic control** (based on available VRAM).
-    ✅ Large enough pool eliminates modded textures loading delay after first load.
-
-* Set to specific value (e.g. 4096) for precise VRAM management.
-
-*Applied to ConsoleVariables → r.Streaming.PoolSize value in Engine.ini*"""
-loc = """
-## 控制游戏可以使用的显存量：
-
-* 设为 **0** **（默认值）** 进行**自动控制**（基于可用显存）。
-    ✅ 足够大的池可以消除模组纹理在首次加载后的加载延迟。
-
-* 设置特定值（如4096）以精确管理显存。
-
-*应用于Engine.ini中的ConsoleVariables → r.Streaming.PoolSize值*"""
-
-[general_settings_texture_streaming_limit_pool_checkbox]
-src = "Limit Pool Size To VRAM"
-loc = "限制池大小到显存"
-
-[general_settings_texture_streaming_limit_pool_checkbox_tooltip]
-src = """
-## Sets the upper limit for how much VRAM the game can use for textures:
-
-* **Enabled** **(default)** – Limits texture pool size based on your GPU's available VRAM.
-    ✅ Helps prevent crashes or stuttering on low VRAM systems.
-    ⚠️ May reduce texture quality or cause pop-ins if too restrictive on high-end GPUs.
-
-* **Disabled** – Unlocks maximum texture pool size, even if it exceeds your GPU's safe limits.
-    ✅ Can improve texture quality and reduce pop-ins on powerful systems.
-    ⚠️ Risk of performance drops, stutters, or crashes if VRAM runs out.
-
-*Applied to ConsoleVariables → r.Streaming.LimitPoolSizeToVRAM value in Engine.ini*"""
-loc = """
-## 设置游戏可用于纹理的显存上限：
-
-* **启用** **（默认值）** – 根据GPU可用显存限制纹理池大小。
-    ✅ 有助于防止低显存系统崩溃或卡顿。
-    ⚠️ 在高端GPU上如果限制过严可能降低纹理质量或导致突然加载。
-
-* **禁用** – 解锁最大纹理池大小，即使超过GPU安全限制。
-    ✅ 可以在性能强大的系统上提高纹理质量并减少突然加载。
-    ⚠️ 如果显存耗尽可能导致性能下降、卡顿或崩溃。
-
-*应用于Engine.ini中的ConsoleVariables → r.Streaming.LimitPoolSizeToVRAM值*"""
-
-[general_settings_mesh_lod_distance_label]
-src = "Mesh LOD Distance:"
-loc = "网格LOD距离："
-
-[general_settings_mesh_lod_distance_entry_tooltip]
-src = """
-## Controls how far game replaces full animated meshes with simplified LoDs:
-
-* Set to **24** **(default)** to force full models as far as the game loads animated objects.
-    ✅ With this value mods are applied as far as you can see.
-    ⚠️ Risk of performance drops for low-end GPUs.
-
-* Set to lower value (e.g. `15`) for better performance.
-    ✅ Reduce FPS cost by allowing the game to use LoD meshes for distant animated objects.
-    ⚠️ LoDs may look wrong due to modded textures being applied to original LoD meshes.
-
-*Applied to ConsoleVariables → r.Kuro.SkeletalMesh.LODDistanceScale value in Engine.ini*"""
-loc = """
-## 控制游戏将完整动画网格替换为简化LOD的距离：
-
-* 设为 **24** **（默认值）** 以在游戏加载动画对象的范围内强制使用完整模型。
-    ✅ 使用此值时，模组效果会应用到可见范围内的所有内容。
-    ⚠️ 低端GPU可能出现性能下降。
-
-* 设置较低的值（如`15`）以获得更好的性能。
-    ✅ 通过允许游戏对远处的动画对象使用LOD网格来减少FPS消耗。
-    ⚠️ 由于模组纹理应用到原始LOD网格，LOD可能看起来不正确。
-
-*应用于Engine.ini中的ConsoleVariables → r.Kuro.SkeletalMesh.LODDistanceScale值*"""
-
 [general_settings_engine_settings_label]
 src = "Engine Settings:"
 loc = "引擎设置："
-
-# HIMI Package Messages
 
 [error_himi_registry_key_not_found]
 src = """
@@ -2696,7 +2401,7 @@ src = """
 - Disable intro: -SkipSplash
 
 **Disabled (default)**: Start game normally via **Wuthering Waves.exe** (most reliable way).
-<font color="red">⚠ Game may crash with this option enabled! ⚠</font>
+<font color=\"red\">⚠ Game may crash with this option enabled! ⚠</font>
 """
 loc = """
 **启用**：通过 **Client-Win64-Shipping.exe** 使用指定的命令行参数启动游戏。
@@ -2704,7 +2409,7 @@ loc = """
 - 禁用开场动画：-SkipSplash
 
 **禁用（默认）**：通过 **Wuthering Waves.exe** 正常启动游戏（最可靠的方式）。
-<font color="red">⚠ 启用此选项可能导致游戏崩溃！⚠</font>
+<font color=\"red\">⚠ 启用此选项可能导致游戏崩溃！⚠</font>
 """
 
 [general_settings_launch_options_entry_tooltip_default]
@@ -2720,3 +2425,4 @@ loc = """
 [general_settings_unlock_fps_checkbox]
 src = "Unlock FPS:"
 loc = "解锁帧率："
+

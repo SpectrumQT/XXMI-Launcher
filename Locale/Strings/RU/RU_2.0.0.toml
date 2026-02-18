@@ -54,18 +54,6 @@ loc = "Не удалось загрузить конфигурацию!"
 src = "Unknown model importer {importer}!"
 loc = "Неизвестный импортер моделей {importer}!"
 
-[error_model_importer_auto_select_failed]
-src = """
-Failed to auto-select importer for `{path}`!
-
-Try to add `--nogui --xxmi WWMI` args (or GIMI, SRMI, ZZMI, HIMI).
-"""
-loc = """
-Не удалось автоматически выбрать импортер для `{path}`!
-
-Попробуйте добавить аргументы `--nogui --xxmi WWMI` (или GIMI, SRMI, ZZMI, HIMI).
-"""
-
 [error_unknown_model_importer_arg]
 src = "Unknown model importer supplied as command line arg `--xxmi={arg_xxmi}`!"
 loc = "Неизвестный импортер моделей указан в аргументе командной строки `--xxmi={arg_xxmi}`!"
@@ -191,22 +179,6 @@ loc = """
 [launcher_shortcut_description]
 src = "Shortcut to XXMI Launcher"
 loc = "Ярлык для запуска XXMI"
-
-[error_migoto_game_detection_timeout]
-src = """
-Failed to detect game process {process_name}!
-
-If game crashed, try to adjust XXMI Delay in General Settings or clear Mods and ShaderFixes folders.
-
-If game window takes more than {start_timeout} seconds to appear, adjust Timeout in Launcher Settings.
-"""
-loc = """
-Не удалось обнаружить процесс игры {process_name}!
-
-Если игра вылетела, попробуйте изменить задержку XXMI в Общих Настройках или очистите папки Mods и ShaderFixes.
-
-Если окно игры появляется более чем через {start_timeout} секунд, измените Таймаут в Настройках Лаунчера.
-"""
 
 [error_migoto_game_start_failed]
 src = "Failed to start {process_name}!"
@@ -361,10 +333,6 @@ loc = """
 
 Пожалуйста, закройте его вручную и нажмите [ОК] для продолжения.
 """
-
-[error_game_exe_not_found]
-src = "Game executable {exe_name} not found!"
-loc = "Файл игры {exe_name} не найден!"
 
 [error_himi_fps_unlock_failed]
 src = "Failed to configure FPS: {error_text}"
@@ -612,31 +580,9 @@ loc = """
 {duplicates}
 """
 
-[message_button_delete_file]
-src = "Delete File"
-loc = "Удалить файл"
-
 [message_button_abort]
 src = "Abort"
 loc = "Прервать"
-
-[message_text_d3dx_ini_in_mods_folder_detected]
-src = """
-Global config file d3dx.ini found inside the Mods folder:
-{path}
-
-It is duplicate file that may cause glitches and crashes.
-
-Would you like to remove it?
-"""
-loc = """
-Файл глобальной конфигурации d3dx.ini найден в папке Mods:
-{path}
-
-Это дубликат, который может вызывать ошибки и сбои.
-
-Удалить его?
-"""
 
 [error_cannot_start_with_d3dx_ini_in_mods]
 src = "Cannot start with d3dx.ini in Mods folder!"
@@ -1070,16 +1016,6 @@ loc = "Неизвестный код ошибки ShellExecute: {error_code}"
 src = "Failed to start {process_name}: {error_text}!"
 loc = "Не удалось запустить {process_name}: {error_text}!"
 
-[error_dll_injector_non_ascii_path]
-src = """
-Please rename all folders from the path using only English letters:
-{dll_path}
-"""
-loc = """
-Переименуйте все папки в пути, используя только английские буквы:
-{dll_path}
-"""
-
 [error_dll_injector_unknown_start_method]
 src = "Unknown process start method `{start_method}`!"
 loc = "Неизвестный метод запуска процесса `{start_method}`!"
@@ -1277,7 +1213,7 @@ It's all about building better tools for the entire {model_importer} community.
 The more patrons, the stronger is motivation to shape new big features!
 """
 loc = """
-Я веду активную разработку инструментов для всего сообщества.
+Я веду активную разработку инструментов для всего {model_importer} сообщества.
 
 Чем больше патронов — тем сильнее мотивация на создание новых фич! :)
 """
@@ -1623,10 +1559,6 @@ loc = """
 [status_reloading_gui]
 src = "Reloading GUI..."
 loc = "Перезагрузка интерфейса..."
-
-[advanced_settings_update_policy_label]
-src = "Update Policy:"
-loc = "Обновления:"
 
 [advanced_settings_overwrite_ini_checkbox]
 src = "Overwrite d3dx.ini"
@@ -2040,138 +1972,9 @@ loc = """
 **Отключено**: Включить эффект. Используйте только совместно с **Injured Effect Remover**.
 """
 
-[general_settings_texture_boost_label]
-src = "Texture Boost:"
-loc = "Ускорение текстур:"
-
-[general_settings_texture_boost_entry_tooltip]
-src = """
-## Controls how aggressively higher resolution textures are pushed to VRAM:
-
-* Start tuning around **30.0** **(default)** for **mid-range PC**.
-    ✅ For slow systems tuning can significantly reduce modded textures loading delay.
-
-* Start tuning around **2.5** for **high end PC**.
-    ✅ For fast systems tuning can completely eliminate modded textures loading delay.
-
-* Set to **1.0** to disable the boost and stick to the default game engine behavior.
-
-⚠️ With low values, try decimals (e.g. `1.1` or `2.5`).
-													 
-	
-																			
-
-																								
-																					
-	
-*Applied to ConsoleVariables → r.Streaming.Boost value in Engine.ini*
-"""
-loc = """
-## Управляет агрессивностью загрузки текстур высокого разрешения в видеопамять (VRAM):
-
-* Начните с **30.0** **(по умолчанию)** для **ПК среднего уровня**.
-    ✅ Для слабых систем это может значительно сократить задержки при загрузке модов.
-
-* Начните с **2.5** для **мощных ПК**.
-    ✅ Для быстрых систем может полностью устранить задержки при загрузке модов.
-
-* Установите **1.0**, чтобы отключить ускорение и использовать поведение движка по умолчанию.
-
-⚠️ При низких значениях используйте десятичные (например, `1.1` или `2.5`).
-																																																							
-
-*Применяется к ConsoleVariables → r.Streaming.Boost в Engine.ini*
-"""
-
 [general_settings_texture_streaming_pool_size_label]
 src = "Texture Pool Size:"
 loc = "Размер пула текстур:"
-
-[general_settings_texture_streaming_pool_size_entry_tooltip]
-src = """
-## Controls how much VRAM the game can use for textures:
-
-* Set to **0** **(default)** for **automatic control** (based on available VRAM).
-    ✅ Large enough pool eliminates modded textures loading delay after first load.
-
-* Set to specific value (e.g. 4096) for precise VRAM management.
-
-*Applied to ConsoleVariables → r.Streaming.PoolSize value in Engine.ini*
-"""
-loc = """
-## Управляет объёмом VRAM, доступным для текстур:
-
-* Установите **0** **(по умолчанию)** для **автоматического управления** (на основе доступной VRAM).
-    ✅ Достаточный объём позволяет отображать текстуры загруженных модов без задержек.
-
-* Установите конкретное значение (например, 4096), чтобы точно задать объём VRAM.
-
-*Применяется к ConsoleVariables → r.Streaming.PoolSize в Engine.ini*
-"""
-
-[general_settings_texture_streaming_limit_pool_checkbox]
-src = "Limit Pool Size To VRAM"
-loc = "Ограничить объёмом VRAM"
-
-[general_settings_texture_streaming_limit_pool_checkbox_tooltip]
-src = """
-## Sets the upper limit for how much VRAM the game can use for textures:
-
-* **Enabled** **(default)** – Limits texture pool size based on your GPU's available VRAM.
-    ✅ Helps prevent crashes or stuttering on low VRAM systems.
-    ⚠️ May reduce texture quality or cause pop-ins if too restrictive on high-end GPUs.
-
-* **Disabled** – Unlocks maximum texture pool size, even if it exceeds your GPU's safe limits.
-    ✅ Can improve texture quality and reduce pop-ins on powerful systems.
-    ⚠️ Risk of performance drops, stutters, or crashes if VRAM runs out.
-
-*Applied to ConsoleVariables → r.Streaming.LimitPoolSizeToVRAM value in Engine.ini*
-"""
-loc = """
-## Устанавливает верхний предел VRAM, доступный для текстур:
-
-* **Включено** **(по умолчанию)** – ограничивает размер пула текстур объёмом VRAM вашей видеокарты.
-    ✅ Помогает избежать сбоев и лагов на системах с малым объёмом VRAM.
-    ⚠️ Может снизить качество или вызвать подгрузки на мощных системах.
-
-* **Отключено** – снимает ограничение, даже если это превышает безопасные пределы VRAM.
-    ✅ Повышает качество текстур и снижает подгрузки на мощных системах.
-    ⚠️ Возможны лаги или сбои при нехватке VRAM.
-
-*Применяется к ConsoleVariables → r.Streaming.LimitPoolSizeToVRAM в Engine.ini*
-"""
-
-[general_settings_mesh_lod_distance_label]
-src = "Mesh LOD Distance:"
-loc = "Дальность LOD моделей:"
-
-[general_settings_mesh_lod_distance_entry_tooltip]
-src = """
-## Controls how far game replaces full animated meshes with simplified LoDs:
-
-* Set to **24** **(default)** to force full models as far as the game loads animated objects.
-    ✅ With this value mods are applied as far as you can see.
-    ⚠️ Risk of performance drops for low-end GPUs.
-
-* Set to lower value (e.g. `15`) for better performance.
-    ✅ Reduce FPS cost by allowing the game to use LoD meshes for distant animated objects.
-    ⚠️ LoDs may look wrong due to modded textures being applied to original LoD meshes.
-
-*Applied to ConsoleVariables → r.Kuro.SkeletalMesh.LODDistanceScale value in Engine.ini*
-"""
-loc = """
-## Управляет дистанцией, на которой полные анимированные модели заменяются упрощёнными LOD:
-
-* Установите **24** **(по умолчанию)**, чтобы использовать полные модели до предела дальности загрузки.
-    ✅ Моды будут отображаться на максимальном расстоянии.
-    ⚠️ Возможны просадки производительности на слабых видеокартах.
-
-* Установите меньшее значение (например, `15`) для повышения производительности.
-    ✅ Позволяет движку использовать упрощённые модели на дистанции.
-    ⚠️ Текстуры модов могут отображаться некорректно на LOD моделях.
-
-*Применяется к ConsoleVariables → r.Kuro.SkeletalMesh.LODDistanceScale в Engine.ini*
-"""
 
 [general_settings_open_file_button]
 src = "🔍 Open {file_name}"
@@ -2375,42 +2178,6 @@ loc = """
 * [d3dx.ini]: show_warnings = 0
 Отключено: Вас преследовать будут предупреждения ini-парсера и сигналы при нажатии F10.
 * [d3dx.ini]: show_warnings = 1
-"""
-
-[importer_settings_calls_logging_checkbox]
-src = "Calls Logging"
-loc = "Лог Вызовов"
-
-[importer_settings_calls_logging_checkbox_tooltip]
-src = """
-Enabled: Log API usage.
-* [d3dx.ini]: calls = 1
-Disabled: Do not log calls. Maximum performance.
-* [d3dx.ini]: calls = 0
-"""
-loc = """
-Включено: Вести лог вызовов API.
-* [d3dx.ini]: calls = 1
-Отключено: Не логировать вызовы. Максимальная производительность.
-* [d3dx.ini]: calls = 0
-"""
-
-[importer_settings_debug_logging_checkbox]
-src = "Debug Logging"
-loc = "Лог Отладки"
-
-[importer_settings_debug_logging_checkbox_tooltip]
-src = """
-Enabled: Super verbose debug logging.
-* [d3dx.ini]: debug = 1
-Disabled: No debug logging. Maximum performance.
-* [d3dx.ini]: debug = 0
-"""
-loc = """
-Включено: Вести отладочное логирование.
-* [d3dx.ini]: debug = 1
-Отключено: Не логировать отладочную информацию. Максимальная производительность.
-* [d3dx.ini]: debug = 0
 """
 
 [importer_settings_importer_folder_label]

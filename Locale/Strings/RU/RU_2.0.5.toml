@@ -1,0 +1,261 @@
+[error_msvc_integrity_verification_failed_md]
+src = """
+**Microsoft Visual C++ Redistributable** is damaged or not installed!
+
+Please try to reinstall it from [Microsoft Website]({page_link}) ([direct download]({direct_link})).
+
+Log file: {log_path}
+
+Error: {error_text}
+"""
+loc = """
+**Microsoft Visual C++ Redistributable** повреждён или не установлен!
+
+Попробуйте его переустановить с [сайта Microsoft]({page_link}) ([ссылка на скачивание]({direct_link})).
+
+Файл журнала: {log_path}
+
+Ошибка: {error_text}
+"""
+
+[error_launcher_crashed_on_init]
+src = """
+Launcher has crashed during initialization:
+
+Log file: {log_path}
+
+Error: {error_text}
+"""
+loc = """
+Инициализация лаунчера была прервана из-за ошибки:
+
+Файл журнала: {log_path}
+
+Ошибка: {error_text}
+"""
+
+[message_title_fatal_error]
+src = "Fatal Error"
+loc = "Фатальная ошибка"
+
+[error_msvc_integrity_verification_failed_plain]
+src = """
+Microsoft Visual V C++ Redistributable is damaged or not installed!
+
+Please reinstall it from https://aka.ms/vs/17/release/vc_redist.x64.exe
+
+Log file: {log_path}
+
+Error: {error_text}
+"""
+loc = """
+Microsoft Visual V C++ Redistributable повреждён или не установлен!
+
+Попробуйте его переустановить с https://aka.ms/vs/17/release/vc_redist.x64.exe
+
+Файл журнала: {log_path}
+
+Ошибка: {error_text}
+"""
+
+[error_model_importer_auto_select_failed]
+src = """
+Failed to auto-select importer for `{path}`!
+
+Try to add `--nogui --xxmi WWMI` args (or GIMI, SRMI, ZZMI, HIMI, EFMI).
+"""
+loc = """
+Не удалось автоматически выбрать импортер для `{path}`!
+
+Попробуйте добавить аргументы `--nogui --xxmi WWMI` args (or GIMI, SRMI, ZZMI, HIMI, EFMI).
+"""
+
+[locale_list_conjunction_spacing]
+src = "\\\\s"
+loc = "\\\\s"
+
+[message_title_rogue_ini_notification]
+src = "Stability Warning"
+loc = "Стабильность под угрозой!"
+
+[message_text_rogue_ini_in_mods_detected]
+src = """
+Detected mods with ini files containing **d3dx.ini**-exclusive options:
+
+{mod_list}
+
+Listed files [usually cause]({link_wiki_d3dx_ini_shipping}) silent errors, glitches and crashes.
+"""
+loc = """
+Найдены моды, ini-файлы которых содержат опции, разрешённые только в главном **d3dx.ini**:
+
+{mod_list}
+
+Перечисленные файлы [обычно вызывают]({link_wiki_d3dx_ini_shipping}) непредвиденные ошибки, глюки и вылеты.
+"""
+
+[message_button_disable_ini_files]
+src = "Disable Ini Files"
+loc = "Отключить ini-файлы"
+
+[message_title_performance_notification]
+src = "Performance Notification"
+loc = "Производительность под угрозой!"
+
+[message_text_global_triggers_in_mods_detected]
+src = """
+Detected mods with notable global performance impact:
+
+{checkbox_widget}
+
+Listed mods are using [unlimited resource slot triggers]({link_wiki_global_triggers_usage}).
+"""
+loc = """
+Найдены моды со значительным влиянием на глобальную производительность:
+
+{checkbox_widget}
+
+Перечисленные моды используют [неограниченные триггеры ресурсных слотов]({link_wiki_global_triggers_usage}).
+"""
+
+[message_button_disable_selected]
+src = "Disable Selected"
+loc = "Отключить выбранные"
+
+[optimizing_ini_files_in_folder]
+src = "Optimizing INI files in {folder_name} folder..."
+loc = "Оптимизция INI-файлов в папке {folder_name}..."
+
+[optimization_results_disabled_mods]
+src = "Disabled {disabled_mods_count} mods."
+loc = "Отключено {disabled_mods_count} модов."
+
+[optimization_results_disabled_files]
+src = "Disabled {disabled_files_count} INI files."
+loc = "Отключено {disabled_files_count} INI-файлов."
+
+[optimization_results_edited_lines]
+src = "Edited {edited_lines_count} lines in {edited_files_count} INI files."
+loc = "Изменено {edited_lines_count} строк в {edited_files_count} INI-файлах."
+
+[message_text_optimization_results]
+src = """
+Successfully introduced following optimizations:
+
+{optimization_results:md_list}
+
+Check out {log_link} for more details.
+"""
+loc = """
+Успешно внесены следующие оптимизации:
+
+{optimization_results:md_list}
+
+Детальный список изменений записан в {log_link}.
+"""
+
+[message_text_optimization_no_results]
+src = "All supported optimizations are already applied!"
+loc = "Все поддерживаемые оптимизации уже применены!"
+
+[message_title_optimization_results]
+src = "Optimization Results"
+loc = "Результаты оптимизации"
+
+[error_set_readonly_failed]
+src = "Failed to set Read Only flag on file {path}: {error_text}!"
+loc = "Не удалость установить флаг **Только чтение** для файла {path}: {error_text}!"
+
+[message_button_remove_flag]
+src = "Remove Flag"
+loc = "Снять флаг"
+
+[error_unknown_error_code]
+src = "Unknown error code {error_code}"
+loc = "Неизвестный код ошибки {error_code}"
+
+[error_dll_inject_process_not_found]
+src = "Process {pid} not found"
+loc = "Процесс {pid} не найден"
+
+[error_dll_inject_invalid_dll_path]
+src = "Invalid DLL path {dll_path}"
+loc = "Неверный путь к DLL: {dll_path}"
+
+[error_dll_inject_kernel32_fail]
+src = "Failed to resolve kernel32.dll"
+loc = "Не удалось получить kernel32.dll"
+
+[error_dll_inject_loadlibrary_fail]
+src = "Failed to resolve LoadLibraryW"
+loc = "Не удалось получить LoadLibraryW"
+
+[error_dll_inject_remote_alloc_fail]
+src = "Failed to allocate remote memory"
+loc = "Не удалось выделить внешнюю память"
+
+[error_dll_inject_write_memory_fail]
+src = "Failed to write DLL path to process memory"
+loc = "Не удалось записать путь к DLL в память процесса"
+
+[error_dll_inject_thread_fail]
+src = "Failed to create remote thread"
+loc = "Не удалось создать внешний поток"
+
+[error_dll_inject_thread_timeout]
+src = "Injection thread timed out"
+loc = "Превышен предел ожидания ответа от потока инъектора"
+
+[error_dll_inject_thread_wait_fail]
+src = "Injection thread wait failed"
+loc = "Не удалось завершить ожидание ответа от потока инъектора"
+
+[error_dll_inject_injection_failed]
+src = "DLL injection failed"
+loc = "Не удалось внедрить DLL"
+
+[error_dll_inject_unknown_error]
+src = "Unknown low level error"
+loc = "Неизвестная низкоуровневая ошибка"
+
+[error_dll_injector_failed]
+src = """
+Failed to inject {dll_path}:
+{error_text}!
+"""
+loc = """
+Не удалось внедрить {dll_path}:
+{error_text}!
+"""
+
+[tool_bar_optimize_mods_button]
+src = "Optimize Mods"
+loc = "Оптимизировать моды"
+
+[error_migoto_game_detection_timeout]
+src = """
+Failed to detect window of game process {process_name}!
+
+If game window takes more than {start_timeout} seconds to appear, adjust **Timeout** in **General Settings**.
+
+If game crashed, try to follow the [Crash Isolation Checklist]({checklist_link}).
+"""
+loc = """
+Не удалось обнаружить окно процесса игры {process_name}!
+
+Если окно игры появляется более чем через {start_timeout} секунд, увеличьте **Таймаут** в **Общих настройках** лаунчера.
+
+Если игра вылетела, попробуйте выполнить шаги из [Crash Isolation Checklist]({checklist_link}).
+"""
+
+[message_text_locale_errors]
+src = """
+Detected errors in active localization files:
+
+{locale_errors:md_list}
+"""
+loc = """
+Обнаружены ошибки в файлах активной локализации:
+
+{locale_errors:md_list}
+"""
