@@ -19,11 +19,11 @@ class ModelImporterSettingsFrame(UIFrame):
 
         # Importer Folder
         self.put(ImporterFolderLabel(self)).grid(row=0, column=0, padx=(20, 0), pady=(0, 30), sticky='w')
-        self.put(ImporterFolderFrame(self)).grid(row=0, column=1, padx=(0, 20), pady=(0, 30), sticky='new', columnspan=4)
+        self.put(ImporterFolderFrame(self)).grid(row=0, column=1, padx=(10, 20), pady=(0, 30), sticky='new', columnspan=4)
 
         # XXMI Delay
         self.put(MigotoInitDelayLabel(self)).grid(row=1, column=0, padx=(20, 0), pady=(0, 30), sticky='w')
-        self.put(MigotoInitDelayEntry(self)).grid(row=1, column=1, padx=(0, 20), pady=(0, 30), sticky='w', columnspan=4)
+        self.put(MigotoInitDelayEntry(self)).grid(row=1, column=1, padx=(10, 20), pady=(0, 30), sticky='w', columnspan=4)
 
         # Error Handling
         self.put(ErrorHandlingLabel(self)).grid(row=2, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
@@ -37,8 +37,8 @@ class ModelImporterSettingsFrame(UIFrame):
         self.put(DumpShadersCheckbox(self)).grid(row=3, column=2, padx=10, pady=(0, 30), sticky='w')
 
         # Fail-Safe
-        self.put(FailSafeLabel(self)).grid(row=3, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
-        self.put(EnforceRenderingCheckbox(self)).grid(row=3, column=1, padx=10, pady=(0, 30), sticky='w', columnspan=2)
+        self.put(FailSafeLabel(self)).grid(row=4, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
+        self.put(EnforceRenderingCheckbox(self)).grid(row=4, column=1, padx=10, pady=(0, 30), sticky='w', columnspan=2)
 
 
 class MigotoInitDelayLabel(UILabel):
