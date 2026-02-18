@@ -61,6 +61,7 @@ class ModelImporterEvents:
     @dataclass
     class OptimizeMods:
         silent: bool = True
+        reset_cache: bool = False
 
 
 @dataclass
@@ -560,6 +561,7 @@ class ModelImporterPackage(Package):
             cache_path=Paths.App.Resources / 'Cache' / 'Ini Optimizer' / f'{self.metadata.package_name}.json',
             dry_run=False,
             use_cache=True,
+            reset_cache=event.reset_cache,
             exclude_patterns=exclude_patterns.values() or ['DISABLED*'],
         )
 

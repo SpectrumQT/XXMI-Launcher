@@ -58,6 +58,9 @@ class IniValidatorCache:
         self.modified: bool = False
         self.data: dict[str, float] = {}
 
+    def reset(self):
+        self.data = {}
+
     def get_mod_time(self, path: Path):
         return self.data.get(str(path.resolve()), None)
 
@@ -294,6 +297,10 @@ class IniValidator:
         if self.use_cache:
             self.cache.load(self.folder_path, self.cache_path)
 
+    def reset_cache(self):
+        if self.use_cache:
+            self.cache.reset()
+
     def is_path_in_cache(self, path: Path):
         if not self.use_cache:
             return False
@@ -378,6 +385,7 @@ class ModManager:
             cache_path: Path | None = None,
             dry_run: bool = True,
             use_cache: bool = True,
+            reset_cache: bool = False,
             exclude_patterns: list[str] | None = None,
         ) -> OptimizationResults:
         """Shutdown the worst ini offenders in Mods folder.
@@ -403,6 +411,8 @@ class ModManager:
             use_cache=True,
             cache_path=cache_path
         )
+        if reset_cache:
+            self.ini_validator.reset_cache()
 
         self.ini_validator.d3dx_ini_keywords = {'[loader', '[system', '[device', '[stereo', '[commandlistunbindallrendertargets'}
         self.ini_validator.d3dx_ini_option_values = {'include': {'include_recursive': 'mods', 'exclude_recursive': 'disabled*'}}

@@ -167,7 +167,7 @@ class OptimizeModsButton(ToolsBarButton):
             y=535,
             button_image_path='button-tool-optimize-mods.png',
             text=L('tool_bar_optimize_mods_button', 'Optimize Mods'),
-            command=lambda: Events.Fire(Events.ModelImporter.OptimizeMods(silent=False)),
+            command=lambda: Events.Fire(Events.ModelImporter.OptimizeMods(silent=False, reset_cache=True)),
             master=master)
 
 
