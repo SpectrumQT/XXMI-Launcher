@@ -103,21 +103,17 @@ if __name__ == '__main__':
 
     logging.debug(f'App Start')
 
+    msvc_error = None
+    gui = None
+
     try:
         import core.locale_manager as Locale
         Locale.initialize(root_path)
 
         try:
             verify_msvc_integrity()
-        except Exception as e:
-            from core.locale_manager import L
-            raise Exception(L('error_msvc_integrity_verification_failed', """
-                MSVC++ Redistributable is damaged or not installed!
-    
-                Please reinstall it from https://aka.ms/vs/17/release/vc_redist.x64.exe
-                
-                ERROR: {error}
-            """).format(error=e))
+        except BaseException as e:
+            msvc_error = e
 
         import core.path_manager as Paths
         Paths.initialize(root_path)
@@ -125,13 +121,98 @@ if __name__ == '__main__':
         import gui.windows.main.main_window as main_window
         gui = main_window.MainWindow()
 
+        if msvc_error is not None:
+            raise msvc_error
+
         from core.application import Application
         Application(gui)
 
-    except BaseException as e:
-        logging.exception(e)
+    except BaseException as init_error:
+        # Handle init time error
+        logging.exception(init_error)
         import traceback
-        from tkinter.messagebox import showerror
-        showerror(title='XXMI Launcher - Fatal Error',
-                  message=f'{e}\n\n'
-                          f'{traceback.format_exc()}')
+        init_stack_trace = traceback.format_exc()
+
+        try:
+            # Try to initialize locale engine
+            from core.locale_manager import L
+        except BaseException:
+            # Locale engine is FUBAR, fallback to dummy getter
+            from textwrap import dedent
+            L = lambda key, string: dedent(string.strip())
+
+        try:
+            # Try to show error in less scary message window of minimal gui
+            page_link = 'https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#latest-supported-redistributable-version'
+            direct_link = 'https://aka.ms/vs/17/release/vc_redist.x64.exe'
+            log_path = f'<a href="file:///{root_path / "XXMI Launcher Log.txt"}">XXMI Launcher Log.txt</a>'
+
+            if msvc_error is not None:
+                error = L('error_msvc_integrity_verification_failed_md', """
+                    **Microsoft Visual C++ Redistributable** is damaged or not installed!
+
+                    Please try to reinstall it from [Microsoft Website]({page_link}) ([direct download]({direct_link})).
+                    
+                    Log file: {log_path}
+
+                    Error: {error_text}
+                """).format(
+                    page_link=page_link,
+                    direct_link=direct_link,
+                    log_path=log_path,
+                    error_text=msvc_error,
+                )
+            else:
+                error = L('error_launcher_crashed_on_init', """
+                    Launcher has crashed during initialization:
+                    
+                    Log file: {log_path}
+                    
+                    Error: {error_text}
+                """).format(
+                    log_path=log_path,
+                    error_text=init_stack_trace,
+                )
+
+            gui.show_messagebox(
+                modal=True,
+                title=L('message_title_fatal_error', 'Fatal Error'),
+                message=error,
+            )
+
+        except BaseException as gui_error:
+            # Fallback to the most basic messagebox
+            logging.exception(gui_error)
+
+            log_path = root_path / "XXMI Launcher Log.txt"
+
+            if msvc_error is not None:
+                error = L('error_msvc_integrity_verification_failed_plain', """
+                    Microsoft Visual V C++ Redistributable is damaged or not installed!
+
+                    Please reinstall it from https://aka.ms/vs/17/release/vc_redist.x64.exe
+                    
+                    Log file: {log_path}
+
+                    Error: {error_text}
+                """).format(
+                    log_path=log_path,
+                    error_text=msvc_error,
+                )
+            else:
+                error = L('error_launcher_crashed_on_init', """
+                    Launcher has crashed during initialization:
+                    
+                    Log file: {log_path}
+                    
+                    Error: {error_text}
+                """).format(
+                    log_path=log_path,
+                    error_text=init_stack_trace,
+                )
+
+            from tkinter.messagebox import showerror
+            showerror(
+                title=f'XXMI Launcher - {L('message_title_fatal_error', 'Fatal Error')}',
+                message=error,
+            )
