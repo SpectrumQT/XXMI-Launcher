@@ -404,8 +404,8 @@ class ModManager:
             cache_path=cache_path
         )
 
-        # self.ini_validator.d3dx_ini_keywords = {'[loader', '[system', '[device', '[stereo', '[commandlistunbindallrendertargets'}
-        # self.ini_validator.d3dx_ini_option_values = {'include': {'include_recursive': 'mods', 'exclude_recursive': 'disabled*'}}
+        self.ini_validator.d3dx_ini_keywords = {'[loader', '[system', '[device', '[stereo', '[commandlistunbindallrendertargets'}
+        self.ini_validator.d3dx_ini_option_values = {'include': {'include_recursive': 'mods', 'exclude_recursive': 'disabled*'}}
 
         if Config.Launcher.active_importer in ['WWMI', 'EFMI']:
             self.ini_validator.unwanted_triggers = {'ib', 'vb0'}
@@ -592,7 +592,7 @@ class ModManager:
 
         checkbox_options = []
         for mod, triggers_count in trigger_counts.items():
-            txt = f'{mod.path.name}: {get_impact_text(triggers_count)} <span class="gray">({mod.path})</span>'
+            txt = f'{mod.name}: {get_impact_text(triggers_count)} <span class="gray">({mod.path.relative_to(mods_path.parent)})</span>'
             checkbox_options.append((True, txt))
 
         user_response, selected_options = Events.Call(Events.Application.ShowWarning(
@@ -714,7 +714,7 @@ class ModManager:
             if p.parent.name == "Mods":
                 mods[p.stem] = Mod(
                     name=p.stem,
-                    path=p.parent,
+                    path=mods_path.parent / p,
                     ini_paths=[p]
                 )
             else:
