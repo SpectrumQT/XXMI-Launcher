@@ -176,22 +176,6 @@ loc = """
 src = "Shortcut to XXMI Launcher"
 loc = "Acceso directo a XXMI Launcher"
 
-[error_migoto_game_detection_timeout]
-src = """
-Failed to detect game process {process_name}!
-
-If game crashed, try to adjust XXMI Delay in General Settings or clear Mods and ShaderFixes folders.
-
-If game window takes more than {start_timeout} seconds to appear, adjust Timeout in Launcher Settings.
-"""
-loc = """
-¡No se ha podido detectar el proceso del juego {process_name}!
-
-Si el juego se ha bloqueado, intente ajustar el retraso XXMI en la configuración general o borre las carpetas Mods y ShaderFixes.
-
-Si la ventana del juego tarda más de {start_timeout} segundos en aparecer, ajuste el tiempo de espera en la configuración del lanzador.
-"""
-
 [error_migoto_game_start_failed]
 src = "Failed to start {process_name}!"
 loc = "¡No se ha podido iniciar {process_name}!"
@@ -2449,3 +2433,4 @@ loc = "Avanzado"
 [settings_title]
 src = "Settings"
 loc = "Configuración"
+
