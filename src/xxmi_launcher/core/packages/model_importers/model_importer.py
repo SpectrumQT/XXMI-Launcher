@@ -23,6 +23,7 @@ import core.config_manager as Config
 from core.locale_manager import L
 from core.package_manager import Package, PackageMetadata
 
+from core.mod_manager import ModManager
 from core.utils.ini_handler import IniHandler, IniHandlerSettings
 
 log = logging.getLogger(__name__)
@@ -57,6 +58,10 @@ class ModelImporterEvents:
     class DetectGameFolder:
         pass
 
+    @dataclass
+    class OptimizeMods:
+        silent: bool = True
+
 
 @dataclass
 class ModelImporterConfig:
@@ -69,8 +74,9 @@ class ModelImporterConfig:
     use_launch_options: bool = True
     overwrite_ini: bool = True
     process_start_method: str = 'Native'
-    xxmi_dll_init_delay: int = 0
     process_priority: str = 'Normal'
+    process_timeout: int = 30
+    xxmi_dll_init_delay: int = 0
     window_mode: str = 'Borderless'
     run_pre_launch_enabled: bool = False
     run_pre_launch: str = ''
@@ -121,6 +127,21 @@ class ModelImporterConfig:
                     Please check Advanced Settings → Inject Libraries.
                 """).format(dll_path=dll_path))
         return dll_paths
+
+    def is_xxmi_dll_used(self) -> bool:
+        # Default Launch - XXMI DLL is always used
+        if not self.custom_launch_enabled:
+            return True
+        # Custom Launch in Hook/Inject mode - XXMI DLL is always used
+        if self.custom_launch_inject_mode != 'Bypass':
+            return True
+        # Custom Launch in Bypass mode without Extra Libraries - XXMI DLL is never used
+        if not self.extra_libraries_enabled:
+            return False
+        # Custom Launch in Bypass mode with Extra Libraries - XXMI DLL is only used when listed
+        if self.importer_path / 'd3d11.dll' in self.extra_dll_paths:
+            return True
+        return False
 
 
 class ModelImporterCommandFileSection(Enum):
@@ -229,6 +250,7 @@ class ModelImporterPackage(Package):
         self.subscribe(Events.ModelImporter.StartGame, self.start_game)
         self.subscribe(Events.ModelImporter.ValidateGameFolder, lambda event: self.validate_game_folder(event))
         self.subscribe(Events.ModelImporter.CreateShortcut, lambda event: self.create_shortcut())
+        self.subscribe(Events.ModelImporter.OptimizeMods, lambda event: self.optimize_mods(event))
         self.subscribe(Events.ModelImporter.DetectGameFolder, lambda event: self.detect_game_paths(supress_errors=True))
         super().load()
         if self.get_installed_version() != '' and not Config.Active.Importer.shortcut_deployed:
@@ -453,11 +475,11 @@ class ModelImporterPackage(Package):
 
         ini_path = Config.Active.Importer.importer_path / 'd3dx.ini'
 
-        Events.Fire(Events.Application.VerifyFileAccess(path=ini_path, write=True))
+        Events.Fire(Events.PathManager.VerifyFileAccess(path=ini_path, write=True))
 
         log.debug(f'Reading d3dx.ini...')
-        with open(ini_path, 'r', encoding='utf-8') as f:
-            ini = IniHandler(IniHandlerSettings(ignore_comments=False), f)
+
+        ini = IniHandler(IniHandlerSettings(ignore_comments=False), Paths.App.read_text(ini_path))
 
         # Set default game exe as target, can be overridden via XXMI Launcher Config.json:
         # 1. Locate "Importers" > "GIMI" > "Importer" > "d3dx_ini"> "core" > "Loader"
@@ -481,8 +503,7 @@ class ModelImporterPackage(Package):
 
         if ini.is_modified():
             log.debug(f'Writing d3dx.ini...')
-            with open(ini_path, 'w', encoding='utf-8') as f:
-                f.write(ini.to_string())
+            Paths.App.write_file(ini_path, ini.to_string())
 
         self.ini = ini
 
@@ -522,6 +543,76 @@ class ModelImporterPackage(Package):
         game_exe_path = self.validate_game_exe_path(game_path)
         return game_exe_path, [], str(game_exe_path.parent)
 
+    def optimize_mods(self, event: ModelImporterEvents.OptimizeMods):
+        Events.Fire(Events.Application.StatusUpdate(status=L('optimizing_ini_files_in_folder', 'Optimizing INI files in {folder_name} folder...').format(folder_name='Mods')))
+
+        if not event.silent:
+            Events.Fire(Events.Application.Busy())
+
+        ini_path = Config.Active.Importer.importer_path / 'd3dx.ini'
+        ini = self.ini or IniHandler(IniHandlerSettings(ignore_comments=False), Paths.App.read_text(ini_path))
+
+        exclude_patterns = ini.get_option_values('exclude_recursive', section_name='Include').get('Include', {})
+
+        mod_manager = ModManager()
+        mod_result = mod_manager.optimize_mods_folder(
+            mods_path=Config.Active.Importer.importer_path / 'Mods',
+            cache_path=Paths.App.Resources / 'Cache' / 'Ini Optimizer' / f'{self.metadata.package_name}.json',
+            dry_run=False,
+            use_cache=True,
+            exclude_patterns=exclude_patterns.values() or ['DISABLED*'],
+        )
+
+        Events.Fire(Events.Application.StatusUpdate(status=L('optimizing_ini_files_in_folder', 'Optimizing INI files in {folder_name} folder...').format(folder_name='ShaderFixes')))
+
+        shader_result = mod_manager.optimize_shaderfixes_folder(
+            shaderfixes_path=Config.Active.Importer.importer_path / 'ShaderFixes',
+            dry_run=False,
+            exclude_patterns=exclude_patterns.values() or ['DISABLED*'],
+        )
+
+        if not event.silent:
+            Events.Fire(Events.Application.Ready())
+            self.show_optimization_results_notification(mod_result, shader_result)
+
+    def show_optimization_results_notification(self, mod_result, shader_result):
+        results = []
+        if mod_result.disabled_mods_count:
+            results.append(L('optimization_results_disabled_mods', 'Disabled {disabled_mods_count} mods.').format(
+                disabled_mods_count=mod_result.disabled_mods_count,
+            ))
+        if mod_result.disabled_files_count or shader_result.disabled_files_count:
+            results.append(
+                L('optimization_results_disabled_files', 'Disabled {disabled_files_count} INI files.').format(
+                    disabled_files_count=mod_result.disabled_files_count + shader_result.disabled_files_count,
+                ))
+        if mod_result.edited_files_count:
+            results.append(L('optimization_results_edited_lines',
+                             'Edited {edited_lines_count} lines in {edited_files_count} INI files.').format(
+                edited_files_count=mod_result.edited_files_count,
+                edited_lines_count=mod_result.edited_lines_count,
+            ))
+
+        if results:
+            message = L('message_text_optimization_results', """
+                Successfully introduced following optimizations:
+                
+                {optimization_results:md_list}
+    
+                Check out {log_link} for more details.
+            """).format(
+                optimization_results=results,
+                log_link=f'<a href="file:///{Paths.App.Root / "XXMI Launcher Log.txt"}">XXMI Launcher Log.txt</a>',
+            )
+        else:
+            message = L('message_text_optimization_no_results', "All supported optimizations are already applied!")
+
+        Events.Call(Events.Application.ShowInfo(
+            modal=True,
+            title=L('message_title_optimization_results', 'Optimization Results'),
+            message=message,
+        ))
+
     def start_game(self, event):
         # Ensure package integrity
         self.validate_package_files()
@@ -536,8 +627,8 @@ class ModelImporterPackage(Package):
         # Write configured settings to main 3dmigoto ini file
         self.update_d3dx_ini(game_exe_path=game_exe_path)
 
-        # Check for critical errors in Mods folder structure
-        self.validate_mods_folder()
+        # Optimize ini files in Mods and ShaderFixes folders
+        Events.Fire(Events.ModelImporter.OptimizeMods())
 
         # Execute initialization sequence of implemented importer
         self.initialize_game_launch(game_path)
@@ -656,147 +747,6 @@ class ModelImporterPackage(Package):
 
         Config.Active.Importer.shortcut_deployed = True
 
-    def get_ini_exclude_patterns(self):
-        """
-        Limited "support" of GLOB patterns.
-        Supports patterns: `*substr*`, `substr*`, `*substr`, `substr`
-        """
-        result = []
-        include_options = self.ini.get_section('Include').options
-        for option_name, exclude_pattern, _, _, _ in include_options:
-            exclude_pattern = exclude_pattern.lower()
-            if option_name.lower() == 'exclude_recursive':
-                if exclude_pattern[-1] == '*':
-                    if exclude_pattern[0] == '*':
-                        # Handles `*substr*` pattern (aka contains)
-                        result.append((exclude_pattern[1:-1], lambda x, y: y in x))
-                    else:
-                        # Handles `substr*` pattern (aka starts with)
-                        result.append((exclude_pattern[:-1], lambda x, y: x.startswith(y)))
-                elif exclude_pattern[0] == '*':
-                    # Handles `*substr` pattern (aka ends with)
-                    result.append((exclude_pattern[1:], lambda x, y: x.endswith(y)))
-                else:
-                    # Handles `substr` pattern (aka exact match)
-                    result.append((exclude_pattern, lambda x, y: x == y))
-        return result
-
-    def disable_duplicate_libraries(self, libs_path: Path):
-        log.debug(f'Searching for duplicate libs...')
-        mods_path = Config.Active.Importer.importer_path / 'Mods'
-        Paths.verify_path(mods_path)
-
-        mods_namespaces = self.index_namespaces(mods_path, self.get_ini_exclude_patterns())
-        packaged_namespaces = self.index_namespaces(libs_path, [])
-
-        log.debug(f'Deducing duplicate libs...')
-        duplicate_ini_paths = []
-        for mods_namespace, ini_paths in mods_namespaces.items():
-            if mods_namespace in packaged_namespaces.keys():
-                for ini_path in ini_paths:
-                    duplicate_ini_paths.append(ini_path)
-
-        if len(duplicate_ini_paths) == 0:
-            return
-
-        user_requested_disable = Events.Call(Events.Application.ShowError(
-            modal=True,
-            confirm_text=L('message_button_disable', 'Disable'),
-            cancel_text=L('message_button_ignore', 'Ignore'),
-            message=L('message_text_duplicate_libraries_detected', """
-                Your Mods folder contains some libraries that are already included into {importer}!
-                
-                Would you like to disable following duplicates automatically (recommended)?
-                
-                {duplicates}
-            """).format(
-                importer=Config.Launcher.active_importer,
-                duplicates='\n'.join([f'Mods\\{x.relative_to(mods_path)}' for x in duplicate_ini_paths]
-            ))
-        ))
-
-        if not user_requested_disable:
-            return
-
-        for ini_path in duplicate_ini_paths:
-            disabled_ini_path = ini_path.parent / f'DISABLED_{ini_path.name}'
-            if disabled_ini_path.is_file():
-                timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-                disabled_ini_path = ini_path.parent / f'DISABLED_{ini_path.stem}_{timestamp}{ini_path.suffix}'
-            ini_path.rename(disabled_ini_path)
-            time.sleep(0.001)
-
-    def validate_mods_folder(self):
-        log.debug(f'Searching for invalid folders...')
-        mods_path = Config.Active.Importer.importer_path / 'Mods'
-
-        for entry in self.scan_directory(mods_path, self.get_ini_exclude_patterns()):
-
-            if entry.is_file():
-                path = Path(entry)
-                if path.name == 'd3dx.ini':
-                    user_requested_fix = Events.Call(Events.Application.ShowError(
-                        modal=True,
-                        confirm_text=L('message_button_delete_file', 'Delete File'),
-                        cancel_text=L('message_button_abort', 'Abort'),
-                        message=L('message_text_d3dx_ini_in_mods_folder_detected', """
-                            Global config file d3dx.ini found inside the Mods folder:
-                            {path}
-                            
-                            It is duplicate file that may cause glitches and crashes.
-                            
-                            Would you like to remove it?
-                        """).format(path=path.relative_to(Config.Active.Importer.importer_path.parent))
-                    ))
-                    if user_requested_fix:
-                        path.unlink()
-                    else:
-                        raise ValueError(L('error_cannot_start_with_d3dx_ini_in_mods', 'Cannot start with d3dx.ini in Mods folder!'))
-                else:
-                    if path.parent.name == 'ShaderFixes' and path.name in ['3dvision2sbs.ini', 'help.ini', 'mouse.ini', 'upscale.ini']:
-                        logging.warning(f'Automatically disabling illegitimate {path}...')
-                        disabled_ini_path = path.parent / f'DISABLED_{path.name}'
-                        if disabled_ini_path.is_file():
-                            timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-                            disabled_ini_path = path.parent / f'DISABLED_{path.stem}_{timestamp}{path.suffix}'
-                        path.rename(disabled_ini_path)
-                        time.sleep(0.001)
-
-    def index_namespaces(self, folder_path: Path, exclude_patterns):
-        log.debug(f'Indexing namespaces for {folder_path}...')
-        namespace_pattern = re.compile(r'namespace\s*=\s*(.*)')
-        namespaces = {}
-
-        for path in self.scan_directory(folder_path, exclude_patterns):
-            if not path.is_file():
-                continue
-
-            path = Path(path)
-
-            if not path.suffix == '.ini':
-                continue
-
-            try:
-                with open(path, 'r', encoding='utf-8') as f:
-                    for line_id, line in enumerate(f.readlines()):
-                        stripped_line = line.strip().lower()
-                        if not stripped_line:
-                            continue
-                        if stripped_line[0] == ';':
-                            continue
-                        result = namespace_pattern.findall(stripped_line)
-                        if len(result) == 1:
-                            namespace = result[0]
-                            known_namespace = namespaces.get(namespace, None)
-                            if known_namespace:
-                                known_namespace.append(path)
-                            else:
-                                namespaces[namespace] = [path]
-            except Exception as e:
-                pass
-
-        return namespaces
-
     def get_paths_from_hoyoplay(self, patterns: Union[re.Pattern, List[re.Pattern]], known_children: List[str] = None):
         hoyoplay_path = Path(os.getenv('APPDATA')).parent / 'Roaming' / 'Cognosphere' / 'HYP'
         paths = []
@@ -852,7 +802,7 @@ class Version:
         self.parse_version(pattern)
 
     def parse_version(self, pattern):
-        Events.Fire(Events.Application.VerifyFileAccess(path=self.ini_path, write=False))
+        Events.Fire(Events.PathManager.VerifyFileAccess(path=self.ini_path, write=False))
 
         with open(self.ini_path, 'r', encoding='utf-8') as f:
 

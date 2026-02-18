@@ -155,30 +155,13 @@ class GIMIPackage(ModelImporterPackage):
         return game_exe_path, [], work_dir_path
 
     def initialize_game_launch(self, game_path: Path):
-        if Config.Active.Importer.custom_launch_inject_mode != 'Bypass':
-            self.disable_duplicate_libraries(Config.Active.Importer.importer_path / 'Core' / 'GIMI' / 'Libraries')
-
-            if Config.Importers.GIMI.Importer.configure_game:
-                try:
-                    # Set "Dynamic Character Resolution" to "Off"
-                    self.update_dcr()
-                except Exception as e:
-                    raise ValueError(L('error_gimi_dcr_config_failed', """
-                        {error_text}
-                        
-                        If nothing helps:
-                        1. Disable `Configure Game Settings` in launcher's `General Settings`
-                        2. Configure in-game `Graphics Settings` manually:
-                        * Graphics > `Dynamic Character Resolution` must be `Off`.
-                    """).format(error_text=e)) from e
-
         if Config.Importers.GIMI.Importer.unlock_fps:
             try:
                 self.configure_fps_unlocker()
             except Exception as e:
                 raise Exception(L('error_gimi_fps_unlocker_config_failed', """
                     Failed to configure FPS Unlocker!
-                    
+
                     {error_text}
                 """).format(error_text=e)) from e
 
@@ -188,8 +171,25 @@ class GIMIPackage(ModelImporterPackage):
             except Exception as e:
                 raise Exception(L('error_gimi_hdr_enable_failed', """
                     Failed to enable HDR!
-                    
+
                     {error_text}
+                """).format(error_text=e)) from e
+
+        if not Config.Active.Importer.is_xxmi_dll_used():
+            return
+
+        if Config.Importers.GIMI.Importer.configure_game:
+            try:
+                # Set "Dynamic Character Resolution" to "Off"
+                self.update_dcr()
+            except Exception as e:
+                raise ValueError(L('error_gimi_dcr_config_failed', """
+                    {error_text}
+                    
+                    If nothing helps:
+                    1. Disable `Configure Game Settings` in launcher's `General Settings`
+                    2. Configure in-game `Graphics Settings` manually:
+                    * Graphics > `Dynamic Character Resolution` must be `Off`.
                 """).format(error_text=e)) from e
 
     def update_dcr(self):

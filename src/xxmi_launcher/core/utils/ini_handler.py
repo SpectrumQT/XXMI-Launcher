@@ -111,14 +111,22 @@ class IniHandlerSection:
 
 
 class IniHandler:
-    def __init__(self, cfg: IniHandlerSettings, f):
+    def __init__(self, cfg: IniHandlerSettings, data):
         self.cfg = cfg
         self.sections = None
         self.footer_comments = []
-        self.from_file(f)
+        if isinstance(data, str):
+            data = data.splitlines()
+        if isinstance(data, list):
+            self.from_text(data)
+        else:
+            self.from_file(data)
         self.modified = False
 
     def from_file(self, f):
+        self.from_text(f.readlines())
+
+    def from_text(self, lines: list[str]):
         log.debug(f'Parsing ini...')
         section_pattern = re.compile(r'^\[(.+)\]')
         if not self.cfg.right_split:
@@ -130,7 +138,7 @@ class IniHandler:
         current_section = None
         current_comments = []
 
-        for line_id, line in enumerate(f.readlines()):
+        for line_id, line in enumerate(lines):
             stripped_line = line.rstrip()
 
             result = section_pattern.findall(stripped_line)
@@ -160,7 +168,7 @@ class IniHandler:
                 continue
 
             if not self.cfg.ignore_comments:
-                current_comments.append(line)
+                current_comments.append(stripped_line + '\n')
 
         if len(current_comments) > 0:
             self.footer_comments = current_comments

@@ -145,7 +145,7 @@ class MigotoPackage(Package):
                     process_name = process_name,
                     dll_paths = extra_dll_paths,
                     cmd = custom_launch_cmd,
-                    inject_timeout=Config.Launcher.start_timeout,
+                    inject_timeout=Config.Active.Importer.process_timeout,
                 )
 
                 # Early DLL injection verification
@@ -155,18 +155,20 @@ class MigotoPackage(Package):
 
                 # Wait until game window appears
                 Events.Fire(Events.Application.WaitForProcess(process_name=process_name))
-                result, pid = wait_for_process(process_name, with_window=True, timeout=Config.Launcher.start_timeout, check_visibility=True)
+                result, pid = wait_for_process(process_name, with_window=True, timeout=Config.Active.Importer.process_timeout, check_visibility=True)
                 if result == WaitResult.Timeout:
                     if hooked:
                         raise ValueError(L('error_migoto_game_detection_timeout', """
-                            Failed to detect game process {process_name}!
-                            
-                            If game crashed, try to adjust XXMI Delay in General Settings or clear Mods and ShaderFixes folders.
-                            
-                            If game window takes more than {start_timeout} seconds to appear, adjust Timeout in Launcher Settings.
+                            Failed to detect window of game process {process_name}!
+    
+                            If game window takes more than {start_timeout} seconds to appear, adjust **Timeout** in **General Settings**.
+    
+                            If game crashed, try to follow the [Crash Isolation Checklist](checklist_link).
                         """).format(
                             process_name=process_name,
-                            start_timeout=Config.Launcher.start_timeout
+                            importer=Config.Launcher.active_importer,
+                            start_timeout=Config.Active.Importer.process_timeout,
+                            checklist_link='https://github.com/SpectrumQT/XXMI-Launcher/blob/main/.github/ISSUE_TEMPLATE/game-crash-report.md#-crash-isolation-checklist'
                         ))
                     else:
                         raise ValueError(L('error_migoto_game_start_failed',
@@ -190,7 +192,7 @@ class MigotoPackage(Package):
 
         else:
             # Use WriteProcessMemory injection method
-            if Config.Active.Importer.custom_launch_inject_mode == 'Bypass':
+            if not Config.Active.Importer.is_xxmi_dll_used():
                 dll_paths = extra_dll_paths
             else:
                 dll_paths = [dll_path] + extra_dll_paths
@@ -199,30 +201,39 @@ class MigotoPackage(Package):
 
             Events.Fire(Events.Application.Inject(library_name=dll_names, process_name=process_name))
 
-            injector.open_process(
-                start_method=Config.Active.Importer.process_start_method,
-                exe_path=str(event.start_exe_path),
-                work_dir=event.work_dir,
-                start_args=start_args,
-                process_flags=process_flags,
-                process_name=process_name,
-                dll_paths=dll_paths,
-                cmd=custom_launch_cmd,
-                inject_timeout=Config.Launcher.start_timeout,
-            )
+            try:
+                injector.open_process(
+                    start_method=Config.Active.Importer.process_start_method,
+                    exe_path=str(event.start_exe_path),
+                    work_dir=event.work_dir,
+                    start_args=start_args,
+                    process_flags=process_flags,
+                    process_name=process_name,
+                    dll_paths=dll_paths,
+                    cmd=custom_launch_cmd,
+                    inject_timeout=Config.Active.Importer.process_timeout,
+                )
+
+            except Exception as e:
+                raise e
+
+            finally:
+                injector.unload()
 
             Events.Fire(Events.Application.WaitForProcess(process_name=process_name))
-            result, pid = wait_for_process(process_name, with_window=True, timeout=Config.Launcher.start_timeout, check_visibility=True)
+            result, pid = wait_for_process(process_name, with_window=True, timeout=Config.Active.Importer.process_timeout, check_visibility=True)
             if result == WaitResult.Timeout:
                 raise ValueError(L('error_migoto_game_detection_timeout', """
-                    Failed to detect game process {process_name}!
+                    Failed to detect window of game process {process_name}!
 
-                    If game crashed, try to adjust XXMI Delay in General Settings or clear Mods and ShaderFixes folders.
+                    If game window takes more than {start_timeout} seconds to appear, adjust **Timeout** in **General Settings**.
 
-                    If game window takes more than {start_timeout} seconds to appear, adjust Timeout in Launcher Settings.
+                    If game crashed, try to follow the [Crash Isolation Checklist](checklist_link).
                 """).format(
                     process_name=process_name,
-                    start_timeout=Config.Launcher.start_timeout
+                    importer=Config.Launcher.active_importer,
+                    start_timeout=Config.Active.Importer.process_timeout,
+                    checklist_link='https://github.com/SpectrumQT/XXMI-Launcher/blob/main/.github/ISSUE_TEMPLATE/game-crash-report.md#-crash-isolation-checklist'
                 ))
 
         # Wait a bit more for window to maximize

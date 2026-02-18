@@ -128,19 +128,22 @@ class ZZMIPackage(ModelImporterPackage):
         return game_exe_path
 
     def initialize_game_launch(self, game_path: Path):
-        if Config.Active.Importer.custom_launch_inject_mode != 'Bypass':
-            if Config.Importers.ZZMI.Importer.configure_game:
-                try:
-                    self.configure_game_settings(game_path)
-                except Exception as e:
-                    raise ValueError(L('error_zzmi_game_config_failed', """
-                        Failed to configure in-game settings for ZZMI!
-                        Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:
-                        * Graphics > `Character Quality` must be `High`.
-                        * Graphics > `High-Precision Character Animation` must be `Disabled`.
-                        
-                        {error_text}
-                    """).format(error_text=e)) from e
+        # Prevent further configuration if ZZMI isn't going to be used
+        if not Config.Active.Importer.is_xxmi_dll_used():
+            return
+        # Configure GENERAL_DATA.bin
+        if Config.Importers.ZZMI.Importer.configure_game:
+            try:
+                self.configure_game_settings(game_path)
+            except Exception as e:
+                raise ValueError(L('error_zzmi_game_config_failed', """
+                    Failed to configure in-game settings for ZZMI!
+                    Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:
+                    * Graphics > `Character Quality` must be `High`.
+                    * Graphics > `High-Precision Character Animation` must be `Disabled`.
+                    
+                    {error_text}
+                """).format(error_text=e)) from e
 
     def configure_game_settings(self, game_path: Path):
         Events.Fire(Events.Application.StatusUpdate(status=L('status_configuring_settings', 'Configuring in-game settings...')))

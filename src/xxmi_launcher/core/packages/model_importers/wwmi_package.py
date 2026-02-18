@@ -229,17 +229,22 @@ class WWMIPackage(ModelImporterPackage):
             return game_path / 'Wuthering Waves.exe', ['-dx11'], str(game_path)
 
     def initialize_game_launch(self, game_path: Path):
+        # Configure LocalStorage.db
+        if any([Config.Importers.WWMI.Importer.configure_game, Config.Importers.WWMI.Importer.unlock_fps]):
+            self.configure_settings(game_path)
+        # Configure Engine.ini
         if Config.Active.Importer.apply_perf_tweaks:
             self.update_engine_ini(game_path)
-        if Config.Active.Importer.custom_launch_inject_mode != 'Bypass':
-            self.update_device_profiles_ini(game_path)
+        # Configure GameUserSettings.ini
+        if Config.Importers.WWMI.Importer.unlock_fps:
             self.update_game_user_settings_ini(game_path)
-        self.configure_settings(game_path)
+        # Prevent further configuration if WWMI isn't going to be used
+        if not Config.Active.Importer.is_xxmi_dll_used():
+            return
+        # Configure DeviceProfiles.ini
+        self.update_device_profiles_ini(game_path)
 
     def configure_settings(self, game_path: Path):
-        if not any([Config.Importers.WWMI.Importer.configure_game, Config.Importers.WWMI.Importer.unlock_fps]):
-            return
-
         Events.Fire(Events.Application.StatusUpdate(status=L('status_configuring_settings', 'Configuring in-game settings...')))
 
         try:
@@ -251,7 +256,7 @@ class WWMIPackage(ModelImporterPackage):
                     # Remove any existing triggers locking the frame rate setting
                     settings_manager.reset_fps_setting()
 
-                if Config.Active.Importer.custom_launch_inject_mode == 'Bypass':
+                if not Config.Active.Importer.is_xxmi_dll_used():
                     return
 
                 if not Config.Importers.WWMI.Importer.configure_game:
@@ -412,9 +417,6 @@ class WWMIPackage(ModelImporterPackage):
             Paths.App.write_file(device_profiles_ini_path, ini.to_string())
 
     def update_game_user_settings_ini(self, game_path: Path):
-        if not Config.Importers.WWMI.Importer.unlock_fps:
-            return
-
         Events.Fire(Events.Application.StatusUpdate(status=L('status_updating_file', 'Updating {file_name}...').format(file_name='GameUserSettings.ini')))
 
         ini_path = game_path / 'Client' / 'Saved' / 'Config' / 'WindowsNoEditor' / 'GameUserSettings.ini'
