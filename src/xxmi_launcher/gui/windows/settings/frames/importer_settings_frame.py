@@ -21,20 +21,68 @@ class ModelImporterSettingsFrame(UIFrame):
         self.put(ImporterFolderLabel(self)).grid(row=0, column=0, padx=(20, 0), pady=(0, 30), sticky='w')
         self.put(ImporterFolderFrame(self)).grid(row=0, column=1, padx=(0, 20), pady=(0, 30), sticky='new', columnspan=4)
 
+        # XXMI Delay
+        self.put(MigotoInitDelayLabel(self)).grid(row=1, column=0, padx=(20, 0), pady=(0, 30), sticky='w')
+        self.put(MigotoInitDelayEntry(self)).grid(row=1, column=1, padx=(0, 20), pady=(0, 30), sticky='w', columnspan=4)
+
         # Error Handling
-        self.put(ErrorHandlingLabel(self)).grid(row=1, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
-        self.put(MuteWarningsCheckbox(self)).grid(row=1, column=1, padx=10, pady=(0, 30), sticky='w')
-        self.put(CallsLoggingCheckbox(self)).grid(row=1, column=2, padx=10, pady=(0, 30), sticky='w')
-        self.put(DebugLoggingCheckbox(self)).grid(row=1, column=3, padx=10, pady=(0, 30), sticky='w')
+        self.put(ErrorHandlingLabel(self)).grid(row=2, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
+        self.put(MuteWarningsCheckbox(self)).grid(row=2, column=1, padx=10, pady=(0, 30), sticky='w')
+        self.put(CallsLoggingCheckbox(self)).grid(row=2, column=2, padx=10, pady=(0, 30), sticky='w')
+        self.put(DebugLoggingCheckbox(self)).grid(row=2, column=3, padx=10, pady=(0, 30), sticky='w')
 
         # Shader Hunting
-        self.put(ShaderHuntingLabel(self)).grid(row=2, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
-        self.put(EnableHuntingCheckbox(self)).grid(row=2, column=1, padx=10, pady=(0, 30), sticky='w')
-        self.put(DumpShadersCheckbox(self)).grid(row=2, column=2, padx=10, pady=(0, 30), sticky='w')
+        self.put(ShaderHuntingLabel(self)).grid(row=3, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
+        self.put(EnableHuntingCheckbox(self)).grid(row=3, column=1, padx=10, pady=(0, 30), sticky='w')
+        self.put(DumpShadersCheckbox(self)).grid(row=3, column=2, padx=10, pady=(0, 30), sticky='w')
 
         # Fail-Safe
         self.put(FailSafeLabel(self)).grid(row=3, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
         self.put(EnforceRenderingCheckbox(self)).grid(row=3, column=1, padx=10, pady=(0, 30), sticky='w', columnspan=2)
+
+
+class MigotoInitDelayLabel(UILabel):
+    def __init__(self, master):
+        super().__init__(
+            text=L('general_settings_xxmi_delay_label', 'XXMI Delay:'),
+            font=('Microsoft YaHei', 14, 'bold'),
+            fg_color='transparent',
+            master=master)
+
+
+class MigotoInitDelayEntry(UIEntry):
+    def __init__(self, master):
+        super().__init__(
+            textvariable=Vars.Active.Importer.xxmi_dll_init_delay,
+            input_filter='INT',
+            width=50,
+            height=36,
+            font=('Arial', 14),
+            master=master)
+
+        self.set_tooltip(self.get_tooltip)
+
+    def get_tooltip(self):
+        msg = L('general_settings_xxmi_delay_entry_tooltip_base', """
+            Delay in milliseconds for how long injected XXMI DLL (3dmigoto) must wait before initialization.
+            {tooltip_footer}
+        """)
+        if Config.Launcher.active_importer == 'WWMI':
+            msg = msg.format(tooltip_footer=L('general_settings_xxmi_delay_entry_tooltip_footer_wwmi', """
+                <font color="red">⚠ Wuthering Waves crashes on launch with wrong delay! ⚠</font>
+                <font color="#8B8000">⚠ If default value fails, try to increase or decrease it until WuWa stops crashing. ⚠</font>
+                ## Known values for Wuthering Waves 2.4:
+                - **500**: Default, works for most users.
+                - **150**: Minimal known value to work along with ReShade.
+                - **50**: Minimal known value to work.
+                - **1000+**: Some users need really huge delays.
+            """))
+        else:
+            msg = msg.format(tooltip_footer=L('general_settings_xxmi_delay_entry_tooltip_footer_general', """
+                If game crashes with no mods, try to increase it. Start with steps of 50 and increase them as you go.
+            """))
+
+        return msg
 
 
 class ShaderHuntingLabel(UILabel):

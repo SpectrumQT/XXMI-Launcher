@@ -48,10 +48,6 @@ class StartBehaviorFrame(UIFrame):
         self.configure(fg_color='transparent')
 
         self.put(AutoCloseCheckbox(self)).grid(row=0, column=0, padx=(0, 10), pady=0, sticky='w')
-        self.put(TimeoutLabel(self)).grid(row=0, column=1, padx=(20, 10), pady=0, sticky='w')
-        self.put(TimeoutEntry(self)).grid(row=0, column=2, padx=(0, 20), pady=0, sticky='w')
-
-        self.grab(TimeoutLabel).set_tooltip(self.grab(TimeoutEntry))
 
 
 class UpdatePolicyFrame(UIFrame):
@@ -190,38 +186,6 @@ class AutoCloseCheckbox(UICheckbox):
             Enabled: Launcher will close itself once the game has started and 3dmigoto injection has been confirmed.
             Disabled: Launcher will keep itself running.
         """))
-
-
-class TimeoutLabel(UILabel):
-    def __init__(self, master):
-        super().__init__(
-            text=L('launcher_settings_timeout_label', 'Timeout:'),
-            font=('Microsoft YaHei', 14),
-            fg_color='transparent',
-            master=master)
-
-
-class TimeoutEntry(UIEntry):
-    def __init__(self, master):
-        super().__init__(
-            textvariable=Vars.Launcher.start_timeout,
-            input_filter='INT',
-            width=40,
-            height=36,
-            font=('Arial', 14),
-            master=master)
-        self.set_tooltip(L('launcher_settings_timeout_entry_tooltip', """
-            Controls how long launcher should wait for the game to show its window after launch.
-            Game process will be considered as crashed once timeout is met.
-            Default value is **30**.
-        """))
-
-        self.trace_write(Vars.Launcher.start_timeout, self.handle_write_start_timeout)
-
-    def handle_write_start_timeout(self, var, val):
-        if val <= 0:
-            Vars.Launcher.start_timeout.set(30)
-            self.icursor('end')
 
 
 class UpdatePolicyLabel(UILabel):

@@ -171,10 +171,13 @@ class ProcessOptionsFrame(UIFrame):
         self.grid_columnconfigure(0, weight=100)
 
         self.put(StartMethodOptionMenu(self)).grid(row=0, column=0, padx=(0, 10), pady=(0, 0), sticky='w')
-        self.put(MigotoInitDelayLabel(self)).grid(row=0, column=1, padx=20, pady=(0, 0), sticky='w')
-        self.put(MigotoInitDelayEntry(self)).grid(row=0, column=2, padx=(0, 10), pady=(0, 0), sticky='w')
-        self.put(ProcessPriorityLabel(self)).grid(row=0, column=3, padx=20, pady=(0, 0), sticky='e')
-        self.put(ProcessPriorityOptionMenu(self)).grid(row=0, column=4, padx=(0, 0), pady=(0, 0), sticky='e')
+
+        self.put(ProcessPriorityLabel(self)).grid(row=0, column=1, padx=20, pady=(0, 0), sticky='w')
+        self.put(ProcessPriorityOptionMenu(self)).grid(row=0, column=2, padx=(0, 10), pady=(0, 0), sticky='w')
+
+        self.put(TimeoutLabel(self)).grid(row=0, column=3, padx=20, pady=0, sticky='e')
+        self.put(TimeoutEntry(self)).grid(row=0, column=4, padx=(0, 0), pady=0, sticky='e')
+        self.grab(TimeoutLabel).set_tooltip(self.grab(TimeoutEntry))
 
 
 class AutoConfigFrame(UIFrame):
@@ -478,51 +481,39 @@ class StartMethodOptionMenu(UIOptionMenu):
             **Native**: Create the game process directly. Usually it's the most reliable way.
             **Shell**: Start the game process via system console. Worth to try if you have some issues with Native.
             **Manual**: Skip launching the game on **Start** button press. Wait for user to launch it manually ({timeout}s timeout).
-        """).format(timeout=Config.Launcher.start_timeout)
+        """).format(timeout=Config.Active.Importer.process_timeout)
 
 
-class MigotoInitDelayLabel(UILabel):
+class TimeoutLabel(UILabel):
     def __init__(self, master):
         super().__init__(
-            text=L('general_settings_xxmi_delay_label', 'XXMI Delay:'),
-            font=('Microsoft YaHei', 14, 'bold'),
+            text=L('launcher_settings_timeout_label', 'Timeout:'),
+            font=('Microsoft YaHei', 14),
             fg_color='transparent',
             master=master)
 
 
-class MigotoInitDelayEntry(UIEntry):
+class TimeoutEntry(UIEntry):
     def __init__(self, master):
         super().__init__(
-            textvariable=Vars.Active.Importer.xxmi_dll_init_delay,
+            textvariable=Vars.Active.Importer.process_timeout,
             input_filter='INT',
-            width=50,
+            width=40,
             height=36,
             font=('Arial', 14),
             master=master)
+        self.set_tooltip(L('launcher_settings_timeout_entry_tooltip', """
+            Controls how long launcher should wait for the game to show its window after launch.
+            Game process will be considered as crashed once timeout is met.
+            Default value is **30**.
+        """))
 
-        self.set_tooltip(self.get_tooltip)
+        self.trace_write(Vars.Active.Importer.process_timeout, self.handle_write_start_timeout)
 
-    def get_tooltip(self):
-        msg = L('general_settings_xxmi_delay_entry_tooltip_base', """
-            Delay in milliseconds for how long injected XXMI DLL (3dmigoto) must wait before initialization.
-            {tooltip_footer}
-        """)
-        if Config.Launcher.active_importer == 'WWMI':
-            msg = msg.format(tooltip_footer=L('general_settings_xxmi_delay_entry_tooltip_footer_wwmi', """
-                <font color="red">⚠ Wuthering Waves crashes on launch with wrong delay! ⚠</font>
-                <font color="#8B8000">⚠ If default value fails, try to increase or decrease it until WuWa stops crashing. ⚠</font>
-                ## Known values for Wuthering Waves 2.4:
-                - **500**: Default, works for most users.
-                - **150**: Minimal known value to work along with ReShade.
-                - **50**: Minimal known value to work.
-                - **1000+**: Some users need really huge delays.
-            """))
-        else:
-            msg = msg.format(tooltip_footer=L('general_settings_xxmi_delay_entry_tooltip_footer_general', """
-                If game crashes with no mods, try to increase it. Start with steps of 50 and increase them as you go.
-            """))
-
-        return msg
+    def handle_write_start_timeout(self, var, val):
+        if val <= 0:
+            Vars.Active.Importer.process_timeout.set(30)
+            self.icursor('end')
 
 
 class ProcessPriorityLabel(UILabel):
@@ -894,7 +885,7 @@ class TextureStreamingFixedPoolSizeCheckbox(UICheckbox):
 class OpenGameConfigButton(UIButton):
     def __init__(self, master):
         super().__init__(
-            text=L('general_settings_open_file_button', '🔍 Open {file_name}').format(file_name='DeviceProfiles.ini'),
+            text=L('general_settings_open_file_button', '🔍 Open {file_name}').format(file_name='Engine.ini'),
             command=self.open_engine_ini,
             width=140,
             height=36,
@@ -905,7 +896,7 @@ class OpenGameConfigButton(UIButton):
 
     def open_engine_ini(self):
         game_folder = Events.Call(Events.ModelImporter.ValidateGameFolder(Config.Active.Importer.game_folder))
-        engine_ini = game_folder / 'Client' / 'Saved' / 'Config' / 'WindowsNoEditor' / 'DeviceProfiles.ini'
+        engine_ini = game_folder / 'Client' / 'Saved' / 'Config' / 'WindowsNoEditor' / 'Engine.ini'
         if engine_ini.is_file():
             subprocess.Popen([f'{str(engine_ini)}'], shell=True)
         else:
