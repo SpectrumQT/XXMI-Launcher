@@ -5,7 +5,6 @@ import subprocess
 from typing import Tuple
 from enum import Enum
 from multiprocessing import Process, Value
-from pyinjector import inject
 
 import win32gui
 import win32process
@@ -135,12 +134,14 @@ class ProcessWaiter(Process):
                     if not self.with_window:
                         # Exit loop: process is found and waiting for window is not required
                         if self.inject_dll:
-                            inject(process.pid, str(self.inject_dll))
+                            # inject(process.pid, str(self.inject_dll))
+                            raise NotImplementedError
                         return
                     elif len(get_hwnds_for_pid(pid=self.data.value, check_visibility=self.check_visibility)) != 0:
                         # Exit loop: process is found and window is also found
                         if self.inject_dll:
-                            inject(process.pid, str(self.inject_dll))
+                            # inject(process.pid, str(self.inject_dll))
+                            raise NotImplementedError
                         return
 
                 # Start process termination attempts once kill_timeout is reached
