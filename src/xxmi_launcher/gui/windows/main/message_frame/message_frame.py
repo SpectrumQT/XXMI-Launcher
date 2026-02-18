@@ -2,13 +2,14 @@ import logging
 import re
 import webbrowser
 import markdown
+import os
 
 from typing import List, Optional
 from textwrap import dedent
 from mdx_gfm import GithubFlavoredMarkdownExtension
-from customtkinter import IntVar, BooleanVar
-from tkinterweb import HtmlLabel, HtmlFrame
-from PIL import Image, ImageDraw, ImageTk
+from customtkinter import IntVar
+from tkinterweb import HtmlFrame
+from pathlib import Path
 
 import core.config_manager as Config
 import core.event_manager as Events
@@ -24,26 +25,37 @@ markdown_parser = markdown.Markdown(extensions=[GithubFlavoredMarkdownExtension(
 
 
 class MessageFrame(UIFrame):
-    def __init__(self, master, canvas, icon='info-icon.ico', title='Message', message='< Text >',
-                 confirm_text='OK', confirm_command=None, cancel_text='', cancel_command=None,
-                 radio_options: Optional[List[str]] = None, lock_master=True, screen_center=False):
+    def __init__(
+            self,
+            master,
+            canvas,
+            title='Message',
+            message='< Text >',
+            confirm_text='OK',
+            confirm_command=None,
+            cancel_text='',
+            cancel_command=None,
+            radio_options: Optional[List[str]] = None,
+            checkbox_options: list[tuple[bool, str]] | None = None,
+    ):
         super().__init__(master=master, canvas=canvas)
 
         self.radio_var = None
+        self.selected_options = None
         self.response = None
 
         self._offset_x = 0
         self._offset_y = 0
 
-        min_width = int(self._apply_widget_scaling(400))
-        max_width = int(self._apply_widget_scaling(800))
+        min_width = 400
+        max_width = 800
 
-        min_height = int(self._apply_widget_scaling(100))
-        max_height = int(self._apply_widget_scaling(310))
+        min_height = 100
+        max_height = 310
 
         min_button_width = 100
 
-        self.content_frame = ContentFrame(self, message, radio_options, min_width, max_width, min_height, max_height)
+        self.content_frame = ContentFrame(self, message, radio_options, checkbox_options, min_width, max_width, min_height, max_height)
 
         self.update()
 
@@ -53,13 +65,15 @@ class MessageFrame(UIFrame):
         self.update()
 
         if content_width < min_width:
-            target_width = min_width + 20 + int(self._apply_widget_scaling(10))
+            target_width = min_width + 20 + 10
             content_width = min_width
         # elif content_width > max_width:
         #     target_width = max_width + 20 + int(self._apply_widget_scaling(10))
         #     content_width = max_width
         else:
-            target_width = content_width + 35 + int(self._apply_widget_scaling(10))
+            target_width = content_width + 35 + 10
+        if target_width % 2 != 0:
+            target_width += 1
 
         if content_height < min_height:
             target_height = min_height + 120
@@ -67,11 +81,12 @@ class MessageFrame(UIFrame):
             target_height = max_height + 120
         else:
             target_height = content_height + 120
+        if target_height % 2 != 0:
+            target_height += 1
 
-        self.set_background_image(width=target_width, height=target_height,
-                                  x=640, y=360, anchor='c', brightness=1.0, opacity=1.0,
-                                  fg_color='#1f2024', border_radius=20, border_width=1, border_color='gray',
-                                  dim_opacity=0.5)
+        self.set_background_image(width=target_width, height=target_height, x=master.master.cfg.width/2, y=master.master.cfg.height/2, anchor='c',
+                                  fg_color='#1f2024', border_color='gray', border_radius=20, border_width=1,
+                                  brightness=1.0, opacity=1.0, dim_opacity=0.5)
 
         title_x = master.master.cfg.width / 2 - target_width / 2 + 25
         title_y = master.master.cfg.height / 2 - target_height / 2 + 20
@@ -119,7 +134,7 @@ class MessageFrame(UIFrame):
             scrollbar_width = self.content_frame._scrollbar._current_width
         content_frame_width = 6 + content_width + scrollbar_width
 
-        self.message_title.move(int(1280/2 - content_frame_width/2 + 7 + 7/self._apply_widget_scaling(1.0)), title_y)
+        self.message_title.move(int(master.master.cfg.width/2 - content_frame_width/2 + 7 + 7/self._apply_widget_scaling(1.0)), title_y)
 
 
         self.place(relx=0.5, rely=0.5, anchor='c')
@@ -250,23 +265,32 @@ class CloseButton(UIImageButton):
 
 
 class ContentFrame(UIScrollableFrame):
-    def __init__(self, master, message: str, radio_options: Optional[List[str]] = None,
-                 min_width: int = 480, max_width: int = 600, min_height: int = 180, max_height: int = 260):
+    def __init__(
+        self,
+        master,
+        message: str,
+        radio_options: list[str] | None = None,
+        checkbox_options: list[tuple[bool, str]] | None = None,
+        min_width: int = 480,
+        max_width: int = 600,
+        min_height: int = 180,
+        max_height: int = 260
+    ):
+
         super().__init__(master, width=max_width, height=max_height, hide_scrollbar=True)
 
         self.configure(fg_color='#1f2024')
-        # self.configure(fg_color='green')
 
         self.message_widget = HtmlFrame(
             master=self,
             messages_enabled=False,
             caches_enabled=False,
-            width=max_width,
-            height=max_height,
+            width=int(self._apply_widget_scaling(max_width)),
+            height=int(self._apply_widget_scaling(max_height)),
             fontscale=1.2 * self._apply_widget_scaling(1.0),
             shrink=True,
             textwrap=True,
-            on_link_click=self.open_in_browser,
+            on_link_click=self.handle_link_click,
             events_enabled=True,
         )
         self.message_widget.unbind_all('<MouseWheel>')
@@ -293,6 +317,16 @@ class ContentFrame(UIScrollableFrame):
             else:
                 html += radio_widget.get_html()
 
+        checkbox_widget = None
+        if checkbox_options is not None:
+            master.selected_options = [x[0] for x in checkbox_options]
+            checkbox_widget = CheckboxWidget(self.message_widget, checkbox_options, master.selected_options)
+            style += checkbox_widget.get_style()
+            if '{checkbox_widget}' in html:
+                html = html.replace('{checkbox_widget}', checkbox_widget.get_html())
+            else:
+                html += checkbox_widget.get_html()
+
         html = html.replace("\\", "/")
 
         html = f"<html>\n{style}\n<body>\n{html}\n</body>\n</html>"
@@ -310,6 +344,9 @@ class ContentFrame(UIScrollableFrame):
 
         if radio_widget is not None:
             radio_widget.setup_callbacks()
+
+        if checkbox_widget is not None:
+            checkbox_widget.setup_callbacks()
 
         # self.wait_variable(loaded)
 
@@ -345,15 +382,27 @@ class ContentFrame(UIScrollableFrame):
 
     @staticmethod
     def insert_space_in_long_words_multiline(text, max_len):
+
         def process_word(word):
             if len(word) <= max_len:
                 return word
             parts = [word[i:i + max_len] for i in range(0, len(word), max_len)]
             return ' '.join(parts)
 
-        tokens = re.findall(r'\S+|\s+', text)
-        processed = [process_word(t) if not t.isspace() else t for t in tokens]
-        return ''.join(processed)
+        # Split into HTML tags and normal text
+        parts = re.split(r'(<[^>]+>)', text)
+
+        result = []
+
+        for part in parts:
+            if part.startswith('<') and part.endswith('>'):
+                result.append(part)
+            else:
+                tokens = re.findall(r'\S+|\s+', part)
+                processed = [process_word(t) if not t.isspace() else t for t in tokens]
+                result.append(''.join(processed))
+
+        return ''.join(result)
 
     #  html { background-color: #1f2024;}
     def get_style(self):
@@ -366,28 +415,29 @@ class ContentFrame(UIScrollableFrame):
                 li { margin: 10px 0px;}
                 h1 { font-size: 18px; margin: 10px 0px;}
                 h2 { font-size: 16px; margin: 10px 0px;}
+                a { color: #84adf3; text-decoration: none; }
+                a:hover { text-decoration: underline; }
+                label { cursor: pointer; padding: 0px; }
+                .red { color: #E57373; }
+                .orange { color: #FFB74D; }
+                .yellow { color: #FFD54F; }
+                .green { color: #81C784; }
+                .teal { color: #4DD0E1; }
+                .blue { color: #00AFF4; }
+                .cyan { color: #4FC3F7; }
+                .purple { color: #B39DDB; }
+                .gray { color: #CCCCCC; }
+                .dark_red { color: #C62828; }
             </style>
         """)
 
-    def get_html(self):
-        return ''
-
-    def open_in_browser(self, url):
-        webbrowser.open(url)
-
-    def get_selected_radio(self):
-        selected_value = self.message_widget.evaljs("""
-            (function() {
-                const radios = document.getElementsByName("fruit");
-                for (let i = 0; i < radios.length; i++) {
-                    if (radios[i].checked) {
-                        return radios[i].id;
-                    }
-                }
-                return null;
-            })();
-        """)
-        print("Selected radio ID:", selected_value)
+    @staticmethod
+    def handle_link_click(url):
+        if url.startswith('file://'):
+            path = Path(url.replace('file:///', ''))
+            os.startfile(path)
+        else:
+            webbrowser.open(url)
 
     def hide(self, hide=True):
         super().hide(hide=hide)
@@ -409,10 +459,6 @@ class RadioWidget:
     def get_style(self):
         return dedent(f"""
             <style>
-            label {{
-              cursor: pointer;
-              padding: 0px;
-            }}
             input[type="radio"] {{
               cursor: pointer;
               margin: 0px; 
@@ -422,10 +468,6 @@ class RadioWidget:
             }}
             </style>
         """)
-
-        # input[type="radio"] {{
-        #   margin-right: 6px;
-        # }}
 
     def get_html(self):
         return dedent(f"""
@@ -482,3 +524,126 @@ class RadioWidget:
             radio_button = self.frame.document.getElementById(f"radio_button_{i}")
             radio_button.bind("<Enter>", self.make_radio_button_hover_callback(i))
             radio_button.bind("<<Modified>>", self.make_radio_button_modified_callback(i))
+
+
+class CheckboxWidget:
+    def __init__(self, frame: HtmlFrame, options: list[tuple[bool, str]], selected_options: list[bool]):
+        self.frame: HtmlFrame = frame
+        self.options: list[tuple[bool, str]] = options
+        self.selected_options = selected_options
+        self.hovered_option = 0
+
+    def get_style(self):
+        return dedent(f"""
+            <style>
+            .checkbox {{
+              display: inline-block;
+              cursor: pointer;
+              font-size: 0;
+              line-height: 0;
+              vertical-align: 3px;
+            }}
+            .box {{
+              width: 16px;
+              height: 16px;
+              border: 2px solid #aaa;
+              border-radius: 4px;
+              background: #2b2b2b;
+              text-align: center;
+              line-height: 12px;
+            }}
+            .checkbox.checked .box {{
+              /*background: #00aff4;*/
+              border-color: #ffffff;
+            }}
+            .tick {{
+              display: none;
+              color: white;
+              font-size: 12px;
+              font: Arial;
+            }}
+            .checkbox.checked .tick {{
+              display: inline;
+            }}
+            .box::after {{
+                content: "\00a0";
+                visibility: hidden;
+                display: block;
+                height: 0;
+            }}
+            .checkbox_label.dim {{
+                color: #aaa;
+            }}
+            .checkbox_label.dim span {{
+                color: #aaa;
+            }}
+            </style>
+        """)
+
+    def get_html(self):
+        return dedent(f"""
+            <form id="checkbox_widget">
+            {
+                "<br>\n".join([
+                    dedent(f'''
+                    <div>
+                    <div class="checkbox{" checked" if option[0] else ""}" name="checkbox_widget_buttons" id="checkbox_button_{str(i)}"><div class="box" id="checkbox_box_{str(i)}"><span class="tick">✔</span></div></div>
+                    <label class="checkbox_label" id="checkbox_label_{str(i)}" for="checkbox_button_{str(i)}"> {option[1]}</label>
+                    </div>
+                    ''') for i, option in enumerate(self.options)
+                ])
+            }
+            </form>
+        """)
+    # <input type="checkbox" name="checkbox_widget_buttons" id="checkbox_button_{str(i)}" value="{str(i)}"{" checked" if option[0] else ""}>
+
+
+    def make_checkbox_label_hover_callback(self, idx):
+        def callback(event):
+            self.hovered_option = idx
+            # print(f'hovered label {self.hovered_option}')
+        return callback
+
+    def make_checkbox_label_click_callback(self, idx):
+        def callback(event):
+            self.toggle_checkbox(idx)
+            # print(f'clicked label {idx} status {self.selected_options[idx]}')
+        return callback
+
+    def make_checkbox_button_hover_callback(self, idx):
+        def callback(event):
+            self.hovered_option = idx
+            # print(f'hovered checkbox {self.hovered_option}')
+        return callback
+
+    def make_checkbox_button_click_callback(self, idx):
+        def callback(event):
+            self.toggle_checkbox(idx)
+            # print(f'clicked checkbox {idx} status {self.selected_options[idx]}')
+        return callback
+
+    def toggle_checkbox(self, checkbox_id: int):
+        if not isinstance(checkbox_id, int):
+            return
+        checked = self.selected_options[checkbox_id]
+        button = self.frame.document.getElementById(f"checkbox_button_{checkbox_id}")
+        label = self.frame.document.getElementById(f"checkbox_label_{checkbox_id}")
+        if checked:
+            button.setAttribute("class", "checkbox")
+            label.setAttribute("class", "checkbox_label dim")
+        else:
+            button.setAttribute("class", "checkbox checked")
+            label.setAttribute("class", "checkbox_label")
+        self.selected_options[checkbox_id] = not checked
+        self.frame.clear_selection()
+
+    def setup_callbacks(self):
+        for i in range(len(self.options)):
+            checkbox_button = self.frame.document.getElementById(f"checkbox_box_{i}")
+            checkbox_button.bind("<Enter>", self.make_checkbox_button_hover_callback(i))
+            checkbox_button.bind("<Button-1>", self.make_checkbox_button_click_callback(i))
+
+            checkbox_label = self.frame.document.getElementById(f"checkbox_label_{i}")
+            checkbox_label.bind("<Enter>", self.make_checkbox_label_hover_callback(i))
+            checkbox_label.bind("<Button-1>", self.make_checkbox_label_click_callback(i))
+
