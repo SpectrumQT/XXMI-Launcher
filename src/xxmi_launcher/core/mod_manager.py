@@ -636,7 +636,7 @@ class ModManager:
                 continue
             indent = line[:len(line) - len(line.lstrip())]
             if issue.reason == 'ib' and Config.Launcher.active_importer == 'WWMI':
-                fixed_line = '$\WWMIv1\enable_ib_callbacks = 1'
+                fixed_line = r"$\WWMIv1\enable_ib_callbacks = 1"
             else:
                 fixed_line = ';' + line.strip()
             log.info(f'    - Line #{issue.line_id+1} `{line.strip()}` with `{fixed_line}` (reason: {issue.reason})')

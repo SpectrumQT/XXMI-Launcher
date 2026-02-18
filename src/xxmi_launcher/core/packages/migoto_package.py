@@ -163,7 +163,7 @@ class MigotoPackage(Package):
     
                             If game window takes more than {start_timeout} seconds to appear, adjust **Timeout** in **General Settings**.
     
-                            If game crashed, try to follow the [Crash Isolation Checklist](checklist_link).
+                            If game crashed, try to follow the [Crash Isolation Checklist]({checklist_link}).
                         """).format(
                             process_name=process_name,
                             importer=Config.Launcher.active_importer,
@@ -228,7 +228,7 @@ class MigotoPackage(Package):
 
                     If game window takes more than {start_timeout} seconds to appear, adjust **Timeout** in **General Settings**.
 
-                    If game crashed, try to follow the [Crash Isolation Checklist](checklist_link).
+                    If game crashed, try to follow the [Crash Isolation Checklist]({checklist_link}).
                 """).format(
                     process_name=process_name,
                     importer=Config.Launcher.active_importer,
