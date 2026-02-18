@@ -4,8 +4,6 @@ import shutil
 
 import pyglet
 
-from pathlib import Path
-
 import core.path_manager as Paths
 import core.event_manager as Events
 import core.config_manager as Config
@@ -14,8 +12,8 @@ from core.locale_manager import L
 
 from customtkinter import set_appearance_mode, set_default_color_theme
 
-from gui.windows.message_window import MessageWindow
 from gui.classes.windows import UIMainWindow, limit_scaling
+from gui.windows.main.message_frame.message_frame import MessageFrame
 from gui.windows.main.launcher_frame.launcher_frame import LauncherFrame
 
 log = logging.getLogger(__name__)
@@ -35,6 +33,10 @@ class MainWindow(UIMainWindow):
 
         self.hide()
 
+        self.cfg.title = 'XXMI Launcher'
+        self.cfg.width = 1280
+        self.cfg.height = 720
+
         # Use dark mode theme colors
         set_appearance_mode('Dark')
 
@@ -42,20 +44,14 @@ class MainWindow(UIMainWindow):
         pyglet.options['win32_gdi_font'] = True
 
         self.active_theme = None
-
-        self.load_theme('Default')
-
-        Events.Subscribe(Events.Application.ShowMessage,
-                         lambda event: self.show_messagebox(event))
-        Events.Subscribe(Events.Application.ShowError,
-                         lambda event: self.show_messagebox(event))
-        Events.Subscribe(Events.Application.ShowWarning,
-                         lambda event: self.show_messagebox(event))
-        Events.Subscribe(Events.Application.ShowInfo,
-                         lambda event: self.show_messagebox(event))
-
         self.launcher_frame = None
         self.message_frame = None
+
+        Events.Subscribe(Events.Application.MoveWindow, lambda event: self.move(event.offset_x, event.offset_y))
+        Events.Subscribe(Events.Application.ShowMessage, lambda event: self.show_messagebox(event))
+        Events.Subscribe(Events.Application.ShowError, lambda event: self.show_messagebox(event))
+        Events.Subscribe(Events.Application.ShowWarning, lambda event: self.show_messagebox(event))
+        Events.Subscribe(Events.Application.ShowInfo, lambda event: self.show_messagebox(event))
 
     def load_theme(self, theme: str):
         # Skip loading the same theme
@@ -122,9 +118,8 @@ class MainWindow(UIMainWindow):
             return False
 
         try:
-            with open(theme_json_path, 'r') as f:
-                theme_data = json.load(f)
-                theme_api_version = theme_data['Metadata']['theme_api_version']
+            theme_data = json.loads(Paths.App.read_text(theme_json_path))
+            theme_api_version = theme_data['Metadata']['theme_api_version']
         except:
             theme_api_version = '0.0.0'
 
@@ -133,9 +128,6 @@ class MainWindow(UIMainWindow):
             set_default_color_theme(str(default_json_path))
             update_dialogue = Events.Application.ShowWarning(
                 modal=True,
-                screen_center=not self.is_shown(),
-                lock_master=self.is_shown(),
-                icon='update-icon.ico',
                 title=L('message_title_theme_update_required', 'Theme Update Required'),
                 confirm_text=L('message_button_theme_use_default', 'Use Default'),
                 cancel_text=L('message_button_patch_theme', 'Patch Theme'),
@@ -152,7 +144,7 @@ class MainWindow(UIMainWindow):
                 Config.Launcher.gui_theme = 'Default'
                 self.load_theme('Default')
             else:
-                Events.Fire(Events.Application.VerifyFileAccess(path=theme_json_path, write=True))
+                Events.Fire(Events.PathManager.VerifyFileAccess(path=theme_json_path, write=True))
                 theme_json_path.unlink()
                 shutil.copy2(default_json_path, theme_json_path)
                 self.load_theme(theme_name)
@@ -205,11 +197,6 @@ class MainWindow(UIMainWindow):
 
         self.load_theme(Config.Config.active_theme)
 
-        self.cfg.title = 'XXMI Launcher'
-
-        self.cfg.width = 1280
-        self.cfg.height = 720
-
         self.apply_config()
 
         self.center_window()
@@ -220,7 +207,6 @@ class MainWindow(UIMainWindow):
         # Auto reload
         self.reload_theme()
 
-        Events.Subscribe(Events.Application.MoveWindow, lambda event: self.move(event.offset_x, event.offset_y))
         Events.Subscribe(Events.GUI.ToggleThemeDevMode, self.reload_theme)
         Events.Subscribe(Events.GUI.ReloadGUI, self.reload_gui)
 
@@ -264,56 +250,55 @@ class MainWindow(UIMainWindow):
         Events.Fire(Events.Application.Ready())
         super().close()
 
-    def show_messagebox(self, event):
+    def show_messagebox(self, event=None, **kwargs):
         if not self.exists:
             return False
 
-        if event.lock_master is None:
-            event.lock_master = self.is_shown()
+        if event is not None:
+            kwargs = vars(event)
 
-        if event.screen_center is None:
-            event.screen_center = not self.is_shown()
-
-        reopen_settings = False
+        minimal_gui = False
+        modal = kwargs.pop('modal', False)
+        show_settings = False
+        settings_frame = None
 
         if self.launcher_frame is None:
-            messagebox = MessageWindow(self, icon=event.icon,
-                                    title=event.title, message=event.message,
-                                    confirm_text=event.confirm_text, confirm_command=event.confirm_command,
-                                    cancel_text=event.cancel_text, cancel_command=event.cancel_command,
-                                    radio_options=event.radio_options,
-                                    lock_master=event.lock_master, screen_center=event.screen_center)
-
+            # Initialize minimal GUI (launcher crashed before LauncherFrame initialization)
+            minimal_gui = True
+            self.load_theme('Default')
+            self.apply_config()
+            self.center_window()
+            self.launcher_frame = self.put(LauncherFrame(self, minimal=True))
+            self.launcher_frame.grid(row=0, column=0, padx=0, pady=0, sticky='news')
         else:
-
-            from gui.windows.settings.settings_frame import SettingsFrame
-            settings_frame = self.launcher_frame.grab(SettingsFrame)
-
+            # Hide SettingsFrame if it's open and remember to show it again once message is closed
+            settings_frame = self.launcher_frame.grab('SettingsFrame')
             if not settings_frame.is_hidden:
-                reopen_settings = True
+                show_settings = True
                 settings_frame.hide()
 
-            from gui.windows.main.message_frame.message_frame import MessageFrame
-            messagebox = MessageFrame(self.launcher_frame, self.launcher_frame.canvas,
-                                      title=event.title, message=event.message,
-                                      confirm_text=event.confirm_text, confirm_command=event.confirm_command,
-                                      cancel_text=event.cancel_text, cancel_command=event.cancel_command,
-                                      radio_options=event.radio_options)
+        messagebox = MessageFrame(self.launcher_frame, self.launcher_frame.canvas, **kwargs)
 
-            self.message_frame = self.put(messagebox)
-            self.message_frame.show()
+        self.message_frame = self.put(messagebox)
+        self.message_frame.show()
 
-        if event.modal:
+        if minimal_gui:
+            self.show()
+
+        if modal:
             self.wait_window(messagebox)
 
         if self.message_frame is not None:
             self.message_frame = None
 
-        if reopen_settings and settings_frame.is_hidden:
+        if show_settings and settings_frame.is_hidden:
             settings_frame.show()
 
         if messagebox.radio_var is not None:
             return messagebox.response, messagebox.radio_var.get()
+
+        if messagebox.selected_options is not None:
+            return messagebox.response, messagebox.selected_options
 
         return messagebox.response
 
