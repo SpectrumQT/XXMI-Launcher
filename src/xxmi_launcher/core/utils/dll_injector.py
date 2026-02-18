@@ -9,9 +9,9 @@ import ctypes.wintypes as wt
 
 from typing import List, Optional
 from pathlib import Path
-from pyinjector import inject
+from enum import Enum
 
-from core.locale_manager import L
+from core.locale_manager import L, LocaleString
 
 
 log = logging.getLogger(__name__)
@@ -19,11 +19,13 @@ log = logging.getLogger(__name__)
 
 class DllInjector:
     def __init__(self, injector_lib_path):
-        self.lib = self.load(Path(injector_lib_path).resolve())
+        self.lib = None
         self.dll_path = None
         self.target_process = None
         self.hook = None
         self.mutex = None
+
+        self.load(Path(injector_lib_path).resolve())
 
     @staticmethod
     def get_short_path(path: Path) -> str:
@@ -33,29 +35,33 @@ class DllInjector:
         except Exception as e:
             return str(path.resolve())
 
-    @staticmethod
-    def load(injector_lib_path):
+    def load(self, injector_lib_path):
         if not injector_lib_path.exists():
             raise ValueError(L('error_dll_injector_file_not_found', 'Injector file not found: {injector_lib_path}!').format(path=injector_lib_path))
 
         try:
-            lib = ct.cdll.LoadLibrary(str(injector_lib_path))
+            self.lib = ct.cdll.LoadLibrary(str(injector_lib_path))
         except Exception as e:
             raise ValueError(L('error_dll_injector_load_failed', 'Failed to load injector library!')) from e
 
         try:
-            lib.HookLibrary.argtypes = (wt.LPCWSTR, ct.POINTER(wt.HHOOK), ct.POINTER(wt.HANDLE))
-            lib.HookLibrary.restype = ct.c_int
+            self.lib.HookLibrary.argtypes = (wt.LPCWSTR, ct.POINTER(wt.HHOOK), ct.POINTER(wt.HANDLE))
+            self.lib.HookLibrary.restype = ct.c_int
 
-            lib.WaitForInjection.argtypes = (wt.LPCWSTR, wt.LPCWSTR, ct.c_int)
-            lib.WaitForInjection.restype = ct.c_int
+            self.lib.WaitForInjection.argtypes = (wt.LPCWSTR, wt.LPCWSTR, ct.c_int)
+            self.lib.WaitForInjection.restype = ct.c_int
 
-            lib.UnhookLibrary.argtypes = (ct.POINTER(wt.HHOOK), ct.POINTER(wt.HANDLE))
-            lib.UnhookLibrary.restype = ct.c_int
+            self.lib.UnhookLibrary.argtypes = (ct.POINTER(wt.HHOOK), ct.POINTER(wt.HANDLE))
+            self.lib.UnhookLibrary.restype = ct.c_int
+
+            self.lib.Inject.argtypes = (wt.DWORD, wt.LPCWSTR, ct.c_int)
+            self.lib.Inject.restype = ct.c_int
         except Exception as e:
+            try:
+                self.unload()
+            except Exception:
+                pass
             raise ValueError(L('error_dll_injector_setup_failed', 'Failed to setup injector library!')) from e
-
-        return lib
 
     def unload(self):
         # Define FreeLibrary arg1 type as HMODULE handle (C void * pointer)
@@ -105,17 +111,6 @@ class DllInjector:
         log.debug(f'Starting game process {process_name} using {start_method} method: exe_path={exe_path}, work_dir={work_dir}, start_args={start_args}, process_flags={process_flags}, cmd={cmd}, dll_paths={dll_paths}')
 
         start_method = start_method.upper()
-
-        # Pyinjector fails with non-ascii paths
-        # if dll_paths:
-            # for dll_path in dll_paths:
-                # try:
-                    # str(dll_path).encode('ascii')
-                # except Exception as e:
-                    # raise ValueError(L('error_dll_injector_non_ascii_path', """
-                        # Please rename all folders from the path using only English letters:
-                        # {dll_path}
-                    # """).format(dll_path=dll_path)) from e
 
         if start_method == 'NATIVE':
             if cmd is None:
@@ -196,6 +191,40 @@ class DllInjector:
             return False
         return True
 
+    class ErrorMixin:
+        UNKNOWN_ERROR_CODE = (-1, L('error_unknown_error_code', 'Unknown error code {error_code}'))
+
+        def __init__(self, code: int, message: LocaleString):
+            self.code = code
+            self._message = message
+
+        def msg(self) -> LocaleString:
+            return self._message
+
+        def format(self, **kwargs) -> LocaleString:
+            return self._message.format(**kwargs)
+
+        @classmethod
+        def from_code(cls, code: int):
+            """Get enum member by numeric code, fallback to UNKNOWN_ERROR_CODE."""
+            for member in cls:
+                if member.code == code:
+                    return member
+            return cls.UNKNOWN_ERROR_CODE
+
+    class InjectError(ErrorMixin, Enum):
+        PROCESS_NOT_FOUND = (100, L('error_dll_inject_process_not_found', 'Process {pid} not found'))
+        INVALID_DLL_PATH = (110, L('error_dll_inject_invalid_dll_path', 'Invalid DLL path {dll_path}'))
+        KERNEL32_FAIL = (120, L('error_dll_inject_kernel32_fail', 'Failed to resolve kernel32.dll'))
+        LOADLIBRARY_FAIL = (130, L('error_dll_inject_loadlibrary_fail', 'Failed to resolve LoadLibraryW'))
+        REMOTE_ALLOC_FAIL = (200, L('error_dll_inject_remote_alloc_fail', 'Failed to allocate remote memory'))
+        WRITE_MEMORY_FAIL = (300, L('error_dll_inject_write_memory_fail', 'Failed to write DLL path to process memory'))
+        THREAD_FAIL = (400, L('error_dll_inject_thread_fail', 'Failed to create remote thread'))
+        THREAD_TIMEOUT = (500, L('error_dll_inject_thread_timeout', 'Injection thread timed out'))
+        THREAD_WAIT_FAIL = (510, L('error_dll_inject_thread_wait_fail', 'Injection thread wait failed'))
+        INJECTION_FAILED = (600, L('error_dll_inject_injection_failed', 'DLL injection failed'))
+        UNKNOWN_ERROR = (700, L('error_dll_inject_unknown_error', 'Unknown low level error'))
+
     def inject_libraries(self, dll_paths: List[Path], process_name: str = None, pid: int = None, timeout: int = 15):
 
         time_start = time.time()
@@ -212,15 +241,24 @@ class DllInjector:
                 try:
                     if process.name() == process_name or process.pid == pid:
                         for dll_path in dll_paths:
-                            safe_path = self.get_short_path(dll_path)
-                            try:
-                                inject(process.pid, safe_path)
-                            except Exception as e:
-                                raise ValueError(L('error_dll_injector_extra_library_failed', """
-                                    Failed to inject extra library {dll_path}:
-                                    {error_text}!
-                                    Please check Advanced Settings → Inject Libraries.
-                                """).format(dll_path=dll_path, error_text=e)) from e
+                            wide_dll_path = wt.LPCWSTR(str(dll_path.resolve()))
+                            result = self.lib.Inject(process.pid, wide_dll_path, ct.c_int(timeout))
+                            if result != 0:
+                                inject_error = DllInjector.InjectError.from_code(result)
+                                error_text = inject_error.format(pid=process.pid, dll_path=dll_path, error_code=result)
+                                if dll_path.name == 'd3d11.dll' and len(dll_paths) == 1:
+                                    raise ValueError(L('error_dll_injector_failed', """
+                                        Failed to inject {dll_path}:
+                                        {error_text}!
+                                    """).format(dll_path=dll_path, error_text=error_text))
+                                else:
+                                    raise ValueError(L('error_dll_injector_extra_library_failed', """
+                                        Failed to inject extra library {dll_path}:
+                                        {error_text}!
+                                        Please check Advanced Settings → Inject Libraries.
+                                    """).format(dll_path=dll_path, error_text=error_text))
+                            else:
+                                log.debug(f'Successfully injected DLL to process {process.name()} (PID: {process.pid}): {dll_path}')
                         return process.pid
                 except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                     pass
