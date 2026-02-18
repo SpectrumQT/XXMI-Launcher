@@ -16,8 +16,9 @@ class ToolBarFrame(UIFrame):
     def __init__(self, master, canvas, **kwargs):
         super().__init__(master=master, canvas=canvas, **kwargs)
 
-        self.set_background_image(image_path='background-image.png', width=230,
-                                  height=156, x=1230, y=595, anchor='se', brightness=0.0, opacity=0.7)
+        self.set_background_image(width=100, height=191, x=1230, y=595, anchor='se',
+                                  fg_color='#000000', border_color='#000000', border_radius=16, border_width=1,
+                                  brightness=1.0, opacity=0.7, dim_opacity=0.0)
 
         self.hovered = False
         self.locked = False
@@ -31,7 +32,15 @@ class ToolBarFrame(UIFrame):
         self.put(RepairXXMIButton(self))
         self.put(CheckForUpdatesButton(self))
         self.put(CreateShortcutButton(self))
+        self.put(OptimizeModsButton(self))
         self.put(OpenModsFolderButton(self))
+
+        width = max(e.winfo_width() for e in self.elements.values() if isinstance(e, ToolsBarButton)) + 30
+        self.background_image.configure(width=width)
+        for element in self.elements.values():
+            if isinstance(element, ToolsBarButton):
+                element.move(1230 - width + 10, element._y)
+                element._bg_image.configure(width=width-20)
 
         self.subscribe(Events.GUI.LauncherFrame.ToggleToolbox, self.handle_toggle_toolbox)
         self.subscribe(Events.Application.Busy, lambda event: self.hide())
@@ -89,7 +98,7 @@ class ToolsBarButton(UIImageButton):
             anchor='w',
             width=22,
             height=22,
-            bg_width=210,
+            bg_width=100,
             bg_height=30,
             button_x_offset=8,
             button_normal_opacity=0.8,
@@ -123,7 +132,7 @@ class ToolsBarButton(UIImageButton):
 class RepairXXMIButton(ToolsBarButton):
     def __init__(self, master):
         super().__init__(
-            y=465,
+            y=430,
             button_image_path='button-tool-repair-xxmi.png',
             text='',
             command=lambda: Events.Fire(Events.Application.Update(force=True, reinstall=True, packages=[Config.Launcher.active_importer])),
@@ -135,7 +144,7 @@ class RepairXXMIButton(ToolsBarButton):
 class CheckForUpdatesButton(ToolsBarButton):
     def __init__(self, master):
         super().__init__(
-            y=500,
+            y=465,
             button_image_path='button-tool-check-for-updates.png',
             text=L('tool_bar_check_updates_button', 'Check For Updates'),
             command=lambda: Events.Fire(Events.Application.CheckForUpdates()),
@@ -145,10 +154,20 @@ class CheckForUpdatesButton(ToolsBarButton):
 class CreateShortcutButton(ToolsBarButton):
     def __init__(self, master):
         super().__init__(
-            y=535,
+            y=500,
             button_image_path='button-tool-add-shortcut.png',
             text=L('tool_bar_add_shortcut_button', 'Add Desktop Shortcut'),
             command=lambda: Events.Fire(Events.ModelImporter.CreateShortcut()),
+            master=master)
+
+
+class OptimizeModsButton(ToolsBarButton):
+    def __init__(self, master):
+        super().__init__(
+            y=535,
+            button_image_path='button-tool-optimize-mods.png',
+            text=L('tool_bar_optimize_mods_button', 'Optimize Mods'),
+            command=lambda: Events.Fire(Events.ModelImporter.OptimizeMods(silent=False)),
             master=master)
 
 

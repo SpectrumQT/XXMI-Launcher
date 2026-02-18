@@ -209,21 +209,37 @@ class UIImage(UICanvasWidget, CTkBaseClass):
         # self._video_rendering_active = False
         # self._video_frame_counter = []
 
-        if fg_color or border_radius:
-            new_image = self.create_rectangle(width, height, fg_color, border_radius, border_width, border_color,
-                                              bg_opacity=bg_opacity, padx=padx, pady=pady)
-            width, height = new_image.width, new_image.height
-            if image_path is not None:
-                image_path = self.compose_image_centered(image_path, new_image)
-            else:
-                image_path = new_image
+        self.fg_color = None
+        self.border_radius = None
+        self.border_width = None
+        self.border_color = None
+        self.bg_opacity = None
+        self.padx = None
+        self.pady = None
 
         self.configure(image_path=image_path, x=x, y=y, width=width, height=height, anchor=anchor,
-                       opacity=opacity, brightness=brightness, **kwargs)
+                       opacity=opacity, brightness=brightness, fg_color=fg_color, border_radius=border_radius,
+                       border_width=border_width, border_color=border_color, bg_opacity=bg_opacity, padx=padx, pady=pady, **kwargs)
 
         self._apply_theme()
 
     def configure(self, **kwargs):
+        if self._update_attrs(['fg_color', 'border_radius', 'border_width', 'border_color', 'bg_opacity', 'padx', 'pady'], kwargs) or any(x in kwargs for x in ['width', 'height', 'image_path']):
+            if self.fg_color or self.border_radius:
+                image_path = kwargs.get('image_path', self.image_path)
+                width = kwargs.get('width', self._width)
+                height = kwargs.get('height', self._height)
+
+                new_image = self.create_rectangle(width, height, self.fg_color, self.border_radius, self.border_width, self.border_color, self.bg_opacity, self.padx, self.pady)
+                width, height = new_image.width, new_image.height
+                if image_path is not None:
+                    image_path = self.compose_image_centered(image_path, new_image)
+                else:
+                    image_path = new_image
+                kwargs['image_path'] = image_path
+                kwargs['width'] = width
+                kwargs['height'] = height
+
         if self._update_attrs(['image_path'], kwargs):
             if isinstance(self.image_path, Image.Image):
                 self._image = self.image_path
