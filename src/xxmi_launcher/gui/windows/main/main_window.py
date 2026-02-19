@@ -273,7 +273,7 @@ class MainWindow(UIMainWindow):
         else:
             # Hide SettingsFrame if it's open and remember to show it again once message is closed
             settings_frame = self.launcher_frame.grab('SettingsFrame')
-            if not settings_frame.is_hidden:
+            if settings_frame and not settings_frame.is_hidden:
                 show_settings = True
                 settings_frame.hide()
 
