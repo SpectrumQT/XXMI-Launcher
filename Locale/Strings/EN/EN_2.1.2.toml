@@ -1,0 +1,73 @@
+[message_title_model_importer_loading_failed]
+src = "{importer} Loading Failed"
+loc = "{importer} Loading Failed"
+
+[error_package_corrupted_by_antivirus]
+src = """
+**{package_name}** package is corrupted by antivirus (e.g. Windows Defender).
+
+Antiviruses update frequently, try again later, or consider whitelisting paths:
+
+- `{package_folder_path}`
+- `{xxmi_deployment_path}`
+
+Error: {error_text}
+
+This is likely a [false positive]({false_positive_link}). Libraries are built from [open source]({repo_link}) using [GitHub Actions]({github_actions_link}) and downloaded from [GitHub releases]({releases_link}).
+"""
+loc = """
+**{package_name}** package is corrupted by antivirus (e.g. Windows Defender).
+
+Antiviruses update frequently, try again later, or consider whitelisting paths:
+
+- `{package_folder_path}`
+- `{xxmi_deployment_path}`
+
+Error: {error_text}
+
+This is likely a [false positive]({false_positive_link}). Libraries are built from [open source]({repo_link}) using [GitHub Actions]({github_actions_link}) and downloaded from [GitHub releases]({releases_link}).
+"""
+
+[error_title_package_corrupted_by_antivirus]
+src = "Data Corruption Detected"
+loc = "Data Corruption Detected"
+
+[error_xxmi_libs_package_corruption]
+src = """
+**XXMI Libraries** package is corrupted.
+
+Details: {error_text}
+"""
+loc = """
+**XXMI Libraries** package is corrupted.
+
+Details: {error_text}
+"""
+
+[message_title_package_repair]
+src = "Package Repair Available"
+loc = "Package Repair Available"
+
+[message_text_package_repair]
+src = """
+{error_text}
+
+Would you like to repair the package automatically?
+"""
+loc = """
+{error_text}
+
+Would you like to repair the package automatically?
+"""
+
+[message_button_repair_package]
+src = "Repair"
+loc = "Repair"
+
+[error_title_package_download_failed]
+src = "{package} Package Download Failed"
+loc = "{package} Package Download Failed"
+
+[error_title_package_install_failed]
+src = "{package} Package Installation Failed"
+loc = "{package} Package Installation Failed"

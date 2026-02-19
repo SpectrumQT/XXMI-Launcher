@@ -227,3 +227,4 @@ loc = """
 
 *Aplicado al valor CVars=r.Streaming.UseFixedPoolSize en todas las secciones de DeviceProfiles.ini*
 """
+

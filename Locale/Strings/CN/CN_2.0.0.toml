@@ -86,29 +86,9 @@ loc = "XXMI启动器快捷方式"
 src = "Failed to start {process_name}!"
 loc = "启动{process_name}失败！"
 
-[message_button_restore_model_importer]
-src = "Restore"
-loc = "恢复"
-
 [message_button_cancel]
 src = "Cancel"
 loc = "取消"
-
-[message_text_message_text_model_importer_installation_damaged]
-src = """
-XXMI installation is damaged!
-
-Details: {error_text}
-
-Would you like to restore XXMI automatically?
-"""
-loc = """
-XXMI安装已损坏！
-
-详情：{error_text}
-
-您是否希望自动恢复XXMI？
-"""
 
 [status_ensuring_game_closed]
 src = "Ensuring the game is closed..."
@@ -1010,30 +990,6 @@ loc = "文件 {file_name} 签名无效！"
 src = "{package_name} manifest file is missing signature for {file_name}!"
 loc = "{package_name} 清单文件缺少 {file_name} 的签名！"
 
-[error_download_update_failed]
-src = """
-Failed to download {version} update for {package} package:
-{error_text}
-"""
-loc = """
-为 {package} 包下载 {version} 更新失败：
-{error_text}
-"""
-
-[error_install_update_failed]
-src = """
-Failed to install {version} update for {package} package!
-Please restart the launcher or your PC and try again.
-
-{error_text}
-"""
-loc = """
-为 {package} 包安装 {version} 更新失败！
-请重启启动器或电脑并重试。
-
-{error_text}
-"""
-
 [error_github_api_limit]
 src = """
 Unauthorized GitHub API requests limit reached for your IP!
@@ -1117,16 +1073,6 @@ loc = "跳过"
 [message_text_already_up_to_date]
 src = "No updates available!"
 loc = "没有可用更新！"
-
-[error_model_importer_loading_failed]
-src = """
-{importer} Loading Failed:
-{error}
-"""
-loc = """
-{importer} 加载失败：
-{error}
-"""
 
 [message_title_file_write_failed_read_only]
 src = "File Read Only Error"

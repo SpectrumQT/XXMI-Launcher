@@ -1,0 +1,73 @@
+[message_title_model_importer_loading_failed]
+src = "{importer} Loading Failed"
+loc = "Error al cargar {importer}"
+
+[error_package_corrupted_by_antivirus]
+src = """
+**{package_name}** package is corrupted by antivirus (e.g. Windows Defender).
+
+Antiviruses update frequently, try again later, or consider whitelisting paths:
+
+- `{package_folder_path}`
+- `{xxmi_deployment_path}`
+
+Error: {error_text}
+
+This is likely a [false positive]({false_positive_link}). Libraries are built from [open source]({repo_link}) using [GitHub Actions]({github_actions_link}) and downloaded from [GitHub releases]({releases_link}).
+"""
+loc = """
+El paquete **{package_name}** está dañado por el antivirus (por ejemplo, Windows Defender).
+
+Los antivirus se actualizan con frecuencia, inténtelo de nuevo más tarde o considere agregar las siguientes rutas a la lista blanca:
+
+- `{package_folder_path}`
+- `{xxmi_deployment_path}`
+
+Error: {error_text}
+
+Esto probablemente sea un [falso positivo]({false_positive_link}). Las bibliotecas se construyen a partir de código [de código abierto]({repo_link}) usando [GitHub Actions]({github_actions_link}) y se descargan desde [GitHub Releases]({releases_link}).
+"""
+
+[error_title_package_corrupted_by_antivirus]
+src = "Data Corruption Detected"
+loc = "Se detectó corrupción de datos"
+
+[error_xxmi_libs_package_corruption]
+src = """
+**XXMI Libraries** package is corrupted.
+
+Details: {error_text}
+"""
+loc = """
+El paquete **XXMI Libraries** está dañado.
+
+Detalles: {error_text}
+"""
+
+[message_title_package_repair]
+src = "Package Repair Available"
+loc = "Reparación del paquete disponible"
+
+[message_text_package_repair]
+src = """
+{error_text}
+
+Would you like to repair the package automatically?
+"""
+loc = """
+{error_text}
+
+¿Desea reparar el paquete automáticamente?
+"""
+
+[message_button_repair_package]
+src = "Repair"
+loc = "Reparar"
+
+[error_title_package_download_failed]
+src = "{package} Package Download Failed"
+loc = "Error al descargar el paquete {package}"
+
+[error_title_package_install_failed]
+src = "{package} Package Installation Failed"
+loc = "Error al instalar el paquete {package}"

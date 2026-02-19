@@ -94,16 +94,6 @@ loc = "Пропустить"
 src = "No updates available!"
 loc = "Обновления отсутствуют!"
 
-[error_model_importer_loading_failed]
-src = """
-{importer} Loading Failed:
-{error}
-"""
-loc = """
-Не удалось загрузить {importer} :
-{error}
-"""
-
 [message_title_file_write_failed_read_only]
 src = "File Read Only Error"
 loc = "Ошибка: файл только для чтения"
@@ -183,26 +173,6 @@ loc = "Ярлык для запуска XXMI"
 [error_migoto_game_start_failed]
 src = "Failed to start {process_name}!"
 loc = "Не удалось запустить {process_name}!"
-
-[message_button_restore_model_importer]
-src = "Restore"
-loc = "Восстановить"
-
-[message_text_message_text_model_importer_installation_damaged]
-src = """
-XXMI installation is damaged!
-
-Details: {error_text}
-
-Would you like to restore XXMI automatically?
-"""
-loc = """
-Установка XXMI повреждена!
-
-Подробности: {error_text}
-
-Хотите автоматически восстановить XXMI?
-"""
 
 [status_ensuring_game_closed]
 src = "Ensuring the game is closed..."
@@ -839,30 +809,6 @@ loc = "Подпись файла {file_name} недействительна!"
 [error_missing_signature]
 src = "{package_name} manifest file is missing signature for {file_name}!"
 loc = "Файл манифеста пакета {package_name} не содержит подпись для {file_name}!"
-
-[error_download_update_failed]
-src = """
-Failed to download {version} update for {package} package:
-{error_text}
-"""
-loc = """
-Не удалось загрузить обновление {version} для пакета {package}:
-{error_text}
-"""
-
-[error_install_update_failed]
-src = """
-Failed to install {version} update for {package} package!
-Please restart the launcher or your PC and try again.
-
-{error_text}
-"""
-loc = """
-Не удалось установить обновление {version} для пакета {package}!
-Пожалуйста, перезапустите лаунчер или компьютер и повторите попытку.
-
-{error_text}
-"""
 
 [error_github_api_limit]
 src = """

@@ -90,16 +90,6 @@ loc = "Omitir"
 src = "No updates available!"
 loc = "¡No hay actualizaciones disponibles!"
 
-[error_model_importer_loading_failed]
-src = """
-{importer} Loading Failed:
-{error}
-"""
-loc = """
-{importer} Error al cargar:
-{error}
-"""
-
 [message_title_file_write_failed_read_only]
 src = "File Read Only Error"
 loc = "Error de archivo de solo lectura"
@@ -179,26 +169,6 @@ loc = "Acceso directo a XXMI Launcher"
 [error_migoto_game_start_failed]
 src = "Failed to start {process_name}!"
 loc = "¡No se ha podido iniciar {process_name}!"
-
-[message_button_restore_model_importer]
-src = "Restore"
-loc = "Restaurar"
-
-[message_text_message_text_model_importer_installation_damaged]
-src = """
-XXMI installation is damaged!
-
-Details: {error_text}
-
-Would you like to restore XXMI automatically?
-"""
-loc = """
-¡La instalación de XXMI está dañada!
-
-Detalles: {error_text}
-
-¿Desea restaurar XXMI automáticamente?
-"""
 
 [status_ensuring_game_closed]
 src = "Ensuring the game is closed..."
@@ -811,30 +781,6 @@ loc = "¡La firma del archivo {file_name} no es válida!"
 [error_missing_signature]
 src = "{package_name} manifest file is missing signature for {file_name}!"
 loc = "¡El archivo de manifiesto {package_name} no tiene la firma de {file_name}!"
-
-[error_download_update_failed]
-src = """
-Failed to download {version} update for {package} package:
-{error_text}
-"""
-loc = """
-Error al descargar la actualización {version} para el paquete {package}:
-{error_text}
-"""
-
-[error_install_update_failed]
-src = """
-Failed to install {version} update for {package} package!
-Please restart the launcher or your PC and try again.
-
-{error_text}
-"""
-loc = """
-Error al instalar la actualización {version} para el paquete {package}.
-Reinicie el lanzador o su PC e inténtelo de nuevo.
-
-{error_text}
-"""
 
 [error_github_api_limit]
 src = """
