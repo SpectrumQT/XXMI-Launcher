@@ -13,6 +13,7 @@ from dataclasses import dataclass, field
 from threading import Thread, current_thread, main_thread
 from queue import Queue, Empty
 
+import core.error_manager as Errors
 import core.locale_manager as Locale
 import core.path_manager as Paths
 import core.event_manager as Events
@@ -684,13 +685,9 @@ class Application:
             self.gui.after(100, Events.Fire, Events.Application.Ready())
             return
         except Exception as e:
-            raise Exception(L('error_model_importer_loading_failed', """
-                {importer} Loading Failed:
-                {error}
-            """).format(
+            raise Errors.with_title(e, L('message_title_model_importer_loading_failed', '{importer} Loading Failed').format(
                 importer=Config.Launcher.active_importer,
-                error=str(e))
-            ) from e
+            ))
         finally:
             self.is_locked = False
             if not Config.Launcher.auto_close:
@@ -743,6 +740,7 @@ class Application:
         logging.error(trace)
         self.gui.show_messagebox(Events.Application.ShowError(
             modal=True,
+            title=Errors.get_title(error) or L('message_title_error', 'Error'),
             message=str(error),
         ))
         if self.gui.is_shown():
