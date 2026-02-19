@@ -512,6 +512,16 @@ class Paths:
 
         return written_total
 
+    @staticmethod
+    def is_av_error(e: Exception) -> bool:
+        win_err = getattr(e, 'winerror', None)
+        err_no = getattr(e, 'errno', None)
+        return (
+            win_err == 225 or
+            err_no in (errno.EACCES, errno.EBUSY, errno.ENOENT, 22, 32, 145) or
+            isinstance(e, (PermissionError, FileNotFoundError))
+        )
+
 App = Paths()
 
 

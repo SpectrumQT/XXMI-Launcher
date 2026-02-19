@@ -8,6 +8,7 @@ from typing import List
 from dataclasses import dataclass, field
 from pathlib import Path
 
+import core.error_manager as Errors
 import core.path_manager as Paths
 import core.event_manager as Events
 import core.config_manager as Config
@@ -73,10 +74,45 @@ class MigotoPackage(Package):
         except Exception as e:
             return ''
 
-    def install_latest_version(self, clean):
-        Events.Fire(Events.PackageManager.InitializeInstallation())
+    def wrap_av_error(self, e: Exception) -> Exception:
+        return Errors.with_title(Exception(L('error_package_corrupted_by_antivirus', """
+            **{package_name}** package is corrupted by antivirus (e.g. Windows Defender).
+            
+            Antiviruses update frequently, try again later, or consider whitelisting paths:
+            
+            - `{package_folder_path}`
+            - `{xxmi_deployment_path}`
+            
+            Error: {error_text}
+            
+            This is likely a [false positive]({false_positive_link}). Libraries are built from [open source]({repo_link}) using [GitHub Actions]({github_actions_link}) and downloaded from [GitHub releases]({releases_link}).
+        """).format(
+            package_name='XXMI Libraries',
+            false_positive_link='https://learn.microsoft.com/en-us/defender-endpoint/defender-endpoint-false-positives-negatives',
+            repo_link='https://github.com/SpectrumQT/XXMI-Libs-Package',
+            github_actions_link='https://github.com/features/actions',
+            releases_link='https://github.com/SpectrumQT/XXMI-Libs-Package/releases',
+            package_folder_path=str(self.package_path),
+            xxmi_deployment_path=str(Config.Active.Importer.importer_path / 'd3d11.dll'),
+            error_text=str(e),
+        )), L('error_title_package_corrupted_by_antivirus', 'Data Corruption Detected'))
 
-        self.move_contents(self.downloaded_asset_path, self.package_path)
+    def download_latest_version(self):
+        try:
+            super().download_latest_version()
+        except Exception as e:
+            if Paths.App.is_av_error(e):
+                raise self.wrap_av_error(e)
+            raise
+
+    def install_latest_version(self, clean):
+        try:
+            Events.Fire(Events.PackageManager.InitializeInstallation())
+            self.move_contents(self.downloaded_asset_path, self.package_path)
+        except Exception as e:
+            if Paths.App.is_av_error(e):
+                raise self.wrap_av_error(e)
+            raise
 
     def handle_open_mods_folder(self, event: MigotoManagerEvents.OpenModsFolder):
         subprocess.Popen(['explorer.exe', Config.Active.Importer.importer_path / 'Mods'])
@@ -240,17 +276,27 @@ class MigotoPackage(Package):
         time.sleep(1)
 
     def restore_package_files(self, e: Exception, process_name: str, validate=False):
-        user_requested_restore = Events.Call(Events.Application.ShowError(
-            modal=True,
-            confirm_text=L('message_button_restore_model_importer', 'Restore'),
-            cancel_text=L('message_button_cancel', 'Cancel'),
-            message=L('message_text_message_text_model_importer_installation_damaged', """
-                XXMI installation is damaged!
+        if Paths.App.is_av_error(e) or isinstance(e, FileNotFoundError):
+            e = self.wrap_av_error(e)
+        else:
+            e = Exception(L('error_xxmi_libs_package_corruption', """
+                **XXMI Libraries** package is corrupted.
                 
                 Details: {error_text}
+            """).format(
+                error_text=str(e).strip())
+            )
+
+        user_requested_restore = Events.Call(Events.Application.ShowError(
+            modal=True,
+            title=L('message_title_package_repair', 'Package Repair Available'),
+            message=L('message_text_package_repair', """
+                {error_text}
                 
-                Would you like to restore XXMI automatically?
+                Would you like to repair the package automatically?
             """).format(error_text=str(e).strip()),
+            confirm_text=L('message_button_repair_package', 'Repair'),
+            cancel_text=L('message_button_cancel', 'Cancel'),
         ))
 
         if not user_requested_restore:
@@ -334,7 +380,7 @@ class MigotoPackage(Package):
                             original_signature = self.get_signature(deployment_path)
                             Config.Active.Importer.deployed_migoto_signatures[file_name] = original_signature
                     else:
-                        raise ValueError(L('error_xxmi_missing_critical_file', 'XXMI package is missing critical file: {file_name}!').format(file_name=deployment_path.name))
+                        raise FileNotFoundError(L('error_xxmi_missing_critical_file', 'XXMI package is missing critical file: {file_name}!').format(file_name=deployment_path.name))
 
     def validate_deployed_files(self):
         package_libs = ['3dmloader.dll']

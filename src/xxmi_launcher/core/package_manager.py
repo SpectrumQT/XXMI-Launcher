@@ -12,6 +12,7 @@ from pathlib import Path
 from dacite import from_dict
 from win32api import GetFileVersionInfo, HIWORD, LOWORD
 
+import core.error_manager as Errors
 import core.event_manager as Events
 import core.path_manager as Paths
 import core.config_manager as Config
@@ -238,7 +239,7 @@ class Package:
         manifest = Manifest()
         manifest_path = self.package_path / 'Manifest.json'
         if not manifest_path.exists():
-            raise ValueError(L('error_missing_manifest', '{package_name} package is missing manifest file!').format(package_name=self.metadata.package_name))
+            raise FileNotFoundError(L('error_missing_manifest', '{package_name} package is missing manifest file!').format(package_name=self.metadata.package_name))
         try:
             manifest.from_json(manifest_path)
         except Exception as e:
@@ -249,7 +250,7 @@ class Package:
         if self.manifest is None:
             self.load_manifest()
         if not file_path.exists():
-            raise ValueError(L('error_missing_critical_file', '{package_name} package is missing critical file: {file_name}!').format(package_name=self.metadata.package_name, file_name=file_path.name))
+            raise FileNotFoundError(L('error_missing_critical_file', '{package_name} package is missing critical file: {file_name}!').format(package_name=self.metadata.package_name, file_name=file_path.name))
         file_bytes = Paths.App.read_bytes(file_path)
         if self.security.verify(self.get_signature(file_path), file_bytes):
             return True
@@ -315,10 +316,9 @@ class Package:
         try:
             self.download_latest_version()
         except Exception as e:
-            raise Exception(L('error_download_update_failed', """
-                Failed to download {version} update for {package} package:
-                {error_text}
-            """).format(version=self.cfg.latest_version, package=self.metadata.package_name, error_text=e))
+            raise Errors.with_title(e, L('error_title_package_download_failed', '{package} Package Download Failed').format(
+                package=self.metadata.package_name
+            ))
 
         try:
             self.install_latest_version(clean=clean)
@@ -326,12 +326,9 @@ class Package:
             manifest_path = self.package_path / f'Manifest.json'
             if manifest_path.is_file():
                 manifest_path.unlink()
-            raise Exception(L('error_install_update_failed', """
-                Failed to install {version} update for {package} package!
-                Please restart the launcher or your PC and try again.
-                
-                {error_text}
-            """).format(version=self.cfg.latest_version, package=self.metadata.package_name, error_text=e))
+            raise Errors.with_title(e, L('error_title_package_install_failed', '{package} Package Installation Failed').format(
+                package=self.metadata.package_name
+            ))
 
         self.load_manifest()
         self.detect_installed_version()
