@@ -61,6 +61,7 @@ class LauncherFrame(UIFrame):
         # Donate Frame
         self.subscribe(Events.Application.OpenDonationCenter, self.handle_open_donation_center)
 
+        # from gui.windows.main.message_frame.message_frame import MessageFrame
         # message_frame = self.put(MessageFrame(
         #     self, self.canvas, title='Performance Notification', message=text,
         #     checkbox_options=checkbox_options,

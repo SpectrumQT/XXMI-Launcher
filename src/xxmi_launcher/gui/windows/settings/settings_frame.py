@@ -26,9 +26,6 @@ class SettingsFrame(UIFrame):
 
         self.hide()
 
-        self.subscribe(
-            Events.Application.OpenSettings,
-            lambda event: self.open_settings(tab_name=event.tab_name, wait_window=event.wait_window))
         self.subscribe(Events.Application.CloseSettings, self.handle_close_settings)
 
     def open_settings(self, tab_name='', wait_window=False):

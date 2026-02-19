@@ -282,6 +282,8 @@ class Application:
         if self.args.update:
             Config.Config.save()
 
+        Events.Subscribe(Events.Application.OpenSettings, self.handle_open_settings)
+
         # Quick launch mode
         if self.args.nogui:
             # If there are any updates, ask user whether they want to install or skip them and just launch the game
@@ -297,6 +299,13 @@ class Application:
                 self.exit()
                 return
 
+        self.gui.after(100, self.run_as_thread, self.auto_update)
+
+        self.initialize_gui()
+
+        self.exit()
+
+    def initialize_gui(self, open_settings: bool = False):
         self.gui.initialize()
 
         if self.args.update:
@@ -320,7 +329,8 @@ class Application:
 
         Events.Fire(Events.PackageManager.NotifyPackageVersions(detect_installed=True))
 
-        self.gui.after(100, self.run_as_thread, self.auto_update)
+        if open_settings:
+            Events.Fire(Events.Application.OpenSettings())
 
         self.handle_stats()
 
@@ -330,7 +340,12 @@ class Application:
 
         self.gui.open()
 
-        self.exit()
+    def handle_open_settings(self, event: ApplicationEvents.OpenSettings):
+        settings_frame = self.gui.launcher_frame.grab('SettingsFrame')
+        if not settings_frame:
+            self.initialize_gui(open_settings=True)
+        else:
+            settings_frame.open_settings(tab_name=event.tab_name, wait_window=event.wait_window)
 
     def load_config(self):
         cfg_backup_path = Paths.App.Backups / Config.Config.config_path.name
