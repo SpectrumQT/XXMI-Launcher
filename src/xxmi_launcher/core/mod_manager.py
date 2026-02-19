@@ -414,7 +414,7 @@ class ModManager:
         if reset_cache:
             self.ini_validator.reset_cache()
 
-        self.ini_validator.d3dx_ini_keywords = {'[loader', '[system', '[device', '[stereo', '[commandlistunbindallrendertargets'}
+        self.ini_validator.d3dx_ini_keywords = {'[loader', '[system', '[stereo', '[commandlistunbindallrendertargets'}
         self.ini_validator.d3dx_ini_option_values = {'include': {'include_recursive': 'mods', 'exclude_recursive': 'disabled*'}}
 
         if Config.Launcher.active_importer in ['WWMI', 'EFMI']:
