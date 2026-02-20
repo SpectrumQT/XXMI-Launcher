@@ -300,6 +300,25 @@ class Paths:
                 time.sleep(delay + delay * 0.1 * (2 * random.random() - 1))
                 delay = min(delay * 2, max_delay)
 
+    @staticmethod
+    def replace_path(
+        src_path: Path | str,
+        dst_path: Path | str,
+    ):
+        src_path = Path(src_path).resolve()
+        dst_path = Path(dst_path).resolve()
+
+        if src_path.drive.lower() != dst_path.drive.lower():
+            shutil.move(src_path, dst_path)
+        else:
+            try:
+                os.replace(src_path, dst_path)
+            except OSError as e:
+                if e.errno == errno.EXDEV or getattr(e, "winerror", None) == 17:
+                    shutil.move(src_path, dst_path)
+                else:
+                    raise
+
     @classmethod
     def rename_path(
         cls,
@@ -366,13 +385,13 @@ class Paths:
                             cls.remove_path(src_path)
                         else:
                             # Replace destination
-                            os.replace(src_path, dst_path)
+                            cls.replace_path(src_path, dst_path)
                 else:
                     # If dst_path exists and is a directory (rare if backup moved it), remove it first
                     if dst_path.is_dir():
                         cls.remove_path(dst_path)
                     # Replace destination
-                    os.replace(src_path, dst_path)
+                    cls.replace_path(src_path, dst_path)
                     # Merge back missing files if requested
                     if keep_existing_files and backup_dir and backup_dir.exists():
                         for root, dirs, files in os.walk(backup_dir):
