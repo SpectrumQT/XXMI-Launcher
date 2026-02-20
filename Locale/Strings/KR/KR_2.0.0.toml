@@ -32,7 +32,7 @@ loc = "인수 구문 분석 실패: {args}"
 
 [message_text_config_was_reset]
 src = "Failed to load configuration! Falling back to defaults."
-loc = "구성을 로드하지 못했습니다! 기본값으로 돌아갑니다."
+loc = "구성을 불러오지 못했습니다! 기본값으로 돌아갑니다."
 
 [status_initializing_update]
 src = "Initializing update..."
@@ -40,15 +40,15 @@ loc = "업데이트 초기화 중..."
 
 [message_button_load_backup_config]
 src = "Load Backup"
-loc = "백업 로드"
+loc = "백업 불러오기"
 
 [message_button_load_default_config]
 src = "Load Default"
-loc = "기본값 로드"
+loc = "기본값 불러오기"
 
 [message_text_config_load_failed]
 src = "Failed to load configuration!"
-loc = "구성을 로드하지 못했습니다!"
+loc = "구성을 불러오지 못했습니다!"
 
 [error_unknown_model_importer]
 src = "Unknown model importer {importer}!"
@@ -172,7 +172,7 @@ loc = "{process_name}을(를) 시작하지 못했습니다!"
 
 [status_ensuring_game_closed]
 src = "Ensuring the game is closed..."
-loc = "게임이 닫혀 있는지 확인하는 중..."
+loc = "게임이 종료되어 있는지 확인하는 중..."
 
 [message_text_game_stop_failed]
 src = """
@@ -183,7 +183,7 @@ Please close the game manually and press [OK] to continue.
 loc = """
 {process_name}을(를) 중지하지 못했습니다!
 
-게임을 수동으로 닫고 [확인]을 눌러 계속하세요.
+게임을 수동으로 끄고 [확인]을 눌러 계속하세요.
 """
 
 [error_xxmi_missing_critical_file]
@@ -297,7 +297,7 @@ Please close it manually and press [OK] to continue.
 loc = """
 FPS Unlocker를 종료하지 못했습니다!
 
-수동으로 닫고 [확인]을 눌러 계속하세요.
+수동으로 끄고 [확인]을 눌러 계속하세요.
 """
 
 [error_game_exe_not_found]
