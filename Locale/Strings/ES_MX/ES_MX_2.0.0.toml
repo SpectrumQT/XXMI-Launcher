@@ -886,10 +886,6 @@ loc = "¡No se ha encontrado el archivo del inyector: {injector_lib_path}!"
 src = "Failed to load injector library!"
 loc = "¡Error al cargar la biblioteca del inyector!"
 
-[error_dll_injector_setup_failed]
-src = "Failed to setup injector library!"
-loc = "¡Error al configurar la biblioteca del inyector!"
-
 [error_dll_injector_unload_failed]
 src = "Failed to unload injector library!"
 loc = "¡Error al descargar la biblioteca del inyector!"

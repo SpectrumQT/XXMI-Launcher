@@ -702,10 +702,6 @@ loc = "注入器文件未找到：{injector_lib_path}！"
 src = "Failed to load injector library!"
 loc = "加载注入器库失败！"
 
-[error_dll_injector_setup_failed]
-src = "Failed to setup injector library!"
-loc = "设置注入器库失败！"
-
 [error_dll_injector_unload_failed]
 src = "Failed to unload injector library!"
 loc = "卸载注入器库失败！"

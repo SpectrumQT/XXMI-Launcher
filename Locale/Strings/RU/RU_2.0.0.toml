@@ -914,10 +914,6 @@ loc = "Файл инжектора не найден: {injector_lib_path}!"
 src = "Failed to load injector library!"
 loc = "Не удалось загрузить библиотеку инжектора!"
 
-[error_dll_injector_setup_failed]
-src = "Failed to setup injector library!"
-loc = "Не удалось настроить библиотеку инжектора!"
-
 [error_dll_injector_unload_failed]
 src = "Failed to unload injector library!"
 loc = "Не удалось выгрузить библиотеку инжектора!"

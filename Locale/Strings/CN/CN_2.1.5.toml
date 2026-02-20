@@ -1,0 +1,23 @@
+[error_old_3dmloader]
+src = """
+Provided **3dmloader.dll** is too old, it's missing **Inject** method.
+
+Please put **3dmloader.dll** from **v0.7.5+** to `Packages/XXMI` or use **Hook** method (without **Inject Libraries**).
+"""
+loc = """
+提供的 **3dmloader.dll** 版本过旧，缺少 **Inject** 方法。
+
+请将 **v0.7.5+** 版本的 **3dmloader.dll** 放入 `Packages/XXMI` 目录，或使用 **Hook** 方法（不使用 **注入库**）。
+"""
+
+[error_dll_injector_setup_failed]
+src = """
+Failed to setup injector library!
+
+Error: {error_text}
+"""
+loc = """
+设置注入器库失败！
+
+错误：{error_text}
+"""
