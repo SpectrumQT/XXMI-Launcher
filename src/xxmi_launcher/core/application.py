@@ -299,8 +299,6 @@ class Application:
                 self.exit()
                 return
 
-        self.gui.after(100, self.run_as_thread, self.auto_update)
-
         self.initialize_gui()
 
         self.exit()
@@ -328,6 +326,8 @@ class Application:
         Events.Fire(Events.Application.ConfigUpdate())
 
         Events.Fire(Events.PackageManager.NotifyPackageVersions(detect_installed=True))
+
+        self.gui.after(100, self.run_as_thread, self.auto_update)
 
         if open_settings:
             Events.Fire(Events.Application.OpenSettings())
