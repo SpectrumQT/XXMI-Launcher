@@ -289,7 +289,7 @@ class Package:
 
     def move_contents(self, source_path: Path, destination_path: Path):
         Paths.verify_path(destination_path)
-        Paths.App.rename_path(source_path, destination_path)
+        Paths.App.rename_path(source_path, destination_path, no_backup=True)
 
     def get_parent_directory(self, path, folder_name):
         parts = list(path.parts)

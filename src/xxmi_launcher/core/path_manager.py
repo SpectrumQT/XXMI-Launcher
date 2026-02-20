@@ -310,6 +310,7 @@ class Paths:
         max_delay: float = 0.5,
         keep_existing_files: bool = True,
         unlink_src_on_fail: bool = False,
+        no_backup: bool = False,
         silent: bool = False,
     ):
         """
@@ -333,7 +334,7 @@ class Paths:
 
         # Handle existing dst_path dir (including dst_path is inside src_path)
         backup_dir: Path | None = None
-        if dst_path.is_dir():
+        if not no_backup and dst_path.is_dir():
             # Rename exiting dst_path folder to prevent collision with src_path renaming
             backup_dir = cls.get_free_path(dst_path)
             cls.rename_path(dst_path, backup_dir, timeout=timeout, base_delay=base_delay, max_delay=max_delay, silent=silent)
@@ -342,29 +343,54 @@ class Paths:
         delay = base_delay
         while True:
             try:
-                # If dst_path exists and is a directory (rare if backup moved it), remove it first
-                if dst_path.is_dir():
-                    cls.remove_path(dst_path)
-                # Replace destination
-                os.replace(src_path, dst_path)
-                # Merge back missing files if requested
-                if keep_existing_files and backup_dir and backup_dir.exists():
-                    for root, dirs, files in os.walk(backup_dir):
-                        root = Path(root)
-                        target_root = dst_path / root.relative_to(backup_dir)
-                        # Ensure directories exist
-                        target_root.mkdir(parents=True, exist_ok=True)
-                        for d in dirs:
-                            (target_root / d).mkdir(exist_ok=True)
-                        # Move files
-                        for file in files:
-                            src_file = root / file
-                            dst_file = target_root / file
-                            if not dst_file.exists():
-                                cls.rename_path(src_file, dst_file, silent=silent)
-                # If we moved the original dir to backup, remove it now
-                if backup_dir and backup_dir.exists():
-                    cls.remove_path(backup_dir)
+                if no_backup:
+                    if not keep_existing_files:
+                        cls.remove_path(dst_path)
+                    else:
+                        if src_path.is_dir():
+                            for root, dirs, files in os.walk(src_path):
+                                root = Path(root)
+                                target_root = dst_path / root.relative_to(src_path)
+                                # Ensure directories exist
+                                target_root.mkdir(parents=True, exist_ok=True)
+                                for d in dirs:
+                                    (target_root / d).mkdir(exist_ok=True)
+                                # Move files
+                                for file in files:
+                                    src_file = root / file
+                                    dst_file = target_root / file
+                                    if src_file.is_dir():
+                                        continue
+                                    cls.rename_path(src_file, dst_file, no_backup=True, silent=silent)
+                            # Remove empty original dirs
+                            cls.remove_path(src_path)
+                        else:
+                            # Replace destination
+                            os.replace(src_path, dst_path)
+                else:
+                    # If dst_path exists and is a directory (rare if backup moved it), remove it first
+                    if dst_path.is_dir():
+                        cls.remove_path(dst_path)
+                    # Replace destination
+                    os.replace(src_path, dst_path)
+                    # Merge back missing files if requested
+                    if keep_existing_files and backup_dir and backup_dir.exists():
+                        for root, dirs, files in os.walk(backup_dir):
+                            root = Path(root)
+                            target_root = dst_path / root.relative_to(backup_dir)
+                            # Ensure directories exist
+                            target_root.mkdir(parents=True, exist_ok=True)
+                            for d in dirs:
+                                (target_root / d).mkdir(exist_ok=True)
+                            # Move files
+                            for file in files:
+                                src_file = root / file
+                                dst_file = target_root / file
+                                if not dst_file.exists():
+                                    cls.rename_path(src_file, dst_file, silent=silent)
+                    # If we moved the original dir to backup, remove it now
+                    if backup_dir and backup_dir.exists():
+                        cls.remove_path(backup_dir)
                 return
             except (OSError, PermissionError) as e:
                 err_no = getattr(e, 'errno', None) or getattr(e, 'winerror', None)
