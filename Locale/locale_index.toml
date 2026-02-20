@@ -17,3 +17,8 @@ codepage = "1252"
 display_name = "Русский"
 keywords = ["ru_RU", "Russian", "Russia"]
 codepage = "1251"
+
+[KR]
+display_name = "한국어"
+keywords = ["ko_KR", "Korean", "Korea"]
+codepage = "949"

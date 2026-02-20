@@ -1,0 +1,229 @@
+[top_bar_efmi_button_tooltip]
+src = "Arknights: Endfield Model Importer"
+loc = "명일방주: 엔드필드 모델 임포터"
+
+[general_settings_force_ultra_high_lod_bias_label]
+src = "Max LOD Bias"
+loc = "최대 LOD Bias"
+
+[general_settings_force_ultra_high_lod_bias_tooltip]
+src = """
+**Enabled**: Set **LOD Bias** to **Ultra High** to force full resolution LOD textures.
+**Disabled**: Keep **LOD Bias** setting untouched. Select this if **Use All Mips** is enabled below.
+"""
+loc = """
+**활성화**: **LOD Bias**를 **Ultra High**로 설정하여 강제로 전체 해상도 LOD 텍스처를 사용합니다.
+**비활성화**: **LOD Bias** 설정을 변경하지 않고 유지합니다. 아래의 **Use All Mips**가 활성화된 경우 이 옵션을 선택하세요.
+"""
+
+[locale_list_conjunction_or]
+src = "or"
+loc = "또는"
+
+[locale_list_conjunction_and]
+src = "and"
+loc = "그리고"
+
+[locale_list_separator]
+src = ", "
+loc = ", "
+
+[general_settings_game_folder_tooltip]
+src = """
+## Path to the folder containing the game executable
+* Usually named: {game_folder_names:bold:or_list}.
+* Contains files: {game_exe_names:bold:or_list}.
+* Contains folders: {game_folder_children:bold:and_list}.
+"""
+loc = """
+## 게임 실행 파일이 포함된 폴더 경로
+* 일반적인 이름: {game_folder_names:bold:or_list}.
+* 포함된 파일: {game_exe_names:bold:or_list}.
+* 포함된 폴더: {game_folder_children:bold:and_list}.
+"""
+
+[general_settings_mesh_lod_offset_tooltip]
+src = """
+## Controls LoD meshes deploying behavior (when full animated models are replaced with simplified ones):
+
+* Default is **-10**, known range where full mesh remains always loaded is from **-1** to **-12** (depending on PC).
+* Mods are currently created for full meshes and cannot (easily) be applied to LoDs.
+
+*Applied to CVars=r.Kuro.SkeletalMesh.LODDistanceScaleDeviceOffset value in all sections of DeviceProfiles.ini*
+"""
+loc = """
+## LoD 메시의 전개 동작을 제어합니다 (전체 애니메이션 모델이 단순화된 모델로 교체될 때):
+
+* 기본값은 **-10**이며, 전체 메시가 항상 로드된 상태를 유지하는 것으로 알려진 범위는 **-1**에서 **-12**까지입니다 (PC 사양에 따라 다름).
+* 모드는 현재 전체 메시용으로 제작되었으며 LoD에는 (쉽게) 적용할 수 없습니다.
+
+*DeviceProfiles.ini의 모든 섹션에 있는 CVars=r.Kuro.SkeletalMesh.LODDistanceScaleDeviceOffset 값에 적용됩니다.*
+"""
+
+[general_settings_texture_boost_entry_tooltip]
+src = """
+## Controls how aggressively higher-resolution textures are pushed to VRAM:
+
+Serves as a multiplier to streaming priorities configured for textures.
+
+* If modded textures are not loading, try increasing it to **25** or **30**.
+    - ⚡ Too high values may increase VRAM usage and can cause stuttering if the pool is small.
+
+This value may require fine tuning to minimize modded textures loading delay:
+
+* Start tuning with **20.0** **(default)**.
+    - ✅ This baseline value should work for most PCs.
+
+* If modded textures are loading fine, gradually decrease until small textures (like eyes) start breaking.
+    - ✅ A value just above this “breaking point” typically gives minimal texture loading delay while staying VRAM-friendly.
+
+*Applied to CVars=r.Streaming.Boost value in all sections of DeviceProfiles.ini*
+"""
+loc = """
+## 고해상도 텍스처를 VRAM에 얼마나 공격적으로 올릴 지 제어합니다:
+
+텍스처에 설정된 streaming priorities의 배수 역할을 합니다.
+
+* 모딩된 텍스처가 로드되지 않는 경우, 값을 **25** 또는 **30**으로 높여보세요.
+    - ⚡ 값이 너무 높으면 VRAM 사용량이 증가하고, pool이 작은 경우 stuttering이 발생할 수 있습니다.
+
+모딩된 텍스처의 로딩 지연을 최소화하기 위해 이 값은 fine tuning이 필요할 수 있습니다:
+
+* **20.0** **(기본값)**으로 튜닝을 시작하세요.
+    - ✅ 이 기준값은 대부분의 PC에서 정상적으로 작동합니다.
+
+* 모딩된 텍스처가 잘 로드된다면, 눈(eyes)과 같은 작은 텍스처가 깨지기 시작할 때까지 값을 점진적으로 낮추세요.
+    - ✅ 이 "breaking point" 바로 위의 값은 일반적으로 VRAM 친화적인 상태를 유지하면서 최소한의 텍스처 로딩 지연을 제공합니다.
+
+*DeviceProfiles.ini의 모든 섹션에 있는 CVars=r.Streaming.Boost 값에 적용됩니다*
+"""
+
+[general_settings_texture_min_boost_label]
+src = "Minimal Boost:"
+loc = "최소 Boost:"
+
+[general_settings_texture_min_boost_entry_tooltip]
+src = """
+## Defines a minimum streaming priority for textures:
+
+Values above **0** **(default)** set a priority floor that texture streaming priorities cannot go below.
+
+- ⚡ Use only if modded textures aren't loading regardless configured **Texture Boost** value.
+- ⚡ Same as with **Texture Boost**, always look for small textures (like eyes) when tuning the value.
+
+*Applied to CVars=r.Streaming.MinBoost value in all sections of DeviceProfiles.ini*
+"""
+loc = """
+## 텍스처의 최소 스트리밍 우선순위를 정의합니다:
+
+**0** **(기본값)**보다 큰 값은 텍스처 스트리밍 우선순위가 그 아래로 떨어질 수 없는 하한선을 설정합니다.
+
+- ⚡ 설정된 **Texture Boost** 값에 관계없이 모드 텍스처가 로드되지 않을 때만 사용하세요.
+- ⚡ **Texture Boost**와 마찬가지로 값을 조정할 때 눈과 같은 작은 텍스처를 항상 확인하세요.
+
+*DeviceProfiles.ini의 모든 섹션에 있는 CVars=r.Streaming.MinBoost 값에 적용됩니다.*
+"""
+
+[general_settings_use_all_mips_tooltip]
+src = """
+## Controls whether texture resolution limits are applied:
+
+* **Enabled** **(default)**: Disable resolution restrictions from LOD Bias.
+    - ✅ Allows to load full resolution textures at cost of higher VRAM usage.
+    - ⚡ If it has no effect or consumes too much VRAM, try to enable **Max LOD Bias** instead.
+
+* **Disabled**: Enable resolution restrictions from LOD Bias.
+    - ⚡ Modded textures won't load if disabled without Max (Ultra High) LOD Bias enabled.
+
+*Applied to CVars=r.Streaming.UseAllMips value in all sections of DeviceProfiles.ini*
+"""
+loc = """
+## 텍스처 해상도 제한 적용 여부를 제어합니다:
+
+* **활성화** **(기본값)**: LOD Bias에 의한 해상도 제한을 비활성화합니다.
+    - ✅ 더 높은 VRAM 사용량을 대가로 전체 해상도 텍스처를 로드할 수 있습니다.
+    - ⚡ 효과가 없거나 VRAM을 너무 많이 차지하는 경우, 대신 **Max LOD Bias**를 활성화해 보세요.
+
+* **비활성화**: LOD Bias에 의한 해상도 제한을 활성화합니다.
+    - ⚡ Max (Ultra High) LOD Bias를 활성화하지 않은 상태에서 비활성화할 경우, 모딩된 텍스처가 로드되지 않습니다.
+
+*DeviceProfiles.ini의 모든 섹션에 있는 CVars=r.Streaming.UseAllMips 값에 적용됩니다.*
+"""
+
+[general_settings_texture_streaming_pool_size_entry_tooltip]
+src = """
+## Controls how much VRAM the game can use for textures:
+
+* Set to **0** **(default)** for **automatic control** (based on available VRAM).
+* Set to specific value (e.g. 4096) for precise VRAM management.
+
+*Applied to CVars=r.Streaming.PoolSize value in all sections of DeviceProfiles.ini*
+"""
+loc = """
+## 게임이 텍스처에 사용할 수 있는 VRAM 양을 제어합니다:
+
+* **자동 제어**(가용 VRAM 기반)를 원하면 **0** **(기본값)**으로 설정하세요.
+* 정밀한 VRAM 관리를 원하면 특정 값(예: 4096)을 설정하세요.
+
+*DeviceProfiles.ini의 모든 섹션에 있는 CVars=r.Streaming.PoolSize 값에 적용됩니다.*
+"""
+
+[general_settings_texture_streaming_limit_pool_checkbox_tooltip]
+src = """
+## Sets the upper limit for how much VRAM the game can use for textures:
+
+* **Enabled** **(default)** – Limits texture pool size based on your GPU's available VRAM.
+    - ✅ Helps prevent crashes or stuttering on low VRAM systems.
+    - ⚡ May reduce texture quality or cause pop-ins if too restrictive on high-end GPUs.
+
+* **Disabled** – Unlocks maximum texture pool size, even if it exceeds your GPU's safe limits.
+    - ✅ Can improve texture quality and reduce pop-ins on powerful systems.
+    - ⚡ Risk of performance drops, stutters, or crashes if VRAM runs out.
+
+*Applied to CVars=r.Streaming.LimitPoolSizeToVRAM value in all sections of DeviceProfiles.ini*
+"""
+loc = """
+## 게임이 텍스처에 사용할 수 있는 VRAM의 상한선을 설정합니다:
+
+* **Enabled** **(기본값)** – GPU의 사용 가능한 VRAM을 기반으로 텍스처 풀 크기를 제한합니다.
+    - ✅ VRAM 용량이 적은 시스템에서 크래시나 스터터링 방지에 도움이 됩니다.
+    - ⚡ 고사양 GPU에서 제한이 너무 엄격할 경우 텍스처 품질 저하나 팝인 현상이 발생할 수 있습니다.
+
+* **Disabled** – GPU의 안전 제한 범위를 초과하더라도 최대 텍스처 풀 크기 제한을 해제합니다.
+    - ✅ 성능이 뛰어난 시스템에서 텍스처 품질을 개선하고 팝인 현상을 줄일 수 있습니다.
+    - ⚡ VRAM이 부족할 경우 성능 저하, 스터터링 또는 크래시 발생 위험이 있습니다.
+
+*DeviceProfiles.ini의 모든 섹션에 있는 CVars=r.Streaming.LimitPoolSizeToVRAM 값에 적용됩니다.*
+"""
+
+[general_settings_texture_streaming_fixed_pool_size_checkbox]
+src = "Use Fixed Pool Size"
+loc = "고정 풀 크기 사용"
+
+[general_settings_texture_streaming_fixed_pool_size_checkbox_tooltip]
+src = """
+## Controls automatic pool size grow/shrink capabilities:
+
+* **Enabled** **(default)** – Locks texture pool size to value calculated on game start.
+    - ✅ Eliminates modded textures loading delay by minimizing texture mip levels pop in/out.
+    - ⚡ Pool size is locked on game start, low end GPU users may want to close as much apps as possible.
+
+* **Disabled** – Allows game engine to dynamically resize pool.
+    - ✅ Provides more freedom to both engine (allows mips streaming) and user (no need to close apps).
+    - ⚡ Introduces short delay to modded textures loading unless **Texture Boost** values is perfectly tuned.
+
+*Applied to CVars=r.Streaming.UseFixedPoolSize value in all sections of DeviceProfiles.ini*
+"""
+loc = """
+## 텍스처 풀 크기의 자동 확장/축소 기능을 제어합니다:
+
+* **활성화** **(기본값)** – 게임 시작 시 계산된 값으로 texture pool size를 고정합니다.
+    - ✅ texture mip levels의 팝인/팝아웃 현상을 최소화하여 모딩된 텍스처의 로딩 지연을 제거합니다.
+    - ⚡ 게임 시작 시 풀 크기가 고정되므로, 저사양 GPU 사용자는 가능한 한 많은 앱을 종료하는 것이 좋습니다.
+
+* **비활성화** – 게임 엔진이 풀 크기를 동적으로 조정할 수 있도록 허용합니다.
+    - ✅ 엔진(mips streaming 허용)과 사용자(앱을 종료할 필요 없음) 모두에게 더 많은 자유를 제공합니다.
+    - ⚡ **Texture Boost** 값이 완벽하게 튜닝되지 않은 경우, 모딩된 텍스처 로딩 시 약간의 지연이 발생합니다.
+
+*DeviceProfiles.ini의 모든 섹션에 있는 CVars=r.Streaming.UseFixedPoolSize 값에 적용됩니다.*
+"""

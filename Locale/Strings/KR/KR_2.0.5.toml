@@ -1,0 +1,381 @@
+[message_title_fatal_error]
+src = "Fatal Error"
+loc = "치명적인 오류"
+
+[error_launcher_crashed_on_init]
+src = """
+Launcher has crashed during initialization:
+
+Log file: {log_path}
+
+Error: {error_text}
+"""
+loc = """
+초기화 중 런처가 크래시되었습니다:
+
+로그 파일: {log_path}
+
+오류: {error_text}
+"""
+
+[message_title_rogue_ini_notification]
+src = "Stability Warning"
+loc = "안정성 경고"
+
+[message_text_rogue_ini_in_mods_detected]
+src = """
+Detected mods with ini files containing **d3dx.ini**-exclusive options:
+
+{mod_list}
+
+Listed files [usually cause]({link_wiki_d3dx_ini_shipping}) silent errors, glitches and crashes.
+"""
+loc = """
+**d3dx.ini** 전용 옵션이 포함된 ini 파일이 있는 모드가 감지되었습니다:
+
+{mod_list}
+
+목록에 있는 파일은 [주로]({link_wiki_d3dx_ini_shipping}) 조용한 오류, 글리치 및 크래시를 유발합니다.
+"""
+
+[message_button_disable_ini_files]
+src = "Disable Ini Files"
+loc = "Ini 파일 비활성화"
+
+[message_title_performance_notification]
+src = "Performance Notification"
+loc = "성능 알림"
+
+[message_text_global_triggers_in_mods_detected]
+src = """
+Detected mods with notable global performance impact:
+
+{checkbox_widget}
+
+Listed mods are using [unlimited resource slot triggers]({link_wiki_global_triggers_usage}).
+"""
+loc = """
+전역 성능에 눈에 띄는 영향을 미치는 모드가 감지되었습니다:
+
+{checkbox_widget}
+
+목록에 있는 모드는 [무제한 리소스 슬롯 트리거]({link_wiki_global_triggers_usage})를 사용 중입니다.
+"""
+
+[message_button_disable_selected]
+src = "Disable Selected"
+loc = "선택 항목 비활성화"
+
+[optimizing_ini_files_in_folder]
+src = "Optimizing INI files in {folder_name} folder..."
+loc = "{folder_name} 폴더의 INI 파일 최적화 중..."
+
+[tool_bar_optimize_mods_button]
+src = "Optimize Mods"
+loc = "모드 최적화"
+
+[message_title_optimization_results]
+src = "Optimization Results"
+loc = "최적화 결과"
+
+[message_text_optimization_results]
+src = """
+Successfully introduced following optimizations:
+
+{optimization_results:md_list}
+
+Check out {log_link} for more details.
+"""
+loc = """
+다음 최적화가 성공적으로 적용되었습니다:
+
+{optimization_results:md_list}
+
+자세한 내용은 {log_link}를 확인하세요.
+"""
+
+[optimization_results_disabled_mods]
+src = "Disabled {disabled_mods_count} mods."
+loc = "{disabled_mods_count}개의 모드가 비활성화되었습니다."
+
+[optimization_results_disabled_files]
+src = "Disabled {disabled_files_count} INI files."
+loc = "{disabled_files_count}개의 INI 파일이 비활성화되었습니다."
+
+[optimization_results_edited_lines]
+src = "Edited {edited_lines_count} lines in {edited_files_count} INI files."
+loc = "{edited_files_count}개의 INI 파일에서 {edited_lines_count}줄이 수정되었습니다."
+
+[message_text_optimization_no_results]
+src = "All supported optimizations are already applied!"
+loc = "지원되는 모든 최적화가 이미 적용되어 있습니다!"
+
+[error_dll_inject_process_not_found]
+src = "Process {pid} not found"
+loc = "프로세스 {pid}를 찾을 수 없습니다"
+
+[error_dll_inject_invalid_dll_path]
+src = "Invalid DLL path {dll_path}"
+loc = "잘못된 DLL 경로 {dll_path}"
+
+[error_dll_inject_kernel32_fail]
+src = "Failed to resolve kernel32.dll"
+loc = "kernel32.dll을 resolve하는 데 실패했습니다"
+
+[error_dll_inject_loadlibrary_fail]
+src = "Failed to resolve LoadLibraryW"
+loc = "LoadLibraryW를 resolve하는 데 실패했습니다"
+
+[error_dll_inject_remote_alloc_fail]
+src = "Failed to allocate remote memory"
+loc = "원격 메모리를 할당하는 데 실패했습니다"
+
+[error_dll_inject_write_memory_fail]
+src = "Failed to write DLL path to process memory"
+loc = "프로세스 메모리에 DLL 경로를 쓰는 데 실패했습니다"
+
+[error_dll_inject_thread_fail]
+src = "Failed to create remote thread"
+loc = "원격 스레드를 생성하는 데 실패했습니다"
+
+[error_dll_inject_thread_timeout]
+src = "Injection thread timed out"
+loc = "인젝션 스레드 시간이 초과되었습니다"
+
+[error_dll_inject_thread_wait_fail]
+src = "Injection thread wait failed"
+loc = "인젝션 스레드 대기에 실패했습니다"
+
+[error_dll_inject_injection_failed]
+src = "DLL injection failed"
+loc = "DLL 인젝션에 실패했습니다"
+
+[error_dll_inject_unknown_error]
+src = "Unknown low level error"
+loc = "알 수 없는 로우 레벨 오류"
+
+[error_unknown_error_code]
+src = "Unknown error code {error_code}"
+loc = "알 수 없는 오류 코드 {error_code}"
+
+[error_dll_injector_failed]
+src = """
+Failed to inject {dll_path}:
+{error_text}!
+"""
+loc = """
+{dll_path} 인젝션에 실패했습니다:
+{error_text}!
+"""
+
+[error_dll_injector_extra_library_failed]
+src = """
+Failed to inject extra library {dll_path}:
+{error_text}!
+Please check Advanced Settings → Inject Libraries.
+"""
+loc = """
+추가 라이브러리 {dll_path} 인젝션에 실패했습니다:
+{error_text}!
+Advanced Settings → Inject Libraries를 확인하세요.
+"""
+
+[error_msvc_integrity_verification_failed_md]
+src = """
+**Microsoft Visual C++ Redistributable** is damaged or not installed!
+
+Please try to reinstall it from [Microsoft Website]({page_link}) ([direct download]({direct_link})).
+
+Log file: {log_path}
+
+Error: {error_text}
+"""
+loc = """
+**Microsoft Visual C++ Redistributable**이 손상되었거나 설치되지 않았습니다!
+
+[Microsoft 웹사이트]({page_link}) ([직접 다운로드]({direct_link}))에서 재설치를 시도해 보세요.
+
+로그 파일: {log_path}
+
+오류: {error_text}
+"""
+
+[error_msvc_integrity_verification_failed_plain]
+src = """
+Microsoft Visual V C++ Redistributable is damaged or not installed!
+
+Please reinstall it from https://aka.ms/vs/17/release/vc_redist.x64.exe
+
+Log file: {log_path}
+
+Error: {error_text}
+"""
+loc = """
+Microsoft Visual V C++ Redistributable이 손상되었거나 설치되지 않았습니다!
+
+https://aka.ms/vs/17/release/vc_redist.x64.exe에서 재설치해 주세요.
+
+로그 파일: {log_path}
+
+오류: {error_text}
+"""
+
+[error_model_importer_auto_select_failed]
+src = """
+Failed to auto-select importer for `{path}`!
+
+Try to add `--nogui --xxmi WWMI` args (or GIMI, SRMI, ZZMI, HIMI, EFMI).
+"""
+loc = """
+`{path}`에 대한 importer 자동 선택에 실패했습니다!
+
+`--nogui --xxmi WWMI` args(또는 GIMI, SRMI, ZZMI, HIMI, EFMI)를 추가해 보세요.
+"""
+
+[application_update_found]
+src = "{package} update found: {current} → {latest}"
+loc = "{package} 업데이트 발견: {current} → {latest}"
+
+[locale_list_conjunction_spacing]
+src = "\\\\s"
+loc = "\\\\s"
+
+[message_text_duplicate_libraries_detected]
+src = """
+Your Mods folder contains some libraries that are already included into {importer}!
+
+Would you like to disable following duplicates automatically (recommended)?
+
+{duplicates}
+"""
+loc = """
+Mods 폴더에 {importer}에 이미 포함된 라이브러리가 일부 있습니다!
+
+다음 중복 항목을 자동으로 비활성화하시겠습니까(권장)?
+
+{duplicates}
+"""
+
+[error_extra_library_not_found]
+src = """
+Failed to inject extra library {dll_path}:
+File not found!
+Please check Advanced Settings → Inject Libraries.
+"""
+loc = """
+추가 라이브러리 {dll_path} 인젝션에 실패했습니다:
+파일을 찾을 수 없습니다!
+Advanced Settings → Inject Libraries를 확인하세요.
+"""
+
+[error_set_readonly_failed]
+src = "Failed to set Read Only flag on file {path}: {error_text}!"
+loc = "{path} 파일에 Read Only 플래그를 설정하는 데 실패했습니다: {error_text}!"
+
+[message_button_remove_flag]
+src = "Remove Flag"
+loc = "플래그 제거"
+
+[donate_wwmi_footer]
+src = """
+It's all about building better tools for the entire {model_importer} community.
+
+The more patrons, the stronger is motivation to shape new big features!
+"""
+loc = """
+이 모든 것은 전체 {model_importer} 커뮤니티를 위한 더 나은 도구를 만들기 위함입니다.
+
+후원자가 많아질수록 새롭고 강력한 기능을 개발하기 위한 동기 부여가 커집니다!
+"""
+
+[general_settings_start_method_native]
+src = "Native"
+loc = "Native"
+
+[general_settings_start_method_shell]
+src = "Shell"
+loc = "Shell"
+
+[general_settings_start_method_manual]
+src = "Manual"
+loc = "수동"
+
+[general_settings_process_priority_low]
+src = "Low"
+loc = "낮음"
+
+[general_settings_process_priority_below_normal]
+src = "Below Normal"
+loc = "보통 이하"
+
+[general_settings_process_priority_normal]
+src = "Normal"
+loc = "보통"
+
+[general_settings_process_priority_above_normal]
+src = "Above Normal"
+loc = "보통 이상"
+
+[general_settings_process_priority_high]
+src = "High"
+loc = "높음"
+
+[general_settings_process_priority_realtime]
+src = "Realtime"
+loc = "실시간"
+
+[general_settings_process_priority_option_menu_tooltip]
+src = """
+Set process priority for the game exe.
+"""
+loc = """
+게임 exe의 프로세스 우선순위를 설정합니다.
+"""
+
+[general_settings_open_file_button_tooltip]
+src = "Open **{file_name}** in default text editor file for manual tweaking."
+loc = "수동 조정을 위해 기본 텍스트 편집기에서 **{file_name}**을(를) 엽니다."
+
+[general_settings_window_mode_windowed]
+src = "Windowed"
+loc = "창 모드"
+
+[general_settings_window_mode_borderless]
+src = "Borderless"
+loc = "테두리 없음"
+
+[general_settings_window_mode_fullscreen]
+src = "Fullscreen"
+loc = "전체 화면"
+
+[general_settings_window_mode_exclusive_fullscreen]
+src = "Exclusive Fullscreen"
+loc = "독점 전체 화면"
+
+[error_migoto_game_detection_timeout]
+src = """
+Failed to detect window of game process {process_name}!
+
+If game window takes more than {start_timeout} seconds to appear, adjust **Timeout** in **General Settings**.
+
+If game crashed, try to follow the [Crash Isolation Checklist]({checklist_link}).
+"""
+loc = """
+게임 프로세스 {process_name}의 창을 감지하는 데 실패했습니다!
+
+게임 창이 나타나는 데 {start_timeout}초 이상 걸리는 경우 **General Settings**에서 **Timeout**을 조정하세요.
+
+게임이 크래시된 경우, [크래시 격리 체크리스트]({checklist_link})를 따라해 보세요.
+"""
+
+[message_text_locale_errors]
+src = """
+Detected errors in active localization files:
+
+{locale_errors:md_list}
+"""
+loc = """
+활성화된 로컬라이제이션 파일에서 오류가 감지되었습니다:
+
+{locale_errors:md_list}
+"""
