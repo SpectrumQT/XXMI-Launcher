@@ -1,8 +1,8 @@
 
-def with_title(e: Exception, title) -> Exception:
+def with_title(e: BaseException, title) -> BaseException:
     setattr(e, 'title', title)
     return e
 
 
-def get_title(e: Exception):
+def get_title(e: BaseException):
     return getattr(e, 'title', None)

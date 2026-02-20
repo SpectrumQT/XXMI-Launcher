@@ -147,6 +147,8 @@ if __name__ == '__main__':
             direct_link = 'https://aka.ms/vs/17/release/vc_redist.x64.exe'
             log_path = f'<a href="file:///{root_path / "XXMI Launcher Log.txt"}">XXMI Launcher Log.txt</a>'
 
+            error_title = L('message_title_fatal_error', 'Fatal Error')
+
             if msvc_error is not None:
                 error = L('error_msvc_integrity_verification_failed_md', """
                     **Microsoft Visual C++ Redistributable** is damaged or not installed!
@@ -162,21 +164,30 @@ if __name__ == '__main__':
                     log_path=log_path,
                     error_text=msvc_error,
                 )
+
             else:
-                error = L('error_launcher_crashed_on_init', """
-                    Launcher has crashed during initialization:
-                    
-                    Log file: {log_path}
-                    
-                    Error: {error_text}
-                """).format(
-                    log_path=log_path,
-                    error_text=init_stack_trace,
-                )
+                import core.error_manager as Errors
+
+                if Errors.get_title(init_error):
+                    # Error with title is already user-friendly
+                    error_title = Errors.get_title(init_error)
+                    error = init_error
+                else:
+                    # Wrap untitled error in more user-friendly text
+                    error = L('error_launcher_crashed_on_init', """
+                        Launcher has crashed during initialization:
+                        
+                        Log file: {log_path}
+                        
+                        Error: {error_text}
+                    """).format(
+                        log_path=log_path,
+                        error_text=init_stack_trace,
+                    )
 
             gui.show_messagebox(
                 modal=True,
-                title=L('message_title_fatal_error', 'Fatal Error'),
+                title=error_title,
                 message=error,
             )
 
