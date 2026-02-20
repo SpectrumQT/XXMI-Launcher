@@ -160,7 +160,11 @@ class MigotoPackage(Package):
         if Config.Active.Importer.extra_libraries_enabled:
             extra_dll_paths += Config.Active.Importer.extra_dll_paths
 
-        injector = DllInjector(self.package_path / '3dmloader.dll')
+        injector = DllInjector(
+            injector_lib_path=self.package_path / '3dmloader.dll',
+            load_hook=use_hook,
+            load_inject=not use_hook or extra_dll_paths,
+        )
 
         if use_hook:
             # Use SetWindowsHookEx injection method

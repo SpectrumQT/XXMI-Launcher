@@ -18,14 +18,14 @@ log = logging.getLogger(__name__)
 
 
 class DllInjector:
-    def __init__(self, injector_lib_path):
+    def __init__(self, injector_lib_path, load_hook=False, load_inject=False):
         self.lib = None
         self.dll_path = None
         self.target_process = None
         self.hook = None
         self.mutex = None
 
-        self.load(Path(injector_lib_path).resolve())
+        self.load(Path(injector_lib_path).resolve(), load_hook, load_inject)
 
     @staticmethod
     def get_short_path(path: Path) -> str:
@@ -35,7 +35,7 @@ class DllInjector:
         except Exception as e:
             return str(path.resolve())
 
-    def load(self, injector_lib_path):
+    def load(self, injector_lib_path, load_hook=False, load_inject=False):
         if not injector_lib_path.exists():
             raise ValueError(L('error_dll_injector_file_not_found', 'Injector file not found: {injector_lib_path}!').format(path=injector_lib_path))
 
@@ -45,23 +45,39 @@ class DllInjector:
             raise ValueError(L('error_dll_injector_load_failed', 'Failed to load injector library!')) from e
 
         try:
-            self.lib.HookLibrary.argtypes = (wt.LPCWSTR, ct.POINTER(wt.HHOOK), ct.POINTER(wt.HANDLE))
-            self.lib.HookLibrary.restype = ct.c_int
+            if load_hook:
+                self.lib.HookLibrary.argtypes = (wt.LPCWSTR, ct.POINTER(wt.HHOOK), ct.POINTER(wt.HANDLE))
+                self.lib.HookLibrary.restype = ct.c_int
 
-            self.lib.WaitForInjection.argtypes = (wt.LPCWSTR, wt.LPCWSTR, ct.c_int)
-            self.lib.WaitForInjection.restype = ct.c_int
+                self.lib.WaitForInjection.argtypes = (wt.LPCWSTR, wt.LPCWSTR, ct.c_int)
+                self.lib.WaitForInjection.restype = ct.c_int
 
-            self.lib.UnhookLibrary.argtypes = (ct.POINTER(wt.HHOOK), ct.POINTER(wt.HANDLE))
-            self.lib.UnhookLibrary.restype = ct.c_int
+                self.lib.UnhookLibrary.argtypes = (ct.POINTER(wt.HHOOK), ct.POINTER(wt.HANDLE))
+                self.lib.UnhookLibrary.restype = ct.c_int
 
-            self.lib.Inject.argtypes = (wt.DWORD, wt.LPCWSTR, ct.c_int)
-            self.lib.Inject.restype = ct.c_int
+            if load_inject:
+                try:
+                    self.lib.Inject.argtypes = (wt.DWORD, wt.LPCWSTR, ct.c_int)
+                    self.lib.Inject.restype = ct.c_int
+                except AttributeError as e:
+                    raise Exception(L('error_old_3dmloader', """
+                        Provided **3dmloader.dll** is too old, it's missing **Inject** method.
+                        
+                        Please put **3dmloader.dll** from **v0.7.5+** to `Packages/XXMI` or use **Hook** method (without **Inject Libraries**).
+                    """)) from e
+
         except Exception as e:
             try:
                 self.unload()
             except Exception:
                 pass
-            raise ValueError(L('error_dll_injector_setup_failed', 'Failed to setup injector library!')) from e
+            raise ValueError(L('error_dll_injector_setup_failed', """
+                Failed to setup injector library!
+
+                Error: {error_text}
+            """).format(
+                error_text=str(e)
+            ))
 
     def unload(self):
         # Define FreeLibrary arg1 type as HMODULE handle (C void * pointer)
