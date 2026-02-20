@@ -228,10 +228,11 @@ class MigotoPackage(Package):
 
         else:
             # Use WriteProcessMemory injection method
-            if not Config.Active.Importer.is_xxmi_dll_used():
-                dll_paths = extra_dll_paths
-            else:
-                dll_paths = [dll_path] + extra_dll_paths
+            dll_paths = []
+            if Config.Active.Importer.is_xxmi_dll_used():
+                if not Config.Active.Importer.is_xxmi_dll_in_extra_libraries():
+                    dll_paths.append(dll_path)
+            dll_paths += extra_dll_paths
 
             dll_names = ', '.join([dll_path.name for dll_path in dll_paths])
 

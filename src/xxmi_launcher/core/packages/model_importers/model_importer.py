@@ -136,14 +136,17 @@ class ModelImporterConfig:
         # Custom Launch in Hook/Inject mode - XXMI DLL is always used
         if self.custom_launch_inject_mode != 'Bypass':
             return True
-        # Custom Launch in Bypass mode without Extra Libraries - XXMI DLL is never used
+        # Custom Launch in Bypass mode - XXMI DLL may be listed in Extra Libraries
+        return self.is_xxmi_dll_in_extra_libraries()
+
+    def is_xxmi_dll_in_extra_libraries(self) -> bool:
+        # Extra Libraries disabled - it doesn't matter if XXMI DLL is listed there
         if not self.extra_libraries_enabled:
             return False
-        # Custom Launch in Bypass mode with Extra Libraries - XXMI DLL is only used when listed
+        # Detect XXMI DLL in Extra Libraries
         if self.importer_path / 'd3d11.dll' in self.extra_dll_paths:
             return True
         return False
-
 
 class ModelImporterCommandFileSection(Enum):
     PreInstall = 'PreInstall'
