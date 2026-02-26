@@ -124,6 +124,12 @@ class IniValidator:
         if self.use_cache:
             self.cache = IniValidatorCache()
 
+    @staticmethod
+    def get_ini_files(dir_path: Path, symlinks=True):
+        return [Path(root) / file
+                for root, dirs, files in os.walk(dir_path, followlinks=symlinks)
+                for file in files if file.endswith('.ini')]
+
     def validate_folder(self) -> dict[Path, tuple[ValidationResult, ParsedIni | None]]:
         # Load list of already processed files to avoid scanning them (if cache is enabled)
         self.load_cache()
@@ -132,11 +138,7 @@ class IniValidator:
 
         unwanted_files = self.unwanted_files.get('*', [])
 
-        ini_files = [Path(root) / file
-                     for root, dirs, files in os.walk(self.folder_path, followlinks=True)
-                     for file in files if file.endswith('.ini')]
-
-        for path in ini_files:
+        for path in self.get_ini_files(self.folder_path):
             # Exclude paths that are configured to be ignored by DLL
             if self.exclude_patterns:
                 if self.should_exclude(path.relative_to(self.folder_path), self.exclude_patterns):
@@ -271,7 +273,7 @@ class IniValidator:
         namespace_pattern = re.compile(r'namespace\s*=\s*(.*)')
         namespaces: dict[str, list[Path]] = {}
 
-        for path in folder_path.rglob('*.ini'):
+        for path in self.get_ini_files(folder_path):
             # Exclude paths that are configured to be ignored by DLL
             if self.exclude_patterns:
                 if self.should_exclude(path.relative_to(folder_path), self.exclude_patterns):
