@@ -165,11 +165,6 @@ class AppConfig:
 
     def run_patch_216(self):
         try:
-            importer = self.Importers.__dict__['WWMI']
-            importer.Importer.game_exe_names = ['Client-Win64-Shipping.exe']
-        except:
-            pass
-        try:
             importer = self.Importers.__dict__['ZZMI']
             importer.Importer.game_exe_names = ['ZenlessZoneZero.exe', 'ZenlessZoneZeroBeta.exe']
         except:

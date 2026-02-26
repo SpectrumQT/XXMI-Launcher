@@ -24,7 +24,8 @@ log = logging.getLogger(__name__)
 
 @dataclass
 class WWMIConfig(ModelImporterConfig):
-    game_exe_names: List[str] = field(default_factory=lambda: ['Client-Win64-Shipping.exe'])
+    game_exe_names: List[str] = field(default_factory=lambda: ['Wuthering Waves.exe'])
+    process_exe_names: List[str] = field(default_factory=lambda: ['Client-Win64-Shipping.exe'])
     game_folder_names: List[str] = field(default_factory=lambda: ['Wuthering Waves Game'])
     game_folder_children: List[str] = field(default_factory=lambda: ['Client', 'Data'])
     importer_folder: str = 'WWMI/'
@@ -153,7 +154,7 @@ class WWMIPackage(ModelImporterPackage):
         raise ValueError(L('error_wuthering_waves_exe_not_found', 'Failed to normalize path {path}: Wuthering Waves.exe not found!').format(path=game_path_original))
 
     def autodetect_game_folders(self) -> List[Path]:
-        paths = self.reg_search_game_folders(Config.Active.Importer.game_exe_names)
+        paths = self.reg_search_game_folders(Config.Active.Importer.process_exe_names)
 
         kuro_launcher_path = Path(os.getenv('APPDATA')) / 'KRLauncher'
         for root, dirs, files in kuro_launcher_path.walk():
@@ -214,7 +215,12 @@ class WWMIPackage(ModelImporterPackage):
         return game_path
 
     def validate_game_exe_path(self, game_path: Path) -> Path:
-        return super().validate_game_exe_path(game_path / 'Client' / 'Binaries' / 'Win64')
+        for game_exe_name in Config.Active.Importer.process_exe_names:
+            game_exe_path = game_path / 'Client' / 'Binaries' / 'Win64' / game_exe_name
+            if game_exe_path.is_file():
+                return game_exe_path
+        raise ValueError(L('error_game_exe_not_found', 'Game executable {exe_name} not found!').format(
+            exe_name=' / '.join(Config.Active.Importer.game_exe_names)))
 
     def get_start_cmd(self, game_path: Path) -> Tuple[Path, List[str], Optional[str]]:
         game_exe_path = self.validate_game_exe_path(game_path)
