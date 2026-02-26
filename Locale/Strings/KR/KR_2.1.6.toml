@@ -1,0 +1,19 @@
+[error_xxmi_dll_remove_failed]
+src = """
+Failed to remove old XXMI library file before update!
+
+File: `{dll_path}`
+
+Error: {error_text}
+"""
+loc = """
+업데이트 전에 기존 XXMI 라이브러리 파일을 제거하지 못했습니다!
+
+파일: `{dll_path}`
+
+오류: {error_text}
+"""
+
+[bottom_bar_bypass]
+src = "Starting {process} in bypass mode..."
+loc = "{process}를 우회 모드로 시작하는 중..."
