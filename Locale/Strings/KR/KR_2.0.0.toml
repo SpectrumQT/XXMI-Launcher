@@ -1,0 +1,2365 @@
+[message_title_message]
+src = "Message"
+loc = "메시지"
+
+[message_button_ok]
+src = "OK"
+loc = "확인"
+
+[message_title_error]
+src = "Error"
+loc = "오류"
+
+[message_title_warning]
+src = "Warning"
+loc = "경고"
+
+[message_title_info]
+src = "Info"
+loc = "정보"
+
+[message_button_confirm]
+src = "Confirm"
+loc = "확인"
+
+[message_button_cancel]
+src = "Cancel"
+loc = "취소"
+
+[application_failed_parse_args]
+src = "Failed to parse args: {args}"
+loc = "인수 구문 분석 실패: {args}"
+
+[message_text_config_was_reset]
+src = "Failed to load configuration! Falling back to defaults."
+loc = "구성을 불러오지 못했습니다! 기본값으로 돌아갑니다."
+
+[status_initializing_update]
+src = "Initializing update..."
+loc = "업데이트 초기화 중..."
+
+[message_button_load_backup_config]
+src = "Load Backup"
+loc = "백업 불러오기"
+
+[message_button_load_default_config]
+src = "Load Default"
+loc = "기본값 불러오기"
+
+[message_text_config_load_failed]
+src = "Failed to load configuration!"
+loc = "구성을 불러오지 못했습니다!"
+
+[error_unknown_model_importer]
+src = "Unknown model importer {importer}!"
+loc = "알 수 없는 모델 임포터 {importer}입니다!"
+
+[error_unknown_model_importer_arg]
+src = "Unknown model importer supplied as command line arg `--xxmi={arg_xxmi}`!"
+loc = "명령줄 인수 `--xxmi={arg_xxmi}`로 알 수 없는 모델 임포터가 제공되었습니다!"
+
+[error_unknown_model_importer_setting]
+src = "Unknown model importer `{importer}` supplied with `active_importer` setting!"
+loc = "`active_importer` 설정에 알 수 없는 모델 임포터 `{importer}`가 제공되었습니다!"
+
+[error_version_list_fetch_failed]
+src = """
+Failed to get latest versions list from GitHub!
+
+{error_text}
+"""
+loc = """
+GitHub에서 최신 버전 목록을 가져오지 못했습니다!
+
+{error_text}
+"""
+
+[message_title_update_available]
+src = "Update Available"
+loc = "업데이트 가능"
+
+[message_button_install_update]
+src = "Update"
+loc = "업데이트"
+
+[message_button_skip_update]
+src = "Skip"
+loc = "건너뛰기"
+
+[message_text_already_up_to_date]
+src = "No updates available!"
+loc = "사용 가능한 업데이트가 없습니다!"
+
+[message_title_file_write_failed_read_only]
+src = "File Read Only Error"
+loc = "파일 읽기 전용 오류"
+
+[message_text_file_write_failed_read_only]
+src = """
+Failed to write Read Only file {path}!
+
+Press [Confirm] to remove this flag and continue.
+"""
+loc = """
+읽기 전용 파일 {path}에 쓰지 못했습니다!
+
+[확인]을 눌러 이 플래그를 제거하고 계속하세요.
+"""
+
+[error_critical_file_write_failed]
+src = "Failed to write critical file: {path}!"
+loc = "중요 파일에 쓰지 못했습니다: {path}!"
+
+[message_button_reset_unsecure_setting]
+src = "Reset"
+loc = "초기화"
+
+[message_button_keep_unsecure_setting]
+src = "Keep"
+loc = "유지"
+
+[message_text_unsecure_setting_validation_failed]
+src = """
+Failed to validate unsecure settings!
+
+{msg}
+"""
+loc = """
+안전하지 않은 설정을 검증하지 못했습니다!
+
+{msg}
+"""
+
+[error_theme_resource_not_found]
+src = """
+Resource not found:
+
+{resource_path}
+
+Hint: You can also use other extensions: {extensions}
+"""
+loc = """
+리소스를 찾을 수 없습니다:
+
+{resource_path}
+
+힌트: 다음 확장자도 사용할 수 있습니다: {extensions}
+"""
+
+[status_waiting_installer]
+src = "Waiting for installer to start..."
+loc = "설치 관리자가 시작되기를 기다리는 중..."
+
+[error_launcher_installer_start_failed]
+src = """
+Failed to start {asset_name}!
+
+Was it blocked by Antivirus software or security settings?
+"""
+loc = """
+{asset_name}을(를) 시작하지 못했습니다!
+
+바이러스 백신 소프트웨어나 보안 설정에 의해 차단되었습니까?
+"""
+
+[launcher_shortcut_description]
+src = "Shortcut to XXMI Launcher"
+loc = "XXMI 런처 바로가기"
+
+[error_migoto_game_start_failed]
+src = "Failed to start {process_name}!"
+loc = "{process_name}을(를) 시작하지 못했습니다!"
+
+[status_ensuring_game_closed]
+src = "Ensuring the game is closed..."
+loc = "게임이 종료되어 있는지 확인하는 중..."
+
+[message_text_game_stop_failed]
+src = """
+Failed to stop {process_name}!
+
+Please close the game manually and press [OK] to continue.
+"""
+loc = """
+{process_name}을(를) 중지하지 못했습니다!
+
+게임을 수동으로 끄고 [확인]을 눌러 계속하세요.
+"""
+
+[error_xxmi_missing_critical_file]
+src = "XXMI package is missing critical file: {file_name}!"
+loc = "XXMI 패키지에 중요 파일이 누락되었습니다: {file_name}!"
+
+[error_gimi_game_exe_not_found]
+src = "Game executable {game_exe_name} or {game_exe_name_cn} not found!"
+loc = "게임 실행 파일 {game_exe_name} 또는 {game_exe_name_cn}을(를) 찾을 수 없습니다!"
+
+[error_gimi_dcr_config_failed]
+src = """
+{error_text}
+
+If nothing helps:
+1. Disable `Configure Game Settings` in launcher's `General Settings`
+2. Configure in-game `Graphics Settings` manually:
+* Graphics > `Dynamic Character Resolution` must be `Off`.
+"""
+loc = """
+{error_text}
+
+도움이 되지 않는 경우:
+1. 런처의 `일반 설정`에서 `게임 설정 구성`을 비활성화합니다.
+2. 인게임 `그래픽 설정`을 수동으로 구성합니다:
+* 그래픽 > `동적 캐릭터 해상도(Dynamic Character Resolution)`를 `끄기`로 설정해야 합니다.
+"""
+
+[error_gimi_fps_unlocker_config_failed]
+src = """
+Failed to configure FPS Unlocker!
+
+{error_text}
+"""
+loc = """
+FPS Unlocker를 구성하지 못했습니다!
+
+{error_text}
+"""
+
+[error_gimi_hdr_enable_failed]
+src = """
+Failed to enable HDR!
+
+{error_text}
+"""
+loc = """
+HDR을 활성화하지 못했습니다!
+
+{error_text}
+"""
+
+[error_gimi_registry_key_not_found]
+src = """
+Genshin Impact registry key is not found!
+
+Please start the game via original launcher to create the key and try again.
+"""
+loc = """
+원신 레지스트리 키를 찾을 수 없습니다!
+
+원본 런처를 통해 게임을 시작하여 키를 생성하고 다시 시도하세요.
+"""
+
+[error_gimi_unknown_settings_format]
+src = "Unknown Settings format: Data type {regtype} is not {expected_type} of REG_BINARY!"
+loc = "알 수 없는 설정 형식: 데이터 유형 {regtype}이(가) REG_BINARY의 {expected_type}이(가) 아닙니다!"
+
+[error_gimi_graphics_settings_not_found]
+src = """
+Graphics Settings record is not found in GI registry!
+
+Please start the game via official launcher to create the record and try again.
+"""
+loc = """
+원신 레지스트리에서 그래픽 설정 레코드를 찾을 수 없습니다!
+
+공식 런처를 통해 게임을 시작하여 레코드를 생성하고 다시 시도하세요.
+"""
+
+[error_gimi_graphics_data_key_not_found]
+src = "Unknown Graphics Settings format: \"graphicsData\" key not found!"
+loc = "알 수 없는 그래픽 설정 형식: \"graphicsData\" 키를 찾을 수 없습니다!"
+
+[error_gimi_global_perf_data_key_not_found]
+src = "Unknown Graphics Settings format: \"globalPerfData\" key not found!"
+loc = "알 수 없는 그래픽 설정 형식: \"globalPerfData\" 키를 찾을 수 없습니다!"
+
+[error_gimi_hdr_record_not_found]
+src = """
+HDR record is not found in GI registry!
+
+Please start the game via official launcher to create the record and try again.
+"""
+loc = """
+원신 레지스트리에서 HDR 레코드를 찾을 수 없습니다!
+
+공식 런처를 통해 게임을 시작하여 레코드를 생성하고 다시 시도하세요.
+"""
+
+[status_configuring_fps_unlocker]
+src = "Configuring FPS Unlocker..."
+loc = "FPS Unlocker 구성 중..."
+
+[message_text_fps_unlocker_manual_termination]
+src = """
+Failed to terminate FPS Unlocker!
+
+Please close it manually and press [OK] to continue.
+"""
+loc = """
+FPS Unlocker를 종료하지 못했습니다!
+
+수동으로 끄고 [확인]을 눌러 계속하세요.
+"""
+
+[error_game_exe_not_found]
+src = "Game executable {exe_name} not found!"
+loc = "게임 실행 파일 {exe_name}을(를) 찾을 수 없습니다!"
+
+[error_himi_fps_unlock_failed]
+src = "Failed to configure FPS: {error_text}"
+loc = "FPS를 구성하지 못했습니다: {error_text}"
+
+[error_himi_registry_key_not_found]
+src = """
+Honkai Impact 3rd registry key is not found!
+
+Please start the game without FPS tweak, change FPS to any value to create the record and try again.
+
+Note: Tweak is supported only for the Global client and will not work for CN.
+"""
+loc = """
+붕괴3rd 레지스트리 키를 찾을 수 없습니다!
+
+FPS 트윅 없이 게임을 시작하고 FPS를 아무 값으로나 변경하여 레코드를 생성한 후 다시 시도하세요.
+
+참고: 트윅은 글로벌 클라이언트에서만 지원되며 CN에서는 작동하지 않습니다.
+"""
+
+[error_himi_graphics_settings_not_found]
+src = """
+Graphics Settings record is not found in Honkai Impact 3rd registry!
+
+Please start the game without FPS tweak, change FPS to any value to create the record and try again.
+"""
+loc = """
+붕괴3rd 레지스트리에서 그래픽 설정 레코드를 찾을 수 없습니다!
+
+FPS 트윅 없이 게임을 시작하고 FPS를 아무 값으로나 변경하여 레코드를 생성한 후 다시 시도하세요.
+"""
+
+[error_himi_unknown_graphics_format]
+src = "Unknown Graphics Settings format: Data type {regtype} is not {expected_type} of REG_BINARY!"
+loc = "알 수 없는 그래픽 설정 형식: 데이터 유형 {regtype}이(가) REG_BINARY의 {expected_type}이(가) 아닙니다!"
+
+[error_himi_fps_key_not_found]
+src = "Unknown Graphics Settings format: \"TargetFrameRateForInLevel\" key not found!"
+loc = "알 수 없는 그래픽 설정 형식: \"TargetFrameRateForInLevel\" 키를 찾을 수 없습니다!"
+
+[error_model_importer_unknown_command]
+src = "Unknown command {name}!"
+loc = "알 수 없는 명령 {name}입니다!"
+
+[error_model_importer_command_execution_failed]
+src = """
+Failed to execute `{name} = {value}` of auto_update.xcmd!
+{error_text}
+"""
+loc = """
+auto_update.xcmd의 `{name} = {value}`를 실행하지 못했습니다!
+{error_text}
+"""
+
+[error_model_importer_removal_scope_restricted]
+src = "File or folder removal is allowed only from Core or ShaderFixes folder!"
+loc = "파일 또는 폴더 제거는 Core 또는 ShaderFixes 폴더에서만 허용됩니다!"
+
+[error_model_importer_removal_forbidden]
+src = "Explicit removal of entire Core or ShaderFixes folder is not allowed!"
+loc = "전체 Core 또는 ShaderFixes 폴더의 명시적 제거는 허용되지 않습니다!"
+
+[error_model_importer_game_folder_not_specified]
+src = "Game installation folder is not specified!"
+loc = "게임 설치 폴더가 지정되지 않았습니다!"
+
+[error_model_importer_game_folder_not_found]
+src = "Specified game installation folder is not found!"
+loc = "지정된 게임 설치 폴더를 찾을 수 없습니다!"
+
+[message_text_game_detection_failed]
+src = """
+Automatic detection of the game installation failed!
+
+Please configure it manually with Game Folder option of General Settings.
+"""
+loc = """
+게임 설치 자동 감지에 실패했습니다!
+
+일반 설정의 게임 폴더 옵션을 사용하여 수동으로 구성하세요.
+"""
+
+[message_button_open_settings]
+src = "Open Settings"
+loc = "설정 열기"
+
+[message_text_game_detected_single]
+src = """
+Detected game installation:
+
+{game_folder}
+
+Please check if it is desired Game Folder or change it in General Settings.
+"""
+loc = """
+게임 설치 감지됨:
+
+{game_folder}
+
+원하는 게임 폴더가 맞는지 확인하거나 일반 설정에서 변경하세요.
+"""
+
+[message_text_game_detected_multiple]
+src = """
+Detected game installations:
+
+Select desired Game Folder from the list below or set it in General Settings:
+
+"""
+loc = """
+여러 게임 설치 감지됨:
+
+아래 목록에서 원하는 게임 폴더를 선택하거나 일반 설정에서 설정하세요:
+
+"""
+
+[message_text_game_folder_not_configured]
+src = """
+Game installation folder is not configured!
+
+Please set it with Game Folder option of General Settings.
+"""
+loc = """
+게임 설치 폴더가 구성되지 않았습니다!
+
+일반 설정의 게임 폴더 옵션에서 설정하세요.
+"""
+
+[status_autodetecting_game]
+src = "Autodetecting game installation folder..."
+loc = "게임 설치 폴더 자동 감지 중..."
+
+[error_launcher_in_game_folder]
+src = """
+
+Launcher must be installed outside of the game folder!
+
+Please reinstall the launcher to another location.
+"""
+loc = """
+
+런처는 게임 폴더 외부에 설치해야 합니다!
+
+런처를 다른 위치에 다시 설치하세요.
+"""
+
+[error_model_importer_in_game_folder]
+src = """
+
+{importer} Folder must be located outside of the Game Folder!
+
+Please chose another location for Settings > {importer} > {importer} Folder.
+"""
+loc = """
+
+{importer} 폴더는 게임 폴더 외부에 위치해야 합니다!
+
+설정 > {importer} > {importer} 폴더에서 다른 위치를 선택하세요.
+"""
+
+[error_model_importer_installation_failed]
+src = """
+{importer} Installation Failed:
+{error_text}
+"""
+loc = """
+{importer} 설치 실패:
+{error_text}
+"""
+
+[status_updating_ini]
+src = "Updating d3dx.ini..."
+loc = "d3dx.ini 업데이트 중..."
+
+[error_ini_missing_setting]
+src = "Config is missing {setting_name} setting!"
+loc = "구성에 {setting_name} 설정이 누락되었습니다!"
+
+[error_ini_missing_value]
+src = "Config is missing value for section `{section}` option `{option}` key `{key}`"
+loc = "섹션 `{section}` 옵션 `{option}` 키 `{key}`에 대한 값이 누락되었습니다."
+
+[error_set_ini_option_failed]
+src = "Failed to set section {section} option {option} to {value}: {error_text}"
+loc = "섹션 {section} 옵션 {option}을(를) {value}(으)로 설정하지 못했습니다: {error_text}"
+
+[message_button_restore]
+src = "Restore"
+loc = "복원"
+
+[message_text_model_importer_installation_damaged]
+src = """
+{importer} installation is damaged!
+Details: Missing critical file: {file_name}!
+Would you like to restore {importer} automatically?
+"""
+loc = """
+{importer} 설치가 손상되었습니다!
+세부 정보: 중요 파일 누락: {file_name}!
+{importer}을(를) 자동으로 복원하시겠습니까?
+"""
+
+[model_importer_missing_critical_file]
+src = "Missing critical file: {file_name}!"
+loc = "중요 파일 누락: {file_name}!"
+
+[model_importer_shortcut_description]
+src = "Start game with {importer} and skip launcher load"
+loc = "{importer}로 게임을 시작하고 런처 로드 건너뛰기"
+
+[message_button_disable]
+src = "Disable"
+loc = "비활성화"
+
+[message_button_ignore]
+src = "Ignore"
+loc = "무시"
+
+[message_button_abort]
+src = "Abort"
+loc = "중단"
+
+[error_cannot_start_with_d3dx_ini_in_mods]
+src = "Cannot start with d3dx.ini in Mods folder!"
+loc = "Mods 폴더에 d3dx.ini가 있으면 시작할 수 없습니다!"
+
+[error_malformed_model_importer_version]
+src = "Malformed {importer} version!"
+loc = "잘못된 {importer} 버전 형식입니다!"
+
+[error_model_importer_version_not_found]
+src = "Failed to locate {importer} version!"
+loc = "{importer} 버전을 찾을 수 없습니다!"
+
+[error_srmi_fps_unlock_failed]
+src = "Failed to force 120 FPS: {error_text}"
+loc = "120 FPS를 강제 적용하지 못했습니다: {error_text}"
+
+[error_srmi_registry_key_not_found]
+src = """
+Star Rail registry key is not found!
+
+Please start the game without 120 FPS tweak, change FPS to any value to create the record and try again.
+
+Note: Tweak is supported only for the Global HSR client and will not work for CN.
+"""
+loc = """
+스타레일 레지스트리 키를 찾을 수 없습니다!
+
+120 FPS 트윅 없이 게임을 시작하고 FPS를 아무 값으로나 변경하여 레코드를 생성한 후 다시 시도하세요.
+
+참고: 트윅은 글로벌 HSR 클라이언트에서만 지원되며 CN에서는 작동하지 않습니다.
+"""
+
+[error_srmi_graphics_settings_not_found]
+src = """
+Graphics Settings record is not found in HSR registry!
+
+Please start the game without 120 FPS tweak, change FPS to any value to create the record and try again.
+"""
+loc = """
+HSR 레지스트리에서 그래픽 설정 레코드를 찾을 수 없습니다!
+
+120 FPS 트윅 없이 게임을 시작하고 FPS를 아무 값으로나 변경하여 레코드를 생성한 후 다시 시도하세요.
+"""
+
+[error_srmi_unknown_graphics_format]
+src = "Unknown Graphics Settings format: Data type {regtype} is not {expected_type} of REG_BINARY!"
+loc = "알 수 없는 그래픽 설정 형식: 데이터 유형 {regtype}이(가) REG_BINARY의 {expected_type}이(가) 아닙니다!"
+
+[error_srmi_fps_key_not_found]
+src = "Unknown Graphics Settings format: \"FPS\" key no found!"
+loc = "알 수 없는 그래픽 설정 형식: \"FPS\" 키를 찾을 수 없습니다!"
+
+[error_game_path_not_absolute]
+src = "Failed to normalize path {path}: Path is not absolute!"
+loc = "경로 {path}을(를) 정규화하지 못했습니다: 절대 경로가 아닙니다!"
+
+[error_wuthering_waves_exe_not_found]
+src = "Failed to normalize path {path}: Wuthering Waves.exe not found!"
+loc = "경로 {path}을(를) 정규화하지 못했습니다: Wuthering Waves.exe를 찾을 수 없습니다!"
+
+[error_wwmi_game_folder_missing_files]
+src = "Game folder must contain `Wuthering Waves.exe` and `Client` & `Engine` folders!"
+loc = "게임 폴더에는 `Wuthering Waves.exe` 및 `Client`와 `Engine` 폴더가 포함되어야 합니다!"
+
+[message_text_wwmi_invalid_steam_installation]
+src = """
+Invalid Wuthering Waves installation detected for Steam:
+{game_path}
+
+{folder_name} folder with {exe_name} must be directly placed in:
+{common_folder}
+
+Please run game file repair via Steam or fix it manually.
+"""
+loc = """
+Steam용으로 잘못된 명조 설치가 감지되었습니다:
+{game_path}
+
+{exe_name}이(가) 있는 {folder_name} 폴더는 다음에 직접 배치해야 합니다:
+{common_folder}
+
+Steam을 통해 게임 파일 무결성 검사를 실행하거나 수동으로 수정하세요.
+"""
+
+[error_steam_game_repair_required]
+src = "Game installation must be repaired via Steam!"
+loc = "Steam을 통해 게임 설치를 복구해야 합니다!"
+
+[error_game_folder_missing_folder]
+src = "Game folder must contain {dir_name} folder!"
+loc = "게임 폴더에 {dir_name} 폴더가 포함되어야 합니다!"
+
+[status_configuring_settings]
+src = "Configuring in-game settings..."
+loc = "인게임 설정 구성 중..."
+
+[message_title_wounded_effect_detected]
+src = "Wounded Effect Detected"
+loc = "상처 효과(Wounded Effect) 감지됨"
+
+[message_button_keep_enabled]
+src = "Keep Enabled"
+loc = "활성화 유지"
+
+[message_text_wounded_effect_detected]
+src = """
+Looks like Wounded Effect is enabled in game settings.
+It is not supported by most mods and textures will break after few hits taken.
+
+Click `Disable` to turn it Off and ensure proper rendering of modded textures.
+Click `Keep Enabled` if you never get hit or use Injured Effect Remover tool.
+"""
+loc = """
+게임 설정에서 상처 효과(Wounded Effect)가 활성화되어 있는 것 같습니다.
+대부분의 모드에서는 이를 지원하지 않으며 피격당할 시 텍스처가 깨집니다.
+
+`비활성화(Disable)`를 클릭하여 끄고 모드 텍스처가 제대로 렌더링되도록 하세요.
+절대 맞지 않거나 부상 효과 제거 도구(Injured Effect Remover)를 사용한다면 `활성화 유지(Keep Enabled)`를 클릭하세요.
+"""
+
+[error_wwmi_fps_unlock_failed]
+src = """
+Failed to force 120 FPS!
+Please disable `Force 120 FPS` in launcher's General Settings.
+
+{error_text}
+"""
+loc = """
+120 FPS를 강제 적용하지 못했습니다!
+런처의 일반 설정에서 `120 FPS 강제 적용`을 비활성화하세요.
+
+{error_text}
+"""
+
+[error_wwmi_game_config_failed]
+src = """
+Failed to configure in-game settings for WWMI!
+Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:
+* Graphics > `Graphics Quality` must be `Quality`.
+
+{error_text}
+"""
+loc = """
+WWMI의 인게임 설정을 구성하지 못했습니다!
+런처의 일반 설정에서 `게임 설정 구성`을 비활성화하고 인게임 설정을 확인하세요:
+* 그래픽 > `그래픽 품질(Graphics Quality)`을 `품질(Quality)`로 설정해야 합니다.
+
+{error_text}
+"""
+
+[status_updating_file]
+src = "Updating {file_name}..."
+loc = "{file_name} 업데이트 중..."
+
+[error_local_storage_init_failed]
+src = "Failed to initialize LocalStorage: {error_text}"
+loc = "LocalStorage를 초기화하지 못했습니다: {error_text}"
+
+[error_zzmi_game_config_failed]
+src = """
+Failed to configure in-game settings for ZZMI!
+Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:
+* Graphics > `Character Quality` must be `High`.
+* Graphics > `High-Precision Character Animation` must be `Disabled`.
+
+{error_text}
+"""
+loc = """
+ZZMI의 인게임 설정을 구성하지 못했습니다!
+런처의 일반 설정에서 `게임 설정 구성`을 비활성화하고 인게임 설정을 확인하세요:
+* 그래픽 > `캐릭터 품질(Character Quality)`을 `높음(High)`으로 설정해야 합니다.
+* 그래픽 > `고정밀 캐릭터 애니메이션(High-Precision Character Animation)`을 `비활성화(Disabled)`로 설정해야 합니다.
+
+{error_text}
+"""
+
+[error_zzmi_unknown_settings_format]
+src = "Unknown system settings entry format: {setting}!"
+loc = "알 수 없는 시스템 설정 항목 형식입니다: {setting}!"
+
+[error_updater_start_failed]
+src = """
+Failed to start XXMI Updater.exe!
+
+Was it blocked by Antivirus software or security settings?
+"""
+loc = """
+XXMI Updater.exe를 시작하지 못했습니다!
+
+바이러스 백신 소프트웨어나 보안 설정에 의해 차단되었습니까?
+"""
+
+[error_package_version_detect_failed]
+src = """
+Failed to detect installed {package_name} version:
+
+{error_text}
+"""
+loc = """
+설치된 {package_name} 버전을 감지하지 못했습니다:
+
+{error_text}
+"""
+
+[package_manager_detect_latest_failed]
+src = """
+Failed to detect latest {package_name} version:
+
+{error_text}
+"""
+loc = """
+최신 {package_name} 버전을 감지하지 못했습니다:
+
+{error_text}
+"""
+
+[error_downloaded_data_verification_failed]
+src = """
+Downloaded data integrity verification failed!
+Please restart the launcher and try again!
+"""
+loc = """
+다운로드한 데이터 무결성 검증에 실패했습니다!
+런처를 다시 시작하고 다시 시도하세요!
+"""
+
+[package_manager_file_verification_failed]
+src = """
+{asset_name} data integrity verification failed!
+Please restart the launcher and try again!
+"""
+loc = """
+{asset_name} 데이터 무결성 검증에 실패했습니다!
+런처를 다시 시작하고 다시 시도하세요!
+"""
+
+[error_missing_manifest]
+src = "{package_name} package is missing manifest file!"
+loc = "{package_name} 패키지에 매니페스트 파일이 없습니다!"
+
+[error_parse_manifest_failed]
+src = "Failed to parse {package_name} manifest file!"
+loc = "{package_name} 매니페스트 파일을 구문 분석하지 못했습니다!"
+
+[error_missing_critical_file]
+src = "{package_name} package is missing critical file: {file_name}!"
+loc = "{package_name} 패키지에 중요 파일이 누락되었습니다: {file_name}!"
+
+[error_file_signature_invalid]
+src = "File {file_name} signature is invalid!"
+loc = "파일 {file_name} 서명이 유효하지 않습니다!"
+
+[error_missing_signature]
+src = "{package_name} manifest file is missing signature for {file_name}!"
+loc = "{package_name} 매니페스트 파일에 {file_name}에 대한 서명이 없습니다!"
+
+[error_github_api_limit]
+src = """
+Unauthorized GitHub API requests limit reached for your IP!
+
+GitHub servers will ignore further connection attempts for an hour.
+
+Set (another) *Proxy* or *GitHub Token* in *Launcher Settings* for instant access.
+"""
+loc = """
+해당 IP의 승인되지 않은 GitHub API 요청 한도에 도달했습니다!
+
+GitHub 서버는 한 시간 동안 추가 연결 시도를 무시합니다.
+
+즉시 액세스하려면 *런처 설정*에서 (다른) *프록시* 또는 *GitHub 토큰*을 설정하세요.
+"""
+
+[error_remove_readonly_failed]
+src = "Failed to remove Read Only flag from file {path}: {error_text}!"
+loc = "파일 {path}에서 읽기 전용 플래그를 제거하지 못했습니다: {error_text}!"
+
+[error_file_not_exist]
+src = "File '{path}' does not exist!"
+loc = "'{path}' 파일이 존재하지 않습니다!"
+
+[error_not_a_file]
+src = "File '{path}' is not a file!"
+loc = "'{path}' 파일은 파일이 아닙니다!"
+
+[error_path_not_absolute]
+src = "File path '{path}' is not absolute!"
+loc = "파일 경로 '{path}'이(가) 절대 경로가 아닙니다!"
+
+[error_no_read_access]
+src = "Failed to read '{path}' file!"
+loc = "'{path}' 파일을 읽지 못했습니다!"
+
+[error_file_readonly]
+src = "Failed to write '{path}': file is Read Only!"
+loc = "'{path}'에 쓰지 못했습니다: 파일이 읽기 전용입니다!"
+
+[error_no_write_access]
+src = "Failed to write '{path}': no write access!"
+loc = "'{path}'에 쓰지 못했습니다: 쓰기 권한이 없습니다!"
+
+[error_no_exe_access]
+src = "Failed run '{path}': no execute access!"
+loc = "'{path}'을(를) 실행하지 못했습니다: 실행 권한이 없습니다!"
+
+[error_dir_not_absolute]
+src = "Directory path '{path}' is not absolute!"
+loc = "디렉토리 경로 '{path}'이(가) 절대 경로가 아닙니다!"
+
+[error_cant_read_folder]
+src = "Can't read from '{path}' folder!"
+loc = "'{path}' 폴더에서 읽을 수 없습니다!"
+
+[error_cant_write_folder]
+src = "Can't write to '{path}' folder!"
+loc = "'{path}' 폴더에 쓸 수 없습니다!"
+
+[error_cant_run_exe_folder]
+src = "Can't run .exe in '{path}' folder!"
+loc = "'{path}' 폴더에서 .exe를 실행할 수 없습니다!"
+
+[error_cant_access_folder]
+src = "Can't access '{path}' folder!"
+loc = "'{path}' 폴더에 접근할 수 없습니다!"
+
+[error_not_a_folder]
+src = "Path '{path}' is not a folder!"
+loc = "'{path}' 경로는 폴더가 아닙니다!"
+
+[error_cannot_set_root_absolute]
+src = "Cannot set root \"{root_path}\" for absolute path \"{path}\"!"
+loc = "절대 경로 \"{path}\"의 루트 \"{root_path}\"를 설정할 수 없습니다!"
+
+[error_curly_brackets_error]
+src = """
+Launcher initialization failed!
+
+Curly brackets {{ and }} in launcher path are not supported:
+{root_path}
+
+Please reinstall the launcher to another location.
+
+"""
+loc = """
+런처 초기화 실패!
+
+런처 경로의 중괄호 {{ 및 }}는 지원되지 않습니다:
+{root_path}
+
+런처를 다른 위치에 다시 설치하세요.
+
+"""
+
+[error_dll_injector_file_not_found]
+src = "Injector file not found: {injector_lib_path}!"
+loc = "인젝터 파일을 찾을 수 없습니다: {injector_lib_path}!"
+
+[error_dll_injector_load_failed]
+src = "Failed to load injector library!"
+loc = "인젝터 라이브러리를 로드하지 못했습니다!"
+
+[error_dll_injector_unload_failed]
+src = "Failed to unload injector library!"
+loc = "인젝터 라이브러리를 언로드하지 못했습니다!"
+
+[dll_injector_shell_error_out_of_memory]
+src = "The operating system is out of memory/resources"
+loc = "운영 체제의 메모리/리소스가 부족합니다."
+
+[dll_injector_shell_error_file_not_found]
+src = "File not found"
+loc = "파일을 찾을 수 없습니다."
+
+[dll_injector_shell_error_path_not_found]
+src = "Path not found"
+loc = "경로를 찾을 수 없습니다."
+
+[dll_injector_shell_error_access_denied]
+src = "Access denied"
+loc = "액세스가 거부되었습니다."
+
+[dll_injector_shell_error_not_win32_app]
+src = ".exe file is invalid or not a Win32 app"
+loc = ".exe 파일이 유효하지 않거나 Win32 앱이 아닙니다."
+
+[dll_injector_shell_error_sharing_violation]
+src = "Sharing violation"
+loc = "공유 위반입니다."
+
+[dll_injector_shell_error_no_app_association]
+src = "No application is associated with the file"
+loc = "파일과 연결된 응용 프로그램이 없습니다."
+
+[dll_injector_shell_error_incomplete_app_association]
+src = "File association is incomplete"
+loc = "파일 연결이 불완전합니다."
+
+[dll_injector_unknown_shell_error_code]
+src = "Unknown ShellExecute error code {error_code}"
+loc = "알 수 없는 ShellExecute 오류 코드 {error_code}입니다."
+
+[error_dll_injector_process_start_failed]
+src = "Failed to start {process_name}: {error_text}!"
+loc = "{process_name}을(를) 시작하지 못했습니다: {error_text}!"
+
+[error_dll_injector_unknown_start_method]
+src = "Unknown process start method `{start_method}`!"
+loc = "알 수 없는 프로세스 시작 방식 `{start_method}`입니다!"
+
+[error_dll_injector_injection_failed]
+src = "Failed to inject {dll_paths}!"
+loc = "{dll_paths}을(를) 주입하지 못했습니다!"
+
+[error_dll_injector_unhook_failed]
+src = "Invalid injector usage: {dll_path} was not unhooked!"
+loc = "잘못된 인젝터 사용: {dll_path}이(가) 언훅(unhook)되지 않았습니다!"
+
+[error_dll_injector_another_instance]
+src = "Another instance of 3DMigotoLoader is running!"
+loc = "3DMigotoLoader의 다른 인스턴스가 실행 중입니다!"
+
+[error_dll_injector_failed_to_load_dll]
+src = "Failed to load {dll_path}!"
+loc = "{dll_path}을(를) 로드하지 못했습니다!"
+
+[error_dll_injector_missing_entry_point]
+src = "Library {dll_path} is missing expected entry point!"
+loc = "라이브러리 {dll_path}에 예상되는 진입점이 없습니다!"
+
+[error_dll_injector_hook_setup_failed]
+src = "Failed to setup windows hook for {dll_path}!"
+loc = "{dll_path}에 대한 Windows 후크를 설정하지 못했습니다!"
+
+[error_dll_injector_unknown_hook_error]
+src = "Unknown error while hooking {dll_path}!"
+loc = "{dll_path} 후킹 중 알 수 없는 오류가 발생했습니다!"
+
+[error_dll_injector_hook_is_null]
+src = "Hook is NULL for {dll_path}!"
+loc = "{dll_path}의 후크가 NULL입니다!"
+
+[error_dll_injector_path_not_defined]
+src = "Invalid injector usage: dll path is not defined!"
+loc = "잘못된 인젝터 사용: dll 경로가 정의되지 않았습니다!"
+
+[error_dll_injector_process_not_defined]
+src = "Invalid injector usage: target process is not defined!"
+loc = "잘못된 인젝터 사용: 대상 프로세스가 정의되지 않았습니다!"
+
+[error_dll_injector_dll_not_hooked]
+src = "Invalid injector usage: dll is not hooked!"
+loc = "잘못된 인젝터 사용: dll이 후킹되지 않았습니다!"
+
+[error_ssl_certificate_validation_failed]
+src = """
+Failed to validate SSL certificate of GitHub HTTPS connection!
+
+If you trust your proxy, uncheck *Verify SSL* in *Launcher Settings* and try again.
+"""
+loc = """
+GitHub HTTPS 연결의 SSL 인증서를 검증하지 못했습니다!
+
+프록시를 신뢰하는 경우 *런처 설정*에서 *SSL 확인*을 선택 취소하고 다시 시도하세요.
+"""
+
+[error_github_connection_failed]
+src = """
+Failed to establish HTTPS connection to GitHub!
+
+Please check your Antivirus, Firewall, Proxy and VPN settings.
+"""
+loc = """
+GitHub에 HTTPS 연결을 설정하지 못했습니다!
+
+바이러스 백신, 방화벽, 프록시 및 VPN 설정을 확인하세요.
+"""
+
+[error_github_rate_limit_exceeded]
+src = "GitHub API rate limit exceeded!"
+loc = "GitHub API 속도 제한을 초과했습니다!"
+
+[error_github_invalid_token]
+src = """
+GitHub Personal Access Token is invalid!
+
+Please configure correct token in launcher settings.
+"""
+loc = """
+GitHub 개인 액세스 토큰이 유효하지 않습니다!
+
+런처 설정에서 올바른 토큰을 구성하세요.
+"""
+
+[error_github_parse_response_failed]
+src = "Failed to parse GitHub response!"
+loc = "GitHub 응답을 구문 분석하지 못했습니다!"
+
+[error_github_parse_version_failed]
+src = "Failed to parse latest release version!"
+loc = "최신 릴리스 버전을 구문 분석하지 못했습니다!"
+
+[error_github_parse_signature_failed]
+src = "Failed to parse signature!"
+loc = "서명을 구문 분석하지 못했습니다!"
+
+[error_github_asset_not_found]
+src = "Failed to locate asset matching to '{asset_name_format}'!"
+loc = "'{asset_name_format}'와(과) 일치하는 에셋을 찾을 수 없습니다!"
+
+[error_github_invalid_release_notes]
+src = "<font color=\"red\">⚠ Error! Invalid release notes format! ⚠</font>"
+loc = "<font color=\"red\">⚠ 오류! 잘못된 릴리스 노트 형식입니다! ⚠</font>"
+
+[error_github_unsigned_release]
+src = "<font color=\"red\">☢ Error! Release is unsigned! ☢</font>"
+loc = "<font color=\"red\">☢ 오류! 릴리스에 서명되지 않았습니다! ☢</font>"
+
+[error_proxy_host_not_specified]
+src = "Proxy host is not specified!"
+loc = "프록시 호스트가 지정되지 않았습니다!"
+
+[error_proxy_port_not_specified]
+src = "Proxy port is not specified!"
+loc = "프록시 포트가 지정되지 않았습니다!"
+
+[error_proxy_port_must_be_numeric]
+src = "Proxy port must be numeric value!"
+loc = "프록시 포트는 숫자 값이어야 합니다!"
+
+[donate_and_wwmi]
+src = " and WWMI"
+loc = " 그리고 WWMI"
+
+[donate_popup_introduction]
+src = """
+Hey there — just a quick moment, I promise I won't interrupt again!
+
+I'm SpectrumQT, the developer behind XXMI Launcher{importer_info}.
+Looks like you've already enjoyed {num_sessions} {model_importer} sessions — awesome!
+"""
+loc = """
+안녕하세요 — 잠시만요, 다시는 방해하지 않겠다고 약속합니다!
+
+저는 XXMI Launcher{importer_info}의 개발자인 SpectrumQT입니다.
+벌써 {num_sessions}번의 {model_importer} 세션을 즐기셨군요 — 대단합니다!
+"""
+
+[donate_wwmi_introduction]
+src = """
+Hello! Thank you for visiting {model_importer} Appreciation Corner!
+
+This page is a bit unique, since I can't list many names here.
+Simply because I'm soloing {model_importer} and XXMI Launcher development.
+"""
+loc = """
+안녕하세요! {model_importer} 감사의 공간(Appreciation Corner)에 오신 것을 환영합니다!
+
+이 페이지는 약간 독특한데, 제가 여기에 많은 이름을 올릴 수 없기 때문입니다.
+단순히 제가 혼자서 {model_importer}와 XXMI Launcher 개발을 진행하고 있기 때문입니다.
+"""
+
+[donate_other_introduction]
+src = """
+Hello! Thank you for visiting {model_importer} Appreciation Corner!
+
+Here you can see the dev team fighting for {model_importer} behind the scenes.
+It's a tough battle — but shader hackers prevail!
+"""
+loc = """
+안녕하세요! {model_importer} 감사의 공간에 오신 것을 환영합니다!
+
+여기에서 보이지 않는 곳에서 {model_importer}를 위해 싸우고 있는 개발팀을 볼 수 있습니다.
+힘든 싸움이지만 셰이더 해커들이 승리합니다!
+"""
+
+[donate_wwmi_useful_check]
+src = "If you've been finding it useful, consider checking out"
+loc = "유용하다고 느끼셨다면, 한 번 확인해 보세요"
+
+[donate_my_patreon_campaign]
+src = "my Patreon campaign."
+loc = "제 Patreon 캠페인을요."
+
+[donate_support_message]
+src = "Please consider supporting those who work hard every day to make {model_importer} possible!"
+loc = "{model_importer}가 가능하도록 매일 열심히 일하는 사람들을 지원하는 것을 고려해 주세요!"
+
+[donate_creators_single]
+src = "• Creator: "
+loc = "• 제작자: "
+
+[donate_creators_multiple]
+src = "• Creators: "
+loc = "• 제작자들: "
+
+[donate_maintainers_single]
+src = "• Maintainer:"
+loc = "• 관리자: "
+
+[donate_maintainers_multiple]
+src = "• Maintainers:"
+loc = "• 관리자들: "
+
+[donate_launcher_handy]
+src = "Also, if the launcher has been handy, I'd appreciate you joining"
+loc = "또한 런처가 유용했다면 제 Patreon에 가입해 주시면 감사하겠습니다."
+
+[donate_my_patreon_short]
+src = "my Patreon."
+loc = "제 Patreon."
+
+[donate_close_button]
+src = "Close"
+loc = "닫기"
+
+[donate_close_countdown]
+src = "Close ({time_left})"
+loc = "닫기 ({time_left})"
+
+[bottom_bar_initializing_launch]
+src = "Initializing game launch..."
+loc = "게임 실행 초기화 중..."
+
+[bottom_bar_hooking]
+src = "Hooking {library} to {process}..."
+loc = "{process}에 {library} 후킹 중..."
+
+[bottom_bar_verifying_hook]
+src = "Verifying {library} load into {process}..."
+loc = "{process}로의 {library} 로드 확인 중..."
+
+[bottom_bar_injecting]
+src = "Injecting {library} to {process}..."
+loc = "{process}에 {library} 주입 중..."
+
+[bottom_bar_launching_game]
+src = "Launching game..."
+loc = "게임 시작 중..."
+
+[bottom_bar_waiting_process]
+src = "Waiting for {process} to start..."
+loc = "{process}가 시작되기를 기다리는 중..."
+
+[bottom_bar_closing_launcher]
+src = "Closing launcher..."
+loc = "런처 닫는 중..."
+
+[bottom_bar_checking_updates]
+src = "Checking for updates..."
+loc = "업데이트 확인 중..."
+
+[bottom_bar_connecting_github]
+src = "Connecting to GitHub..."
+loc = "GitHub에 연결 중..."
+
+[bottom_bar_downloading]
+src = "Downloading {asset}..."
+loc = "{asset} 다운로드 중..."
+
+[bottom_bar_verifying_integrity]
+src = "Verifying {asset} integrity..."
+loc = "{asset} 무결성 검증 중..."
+
+[bottom_bar_initializing_installation]
+src = "Initializing update installation..."
+loc = "업데이트 설치 초기화 중..."
+
+[bottom_bar_writing_file]
+src = "Writing {asset} on disk..."
+loc = "디스크에 {asset} 쓰는 중..."
+
+[bottom_bar_moving_file]
+src = "Moving {asset}..."
+loc = "{asset} 이동 중..."
+
+[bottom_bar_unpacking]
+src = "Unpacking {asset}..."
+loc = "{asset} 압축 푸는 중..."
+
+[launcher_select_games_text]
+src = "Select Games To Mod:"
+loc = "모드를 적용할 게임 선택:"
+
+[launcher_update_button_tooltip]
+src = """
+## Update packages to latest versions:
+{pending_update_message}
+
+<font color=\"#3366ff\">*Hover over versions in the bottom-left corner to view update descriptions.*</font>
+"""
+loc = """
+## 패키지를 최신 버전으로 업데이트:
+{pending_update_message}
+
+<font color=\"#3366ff\">*업데이트 설명을 보려면 왼쪽 하단의 버전 위로 마우스를 올리세요.*</font>
+"""
+
+[launcher_start_button]
+src = "Start"
+loc = "시작"
+
+[launcher_install_button]
+src = "Install"
+loc = "설치"
+
+[package_release_notes_up_to_date]
+src = """
+# What's new in {package_name} v{new_package_version}:
+{installed_release_notes}
+"""
+loc = """
+# {package_name} v{new_package_version}의 새로운 기능:
+{installed_release_notes}
+"""
+
+[package_release_notes_update_available]
+src = """
+# Update {package_name} to v{new_package_version} for:
+{latest_release_notes}
+"""
+loc = """
+# {package_name}을(를) v{new_package_version}으로 업데이트:
+{latest_release_notes}
+"""
+
+[package_release_notes_not_installed]
+src = """
+Press **Install** button to setup the package.
+"""
+loc = """
+**설치** 버튼을 눌러 패키지를 설정하세요.
+"""
+
+[package_description_launcher]
+src = """
+*This package is XXMI Launcher App itself and defines its features.*
+"""
+loc = """
+*이 패키지는 XXMI 런처 앱 자체이며 해당 기능을 정의합니다.*
+"""
+
+[package_description_xxmi_libraries]
+src = """
+*XXMI Libraries package is custom 3dmigoto build fiddling with data between GPU and a game process.*
+"""
+loc = """
+*XXMI Libraries 패키지는 GPU와 게임 프로세스 간의 데이터를 조작하는 커스텀 3dmigoto 빌드입니다.*
+"""
+
+[package_description_model_importer]
+src = """
+*Model Importer package offers a set of API functions required for mods to work in given game.*
+"""
+loc = """
+*Model Importer 패키지는 해당 게임에서 모드가 작동하는 데 필요한 일련의 API 함수를 제공합니다.*
+"""
+
+[package_description_tooltip_open_github_changelog]
+src = """
+<font color=\"#3366ff\">*<u>Left-Click</u> to open {package_name} Dev Blog on Patreon.*</font>
+<font color=\"#3366ff\">*<u>Right-Click</u> to open {package_name} GitHub releases for full changelog.*</font>
+"""
+loc = """
+<font color=\"#3366ff\">*<u>좌클릭</u>하여 Patreon의 {package_name} 개발 블로그를 엽니다.*</font>
+<font color=\"#3366ff\">*전체 변경 로그를 보려면 <u>우클릭</u>하여 {package_name} GitHub 릴리스를 엽니다.*</font>
+"""
+
+[package_description_tooltip_open_dev_blog]
+src = """
+<font color=\"#3366ff\">*<u>Left-Click</u> to open {package_name} GitHub releases for full changelog.*</font>
+"""
+loc = """
+<font color=\"#3366ff\">*전체 변경 로그를 보려면 <u>좌클릭</u>하여 {package_name} GitHub 릴리스를 엽니다.*</font>
+"""
+
+[package_release_notes]
+src = """
+{package_release_notes}
+
+{actions_tooltip}
+<font color=\"#aaaaaa\">{package_description}</font>
+"""
+loc = """
+{package_release_notes}
+
+{actions_tooltip}
+<font color=\"#aaaaaa\">{package_description}</font>
+"""
+
+[tool_bar_repair_button]
+src = "Repair {importer}"
+loc = "{importer} 수리"
+
+[tool_bar_check_updates_button]
+src = "Check For Updates"
+loc = "업데이트 확인"
+
+[tool_bar_add_shortcut_button]
+src = "Add Desktop Shortcut"
+loc = "바탕 화면 바로가기 추가"
+
+[tool_bar_open_mods_button]
+src = "Open Mods Folder"
+loc = "Mods 폴더 열기"
+
+[top_bar_xxmi_button_tooltip]
+src = "Manage Model Importers"
+loc = "모델 임포터 관리"
+
+[top_bar_wwmi_button_tooltip]
+src = "Wuthering Waves Model Importer"
+loc = "명조 모델 임포터(WWMI)"
+
+[top_bar_zzmi_button_tooltip]
+src = "Zenless Zone Zero Model Importer"
+loc = "젠레스 존 제로 모델 임포터(ZZMI)"
+
+[top_bar_srmi_button_tooltip]
+src = "Honkai: Star Rail Model Importer"
+loc = "붕괴: 스타레일 모델 임포터(SRMI)"
+
+[top_bar_gimi_button_tooltip]
+src = "Genshin Impact Model Importer"
+loc = "원신 모델 임포터(GIMI)"
+
+[top_bar_himi_button_tooltip]
+src = "Honkai Impact Model Importer"
+loc = "붕괴3rd 모델 임포터(HiMI)"
+
+[top_bar_gamebanana_button_tooltip]
+src = "{importer} GameBanana"
+loc = "{importer} 게임바나나(GameBanana)"
+
+[top_bar_discord_button_tooltip]
+src = "AGMG Modding Community Discord"
+loc = "AGMG 모딩 커뮤니티 디스코드"
+
+[top_bar_github_button_tooltip]
+src = "XXMI Launcher GitHub"
+loc = "XXMI 런처 GitHub"
+
+[top_bar_donate_button_tooltip]
+src = "Support {importer}"
+loc = "{importer} 지원"
+
+[top_bar_settings_button_tooltip]
+src = "Open Settings"
+loc = "설정 열기"
+
+[top_bar_minimize_button_tooltip]
+src = "Minimize"
+loc = "최소화"
+
+[top_bar_close_button_tooltip]
+src = "Close"
+loc = "닫기"
+
+[top_bar_unsafe_mode_text]
+src = "Unsafe Mode"
+loc = "비보안 모드(Unsafe Mode)"
+
+[top_bar_unsafe_mode_text_tooltip]
+src = """
+Usage of 3-rd party 3dmigoto DLLs is allowed.
+Make sure to use ones only from a trusted source!
+"""
+loc = """
+타사 3dmigoto DLL 사용이 허용됩니다.
+반드시 신뢰할 수 있는 소스의 DLL만 사용하세요!
+"""
+
+[message_text_theme_load_failed_no_folder]
+src = """
+Failed to load {theme} theme:
+
+Theme folder does not exist!
+"""
+loc = """
+{theme} 테마를 로드하지 못했습니다:
+
+테마 폴더가 존재하지 않습니다!
+"""
+
+[message_text_theme_load_failed_no_file]
+src = """
+Failed to load {theme} theme:
+
+Theme file `custom-tkinter-theme.json` does not exist!
+"""
+loc = """
+{theme} 테마를 로드하지 못했습니다:
+
+테마 파일 `custom-tkinter-theme.json`이 존재하지 않습니다!
+"""
+
+[message_title_theme_update_required]
+src = "Theme Update Required"
+loc = "테마 업데이트 필요"
+
+[message_button_theme_use_default]
+src = "Use Default"
+loc = "기본값 사용"
+
+[message_button_patch_theme]
+src = "Patch Theme"
+loc = "테마 패치"
+
+[message_text_theme_update_required]
+src = """
+Selected {theme} theme cannot be loaded!
+
+Click `Use Default` to use default theme instead (ensures proper visuals).
+Click `Patch Theme` to replace `custom-tkinter-theme.json` with new one.
+"""
+loc = """
+선택한 {theme} 테마를 로드할 수 없습니다!
+
+대신 기본 테마를 사용하려면 `기본값 사용(Use Default)`을 클릭하세요(적절한 비주얼 보장).
+`custom-tkinter-theme.json`을 새 것으로 교체하려면 `테마 패치(Patch Theme)`를 클릭하세요.
+"""
+
+[status_reloading_gui]
+src = "Reloading GUI..."
+loc = "GUI 새로고침 중..."
+
+[advanced_settings_overwrite_ini_checkbox]
+src = "Overwrite d3dx.ini"
+loc = "d3dx.ini 덮어쓰기"
+
+[advanced_settings_overwrite_ini_checkbox_tooltip]
+src = """
+Enabled: {importer} updates will overwrite existing d3dx.ini to ensure its up-to-date state.
+Disabled: {importer} updates will keep existing d3dx.ini untouched.
+"""
+loc = """
+활성화: 최신 상태를 유지하기 위해 {importer} 업데이트가 기존 d3dx.ini를 덮어씁니다.
+비활성화: {importer} 업데이트 시 기존 d3dx.ini를 건드리지 않습니다.
+"""
+
+[advanced_settings_security_label]
+src = "Security:"
+loc = "보안:"
+
+[advanced_settings_unsafe_mode_checkbox]
+src = "Unsafe Mode"
+loc = "비보안 모드"
+
+[advanced_settings_unsafe_mode_checkbox_tooltip]
+src = """
+Enabled: Allow 3-rd party 3dmigoto dlls.
+Disabled: Disallow 3-rd party 3dmigoto dlls.
+Note: If 3-rd party d3d11.dll does not support running from nested directories, it will fail to load.
+"""
+loc = """
+활성화: 타사 3dmigoto dll을 허용합니다.
+비활성화: 타사 3dmigoto dll을 허용하지 않습니다.
+참고: 타사 d3d11.dll이 중첩된 디렉토리에서의 실행을 지원하지 않으면 로드에 실패합니다.
+"""
+
+[advanced_settings_run_pre_launch_checkbox]
+src = "Run Pre-Launch:"
+loc = "실행 전(Pre-Launch) 실행:"
+
+[advanced_settings_option_checkbox_tooltip]
+src = """
+Enabled: Option will have stated effect.
+Disabled: Option will have no effect.
+"""
+loc = """
+활성화: 옵션에 명시된 효과가 적용됩니다.
+비활성화: 옵션이 효과가 없습니다.
+"""
+
+[advanced_settings_run_pre_launch_tooltip]
+src = """
+Windows console command to be executed before game exe launch.
+Note: If something needs to be done before the game start, do it here.
+"""
+loc = """
+게임 exe 실행 전에 실행될 Windows 콘솔 명령입니다.
+참고: 게임 시작 전에 해야 할 일이 있다면 여기서 수행하세요.
+"""
+
+[advanced_settings_wait_checkbox]
+src = "Wait"
+loc = "대기"
+
+[advanced_settings_run_pre_launch_wait_checkbox_tooltip]
+src = """
+Enabled: Wait for (blocking) command to finish its execution before launching the game exe.
+"""
+loc = """
+활성화: 게임 exe를 시작하기 전에 (차단) 명령이 실행을 마칠 때까지 기다립니다.
+"""
+
+[advanced_settings_custom_launch_checkbox]
+src = "Custom Launch:"
+loc = "사용자 지정 실행(Custom Launch):"
+
+[advanced_settings_custom_launch_entry_tooltip]
+src = """
+Windows console command to run when Start button is pressed instead of default game exe launch.
+Hint: If you want to change injection method only, just leave this field empty.
+Warning! This command also overrides `Launch Options` from General Settings.
+Note: If you want to start game exe with another custom exe, do it here.
+Example (equivalent for command internally used by launcher to start GI via FPS unlocker):
+`start /d \"C:\\Games\\XXMI Launcher\\Resources\\Packages\\GI-FPS-Unlocker\" unlockfps_nc.exe`
+"""
+loc = """
+기본 게임 exe 실행 대신 시작 버튼을 눌렀을 때 실행할 Windows 콘솔 명령입니다.
+힌트: 주입 방식만 변경하려면 이 필드를 비워 두세요.
+경고! 이 명령은 일반 설정의 `실행 옵션(Launch Options)`도 무시합니다.
+참고: 게임 exe를 다른 커스텀 exe로 시작하려면 여기서 수행하세요.
+예 (런처가 FPS Unlocker를 통해 원신을 시작하는 데 내부적으로 사용하는 명령과 동일):
+`start /d \"C:\\Games\\XXMI Launcher\\Resources\\Packages\\GI-FPS-Unlocker\" unlockfps_nc.exe`
+"""
+
+[advanced_settings_custom_launch_inject_mode_option_menu_tooltip]
+src = """
+Defines the way of 3dmigoto injection into the game process started via Custom Launch.
+* Inject: Use WriteProcessMemory, more reliable but requires direct memory access.
+* Hook: Use SetWindowsHookEx, less reliable, but potentially less prominent for anti-cheats.
+* Bypass: Skip 3dmigoto injection and process only Inject Libraries field.
+"""
+loc = """
+사용자 지정 실행을 통해 시작된 게임 프로세스에 3dmigoto를 주입하는 방식을 정의합니다.
+* Inject (주입): WriteProcessMemory를 사용합니다. 더 안정적이지만 직접적인 메모리 액세스가 필요합니다.
+* Hook (후크): SetWindowsHookEx를 사용합니다. 안정성은 떨어지지만 안티치트에 덜 눈에 띌 가능성이 있습니다.
+* Bypass (우회): 3dmigoto 주입을 건너뛰고 라이브러리 주입(Inject Libraries) 필드만 처리합니다.
+"""
+
+[advanced_settings_run_post_load_checkbox]
+src = "Run Post-Load:"
+loc = "로드 후(Post-Load) 실행:"
+
+[advanced_settings_run_post_load_checkbox_tooltip]
+src = """
+Windows console command to be executed after hooking d3d11.dll to launched game exe.
+Note: If something needs to be done after 3dmigoto injection, do it here.
+"""
+loc = """
+시작된 게임 exe에 d3d11.dll을 후킹한 후 실행될 Windows 콘솔 명령입니다.
+참고: 3dmigoto 주입 후에 해야 할 일이 있다면 여기서 수행하세요.
+"""
+
+[advanced_settings_run_post_load_wait_checkbox_tooltip]
+src = """
+Enabled: Wait for (blocking) command to finish its execution before treating the game launch as complete.
+"""
+loc = """
+활성화: 게임 실행이 완료된 것으로 간주하기 전에 (차단) 명령이 실행을 마칠 때까지 기다립니다.
+"""
+
+[advanced_settings_inject_libraries_checkbox]
+src = "Inject Libraries:"
+loc = "라이브러리 주입(Inject Libraries):"
+
+[advanced_settings_inject_libraries_tooltip]
+src = """
+List of additional DLL paths to inject into the game process. 1 path per line.
+injection will be made via WriteProcessMemory method.
+Example (inject ReShade dll):
+`C:\\Games\\ReShade\\ReShade64.dll`
+"""
+loc = """
+게임 프로세스에 주입할 추가 DLL 경로 목록입니다. 줄당 1개의 경로.
+WriteProcessMemory 방식을 통해 주입됩니다.
+예 (ReShade dll 주입):
+`C:\\Games\\ReShade\\ReShade64.dll`
+"""
+
+[launcher_settings_language_label]
+src = "Language:"
+loc = "언어:"
+
+[general_settings_engine_settings_label]
+src = "Engine Settings:"
+loc = "엔진 설정:"
+
+[general_settings_game_folder_label]
+src = "Game Folder:"
+loc = "게임 폴더:"
+
+[general_settings_game_folder_error_label]
+src = "Failed to detect Game Folder!"
+loc = "게임 폴더를 감지하지 못했습니다!"
+
+[settings_browse_path_button]
+src = "Browse..."
+loc = "찾아보기..."
+
+[general_settings_detect_game_folder_button_tooltip]
+src = "Try to automatically detect existing installation folders."
+loc = "기존 설치 폴더를 자동으로 감지하려고 시도합니다."
+
+[general_settings_launch_options_label]
+src = "Launch Options:"
+loc = "실행 옵션:"
+
+[general_settings_launch_options_entry_tooltip_wwmi]
+src = """
+**Enabled**: Start game via **Client-Win64-Shipping.exe** with specified command line arguments.
+
+- Disable intro: -SkipSplash
+
+**Disabled (default)**: Start game normally via **Wuthering Waves.exe** (most reliable way).
+<font color=\"red\">⚠ Game may crash with this option enabled! ⚠</font>
+"""
+loc = """
+**활성화**: 지정된 명령줄 인수와 함께 **Client-Win64-Shipping.exe**를 통해 게임을 시작합니다.
+
+- 인트로 비활성화: -SkipSplash
+
+**비활성화 (기본값)**: **Wuthering Waves.exe**를 통해 정상적으로 게임을 시작합니다(가장 안정적인 방법).
+<font color=\"red\">⚠ 이 옵션을 활성화하면 게임이 충돌할 수 있습니다! ⚠</font>
+"""
+
+[general_settings_launch_options_entry_tooltip_default]
+src = """
+**Enabled**: Start game exe with specified command line arguments.
+**Disabled**: Ignore specified command line arguments and start game exe normally.
+"""
+loc = """
+**활성화**: 지정된 명령줄 인수와 함께 게임 exe를 시작합니다.
+**비활성화**: 지정된 명령줄 인수를 무시하고 정상적으로 게임 exe를 시작합니다.
+"""
+
+[general_settings_launch_options_about_button]
+src = "About..."
+loc = "정보..."
+
+[general_settings_launch_options_about_button_tooltip]
+src = """
+Open {engine} command line arguments documentation webpage.
+Note: Game engine is customized by devs and some args may not work.
+"""
+loc = """
+{engine} 명령줄 인수 문서 웹페이지를 엽니다.
+참고: 게임 엔진은 개발자가 맞춤화하여 일부 인수가 작동하지 않을 수 있습니다.
+"""
+
+[general_settings_start_method_label]
+src = "Start Method:"
+loc = "시작 방법:"
+
+[general_settings_start_method_option_menu_tooltip]
+src = """
+**Native**: Create the game process directly. Usually it's the most reliable way.
+**Shell**: Start the game process via system console. Worth to try if you have some issues with Native.
+**Manual**: Skip launching the game on **Start** button press. Wait for user to launch it manually ({timeout}s timeout).
+"""
+loc = """
+**Native (기본)**: 게임 프로세스를 직접 생성합니다. 보통 가장 안정적인 방법입니다.
+**Shell (셸)**: 시스템 콘솔을 통해 게임 프로세스를 시작합니다. Native에 문제가 있는 경우 시도해 볼 만합니다.
+**Manual (수동)**: **시작** 버튼을 눌렀을 때 게임 실행을 건너뜁니다. 사용자가 수동으로 실행할 때까지 기다립니다({timeout}초 시간 초과).
+"""
+
+[general_settings_xxmi_delay_label]
+src = "XXMI Delay:"
+loc = "XXMI 지연:"
+
+[general_settings_xxmi_delay_entry_tooltip_base]
+src = """
+Delay in milliseconds for how long injected XXMI DLL (3dmigoto) must wait before initialization.
+{tooltip_footer}
+"""
+loc = """
+주입된 XXMI DLL(3dmigoto)이 초기화 전에 대기해야 하는 지연 시간(밀리초)입니다.
+{tooltip_footer}
+"""
+
+[general_settings_xxmi_delay_entry_tooltip_footer_wwmi]
+src = """
+<font color=\"red\">⚠ Wuthering Waves crashes on launch with wrong delay! ⚠</font>
+<font color=\"#8B8000\">⚠ If default value fails, try to increase or decrease it until WuWa stops crashing. ⚠</font>
+## Known values for Wuthering Waves 2.4:
+- **500**: Default, works for most users.
+- **150**: Minimal known value to work along with ReShade.
+- **50**: Minimal known value to work.
+- **1000+**: Some users need really huge delays.
+"""
+loc = """
+<font color=\"red\">⚠ 잘못된 지연 설정 시 명조 실행 중 충돌이 발생합니다! ⚠</font>
+<font color=\"#8B8000\">⚠ 기본값이 실패하면 게임 충돌이 멈출 때까지 값을 늘리거나 줄여보세요. ⚠</font>
+## 명조 2.4의 알려진 값:
+- **500**: 기본값, 대부분의 사용자에게 작동합니다.
+- **150**: ReShade와 함께 작동하는 최소 알려진 값입니다.
+- **50**: 작동하는 최소 알려진 값입니다.
+- **1000+**: 일부 사용자는 아주 긴 지연이 필요합니다.
+"""
+
+[general_settings_xxmi_delay_entry_tooltip_footer_general]
+src = """
+If game crashes with no mods, try to increase it. Start with steps of 50 and increase them as you go.
+"""
+loc = """
+모드가 없는데도 게임이 충돌하면 값을 늘려보세요. 50 단위로 시작하여 점진적으로 증가시키세요.
+"""
+
+[general_settings_process_priority_label]
+src = "Process Priority:"
+loc = "프로세스 우선순위:"
+
+[general_settings_auto_config_label]
+src = "Auto Config:"
+loc = "자동 구성:"
+
+[general_settings_configure_game_checkbox]
+src = "Configure Game Settings"
+loc = "게임 설정 구성"
+
+[general_settings_configure_game_tooltip_gimi]
+src = """
+**Enabled**: Ensure GIMI-compatible in-game **Graphics Settings** before game start:
+
+- `Dynamic Character Resolution: Off`
+
+**Disabled**: In-game settings will not be affected.
+
+<font color=\"red\">⚠ Mods will not work with wrong settings! ⚠</font>
+"""
+loc = """
+**활성화**: 게임 시작 전에 GIMI 호환 인게임 **그래픽 설정**을 보장합니다:
+
+- `동적 캐릭터 해상도(Dynamic Character Resolution): 끄기`
+
+**비활성화**: 인게임 설정에 영향을 주지 않습니다.
+
+<font color=\"red\">⚠ 잘못된 설정에서는 모드가 작동하지 않습니다! ⚠</font>
+"""
+
+[general_settings_configure_game_tooltip_wwmi]
+src = """
+**Enabled**: Ensure WWMI-compatible in-game **Graphics Settings** before game start:
+
+- `Graphics Quality: Quality`
+
+**Disabled**: In-game settings will not be affected.
+
+<font color=\"red\">⚠ Mods will not work with wrong settings! ⚠</font>
+"""
+loc = """
+**활성화**: 게임 시작 전에 WWMI 호환 인게임 **그래픽 설정**을 보장합니다:
+
+- `그래픽 품질(Graphics Quality): 품질(Quality)`
+
+**비활성화**: 인게임 설정에 영향을 주지 않습니다.
+
+<font color=\"red\">⚠ 잘못된 설정에서는 모드가 작동하지 않습니다! ⚠</font>
+"""
+
+[general_settings_configure_game_tooltip_zzmi]
+src = """
+**Enabled**: Ensure ZZMI-compatible in-game **Graphics Settings** before game start:
+
+- `Character Quality: High`
+- `High-Precision Character Animation: Disabled`
+
+**Disabled**: In-game settings will not be affected.
+
+<font color=\"red\">⚠ Mods will not work with wrong settings! ⚠</font>
+"""
+loc = """
+**활성화**: 게임 시작 전에 ZZMI 호환 인게임 **그래픽 설정**을 보장합니다:
+
+- `캐릭터 품질(Character Quality): 높음(High)`
+- `고정밀 캐릭터 애니메이션(High-Precision Character Animation): 비활성화(Disabled)`
+
+**비활성화**: 인게임 설정에 영향을 주지 않습니다.
+
+<font color=\"red\">⚠ 잘못된 설정에서는 모드가 작동하지 않습니다! ⚠</font>
+"""
+
+[error_no_data_available_short]
+src = "N/A"
+loc = "N/A (해당 없음)"
+
+[general_settings_disable_wounded_effect_checkbox]
+src = "Disable Wounded Effect"
+loc = "상처 효과 비활성화"
+
+[general_settings_disable_wounded_effect_checkbox_tooltip]
+src = """
+Most mods do not support this effect, so textures usually break after few hits taken.
+**Enabled**: Turn the effect `Off`. Ensures proper rendering of modded textures.
+**Disabled**: Turn the effect `On`. Select this if you use `Injured Effect Remover` tool.
+"""
+loc = """
+대부분의 모드에서 이 효과를 지원하지 않아 피격당할 시 텍스처가 깨집니다.
+**활성화**: 효과를 `끄기`로 설정합니다. 모드 텍스처의 적절한 렌더링을 보장합니다.
+**비활성화**: 효과를 `켜기`로 설정합니다. `부상 효과 제거기(Injured Effect Remover)` 도구를 사용하는 경우 선택하세요.
+"""
+
+[general_settings_texture_boost_label]
+src = "Texture Boost:"
+loc = "텍스처 부스트:"
+
+[general_settings_use_all_mips_label]
+src = "Use All Mips"
+loc = "모든 Mips 사용"
+
+[general_settings_texture_streaming_pool_size_label]
+src = "Texture Pool Size:"
+loc = "텍스처 풀 크기:"
+
+[general_settings_texture_streaming_limit_pool_checkbox]
+src = "Limit Pool Size To VRAM"
+loc = "풀 크기를 VRAM으로 제한"
+
+[general_settings_mesh_lod_offset_label]
+src = "Mesh LOD Offset:"
+loc = "메쉬 LOD 오프셋:"
+
+[general_settings_open_file_button]
+src = "🔍 Open {file_name}"
+loc = "🔍 {file_name} 열기"
+
+[error_general_settings_file_not_found]
+src = "File does not exist: **{file_name}**!"
+loc = "**{file_name}** 파일이 존재하지 않습니다!"
+
+[general_settings_tweaks_label]
+src = "Tweaks:"
+loc = "트윅:"
+
+[general_settings_unlock_fps_checkbox_force]
+src = "Force 120 FPS"
+loc = "120 FPS 강제 적용"
+
+[general_settings_unlock_fps_checkbox]
+src = "Unlock FPS:"
+loc = "FPS 제한 해제:"
+
+[general_settings_unlock_fps_checkbox_tooltip_wwmi]
+src = """
+This option allows to set FPS limit to 120 even on not officially supported devices.
+Please do note that with some hardware game refuses to go 120 FPS even with this tweak.
+**Enabled**: Sets `CustomFrameRate` to `120` in `LocalStorage.db` on game start.
+**Disabled**: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.
+"""
+loc = """
+이 옵션을 사용하면 공식적으로 지원되지 않는 기기에서도 FPS 제한을 120으로 설정할 수 있습니다.
+일부 하드웨어에서는 이 트윅을 적용해도 게임이 120 FPS로 작동하지 않을 수 있습니다.
+**활성화**: 게임 시작 시 `LocalStorage.db`의 `CustomFrameRate`를 `120`으로 설정합니다.
+**비활성화**: FPS 설정에 영향을 주지 않으며, 인게임 설정을 사용하여 강제로 적용된 120 FPS를 실행 취소합니다.
+"""
+
+[general_settings_unlock_fps_checkbox_tooltip_srmi]
+src = """
+This option allows to set FPS limit to 120.
+**Enabled**: Updates Graphics Settings Windows Registry key with 120 FPS value on game start.
+**Disabled**: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.
+**Warning!** Tweak is supported only for the Global HSR client and will not work for CN.
+*Note: Edits `FPS` value in `HKEY_CURRENT_USER/SOFTWARE/Cognosphere/Star Rail/GraphicsSettings_Model_h2986158309`.*
+"""
+loc = """
+이 옵션을 사용하면 FPS 제한을 120으로 설정할 수 있습니다.
+**활성화**: 게임 시작 시 120 FPS 값으로 그래픽 설정 Windows 레지스트리 키를 업데이트합니다.
+**비활성화**: FPS 설정에 영향을 주지 않으며, 인게임 설정을 사용하여 강제로 적용된 120 FPS를 실행 취소합니다.
+**경고!** 트윅은 글로벌 HSR 클라이언트에서만 지원되며 CN에서는 작동하지 않습니다.
+*참고: `HKEY_CURRENT_USER/SOFTWARE/Cognosphere/Star Rail/GraphicsSettings_Model_h2986158309`의 `FPS` 값을 수정합니다.*
+"""
+
+[general_settings_unlock_fps_checkbox_tooltip_gimi]
+src = """
+This option allows to set custom FPS limit.
+**Warning!**: To minimize game engine glitches set FPS to 120 / 180 / 240 etc.
+**Enabled**: Launch game via `unlockfps_nc.exe` and let it run in background to keep FPS tweak applied.
+**Disabled**: Launch game via original `.exe` file, has no effect on FPS.
+*Hint: If FPS Unlocker package is outdated, you can manually update \"unlockfps_nc.exe\" from original repository.*
+*Local Path*: `Resources/Packages/GI-FPS-Unlocker/unlockfps_nc.exe`
+*Original Repository*: `https://github.com/34736384/genshin-fps-unlock`
+"""
+loc = """
+이 옵션을 사용하면 사용자 지정 FPS 제한을 설정할 수 있습니다.
+**경고!**: 게임 엔진의 글리치를 최소화하려면 FPS를 120 / 180 / 240 등으로 설정하세요.
+**활성화**: `unlockfps_nc.exe`를 통해 게임을 실행하고 백그라운드에서 계속 실행되도록 하여 FPS 트윅을 적용된 상태로 유지합니다.
+**비활성화**: 원본 `.exe` 파일을 통해 게임을 실행하며 FPS에 영향을 주지 않습니다.
+*힌트: FPS Unlocker 패키지가 오래된 경우 원본 저장소에서 \"unlockfps_nc.exe\"를 수동으로 업데이트할 수 있습니다.*
+*로컬 경로*: `Resources/Packages/GI-FPS-Unlocker/unlockfps_nc.exe`
+*원본 저장소*: `https://github.com/34736384/genshin-fps-unlock`
+"""
+
+[general_settings_unlock_fps_checkbox_tooltip_himi]
+src = """
+This option allows to set custom FPS limit.
+**Enabled**: Updates Graphics Settings Windows Registry key with specified FPS value on game start.
+**Disabled**: Has no effect on FPS settings, use in-game settings to undo already tweaked FPS.
+"""
+loc = """
+이 옵션을 사용하면 사용자 지정 FPS 제한을 설정할 수 있습니다.
+**활성화**: 게임 시작 시 지정된 FPS 값으로 그래픽 설정 Windows 레지스트리 키를 업데이트합니다.
+**비활성화**: FPS 설정에 영향을 주지 않으며, 인게임 설정을 사용하여 이미 적용된 FPS 트윅을 실행 취소합니다.
+"""
+
+[general_settings_window_mode_option_menu_tooltip]
+src = "Game window mode when started with FPS Unlocker."
+loc = "FPS Unlocker로 시작할 때의 게임 창 모드입니다."
+
+[general_settings_apply_tweaks_checkbox]
+src = "Apply Performance Tweaks"
+loc = "성능 트윅 적용"
+
+[general_settings_apply_tweaks_checkbox_tooltip]
+src = """
+**Enabled**: Add list of performance tweaks to `[SystemSettings]` section of `Engine.ini` on game start.
+**Disabled**: Do not add tweaks to `Engine.ini`. Already added ones will have to be removed manually.
+
+List of tweaks:
+{tweaks}
+"""
+loc = """
+**활성화**: 게임 시작 시 `Engine.ini`의 `[SystemSettings]` 섹션에 성능 트윅 목록을 추가합니다.
+**비활성화**: `Engine.ini`에 트윅을 추가하지 않습니다. 이미 추가된 항목은 수동으로 제거해야 합니다.
+
+트윅 목록:
+{tweaks}
+"""
+
+[general_settings_enable_hdr_checkbox]
+src = "Enable HDR"
+loc = "HDR 활성화"
+
+[general_settings_enable_hdr_checkbox_tooltip]
+src = """
+**Warning**! Your monitor must support HDR and `Use HDR` must be enabled in Windows Display settings!
+**Enabled**: Turn HDR On. Creates HDR registry record each time before the game launch.
+**Disabled**: Turn HDR Off. No extra action required, game auto-removes HDR registry record on launch.
+"""
+loc = """
+**경고**! 모니터가 HDR을 지원해야 하며 Windows 디스플레이 설정에서 `HDR 사용`이 켜져 있어야 합니다!
+**활성화**: HDR을 켭니다. 게임 실행 전마다 HDR 레지스트리 레코드를 생성합니다.
+**비활성화**: HDR을 끕니다. 추가 작업이 필요하지 않으며, 게임 실행 시 HDR 레지스트리 레코드를 자동 제거합니다.
+"""
+
+[importer_settings_shader_hunting_label]
+src = "Shader Hunting:"
+loc = "셰이더 헌팅:"
+
+[importer_settings_enable_hunting_checkbox]
+src = "Enable Hunting"
+loc = "헌팅 활성화"
+
+[importer_settings_enable_hunting_checkbox_tooltip]
+src = """
+Enabled: Allows to toggle Hunting Mode via Numpad [0] hotkey.
+* [d3dx.ini]: hunting = 2
+Disabled: Hunting Mode is hard disabled.
+* [d3dx.ini]: hunting = 0
+"""
+loc = """
+활성화: 숫자 패드 [0] 단축키를 통해 헌팅 모드를 토글할 수 있습니다.
+* [d3dx.ini]: hunting = 2
+비활성화: 헌팅 모드가 강제로 비활성화됩니다.
+* [d3dx.ini]: hunting = 0
+"""
+
+[importer_settings_dump_shaders_checkbox]
+src = "Dump Shaders"
+loc = "셰이더 덤프"
+
+[importer_settings_dump_shaders_checkbox_tooltip]
+src = """
+Enabled: Hunting Mode [Copy Hash] key also saves selected shader as file in ShaderFixes.
+* [d3dx.ini]: marking_actions = clipboard hlsl asm regex
+Disabled: Hunting Mode [Copy Hash] only copies hash of selected shader to clipboard.
+* [d3dx.ini]: marking_actions = clipboard
+"""
+loc = """
+활성화: 헌팅 모드 [해시 복사] 키가 선택한 셰이더를 ShaderFixes에 파일로 저장합니다.
+* [d3dx.ini]: marking_actions = clipboard hlsl asm regex
+비활성화: 헌팅 모드 [해시 복사]는 선택한 셰이더의 해시만 클립보드에 복사합니다.
+* [d3dx.ini]: marking_actions = clipboard
+"""
+
+[importer_settings_error_handling_label]
+src = "Error Handling:"
+loc = "오류 처리:"
+
+[importer_settings_mute_warnings_checkbox]
+src = "Mute Warnings"
+loc = "경고 음소거"
+
+[importer_settings_mute_warnings_checkbox_tooltip]
+src = """
+Enabled: No error warnings or beeps whatsoever. Ignorance is bliss.
+* [d3dx.ini]: show_warnings = 0
+Disabled: Ini parser error warnings and beeps on F10 will haunt poor souls.
+* [d3dx.ini]: show_warnings = 1
+"""
+loc = """
+활성화: 오류 경고나 알림음을 음소거합니다.
+* [d3dx.ini]: show_warnings = 0
+비활성화: 뿝-
+* [d3dx.ini]: show_warnings = 1
+"""
+
+[importer_settings_calls_logging_checkbox]
+src = "Calls Logging"
+loc = "호출 로깅"
+
+[importer_settings_calls_logging_checkbox_tooltip]
+src = """
+Enabled: Log API usage.
+* [d3dx.ini]: calls = 1
+Disabled: Do not log calls. Maximum performance.
+* [d3dx.ini]: calls = 0
+"""
+loc = """
+활성화: API 사용을 기록합니다.
+* [d3dx.ini]: calls = 1
+비활성화: 호출을 기록하지 않습니다. 최대 성능.
+* [d3dx.ini]: calls = 0
+"""
+
+[importer_settings_debug_logging_checkbox]
+src = "Debug Logging"
+loc = "디버그 로깅"
+
+[importer_settings_debug_logging_checkbox_tooltip]
+src = """
+Enabled: Super verbose debug logging.
+* [d3dx.ini]: debug = 1
+Disabled: No debug logging. Maximum performance.
+* [d3dx.ini]: debug = 0
+"""
+loc = """
+활성화: 매우 상세한 디버그 로깅.
+* [d3dx.ini]: debug = 1
+비활성화: 디버그 로깅 없음. 최대 성능.
+* [d3dx.ini]: debug = 0
+"""
+
+[importer_settings_importer_folder_label]
+src = "Importer Folder:"
+loc = "임포터 폴더:"
+
+[importer_settings_importer_folder_label_dynamic]
+src = "{importer} Folder:"
+loc = "{importer} 폴더:"
+
+[importer_settings_importer_folder_entry_tooltip]
+src = """
+Path to folder containing `Mods` folder, `d3dx.ini` and other {importer} resources.
+**Absolute**: Set any arbitrary folder, i.e. `C:/Games/{importer}/`.
+**Relative**: Set any folder **inside** the Launcher folder, i.e. `{importer}/` (default).
+"""
+loc = """
+`Mods` 폴더, `d3dx.ini` 및 기타 {importer} 리소스가 포함된 폴더 경로입니다.
+**절대 경로(Absolute)**: 임의의 폴더를 설정합니다(예: `C:/Games/{importer}/`).
+**상대 경로(Relative)**: 런처 폴더 **내부**의 임의 폴더를 설정합니다(예: `{importer}/` - 기본값).
+"""
+
+[importer_settings_ini_protection_label]
+src = "Ini Protection:"
+loc = "Ini 보호:"
+
+[importer_settings_enforce_rendering_checkbox]
+src = "Enforce Rendering Settings"
+loc = "렌더링 설정 강제 적용"
+
+[importer_settings_enforce_rendering_checkbox_tooltip]
+src = """
+Enabled: Ensure {importer}-compatible [Rendering] section settings.
+* [d3dx.ini]: texture_hash = {texture_hash}
+* [d3dx.ini]: track_texture_updates = {track_texture_updates}
+Disabled: Settings above will not be forced into d3dx.ini.
+"""
+loc = """
+활성화: {importer} 호환 [Rendering] 섹션 설정을 보장합니다.
+* [d3dx.ini]: texture_hash = {texture_hash}
+* [d3dx.ini]: track_texture_updates = {track_texture_updates}
+비활성화: 위의 설정이 d3dx.ini에 강제로 적용되지 않습니다.
+"""
+
+[launcher_settings_start_behavior_label]
+src = "Start Behavior:"
+loc = "시작 동작:"
+
+[launcher_settings_auto_close_checkbox]
+src = "Close Launcher After Game Start"
+loc = "게임 시작 후 런처 닫기"
+
+[launcher_settings_auto_close_checkbox_tooltip]
+src = """
+Enabled: Launcher will close itself once the game has started and 3dmigoto injection has been confirmed.
+Disabled: Launcher will keep itself running.
+"""
+loc = """
+활성화: 게임이 시작되고 3dmigoto 주입이 확인되면 런처가 스스로 닫힙니다.
+비활성화: 런처가 계속 실행됩니다.
+"""
+
+[launcher_settings_timeout_label]
+src = "Timeout:"
+loc = "타임 아웃:"
+
+[launcher_settings_timeout_entry_tooltip]
+src = """
+Controls how long launcher should wait for the game to show its window after launch.
+Game process will be considered as crashed once timeout is met.
+Default value is **30**.
+"""
+loc = """
+시작 후 게임이 창을 표시할 때까지 런처가 대기하는 시간을 제어합니다.
+타임 아웃에 도달하면 게임 프로세스가 충돌한 것으로 간주됩니다.
+기본값은 **30**입니다.
+"""
+
+[launcher_settings_update_policy_label]
+src = "Update Policy:"
+loc = "업데이트 정책:"
+
+[launcher_settings_auto_update_checkbox]
+src = "Auto Update"
+loc = "자동 업데이트"
+
+[launcher_settings_auto_update_checkbox_tooltip]
+src = """
+Enabled: Launcher and {importer} updates will be Downloaded and Installed automatically.
+Disabled: Use special [▲] button next to [Start] button to Download and Install updates manually.
+"""
+loc = """
+활성화: 런처 및 {importer} 업데이트가 자동으로 다운로드 및 설치됩니다.
+비활성화: 수동으로 업데이트를 다운로드하고 설치하려면 [시작] 버튼 옆에 있는 [▲] 버튼을 사용하세요.
+"""
+
+[launcher_settings_update_channel_label]
+src = "Channel:"
+loc = "채널:"
+
+[launcher_settings_update_channel_option_menu_tooltip]
+src = """
+**Auto**: Detect update installation method automatically.
+**MSI**: Use native `.msi` installers to install updates.
+**ZIP**: Use portable `.zip` archives to install updates.
+"""
+loc = """
+**Auto (자동)**: 업데이트 설치 방법을 자동으로 감지합니다.
+**MSI**: 네이티브 `.msi` 설치 관리자를 사용하여 업데이트를 설치합니다.
+**ZIP**: 휴대용 `.zip` 아카이브를 사용하여 업데이트를 설치합니다.
+"""
+
+[launcher_settings_theme_label]
+src = "UI Theme:"
+loc = "UI 테마:"
+
+[launcher_settings_theme_option_menu_tooltip]
+src = """
+Select launcher GUI theme.
+Warning! `Default` theme will be overwritten by launcher updates!
+To make a custom theme:
+1. Create a duplicate of `Default` folder in `Themes` folder.
+2. Rename the duplicate in a way you want it to be shown in Settings.
+3. Edit or replace any images (valid extensions: webp, jpeg, png, jpg).
+"""
+loc = """
+런처 GUI 테마를 선택합니다.
+경고! `기본(Default)` 테마는 런처 업데이트 시 덮어쓰여집니다!
+사용자 정의 테마를 만들려면:
+1. `Themes` 폴더 안에 `Default` 폴더의 복사본을 만듭니다.
+2. 설정에 표시할 이름으로 복사본의 이름을 바꿉니다.
+3. 이미지를 편집하거나 교체합니다(유효한 확장자: webp, jpeg, png, jpg).
+"""
+
+[launcher_settings_dev_mode_checkbox]
+src = "Dev Mode"
+loc = "개발자 모드"
+
+[launcher_settings_dev_mode_checkbox_tooltip]
+src = """
+Enabled: Launcher will track changes in `custom-tkinter-theme.json` and apply them on the fly.
+Disabled: Theme changes will not be tracked.
+"""
+loc = """
+활성화: 런처가 `custom-tkinter-theme.json`의 변경 사항을 추적하고 즉석에서 적용합니다.
+비활성화: 테마 변경 사항을 추적하지 않습니다.
+"""
+
+[launcher_settings_connection_label]
+src = "Connection:"
+loc = "연결:"
+
+[launcher_settings_github_token_label]
+src = "GitHub Token:"
+loc = "GitHub 토큰:"
+
+[launcher_settings_github_token_entry_tooltip]
+src = """
+Your **Personal Access Token** on **GitHub** (i.e. `ghp_f7gy3A4eQ97jfy2983mfZu2Hy93yf2P3d798`).
+Allows to combat `GitHub API Requests Limit` error that usually happens with public proxies.
+It is totally free and only requires GitHub registration.
+To create new token:
+1. Click `[?]` button to open token creation webpage.
+2. Use `Generate new token (classic)` button.
+"""
+loc = """
+**GitHub**의 **개인 액세스 토큰**입니다(예: `ghp_f7gy3A4eQ97jfy2983mfZu2Hy93yf2P3d798`).
+공개 프록시에서 주로 발생하는 `GitHub API 요청 한도` 오류에 대응할 수 있습니다.
+완전 무료이며 GitHub 가입만 필요합니다.
+새 토큰을 생성하려면:
+1. `[?]` 버튼을 클릭하여 토큰 생성 웹페이지를 엽니다.
+2. `새 토큰 생성(클래식)` 버튼을 사용합니다.
+"""
+
+[launcher_settings_github_token_create_button]
+src = "Create..."
+loc = "생성..."
+
+[launcher_settings_github_token_create_button_tooltip]
+src = "Open **GitHub Personal Access Token** creation webpage."
+loc = "**GitHub 개인 액세스 토큰** 생성 웹페이지를 엽니다."
+
+[launcher_settings_verify_ssl_checkbox]
+src = "Verify SSL"
+loc = "SSL 확인"
+
+[launcher_settings_verify_ssl_checkbox_tooltip]
+src = """
+<font color=\"red\">⚠ Disable only if you trust your proxy or whatever else that breaks SSL. ⚠</font>
+**Enabled**: Validate SLL certificates for GitHub downloads to keep you secure.
+**Disabled**: Allow insecure connection vulnerable to man-in-middle attacks.
+"""
+loc = """
+<font color=\"red\">⚠ 프록시나 SSL을 방해하는 기타 요소를 신뢰하는 경우에만 비활성화하세요. ⚠</font>
+**활성화**: 보안 유지를 위해 GitHub 다운로드용 SSL 인증서를 유효성 검사합니다.
+**비활성화**: 중간자 공격에 취약한 안전하지 않은 연결을 허용합니다.
+"""
+
+[launcher_settings_proxy_enable_checkbox]
+src = "Use Proxy:"
+loc = "프록시 사용:"
+
+[launcher_settings_proxy_enable_checkbox_tooltip]
+src = """
+Controls how launcher connects to GitHub to download packages.
+**Enabled**: Use specified proxy server to access Internet.
+**Disabled**: Use default system Internet connection settings.
+"""
+loc = """
+패키지를 다운로드하기 위해 런처가 GitHub에 연결하는 방식을 제어합니다.
+**활성화**: 지정된 프록시 서버를 사용하여 인터넷에 접속합니다.
+**비활성화**: 기본 시스템 인터넷 연결 설정을 사용합니다.
+"""
+
+[launcher_settings_proxy_type_label]
+src = "Type:"
+loc = "유형:"
+
+[launcher_settings_proxy_type_option_menu_tooltip]
+src = """
+**HTTPS**: Good old proxy protocol. Offers best security.
+**SOCKS5**: Newer and less secure, but excels at bypassing firewalls.
+"""
+loc = """
+**HTTPS**: 전통적인 프록시 프로토콜. 최고의 보안을 제공합니다.
+**SOCKS5**: 더 새롭고 덜 안전하지만 방화벽 우회에 탁월합니다.
+"""
+
+[launcher_settings_proxy_dns_checkbox]
+src = "Proxy DNS Via SOCKS5"
+loc = "SOCKS5를 통한 프록시 DNS"
+
+[launcher_settings_proxy_dns_checkbox_tooltip]
+src = """
+**Enabled**: Use SOCKS5 proxy connection to route DNS requests.
+**Disabled**: DNS requests will be routed through your ISP.
+"""
+loc = """
+**활성화**: SOCKS5 프록시 연결을 사용하여 DNS 요청을 라우팅합니다.
+**비활성화**: DNS 요청이 ISP를 통해 라우팅됩니다.
+"""
+
+[launcher_settings_proxy_host_label]
+src = "Host:"
+loc = "호스트:"
+
+[launcher_settings_proxy_host_entry_tooltip]
+src = "Proxy IP address (i.e. `123.12.1.231`) or domain name (i.e. `proxyprovider.com`)."
+loc = "프록시 IP 주소(예: `123.12.1.231`) 또는 도메인 이름(예: `proxyprovider.com`)."
+
+[launcher_settings_proxy_port_label]
+src = "Port:"
+loc = "포트:"
+
+[launcher_settings_proxy_port_entry_tooltip]
+src = "Proxy port (i.e. `1080`)."
+loc = "프록시 포트(예: `1080`)."
+
+[launcher_settings_proxy_credentials_checkbox]
+src = "Proxy Requires Password"
+loc = "프록시에 비밀번호 필요"
+
+[launcher_settings_proxy_credentials_checkbox_tooltip]
+src = """
+**Enabled**: Use specified user name and password for the proxy server authentication.
+**Disabled**: Do not use any credentials when accessing a proxy server.
+"""
+loc = """
+**활성화**: 프록시 서버 인증을 위해 지정된 사용자 이름과 비밀번호를 사용합니다.
+**비활성화**: 프록시 서버에 접속할 때 자격 증명을 사용하지 않습니다.
+"""
+
+[launcher_settings_proxy_user_label]
+src = "User:"
+loc = "사용자:"
+
+[launcher_settings_proxy_user_entry_tooltip]
+src = "User name provided by your proxy service."
+loc = "프록시 서비스에서 제공한 사용자 이름입니다."
+
+[launcher_settings_proxy_password_label]
+src = "Password:"
+loc = "비밀번호:"
+
+[launcher_settings_proxy_password_entry_tooltip]
+src = "Password provided by your proxy service."
+loc = "프록시 서비스에서 제공한 비밀번호입니다."
+
+[settings_tab_general]
+src = "General"
+loc = "일반"
+
+[settings_tab_launcher]
+src = "Launcher"
+loc = "런처"
+
+[settings_tab_importer]
+src = "MI"
+loc = "MI"
+
+[settings_tab_advanced]
+src = "Advanced"
+loc = "고급"
+
+[settings_title]
+src = "Settings"
+loc = "설정"
