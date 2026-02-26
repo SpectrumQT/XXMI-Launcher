@@ -12,7 +12,7 @@ from pathlib import Path
 from enum import Enum
 
 from core.locale_manager import L, LocaleString
-
+from .loader3dm import inject
 
 log = logging.getLogger(__name__)
 
@@ -54,18 +54,7 @@ class DllInjector:
 
                 self.lib.UnhookLibrary.argtypes = (ct.POINTER(wt.HHOOK), ct.POINTER(wt.HANDLE))
                 self.lib.UnhookLibrary.restype = ct.c_int
-
-            if load_inject:
-                try:
-                    self.lib.Inject.argtypes = (wt.DWORD, wt.LPCWSTR, ct.c_int)
-                    self.lib.Inject.restype = ct.c_int
-                except AttributeError as e:
-                    raise Exception(L('error_old_3dmloader', """
-                        Provided **3dmloader.dll** is too old, it's missing **Inject** method.
-                        
-                        Please put **3dmloader.dll** from **v0.7.5+** to `Packages/XXMI` or use **Hook** method (without **Inject Libraries**).
-                    """)) from e
-
+                
         except Exception as e:
             try:
                 self.unload()
@@ -257,8 +246,7 @@ class DllInjector:
                 try:
                     if process.name() == process_name or process.pid == pid:
                         for dll_path in dll_paths:
-                            wide_dll_path = wt.LPCWSTR(str(dll_path.resolve()))
-                            result = self.lib.Inject(process.pid, wide_dll_path, ct.c_int(timeout))
+                            result = inject(process.pid, str(dll_path.resolve()), timeout)
                             if result != 0:
                                 inject_error = DllInjector.InjectError.from_code(result)
                                 error_text = inject_error.format(pid=process.pid, dll_path=dll_path, error_code=result)
