@@ -1,0 +1,19 @@
+[error_xxmi_dll_remove_failed]
+src = """
+Failed to remove old XXMI library file before update!
+
+File: `{dll_path}`
+
+Error: {error_text}
+"""
+loc = """
+Не удалось удалить старый файл библиотеки XXMI перед обновлением!
+
+Файл: `{dll_path}`
+
+Ошибка: {error_text}
+"""
+
+[bottom_bar_bypass]
+src = "Starting {process} in bypass mode..."
+loc = "Запуск {process} в bypass режиме..."
