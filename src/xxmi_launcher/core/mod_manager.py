@@ -3,7 +3,7 @@ import logging
 import json
 import fnmatch
 import re
-from os import mkdir
+import os
 
 from pathlib import Path
 from dataclasses import dataclass, field
@@ -113,6 +113,8 @@ class IniValidator:
     d3dx_ini_option_values: dict[str, dict[str, str]] = field(default_factory=dict)
     # Controls whether validator stores paths to processed ini files mod time to skip them on subsequent runs
     use_cache: bool = False
+    # Controls whether validator uses existing cache from file or new one
+    new_cache: bool = False,
     # Cache path (default it is folder_path/ini_validator_cache.json)
     cache_path: Path | None = None
 
@@ -130,7 +132,11 @@ class IniValidator:
 
         unwanted_files = self.unwanted_files.get('*', [])
 
-        for path in self.folder_path.rglob('*.ini'):
+        ini_files = [Path(root) / file
+                     for root, dirs, files in os.walk(self.folder_path, followlinks=True)
+                     for file in files if file.endswith('.ini')]
+
+        for path in ini_files:
             # Exclude paths that are configured to be ignored by DLL
             if self.exclude_patterns:
                 if self.should_exclude(path.relative_to(self.folder_path), self.exclude_patterns):
@@ -294,7 +300,7 @@ class IniValidator:
         return namespaces
 
     def load_cache(self):
-        if self.use_cache:
+        if self.use_cache and not self.new_cache:
             self.cache.load(self.folder_path, self.cache_path)
 
     def reset_cache(self):
@@ -333,7 +339,13 @@ class Mod:
         new_path = self.path.parent / f'DISABLED_{self.path.name}'
         log.info(f'{dry_prefix}Disabled mod {self.path.name} (reason: {reason}), new path: {new_path} ')
         if not dry_run:
-            Paths.App.rename_path(self.path, new_path)
+            if not self.path.is_symlink():
+                Paths.App.rename_path(self.path, Paths.App.get_free_path(new_path))
+            else:
+                for ini_path in self.ini_paths:
+                    new_path = ini_path.parent / f'DISABLED_{ini_path.name}'
+                    Paths.App.rename_path(ini_path, Paths.App.get_free_path(new_path))
+
 
     def __hash__(self):
         return hash(self.path)
@@ -409,10 +421,9 @@ class ModManager:
             folder_path=mods_path,
             exclude_patterns=exclude_patterns,
             use_cache=True,
+            new_cache=reset_cache,
             cache_path=cache_path
         )
-        if reset_cache:
-            self.ini_validator.reset_cache()
 
         self.ini_validator.d3dx_ini_keywords = {'[loader', '[system', '[stereo', '[commandlistunbindallrendertargets'}
         self.ini_validator.d3dx_ini_option_values = {'include': {'include_recursive': 'mods', 'exclude_recursive': 'disabled*'}}
@@ -526,6 +537,7 @@ class ModManager:
         mod_list = self.build_mod_list(list(ini_paths.values()), mods_path)
 
         def get_mod_by_ini_path(mods: dict[str, Mod], path: Path) -> Mod | None:
+            path = mods_path.parent / path
             for mod in mods.values():
                 if path in mod.ini_paths:
                     return mod
@@ -590,8 +602,7 @@ class ModManager:
         trigger_counts = {}
         for mod_name, mod in mod_list.items():
             triggers_count = 0
-            for rel_ini_path in mod.ini_paths:
-                ini_path = mods_path.parent / rel_ini_path
+            for ini_path in mod.ini_paths:
                 validation_result: ValidationResult = global_trigger_results[ini_path]
                 for line_issue in validation_result.line_issues.values():
                     if line_issue.type == IssueType.GlobalTrigger:
@@ -753,6 +764,10 @@ class ModManager:
 
         # Merge standalone mods
         result.update(mods)
+
+        # Make ini paths absolute
+        for mod in result.values():
+            mod.ini_paths = [mods_path.parent / ini_path for ini_path in mod.ini_paths]
 
         return result
 
