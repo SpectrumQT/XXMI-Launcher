@@ -137,6 +137,10 @@ class ApplicationEvents:
         process_name: str
 
     @dataclass
+    class Bypass:
+        process_name: str
+
+    @dataclass
     class WaitForProcess:
         process_name: str
 
