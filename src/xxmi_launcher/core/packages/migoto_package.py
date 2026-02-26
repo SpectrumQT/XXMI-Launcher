@@ -1,5 +1,4 @@
 import logging
-import shutil
 import subprocess
 import json
 import time
@@ -115,167 +114,33 @@ class MigotoPackage(Package):
             raise
 
     def handle_open_mods_folder(self, event: MigotoManagerEvents.OpenModsFolder):
-        subprocess.Popen(['explorer.exe', Config.Active.Importer.importer_path / 'Mods'])
+        mods_path = Config.Active.Importer.importer_path / 'Mods'
+        Paths.verify_path(mods_path)
+        subprocess.Popen(['explorer.exe', mods_path])
 
     def handle_start_and_inject(self, event: MigotoManagerEvents.StartAndInject):
-        process_name = event.game_exe_path.name
 
-        Events.Fire(Events.Application.Busy())
+        injector = MigotoInjector.from_event(event, self.package_path / '3dmloader.dll')
 
-        try:
-            # Copy XXMI package files to game instance
-            self.deploy_package_files(process_name)
-        except Exception as e:
-            # Attempt to restore damaged game instance files
-            self.restore_package_files(e, process_name, validate=False)
+        context = injector.context
 
-        Events.Fire(Events.Application.Busy())
+        # Deploy new or updated XXMI libraries to model importer folder
+        if Config.Active.Importer.is_xxmi_dll_used():
+            try:
+                self.deploy_package_files(context.process_name)
+            except Exception as e:
+                self.restore_package_files(e, context.process_name, validate=False)
 
+        # Check signatures to prevent 3rd-party 3dmigoto libraries from loading
         if not Config.Active.Migoto.unsafe_mode:
             try:
-                # Check signatures to prevent 3rd-party 3dmigoto libraries from loading
                 self.validate_deployed_files()
             except Exception as e:
-                self.restore_package_files(e, process_name, validate=True)
+                self.restore_package_files(e, context.process_name, validate=True)
 
         Events.Fire(Events.Application.Busy())
 
-        dll_path = Config.Active.Importer.importer_path / 'd3d11.dll'
-
-        start_args = event.start_args
-        if Config.Active.Importer.use_launch_options:
-            start_args += Config.Active.Importer.launch_options.split()
-
-        process_flags = subprocess.CREATE_NEW_CONSOLE | subprocess.CREATE_DEFAULT_ERROR_MODE
-        process_flags |= ProcessPriority(Config.Active.Importer.process_priority).get_process_flag()
-
-        use_hook = event.use_hook
-
-        custom_launch_cmd = None
-        if Config.Active.Importer.custom_launch_enabled:
-            use_hook = Config.Active.Importer.custom_launch_inject_mode == 'Hook'
-            custom_launch_cmd = Config.Active.Importer.custom_launch.strip() or None
-
-        extra_dll_paths = []
-        if Config.Active.Importer.extra_libraries_enabled:
-            extra_dll_paths += Config.Active.Importer.extra_dll_paths
-
-        injector = DllInjector(
-            injector_lib_path=self.package_path / '3dmloader.dll',
-            load_hook=use_hook,
-            load_inject=not use_hook or extra_dll_paths,
-        )
-
-        if use_hook:
-            # Use SetWindowsHookEx injection method
-            try:
-                # Setup global windows hook for 3dmigoto dll
-                Events.Fire(Events.Application.SetupHook(library_name=dll_path.name, process_name=process_name))
-                injector.hook_library(dll_path, process_name)
-
-                # Start game's exe
-                Events.Fire(Events.Application.StartGameExe(process_name=process_name))
-
-                injector.open_process(
-                    start_method = Config.Active.Importer.process_start_method,
-                    exe_path = str(event.start_exe_path),
-                    work_dir = event.work_dir,
-                    start_args = start_args,
-                    process_flags = process_flags,
-                    process_name = process_name,
-                    dll_paths = extra_dll_paths,
-                    cmd = custom_launch_cmd,
-                    inject_timeout=Config.Active.Importer.process_timeout,
-                )
-
-                # Early DLL injection verification
-                hooked = injector.wait_for_injection(5)
-                if hooked:
-                    log.info(f'Successfully passed early {dll_path.name} -> {process_name} hook check!')
-
-                # Wait until game window appears
-                Events.Fire(Events.Application.WaitForProcess(process_name=process_name))
-                result, pid = wait_for_process(process_name, with_window=True, timeout=Config.Active.Importer.process_timeout, check_visibility=True)
-                if result == WaitResult.Timeout:
-                    if hooked:
-                        raise ValueError(L('error_migoto_game_detection_timeout', """
-                            Failed to detect window of game process {process_name}!
-    
-                            If game window takes more than {start_timeout} seconds to appear, adjust **Timeout** in **General Settings**.
-    
-                            If game crashed, try to follow the [Crash Isolation Checklist]({checklist_link}).
-                        """).format(
-                            process_name=process_name,
-                            importer=Config.Launcher.active_importer,
-                            start_timeout=Config.Active.Importer.process_timeout,
-                            checklist_link='https://github.com/SpectrumQT/XXMI-Launcher/blob/main/.github/ISSUE_TEMPLATE/game-crash-report.md#-crash-isolation-checklist'
-                        ))
-                    else:
-                        raise ValueError(L('error_migoto_game_start_failed',
-                            'Failed to start {process_name}!'
-                        ).format(process_name=process_name))
-
-                # Late DLL injection verification
-                Events.Fire(Events.Application.VerifyHook(library_name=dll_path.name, process_name=process_name))
-                if injector.wait_for_injection(5):
-                    log.info(f'Successfully passed late {dll_path.name} -> {process_name} hook check!')
-                elif not hooked:
-                    log.error(f'Failed to verify {dll_path.name} -> {process_name} hook!')
-
-            except Exception as e:
-                raise e
-
-            finally:
-                # Remove global hook to free system resources
-                injector.unhook_library()
-                injector.unload()
-
-        else:
-            # Use WriteProcessMemory injection method
-            dll_paths = []
-            if Config.Active.Importer.is_xxmi_dll_used():
-                if not Config.Active.Importer.is_xxmi_dll_in_extra_libraries():
-                    dll_paths.append(dll_path)
-            dll_paths += extra_dll_paths
-
-            dll_names = ', '.join([dll_path.name for dll_path in dll_paths])
-
-            Events.Fire(Events.Application.Inject(library_name=dll_names, process_name=process_name))
-
-            try:
-                injector.open_process(
-                    start_method=Config.Active.Importer.process_start_method,
-                    exe_path=str(event.start_exe_path),
-                    work_dir=event.work_dir,
-                    start_args=start_args,
-                    process_flags=process_flags,
-                    process_name=process_name,
-                    dll_paths=dll_paths,
-                    cmd=custom_launch_cmd,
-                    inject_timeout=Config.Active.Importer.process_timeout,
-                )
-
-            except Exception as e:
-                raise e
-
-            finally:
-                injector.unload()
-
-            Events.Fire(Events.Application.WaitForProcess(process_name=process_name))
-            result, pid = wait_for_process(process_name, with_window=True, timeout=Config.Active.Importer.process_timeout, check_visibility=True)
-            if result == WaitResult.Timeout:
-                raise ValueError(L('error_migoto_game_detection_timeout', """
-                    Failed to detect window of game process {process_name}!
-
-                    If game window takes more than {start_timeout} seconds to appear, adjust **Timeout** in **General Settings**.
-
-                    If game crashed, try to follow the [Crash Isolation Checklist]({checklist_link}).
-                """).format(
-                    process_name=process_name,
-                    importer=Config.Launcher.active_importer,
-                    start_timeout=Config.Active.Importer.process_timeout,
-                    checklist_link='https://github.com/SpectrumQT/XXMI-Launcher/blob/main/.github/ISSUE_TEMPLATE/game-crash-report.md#-crash-isolation-checklist'
-                ))
+        injector.run()
 
         # Wait a bit more for window to maximize
         time.sleep(1)
@@ -289,8 +154,8 @@ class MigotoPackage(Package):
                 
                 Details: {error_text}
             """).format(
-                error_text=str(e).strip())
-            )
+                error_text=str(e).strip()
+            ))
 
         user_requested_restore = Events.Call(Events.Application.ShowError(
             modal=True,
@@ -317,77 +182,100 @@ class MigotoPackage(Package):
 
         self.deploy_package_files(process_name, force=True)
 
-    def deploy_package_files(self, process_name: str, force: bool = False):
-        for file_name in ['d3d11.dll', 'd3dcompiler_47.dll', 'nvapi64.dll']:
-            deployment_path = Config.Active.Importer.importer_path / file_name
-            deployed_signature = Config.Active.Importer.deployed_migoto_signatures.get(file_name, '')
+    def should_deploy_package_file(self, file_name: str, file_path: Path, force: bool = False) -> tuple[bool, str]:
+        # Handle forced redeployment
+        if force:
+            return True, 'Forcing re-deploy of {file_path}...'
+        # Handle missing DLL
+        if not file_path.is_file():
+            return True, 'Deploying new {file_path}...'
+        # Handle signature mismatch between deployed DLL and one from manifest of installed XXMI package
+        deployed_signature = Config.Active.Importer.deployed_migoto_signatures.get(file_name, '')
+        if not deployed_signature or deployed_signature != self.get_signature(file_path):
 
-            deploy_pending = False
-            remove_pending = False
+            if Config.Active.Migoto.unsafe_mode:
+                # Lets deside what to do based on DLL origin
+                with open(file_path, 'rb') as f:
+                    if self.security.verify(deployed_signature, f.read()):
+                        # DLL matches the signature of last deployed one, it should be safe to update it
+                        return True, 'Deploying updated {file_path}...'
+                    else:
+                        # Third-party DLL found, lets leave its management to user
+                        return False, 'Skipped auto-deploy for {file_path} (signature mismatch)!'
+            else:
+                # We should never reach this point unless the config is desynced (and if it is, lets redeploy)
+                return True, 'Re-deploying {file_path}...'
+
+        return False, ''
+
+    def deploy_package_files(self, process_name: str, force: bool = False):
+        Events.Fire(Events.Application.Busy())
+
+        pending_removals = {}
+        pending_deployments = {}
+
+        package_files = ['d3d11.dll', 'd3dcompiler_47.dll', 'nvapi64.dll']
+
+        for file_name in package_files:
+            file_path = Config.Active.Importer.importer_path / file_name
 
             if file_name == 'nvapi64.dll':
-                if deployment_path.is_file():
-                    # nvapi64.dll is found at deployment path, it's no longer supported and should be removed
-                    log.debug(f'Removing deprecated {deployment_path}...')
-                    remove_pending = True
-                else:
-                    # DLL should not be deployed and does not exist, lets exit early
-                    continue
+                if file_path.is_file():
+                    pending_removals[file_path] = 'Removing deprecated {file_path}...'
+                continue
 
-            if deploy_pending or remove_pending:
-                # Some DLL already got special treatment, no further checks required
-                pass
-            elif force:
-                # Forced redeployment requested, lets just redeploy without any extra checks
-                log.debug(f'Forcing re-deploy of {deployment_path}...')
-                deploy_pending = True
-            elif not deployment_path.is_file():
-                # DLL is not found at deployment path, we must deploy one
-                log.debug(f'Deploying new {deployment_path}...')
-                deploy_pending = True
-            elif not deployed_signature or deployed_signature != self.get_signature(deployment_path):
-                # Signature of deployed DLL doesn't match one from manifest of installed XXMI package
-                if Config.Active.Migoto.unsafe_mode:
-                    # Lets deside what to do based on DLL origin
-                    with open(deployment_path, 'rb') as f:
-                        if self.security.verify(deployed_signature, f.read()):
-                            # DLL matches the signature of last deployed one, it should be safe to update it
-                            log.debug(f'Deploying updated {deployment_path}...')
-                            deploy_pending = True
-                        else:
-                            # Third-party DLL found, lets leave its management to user
-                            log.debug(f'Skipped auto-deploy for {deployment_path} (signature mismatch)!')
-                else:
-                    # We should never reach this point unless the config is desynced (and if it is, lets redeploy)
-                    log.debug(f'Re-deploying updated {deployment_path}...')
-                    deploy_pending = True
+            deploy, message = self.should_deploy_package_file(file_name, file_path, force)
+            if deploy:
+                pending_removals[file_path] = 'Removing outdated {file_path}...'
+                pending_deployments[file_path] = message
+                continue
 
-            if deploy_pending or remove_pending:
-                Events.Fire(Events.Application.StatusUpdate(status=L('status_ensuring_game_closed', 'Ensuring the game is closed...')))
-                result, pid = wait_for_process_exit(process_name=process_name, timeout=5, kill_timeout=0)
-                if result == WaitResult.Timeout:
-                    Events.Fire(Events.Application.ShowError(
-                        modal=True,
-                        message=L('message_text_game_stop_failed', """
-                            Failed to stop {process_name}!
-                            
-                            Please close the game manually and press [OK] to continue.
-                        """).format(process_name=process_name),
-                    ))
-                if remove_pending:
-                    deployment_path.unlink()
-                    continue
-                if deploy_pending:
-                    package_file_path = self.package_path / file_name
-                    if package_file_path.exists():
-                        shutil.copy2(package_file_path, deployment_path)
-                        if deploy_pending:
-                            original_signature = self.get_signature(deployment_path)
-                            Config.Active.Importer.deployed_migoto_signatures[file_name] = original_signature
-                    else:
-                        raise FileNotFoundError(L('error_xxmi_missing_critical_file', 'XXMI package is missing critical file: {file_name}!').format(file_name=deployment_path.name))
+        if pending_deployments or pending_removals:
+            Events.Fire(Events.Application.StatusUpdate(status=L('status_ensuring_game_closed', 'Ensuring the game is closed...')))
+            result, pid = wait_for_process_exit(process_name=process_name, timeout=5, kill_timeout=0)
+            if result == WaitResult.Timeout:
+                Events.Fire(Events.Application.ShowError(
+                    modal=True,
+                    message=L('message_text_game_stop_failed', """
+                        Failed to stop {process_name}!
+                        
+                        Please close the game manually and press [OK] to continue.
+                    """).format(process_name=process_name),
+                ))
+
+        for file_path, message in pending_removals.items():
+            if not file_path.is_file():
+                continue
+            if message:
+                log.debug(message.format(file_path=file_path))
+            try:
+                Paths.App.remove_path(file_path)
+            except Exception as e:
+                raise ValueError(L('error_xxmi_dll_remove_failed', """
+                    Failed to remove old XXMI library file before update!
+
+                    File: `{dll_path}`
+
+                    Error: {error_text}
+                """).format(
+                    dll_path=file_path,
+                    error_text=str(e),
+                )) from e
+
+        for file_path, message in pending_deployments.items():
+            if message:
+                log.debug(message.format(file_path=file_path))
+            package_file_path = self.package_path / file_path.name
+            if package_file_path.is_file():
+                Paths.App.copy_file(package_file_path, file_path)
+                original_signature = self.get_signature(file_path)
+                Config.Active.Importer.deployed_migoto_signatures[file_path.name] = original_signature
+            else:
+                raise FileNotFoundError(L('error_xxmi_missing_critical_file', 'XXMI package is missing critical file: {file_name}!').format(file_name=file_path.name))
 
     def validate_deployed_files(self):
+        Events.Fire(Events.Application.Busy())
+
         package_libs = ['3dmloader.dll']
         self.validate_files([self.package_path / f for f in package_libs])
 
@@ -402,5 +290,182 @@ class MigotoPackage(Package):
         log.debug(f'Uninstalling package {self.metadata.package_name}...')
 
         if self.package_path.is_dir():
-            log.debug(f'Removing {self.package_path}...')
-            shutil.rmtree(self.package_path)
+            Paths.App.remove_path(self.package_path)
+
+
+@dataclass
+class LaunchContext:
+    process_name: str
+    start_exe_path: Path
+    start_args: list[str]
+    work_dir: str | None
+    process_flags: int
+    use_hook: bool
+    custom_launch_cmd: str | None
+    xxmi_dll_path: Path
+    inject_dll_paths: list[Path]
+
+
+class MigotoInjector:
+    def __init__(self, context: LaunchContext, injector_path: Path):
+        self.context = context
+        self.injector_path = injector_path
+        self.injector: DllInjector | None = None
+
+    @classmethod
+    def from_event(cls, event: MigotoManagerEvents.StartAndInject, injector_path: Path):
+        context = cls.get_launch_context(event)
+        return cls(context, injector_path)
+
+    def run(self):
+        context = self.context
+
+        self.injector = DllInjector(
+            injector_lib_path=self.injector_path,
+            load_hook=context.use_hook,
+            load_inject=not context.use_hook or len(context.inject_dll_paths) > 0,
+        )
+
+        if context.use_hook:
+            # Use WriteProcessMemory injection method
+            self.run_hook_injector()
+        else:
+            # Use SetWindowsHookEx injection method
+            self.run_direct_injector()
+
+    @staticmethod
+    def get_launch_context(event: MigotoManagerEvents.StartAndInject) -> LaunchContext:
+
+        start_args = list(event.start_args)
+        if Config.Active.Importer.use_launch_options:
+            start_args += Config.Active.Importer.launch_options.split()
+
+        process_flags = subprocess.CREATE_NEW_CONSOLE | subprocess.CREATE_DEFAULT_ERROR_MODE
+        process_flags |= ProcessPriority(Config.Active.Importer.process_priority).get_process_flag()
+
+        if not Config.Active.Importer.custom_launch_enabled:
+            use_hook = event.use_hook
+            custom_launch_cmd = None
+        else:
+            use_hook = Config.Active.Importer.custom_launch_inject_mode == 'Hook'
+            custom_launch_cmd = Config.Active.Importer.custom_launch.strip() or None
+
+        dll_paths = list(Config.Active.Importer.extra_dll_paths) if Config.Active.Importer.extra_libraries_enabled else []
+
+        return LaunchContext(
+            process_name=event.game_exe_path.name,
+            start_exe_path=event.start_exe_path,
+            start_args=start_args,
+            work_dir=event.work_dir,
+            process_flags=process_flags,
+            use_hook=use_hook,
+            custom_launch_cmd=custom_launch_cmd,
+            xxmi_dll_path=Config.Active.Importer.importer_path / 'd3d11.dll',
+            inject_dll_paths=dll_paths,
+        )
+
+    @staticmethod
+    def wait_for_window(context: LaunchContext, injection_verified: bool):
+        Events.Fire(Events.Application.WaitForProcess(process_name=context.process_name))
+
+        result, pid = wait_for_process(context.process_name, with_window=True,
+                                       timeout=Config.Active.Importer.process_timeout, check_visibility=True)
+
+        if result == WaitResult.Timeout:
+            if injection_verified:
+                raise ValueError(L('error_migoto_game_detection_timeout', """
+                    Failed to detect window of game process {process_name}!
+
+                    If game window takes more than {start_timeout} seconds to appear, adjust **Timeout** in **General Settings**.
+
+                    If game crashed, try to follow the [Crash Isolation Checklist]({checklist_link}).
+                """).format(
+                    process_name=context.process_name,
+                    importer=Config.Launcher.active_importer,
+                    start_timeout=Config.Active.Importer.process_timeout,
+                    checklist_link='https://github.com/SpectrumQT/XXMI-Launcher/blob/main/.github/ISSUE_TEMPLATE/game-crash-report.md#-crash-isolation-checklist'
+                ))
+            else:
+                raise ValueError(L('error_migoto_game_start_failed',
+                    'Failed to start {process_name}!'
+                ).format(process_name=context.process_name))
+
+    def run_direct_injector(self):
+        injector = self.injector
+        context = self.context
+
+        dll_paths = []
+        if Config.Active.Importer.is_xxmi_dll_used():
+            if not Config.Active.Importer.is_xxmi_dll_in_extra_libraries():
+                dll_paths.append(context.xxmi_dll_path)
+        dll_paths += context.inject_dll_paths
+
+        if dll_paths:
+            dll_names = ', '.join([dll_path.name for dll_path in dll_paths])
+            Events.Fire(Events.Application.Inject(library_name=dll_names, process_name=context.process_name))
+        else:
+            Events.Fire(Events.Application.Bypass(process_name=context.process_name))
+
+        try:
+            injector.open_process(
+                start_method=Config.Active.Importer.process_start_method,
+                exe_path=str(context.start_exe_path),
+                work_dir=context.work_dir,
+                start_args=context.start_args,
+                process_flags=context.process_flags,
+                process_name=context.process_name,
+                dll_paths=dll_paths,
+                cmd=context.custom_launch_cmd,
+                inject_timeout=Config.Active.Importer.process_timeout,
+            )
+
+            # Wait until game window appears
+            self.wait_for_window(context, injection_verified=True)
+
+        finally:
+            self.injector.unload()
+
+    def run_hook_injector(self):
+        injector = self.injector
+        context = self.context
+
+        try:
+            # Setup global windows hook for 3dmigoto dll
+            Events.Fire(Events.Application.SetupHook(library_name=context.xxmi_dll_path.name, process_name=context.process_name))
+            injector.hook_library(context.xxmi_dll_path, context.process_name)
+
+            # Start game's exe
+            Events.Fire(Events.Application.StartGameExe(process_name=context.process_name))
+
+            injector.open_process(
+                start_method = Config.Active.Importer.process_start_method,
+                exe_path = str(context.start_exe_path),
+                work_dir = context.work_dir,
+                start_args = context.start_args,
+                process_flags = context.process_flags,
+                process_name = context.process_name,
+                dll_paths = context.inject_dll_paths,
+                cmd = context.custom_launch_cmd,
+                inject_timeout=Config.Active.Importer.process_timeout,
+            )
+
+            # Early DLL injection verification
+            hooked = injector.wait_for_injection(5)
+            if hooked:
+                log.info(f'Successfully passed early {context.xxmi_dll_path.name} -> {context.process_name} hook check!')
+
+            # Wait until game window appears
+            self.wait_for_window(context, injection_verified=hooked)
+
+            # Late DLL injection verification
+            Events.Fire(Events.Application.VerifyHook(library_name=context.xxmi_dll_path.name, process_name=context.process_name))
+
+            if injector.wait_for_injection(5):
+                log.info(f'Successfully passed late {context.xxmi_dll_path.name} -> {context.process_name} hook check!')
+            elif not hooked:
+                log.error(f'Failed to verify {context.xxmi_dll_path.name} -> {context.process_name} hook!')
+
+        finally:
+            # Remove global hook to free system resources
+            injector.unhook_library()
+            injector.unload()
