@@ -112,13 +112,6 @@ class EFMIPackage(ModelImporterPackage):
         except Exception as e:
             return ''
 
-    def validate_game_exe_path(self, game_path: Path) -> Path:
-        for game_exe_name in Config.Importers.EFMI.Importer.game_exe_names:
-            game_exe_path = game_path / game_exe_name
-            if game_exe_path.is_file():
-                return game_exe_path
-        raise ValueError(L('error_game_exe_not_found', 'Game executable {exe_name} not found!').format(exe_name=' / '.join(Config.Importers.EFMI.Importer.game_exe_names)))
-
     def get_start_cmd(self, game_path: Path) -> Tuple[Path, List[str], Optional[str]]:
         game_exe_path = self.validate_game_exe_path(game_path)
         work_dir_path = str(game_exe_path.parent)

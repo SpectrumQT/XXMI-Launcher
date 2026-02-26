@@ -131,20 +131,6 @@ class GIMIPackage(ModelImporterPackage):
         except Exception as e:
             return ''
 
-    def validate_game_exe_path(self, game_path: Path) -> Path:
-        game_exe_path = game_path / 'GenshinImpact.exe'
-        if not game_exe_path.is_file():
-            game_exe_cn_path = game_path / 'YuanShen.exe'
-            if not game_exe_cn_path.is_file():
-                raise ValueError(L('error_gimi_game_exe_not_found',
-                    'Game executable {game_exe_name} or {game_exe_name_cn} not found!'
-                ).format(
-                    game_exe_name=game_exe_path.name,
-                    game_exe_name_cn=game_exe_cn_path.name
-                ))
-            game_exe_path = game_exe_cn_path
-        return game_exe_path
-
     def get_start_cmd(self, game_path: Path) -> Tuple[Path, List[str], Optional[str]]:
         if Config.Importers.GIMI.Importer.unlock_fps:
             game_exe_path = Paths.App.Resources / 'Packages' / 'GI-FPS-Unlocker' / 'unlockfps_nc.exe'

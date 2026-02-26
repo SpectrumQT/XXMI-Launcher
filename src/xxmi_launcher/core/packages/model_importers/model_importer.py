@@ -247,7 +247,11 @@ class ModelImporterPackage(Package):
         return game_path
 
     def validate_game_exe_path(self, game_path: Path) -> Path:
-        raise NotImplementedError
+        for game_exe_name in Config.Active.Importer.game_exe_names:
+            game_exe_path = game_path / game_exe_name
+            if game_exe_path.is_file():
+                return game_exe_path
+        raise ValueError(L('error_game_exe_not_found', 'Game executable {exe_name} not found!').format(exe_name=' / '.join(Config.Active.Importer.game_exe_names)))
 
     def load(self):
         self.subscribe(Events.ModelImporter.Install, self.install)

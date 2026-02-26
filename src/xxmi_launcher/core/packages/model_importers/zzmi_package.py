@@ -25,7 +25,7 @@ log = logging.getLogger(__name__)
 
 @dataclass
 class ZZMIConfig(ModelImporterConfig):
-    game_exe_names: List[str] = field(default_factory=lambda: ['ZenlessZoneZero.exe'])
+    game_exe_names: List[str] = field(default_factory=lambda: ['ZenlessZoneZero.exe', 'ZenlessZoneZeroBeta.exe'])
     game_folder_names: List[str] = field(default_factory=lambda: ['ZenlessZoneZero Game'])
     game_folder_children: List[str] = field(default_factory=lambda: ['ZenlessZoneZero_Data'])
     importer_folder: str = 'ZZMI/'
@@ -120,12 +120,6 @@ class ZZMIPackage(ModelImporterPackage):
             return str(Version(Config.Importers.ZZMI.Importer.importer_path / 'Core' / 'ZZMI' / 'main.ini'))
         except Exception as e:
             return ''
-
-    def validate_game_exe_path(self, game_path: Path) -> Path:
-        game_exe_path = game_path / 'ZenlessZoneZero.exe'
-        if not game_exe_path.is_file():
-            raise ValueError(L('error_game_exe_not_found', 'Game executable {exe_name} not found!').format(exe_name=game_exe_path.name))
-        return game_exe_path
 
     def initialize_game_launch(self, game_path: Path):
         # Prevent further configuration if ZZMI isn't going to be used

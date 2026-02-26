@@ -121,12 +121,6 @@ class SRMIPackage(ModelImporterPackage):
         except Exception as e:
             return ''
 
-    def validate_game_exe_path(self, game_path: Path) -> Path:
-        game_exe_path = game_path / 'StarRail.exe'
-        if not game_exe_path.is_file():
-            raise ValueError(L('error_game_exe_not_found', 'Game executable {exe_name} not found!').format(exe_name=game_exe_path.name))
-        return game_exe_path
-
     def initialize_game_launch(self, game_path: Path):
         if Config.Importers.SRMI.Importer.unlock_fps:
             try:
