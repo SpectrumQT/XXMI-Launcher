@@ -1,0 +1,382 @@
+[message_title_fatal_error]
+src = "Fatal Error"
+loc = "Błąd krytyczny"
+
+[error_launcher_crashed_on_init]
+src = """
+Launcher has crashed during initialization:
+
+Log file: {log_path}
+
+Error: {error_text}
+"""
+loc = """
+Launcher uległ awarii podczas inicjalizacji:
+
+Plik logu: {log_path}
+
+Błąd: {error_text}
+"""
+
+[message_title_rogue_ini_notification]
+src = "Stability Warning"
+loc = "Ostrzeżenie o stabilności"
+
+[message_text_rogue_ini_in_mods_detected]
+src = """
+Detected mods with ini files containing **d3dx.ini**-exclusive options:
+
+{mod_list}
+
+Listed files [usually cause]({link_wiki_d3dx_ini_shipping}) silent errors, glitches and crashes.
+"""
+loc = """
+Wykryto mody z plikami ini zawierającymi opcje wyłącznie dla **d3dx.ini**:
+
+{mod_list}
+
+Wymienione pliki [zazwyczaj powodują]({link_wiki_d3dx_ini_shipping}) ciche błędy, problemy graficzne i awarie.
+"""
+
+[message_button_disable_ini_files]
+src = "Disable Ini Files"
+loc = "Wyłącz pliki INI"
+
+[message_title_performance_notification]
+src = "Performance Notification"
+loc = "Powiadomienie o wydajności"
+
+[message_text_global_triggers_in_mods_detected]
+src = """
+Detected mods with notable global performance impact:
+
+{checkbox_widget}
+
+Listed mods are using [unlimited resource slot triggers]({link_wiki_global_triggers_usage}).
+"""
+loc = """
+Wykryto mody mające znaczący globalny wpływ na wydajność:
+
+{checkbox_widget}
+
+Wymienione mody używają [unlimited resource slot triggers]({link_wiki_global_triggers_usage}).
+"""
+
+[message_button_disable_selected]
+src = "Disable Selected"
+loc = "Wyłącz zaznaczone"
+
+[optimizing_ini_files_in_folder]
+src = "Optimizing INI files in {folder_name} folder..."
+loc = "Optymalizowanie plików INI w folderze {folder_name}..."
+
+[tool_bar_optimize_mods_button]
+src = "Optimize Mods"
+loc = "Optymalizuj mody"
+
+[message_title_optimization_results]
+src = "Optimization Results"
+loc = "Wyniki optymalizacji"
+
+[message_text_optimization_results]
+src = """
+Successfully introduced following optimizations:
+
+{optimization_results:md_list}
+
+Check out {log_link} for more details.
+"""
+loc = """
+Pomyślnie wprowadzono następujące optymalizacje:
+
+{optimization_results:md_list}
+
+Sprawdź {log_link} po więcej szczegółów.
+"""
+
+[optimization_results_disabled_mods]
+src = "Disabled {disabled_mods_count} mods."
+loc = "Wyłączono {disabled_mods_count} mody."
+
+[optimization_results_disabled_files]
+src = "Disabled {disabled_files_count} INI files."
+loc = "Wyłączono {disabled_files_count} plików INI."
+
+[optimization_results_edited_lines]
+src = "Edited {edited_lines_count} lines in {edited_files_count} INI files."
+loc = "Edytowano {edited_lines_count} linie w {edited_files_count} plikach INI."
+
+[message_text_optimization_no_results]
+src = "All supported optimizations are already applied!"
+loc = "Wszystkie obsługiwane optymalizacje zostały już zastosowane!"
+
+[error_dll_inject_process_not_found]
+src = "Process {pid} not found"
+loc = "Proces {pid} nie znaleziony"
+
+[error_dll_inject_invalid_dll_path]
+src = "Invalid DLL path {dll_path}"
+loc = "Nieprawidłowa ścieżka DLL {dll_path}"
+
+[error_dll_inject_kernel32_fail]
+src = "Failed to resolve kernel32.dll"
+loc = "Nie udało się odczytać kernel32.dll"
+
+[error_dll_inject_loadlibrary_fail]
+src = "Failed to resolve LoadLibraryW"
+loc = "Nie udało się odczytać LoadLibraryW"
+
+[error_dll_inject_remote_alloc_fail]
+src = "Failed to allocate remote memory"
+loc = "Nie udało się przydzielić pamięci zdalnej"
+
+[error_dll_inject_write_memory_fail]
+src = "Failed to write DLL path to process memory"
+loc = "Nie udało się zapisać ścieżki DLL w pamięci procesu"
+
+[error_dll_inject_thread_fail]
+src = "Failed to create remote thread"
+loc = "Nie udało się utworzyć zdalnego wątku"
+
+[error_dll_inject_thread_timeout]
+src = "Injection thread timed out"
+loc = "Przekroczono czas wątku wstrzykiwania"
+
+[error_dll_inject_thread_wait_fail]
+src = "Injection thread wait failed"
+loc = "Błąd oczekiwania na wątek wstrzykiwania"
+
+[error_dll_inject_injection_failed]
+src = "DLL injection failed"
+loc = "Wstrzykiwanie DLL nie powiodło się"
+
+[error_dll_inject_unknown_error]
+src = "Unknown low level error"
+loc = "Nieznany błąd niskiego poziomu"
+
+[error_unknown_error_code]
+src = "Unknown error code {error_code}"
+loc = "Nieznany kod błędu {error_code}"
+
+[error_dll_injector_failed]
+src = """
+Failed to inject {dll_path}:
+{error_text}!
+"""
+loc = """
+Nie udało się wstrzyknąć {dll_path}:
+{error_text}!
+"""
+
+[error_dll_injector_extra_library_failed]
+src = """
+Failed to inject extra library {dll_path}:
+{error_text}!
+Please check Advanced Settings → Inject Libraries.
+"""
+loc = """
+Nie udało się wstrzyknąć dodatkowej biblioteki {dll_path}:
+{error_text}!
+Sprawdź Zaawansowane Ustawienia → Wstrzykiwanie bibliotek.
+"""
+
+[error_msvc_integrity_verification_failed_md]
+src = """
+**Microsoft Visual C++ Redistributable** is damaged or not installed!
+
+Please try to reinstall it from [Microsoft Website]({page_link}) ([direct download]({direct_link})).
+
+Log file: {log_path}
+
+Error: {error_text}
+"""
+loc = """
+**Microsoft Visual C++ Redistributable** jest uszkodzony lub nie jest zainstalowany!
+
+Spróbuj ponownie zainstalować go ze [strony Microsoft]({page_link}) ([bezpośrednie pobranie]({direct_link})).
+
+Plik logu: {log_path}
+
+Błąd: {error_text}
+"""
+
+[error_msvc_integrity_verification_failed_plain]
+src = """
+Microsoft Visual V C++ Redistributable is damaged or not installed!
+
+Please reinstall it from https://aka.ms/vs/17/release/vc_redist.x64.exe
+
+Log file: {log_path}
+
+Error: {error_text}
+"""
+loc = """
+Microsoft Visual C++ Redistributable jest uszkodzony lub nie jest zainstalowany!
+
+Zainstaluj go ponownie z https://aka.ms/vs/17/release/vc_redist.x64.exe
+
+Plik logu: {log_path}
+
+Błąd: {error_text}
+"""
+
+[error_model_importer_auto_select_failed]
+src = """
+Failed to auto-select importer for `{path}`!
+
+Try to add `--nogui --xxmi WWMI` args (or GIMI, SRMI, ZZMI, HIMI, EFMI).
+"""
+loc = """
+Nie udało się automatycznie wybrać importera dla `{path}`!
+
+Spróbuj dodać argumenty `--nogui --xxmi WWMI` (lub GIMI, SRMI, ZZMI, HIMI, EFMI).
+"""
+
+[application_update_found]
+src = "{package} update found: {current} → {latest}"
+loc = "Znaleziono aktualizację {package}: {current} → {latest}"
+
+[locale_list_conjunction_spacing]
+src = "\\\\s"
+loc = "\\\\s"
+
+[message_text_duplicate_libraries_detected]
+src = """
+Your Mods folder contains some libraries that are already included into {importer}!
+
+Would you like to disable following duplicates automatically (recommended)?
+
+{duplicates}
+"""
+loc = """
+Twój folder Mods zawiera biblioteki, które są już dołączone do {importer}!
+
+Czy chcesz automatycznie wyłączyć następujące duplikaty (zalecane)?
+
+{duplicates}
+"""
+
+[error_extra_library_not_found]
+src = """
+Failed to inject extra library {dll_path}:
+File not found!
+Please check Advanced Settings → Inject Libraries.
+"""
+loc = """
+Nie udało się wstrzyknąć dodatkowej biblioteki {dll_path}:
+Plik nie znaleziony!
+Sprawdź Zaawansowane Ustawienia → Wstrzykiwanie bibliotek.
+"""
+
+[error_set_readonly_failed]
+src = "Failed to set Read Only flag on file {path}: {error_text}!"
+loc = "Nie udało się ustawić atrybutu Tylko do odczytu dla pliku {path}: {error_text}!"
+
+[message_button_remove_flag]
+src = "Remove Flag"
+loc = "Usuń atrybut"
+
+[donate_wwmi_footer]
+src = """
+It's all about building better tools for the entire {model_importer} community.
+
+The more patrons, the stronger is motivation to shape new big features!
+"""
+loc = """
+Chodzi o tworzenie lepszych narzędzi dla całej społeczności {model_importer}.
+
+Im więcej patronów, tym większa motywacja do tworzenia nowych funkcji!
+"""
+
+[general_settings_start_method_native]
+src = "Native"
+loc = "Native"
+
+[general_settings_start_method_shell]
+src = "Shell"
+loc = "Shell"
+
+[general_settings_start_method_manual]
+src = "Manual"
+loc = "Ręcznie"
+
+[general_settings_process_priority_low]
+src = "Low"
+loc = "Niski"
+
+[general_settings_process_priority_below_normal]
+src = "Below Normal"
+loc = "Poniżej normalnego"
+
+[general_settings_process_priority_normal]
+src = "Normal"
+loc = "Normalny"
+
+[general_settings_process_priority_above_normal]
+src = "Above Normal"
+loc = "Powyżej normalnego"
+
+[general_settings_process_priority_high]
+src = "High"
+loc = "Wysoki"
+
+[general_settings_process_priority_realtime]
+src = "Realtime"
+loc = "Czas rzeczywisty"
+
+[general_settings_process_priority_option_menu_tooltip]
+src = """
+Set process priority for the game exe.
+"""
+loc = """
+Ustaw priorytet procesu dla pliku wykonywalnego gry.
+"""
+
+[general_settings_open_file_button_tooltip]
+src = "Open **{file_name}** in default text editor file for manual tweaking."
+loc = "Otwórz **{file_name}** w domyślnym edytorze tekstu do ręcznej edycji."
+
+[general_settings_window_mode_windowed]
+src = "Windowed"
+loc = "Okienkowy"
+
+[general_settings_window_mode_borderless]
+src = "Borderless"
+loc = "Bezramkowy"
+
+[general_settings_window_mode_fullscreen]
+src = "Fullscreen"
+loc = "Pełny ekran"
+
+[general_settings_window_mode_exclusive_fullscreen]
+src = "Exclusive Fullscreen"
+loc = "Wyłączny pełny ekran"
+
+[error_migoto_game_detection_timeout]
+src = """
+Failed to detect window of game process {process_name}!
+
+If game window takes more than {start_timeout} seconds to appear, adjust **Timeout** in **General Settings**.
+
+If game crashed, try to follow the [Crash Isolation Checklist]({checklist_link}).
+"""
+loc = """
+Nie udało się wykryć okna procesu gry {process_name}!
+
+Jeśli okno gry pojawia się po więcej niż {start_timeout} sekund, zmień wartość **Timeout** w **Ustawieniach ogólnych**.
+
+Jeśli gra uległa awarii, spróbuj postępować zgodnie z [Crash Isolation Checklist]({checklist_link}).
+"""
+
+[message_text_locale_errors]
+src = """
+Detected errors in active localization files:
+
+{locale_errors:md_list}
+"""
+loc = """
+Wykryto błędy w aktywnych plikach lokalizacji:
+
+{locale_errors:md_list}
+"""
+

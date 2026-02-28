@@ -1,0 +1,2366 @@
+[message_title_message]
+src = "Message"
+loc = "Wiadomość"
+
+[message_button_ok]
+src = "OK"
+loc = "OK"
+
+[message_title_error]
+src = "Error"
+loc = "Błąd"
+
+[message_title_warning]
+src = "Warning"
+loc = "Ostrzeżenie"
+
+[message_title_info]
+src = "Info"
+loc = "Informacja"
+
+[message_button_confirm]
+src = "Confirm"
+loc = "Potwierdź"
+
+[message_button_cancel]
+src = "Cancel"
+loc = "Anuluj"
+
+[application_failed_parse_args]
+src = "Failed to parse args: {args}"
+loc = "Nie udało się przetworzyć argumentów: {args}"
+
+[message_text_config_was_reset]
+src = "Failed to load configuration! Falling back to defaults."
+loc = "Nie udało się wczytać konfiguracji! Wrócono do ustawień domyślnych."
+
+[status_initializing_update]
+src = "Initializing update..."
+loc = "Inicjalizacja aktualizacji..."
+
+[message_button_load_backup_config]
+src = "Load Backup"
+loc = "Wczytaj kopię zapasową"
+
+[message_button_load_default_config]
+src = "Load Default"
+loc = "Wczytaj domyślne"
+
+[message_text_config_load_failed]
+src = "Failed to load configuration!"
+loc = "Nie udało się wczytać konfiguracji!"
+
+[error_unknown_model_importer]
+src = "Unknown model importer {importer}!"
+loc = "Nieznany importer modeli {importer}!"
+
+[error_unknown_model_importer_arg]
+src = "Unknown model importer supplied as command line arg `--xxmi={arg_xxmi}`!"
+loc = "Nieznany importer modeli podany w argumencie wiersza poleceń `--xxmi={arg_xxmi}`!"
+
+[error_unknown_model_importer_setting]
+src = "Unknown model importer `{importer}` supplied with `active_importer` setting!"
+loc = "Nieznany importer modeli `{importer}` ustawiony w `active_importer`!"
+
+[error_version_list_fetch_failed]
+src = """
+Failed to get latest versions list from GitHub!
+
+{error_text}
+"""
+loc = """
+Nie udało się pobrać listy najnowszych wersji z GitHub!
+
+{error_text}
+"""
+
+[message_title_update_available]
+src = "Update Available"
+loc = "Dostępna aktualizacja"
+
+[message_button_install_update]
+src = "Update"
+loc = "Aktualizuj"
+
+[message_button_skip_update]
+src = "Skip"
+loc = "Pomiń"
+
+[message_text_already_up_to_date]
+src = "No updates available!"
+loc = "Brak dostępnych aktualizacji!"
+
+[message_title_file_write_failed_read_only]
+src = "File Read Only Error"
+loc = "Błąd: plik tylko do odczytu"
+
+[message_text_file_write_failed_read_only]
+src = """
+Failed to write Read Only file {path}!
+
+Press [Confirm] to remove this flag and continue.
+"""
+loc = """
+Nie udało się zapisać pliku tylko do odczytu {path}!
+
+Naciśnij [Potwierdź], aby usunąć tę flagę i kontynuować.
+"""
+
+[error_critical_file_write_failed]
+src = "Failed to write critical file: {path}!"
+loc = "Nie udało się zapisać krytycznego pliku: {path}!"
+
+[message_button_reset_unsecure_setting]
+src = "Reset"
+loc = "Resetuj"
+
+[message_button_keep_unsecure_setting]
+src = "Keep"
+loc = "Zachowaj"
+
+[message_text_unsecure_setting_validation_failed]
+src = """
+Failed to validate unsecure settings!
+
+{msg}
+"""
+loc = """
+Nie udało się zweryfikować niebezpiecznych ustawień!
+
+{msg}
+"""
+
+[error_theme_resource_not_found]
+src = """
+Resource not found:
+
+{resource_path}
+
+Hint: You can also use other extensions: {extensions}
+"""
+loc = """
+Nie znaleziono zasobu:
+
+{resource_path}
+
+Wskazówka: Możesz też użyć innych rozszerzeń: {extensions}
+"""
+
+[status_waiting_installer]
+src = "Waiting for installer to start..."
+loc = "Oczekiwanie na uruchomienie instalatora..."
+
+[error_launcher_installer_start_failed]
+src = """
+Failed to start {asset_name}!
+
+Was it blocked by Antivirus software or security settings?
+"""
+loc = """
+Nie udało się uruchomić {asset_name}!
+
+Prawdopodobnie został zablokowany przez program antywirusowy lub ustawienia bezpieczeństwa
+"""
+
+[launcher_shortcut_description]
+src = "Shortcut to XXMI Launcher"
+loc = "Skrót do XXMI Launcher"
+
+[error_migoto_game_start_failed]
+src = "Failed to start {process_name}!"
+loc = "Nie udało się uruchomić {process_name}!"
+
+[status_ensuring_game_closed]
+src = "Ensuring the game is closed..."
+loc = "Sprawdzanie, czy gra jest zamknięta..."
+
+[message_text_game_stop_failed]
+src = """
+Failed to stop {process_name}!
+
+Please close the game manually and press [OK] to continue.
+"""
+loc = """
+Nie udało się zamknąć {process_name}!
+
+Proszę zamknąć grę ręcznie i nacisnąć [OK], aby kontynuować.
+"""
+
+[error_xxmi_missing_critical_file]
+src = "XXMI package is missing critical file: {file_name}!"
+loc = "Pakiet XXMI nie zawiera krytycznego pliku: {file_name}!"
+
+[error_gimi_game_exe_not_found]
+src = "Game executable {game_exe_name} or {game_exe_name_cn} not found!"
+loc = "Nie znaleziono pliku wykonywalnego gry {game_exe_name} ani {game_exe_name_cn}!"
+
+[error_gimi_dcr_config_failed]
+src = """
+{error_text}
+
+If nothing helps:
+1. Disable `Configure Game Settings` in launcher's `General Settings`
+2. Configure in-game `Graphics Settings` manually:
+* Graphics > `Dynamic Character Resolution` must be `Off`.
+"""
+loc = """
+{error_text}
+
+Jeśli nic nie pomaga:
+1. Wyłącz `Konfiguruj ustawienia gry` w `Ustawieniach ogólnych` launchera
+2. Skonfiguruj ręcznie `Ustawienia grafiki` w grze:
+* Grafika > `Dynamiczna rozdzielczość postaci` musi być `Wyłączona`.
+"""
+
+[error_gimi_fps_unlocker_config_failed]
+src = """
+Failed to configure FPS Unlocker!
+
+{error_text}
+"""
+loc = """
+Nie udało się skonfigurować FPS Unlockera!
+
+{error_text}
+"""
+
+[error_gimi_hdr_enable_failed]
+src = """
+Failed to enable HDR!
+
+{error_text}
+"""
+loc = """
+Nie udało się włączyć HDR!
+
+{error_text}
+"""
+
+[error_gimi_registry_key_not_found]
+src = """
+Genshin Impact registry key is not found!
+
+Please start the game via original launcher to create the key and try again.
+"""
+loc = """
+Nie znaleziono klucza rejestru Genshin Impact!
+
+Uruchom grę przez oryginalny launcher, aby utworzyć klucz, i spróbuj ponownie.
+"""
+
+[error_gimi_unknown_settings_format]
+src = "Unknown Settings format: Data type {regtype} is not {expected_type} of REG_BINARY!"
+loc = "Nieznany format ustawień: typ danych {regtype} nie jest {expected_type} typu REG_BINARY!"
+
+[error_gimi_graphics_settings_not_found]
+src = """
+Graphics Settings record is not found in GI registry!
+
+Please start the game via official launcher to create the record and try again.
+"""
+loc = """
+Nie znaleziono rekordu ustawień grafiki w rejestrze GI!
+
+Uruchom grę przez oficjalny launcher, aby utworzyć rekord, i spróbuj ponownie.
+"""
+
+[error_gimi_graphics_data_key_not_found]
+src = "Unknown Graphics Settings format: \"graphicsData\" key not found!"
+loc = "Nieznany format ustawień grafiki: nie znaleziono klucza \"graphicsData\"!"
+
+[error_gimi_global_perf_data_key_not_found]
+src = "Unknown Graphics Settings format: \"globalPerfData\" key not found!"
+loc = "Nieznany format ustawień grafiki: nie znaleziono klucza \"globalPerfData\"!"
+
+[error_gimi_hdr_record_not_found]
+src = """
+HDR record is not found in GI registry!
+
+Please start the game via official launcher to create the record and try again.
+"""
+loc = """
+Nie znaleziono rekordu HDR w rejestrze GI!
+
+Uruchom grę przez oficjalny launcher, aby utworzyć rekord, i spróbuj ponownie.
+"""
+
+[status_configuring_fps_unlocker]
+src = "Configuring FPS Unlocker..."
+loc = "Konfigurowanie FPS Unlockera..."
+
+[message_text_fps_unlocker_manual_termination]
+src = """
+Failed to terminate FPS Unlocker!
+
+Please close it manually and press [OK] to continue.
+"""
+loc = """
+Nie udało się zamknąć FPS Unlockera!
+
+Zamknij go ręcznie i naciśnij [OK], aby kontynuować.
+"""
+
+[error_game_exe_not_found]
+src = "Game executable {exe_name} not found!"
+loc = "Nie znaleziono pliku wykonywalnego gry {exe_name}!"
+
+[error_himi_fps_unlock_failed]
+src = "Failed to configure FPS: {error_text}"
+loc = "Nie udało się skonfigurować FPS: {error_text}"
+
+[error_himi_registry_key_not_found]
+src = """
+Honkai Impact 3rd registry key is not found!
+
+Please start the game without FPS tweak, change FPS to any value to create the record and try again.
+
+Note: Tweak is supported only for the Global client and will not work for CN.
+"""
+loc = """
+Nie znaleziono klucza rejestru Honkai Impact 3rd!
+
+Uruchom grę bez modyfikacji FPS, zmień FPS na dowolną wartość, aby utworzyć rekord, i spróbuj ponownie.
+
+Uwaga: Modyfikacja działa tylko w wersji Global i nie będzie działać w wersji CN.
+"""
+
+[error_himi_graphics_settings_not_found]
+src = """
+Graphics Settings record is not found in Honkai Impact 3rd registry!
+
+Please start the game without FPS tweak, change FPS to any value to create the record and try again.
+"""
+loc = """
+Nie znaleziono rekordu ustawień grafiki w rejestrze Honkai Impact 3rd!
+
+Uruchom grę bez modyfikacji FPS, zmień FPS na dowolną wartość, aby utworzyć rekord, i spróbuj ponownie.
+"""
+
+[error_himi_unknown_graphics_format]
+src = "Unknown Graphics Settings format: Data type {regtype} is not {expected_type} of REG_BINARY!"
+loc = "Nieznany format ustawień grafiki: typ danych {regtype} nie jest {expected_type} typu REG_BINARY!"
+
+[error_himi_fps_key_not_found]
+src = "Unknown Graphics Settings format: \"TargetFrameRateForInLevel\" key not found!"
+loc = "Nieznany format ustawień grafiki: nie znaleziono klucza: \"TargetFrameRateForInLevel\"!"
+
+[error_model_importer_unknown_command]
+src = "Unknown command {name}!"
+loc = "Nieznane polecenie {name}!"
+
+[error_model_importer_command_execution_failed]
+src = """
+Failed to execute `{name} = {value}` of auto_update.xcmd!
+{error_text}
+"""
+loc = """
+Nie udało się wykonać `{name} = {value}` w auto_update.xcmd!
+{error_text}
+"""
+
+[error_model_importer_removal_scope_restricted]
+src = "File or folder removal is allowed only from Core or ShaderFixes folder!"
+loc = "Usuwanie plików lub folderów jest dozwolone tylko w folderach Core lub ShaderFixes!"
+
+[error_model_importer_removal_forbidden]
+src = "Explicit removal of entire Core or ShaderFixes folder is not allowed!"
+loc = "Bezpośrednie usunięcie całego folderu Core lub ShaderFixes jest niedozwolone!"
+
+[error_model_importer_game_folder_not_specified]
+src = "Game installation folder is not specified!"
+loc = "Nie podano folderu instalacji gry!"
+
+[error_model_importer_game_folder_not_found]
+src = "Specified game installation folder is not found!"
+loc = "Nie znaleziono wskazanego folderu instalacji gry!"
+
+[message_text_game_detection_failed]
+src = """
+Automatic detection of the game installation failed!
+
+Please configure it manually with Game Folder option of General Settings.
+"""
+loc = """
+Nie udało się automatycznie wykryć instalacji gry!
+
+Skonfiguruj ją ręcznie w opcji „Folder gry” w Ustawieniach ogólnych.
+"""
+
+[message_button_open_settings]
+src = "Open Settings"
+loc = "Otwórz ustawienia"
+
+[message_text_game_detected_single]
+src = """
+Detected game installation:
+
+{game_folder}
+
+Please check if it is desired Game Folder or change it in General Settings.
+"""
+loc = """
+Wykryto instalację gry:
+
+{game_folder}
+
+Sprawdź, czy to właściwy folder gry lub zmień go w Ustawieniach ogólnych.
+"""
+
+[message_text_game_detected_multiple]
+src = """
+Detected game installations:
+
+Select desired Game Folder from the list below or set it in General Settings:
+
+"""
+loc = """
+Wykryto instalacje gry:
+
+Wybierz pożądany folder gry z poniższej listy lub ustaw go w Ustawieniach ogólnych:
+
+"""
+
+[message_text_game_folder_not_configured]
+src = """
+Game installation folder is not configured!
+
+Please set it with Game Folder option of General Settings.
+"""
+loc = """
+Folder instalacji gry nie jest skonfigurowany!
+
+Ustaw go w opcji „Folder gry” w Ustawieniach ogólnych.
+"""
+
+[status_autodetecting_game]
+src = "Autodetecting game installation folder..."
+loc = "Automatyczne wykrywanie folderu instalacji gry..."
+
+[error_launcher_in_game_folder]
+src = """
+
+Launcher must be installed outside of the game folder!
+
+Please reinstall the launcher to another location.
+"""
+loc = """
+
+Launcher musi być zainstalowany poza folderem gry!
+
+Zainstaluj launcher w innej lokalizacji.
+"""
+
+[error_model_importer_in_game_folder]
+src = """
+
+{importer} Folder must be located outside of the Game Folder!
+
+Please chose another location for Settings > {importer} > {importer} Folder.
+"""
+loc = """
+
+Folder {importer} musi znajdować się poza folderem gry!
+
+Wybierz inną lokalizację w Ustawienia > {importer} > Folder {importer}.
+"""
+
+[error_model_importer_installation_failed]
+src = """
+{importer} Installation Failed:
+{error_text}
+"""
+loc = """
+Instalacja {importer} nie powiodła się:
+{error_text}
+"""
+
+[status_updating_ini]
+src = "Updating d3dx.ini..."
+loc = "Aktualizuje d3dx.ini..."
+
+[error_ini_missing_setting]
+src = "Config is missing {setting_name} setting!"
+loc = "Konfiguracja nie zawiera ustawienia {setting_name}!"
+
+[error_ini_missing_value]
+src = "Config is missing value for section `{section}` option `{option}` key `{key}`"
+loc = "Konfiguracja nie zawiera wartości dla sekcji `{section}`, opcji `{option}`, klucza `{key}`"
+
+[error_set_ini_option_failed]
+src = "Failed to set section {section} option {option} to {value}: {error_text}"
+loc = "Nie udało się ustawić w sekcji {section} opcji {option} na {value}: {error_text}"
+
+[message_button_restore]
+src = "Restore"
+loc = "Przywróć"
+
+[message_text_model_importer_installation_damaged]
+src = """
+{importer} installation is damaged!
+Details: Missing critical file: {file_name}!
+Would you like to restore {importer} automatically?
+"""
+loc = """
+Instalacja {importer} jest uszkodzona!
+Szczegóły: Brak krytycznego pliku: {file_name}!
+Czy chcesz automatycznie przywrócić {importer}?
+"""
+
+[model_importer_missing_critical_file]
+src = "Missing critical file: {file_name}!"
+loc = "Brak krytycznego pliku: {file_name}!"
+
+[model_importer_shortcut_description]
+src = "Start game with {importer} and skip launcher load"
+loc = "Uruchom grę z {importer} i pomiń ładowanie launchera"
+
+[message_button_disable]
+src = "Disable"
+loc = "Wyłącz"
+
+[message_button_ignore]
+src = "Ignore"
+loc = "Ignoruj"
+
+[message_button_abort]
+src = "Abort"
+loc = "Przerwij"
+
+[error_cannot_start_with_d3dx_ini_in_mods]
+src = "Cannot start with d3dx.ini in Mods folder!"
+loc = "Nie można uruchomić gry z d3dx.ini w folderze Mods!"
+
+[error_malformed_model_importer_version]
+src = "Malformed {importer} version!"
+loc = "Nieprawidłowa wersja {importer}!"
+
+[error_model_importer_version_not_found]
+src = "Failed to locate {importer} version!"
+loc = "Nie udało się znaleźć wersji {importer}!"
+
+[error_srmi_fps_unlock_failed]
+src = "Failed to force 120 FPS: {error_text}"
+loc = "Nie udało się wymusić 120 FPS: {error_text}"
+
+[error_srmi_registry_key_not_found]
+src = """
+Star Rail registry key is not found!
+
+Please start the game without 120 FPS tweak, change FPS to any value to create the record and try again.
+
+Note: Tweak is supported only for the Global HSR client and will not work for CN.
+"""
+loc = """
+Nie znaleziono klucza rejestru Star Rail!
+
+Uruchom grę bez modyfikacji 120 FPS, zmień FPS na dowolną wartość, aby utworzyć rekord, i spróbuj ponownie.
+
+Uwaga: Modyfikacja działa tylko w globalnym kliencie HSR i nie będzie działać w wersji CN.
+"""
+
+[error_srmi_graphics_settings_not_found]
+src = """
+Graphics Settings record is not found in HSR registry!
+
+Please start the game without 120 FPS tweak, change FPS to any value to create the record and try again.
+"""
+loc = """
+Nie znaleziono rekordu ustawień grafiki w rejestrze HSR!
+
+Uruchom grę bez modyfikacji 120 FPS, zmień FPS na dowolną wartość, aby utworzyć rekord, i spróbuj ponownie.
+"""
+
+[error_srmi_unknown_graphics_format]
+src = "Unknown Graphics Settings format: Data type {regtype} is not {expected_type} of REG_BINARY!"
+loc = "Nieznany format ustawień grafiki: typ danych {regtype} nie jest {expected_type} typu REG_BINARY!"
+
+[error_srmi_fps_key_not_found]
+src = "Unknown Graphics Settings format: \"FPS\" key no found!"
+loc = "Nieznany format ustawień grafiki: nie znaleziono klucza \"FPS\"!"
+
+[error_game_path_not_absolute]
+src = "Failed to normalize path {path}: Path is not absolute!"
+loc = "Nie udało się znormalizować ścieżki {path}: Ścieżka nie jest absolutna!"
+
+[error_wuthering_waves_exe_not_found]
+src = "Failed to normalize path {path}: Wuthering Waves.exe not found!"
+loc = "Nie udało się znormalizować ścieżki {path}: nie znaleziono Wuthering Waves.exe!"
+
+[error_wwmi_game_folder_missing_files]
+src = "Game folder must contain `Wuthering Waves.exe` and `Client` & `Engine` folders!"
+loc = "Folder gry musi zawierać `Wuthering Waves.exe` oraz foldery `Client` i `Engine`!"
+
+[message_text_wwmi_invalid_steam_installation]
+src = """
+Invalid Wuthering Waves installation detected for Steam:
+{game_path}
+
+{folder_name} folder with {exe_name} must be directly placed in:
+{common_folder}
+
+Please run game file repair via Steam or fix it manually.
+"""
+loc = """
+Wykryto nieprawidłową instalację Wuthering Waves dla Steam:
+{game_path}
+
+Folder {folder_name} z plikiem {exe_name} musi być bezpośrednio umieszczony w:
+{common_folder}
+
+Uruchom naprawę plików gry przez Steam lub napraw ręcznie.
+"""
+
+[error_steam_game_repair_required]
+src = "Game installation must be repaired via Steam!"
+loc = "Instalacja gry musi zostać naprawiona przez Steam!"
+
+[error_game_folder_missing_folder]
+src = "Game folder must contain {dir_name} folder!"
+loc = "Folder gry musi zawierać folder {dir_name}!"
+
+[status_configuring_settings]
+src = "Configuring in-game settings..."
+loc = "Konfigurowanie ustawień w grze..."
+
+[message_title_wounded_effect_detected]
+src = "Wounded Effect Detected"
+loc = "Wykryto 'Wounded Effect'"
+
+[message_button_keep_enabled]
+src = "Keep Enabled"
+loc = "Pozostaw włączone"
+
+[message_text_wounded_effect_detected]
+src = """
+Looks like Wounded Effect is enabled in game settings.
+It is not supported by most mods and textures will break after few hits taken.
+
+Click `Disable` to turn it Off and ensure proper rendering of modded textures.
+Click `Keep Enabled` if you never get hit or use Injured Effect Remover tool.
+"""
+loc = """
+Wygląda na to, że 'Wounded Effect' jest włączony w ustawieniach gry.
+Nie jest wspierany przez większość modów i tekstury mogą się uszkodzić po kilku trafieniach.
+
+Kliknij `Wyłącz`, aby go wyłączyć i zapewnić poprawne renderowanie zmodyfikowanych tekstur.
+Kliknij `Pozostaw włączone`, jeśli nigdy nie otrzymujesz obrażeń lub używasz narzędzia do usuwania efektu rannego.
+"""
+
+[error_wwmi_fps_unlock_failed]
+src = """
+Failed to force 120 FPS!
+Please disable `Force 120 FPS` in launcher's General Settings.
+
+{error_text}
+"""
+loc = """
+Nie udało się wymusić 120 FPS!
+Wyłącz opcję `Wymuś 120 FPS` w Ustawieniach ogólnych launchera.
+
+{error_text}
+"""
+
+[error_wwmi_game_config_failed]
+src = """
+Failed to configure in-game settings for WWMI!
+Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:
+* Graphics > `Graphics Quality` must be `Quality`.
+
+{error_text}
+"""
+loc = """
+Nie udało się skonfigurować ustawień gry dla WWMI!
+Wyłącz opcję `Konfiguruj ustawienia gry` w Ustawieniach ogólnych launchera i sprawdź ustawienia w grze:
+* Grafika > `Jakość grafiki` musi być `Jakość`.
+
+{error_text}
+"""
+
+[status_updating_file]
+src = "Updating {file_name}..."
+loc = "Aktualizacja {file_name}..."
+
+[error_local_storage_init_failed]
+src = "Failed to initialize LocalStorage: {error_text}"
+loc = "Nie udało się zainicjalizować LocalStorage: {error_text}"
+
+[error_zzmi_game_config_failed]
+src = """
+Failed to configure in-game settings for ZZMI!
+Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:
+* Graphics > `Character Quality` must be `High`.
+* Graphics > `High-Precision Character Animation` must be `Disabled`.
+
+{error_text}
+"""
+loc = """
+Nie udało się skonfigurować ustawień gry dla ZZMI!
+Wyłącz opcję `Konfiguruj ustawienia gry` w Ustawieniach ogólnych launchera i sprawdź ustawienia w grze:
+* Grafika > `Jakość postaci` musi być `Wysoka`.
+* Grafika > `Animacja postaci wysokiej precyzji` musi być `Wyłączona`.
+
+{error_text}
+"""
+
+[error_zzmi_unknown_settings_format]
+src = "Unknown system settings entry format: {setting}!"
+loc = "Nieznany format wpisu w ustawieniach systemowych: {setting}!"
+
+[error_updater_start_failed]
+src = """
+Failed to start XXMI Updater.exe!
+
+Was it blocked by Antivirus software or security settings?
+"""
+loc = """
+Nie udało się uruchomić XXMI Updater.exe!
+
+Prawdopodobnie został zablokowany przez program antywirusowy lub ustawienia bezpieczeństwa
+"""
+
+[error_package_version_detect_failed]
+src = """
+Failed to detect installed {package_name} version:
+
+{error_text}
+"""
+loc = """
+Nie udało się wykryć zainstalowanej wersji {package_name}:
+
+{error_text}
+"""
+
+[package_manager_detect_latest_failed]
+src = """
+Failed to detect latest {package_name} version:
+
+{error_text}
+"""
+loc = """
+Nie udało się wykryć najnowszej wersji {package_name}:
+
+{error_text}
+"""
+
+[error_downloaded_data_verification_failed]
+src = """
+Downloaded data integrity verification failed!
+Please restart the launcher and try again!
+"""
+loc = """
+Weryfikacja integralności pobranych danych nie powiodła się!
+Uruchom launcher ponownie i spróbuj ponownie!
+"""
+
+[package_manager_file_verification_failed]
+src = """
+{asset_name} data integrity verification failed!
+Please restart the launcher and try again!
+"""
+loc = """
+Weryfikacja integralności danych {asset_name} nie powiodła się!
+Uruchom launcher ponownie i spróbuj ponownie!
+"""
+
+[error_missing_manifest]
+src = "{package_name} package is missing manifest file!"
+loc = "Pakiet {package_name} nie zawiera pliku manifestu!"
+
+[error_parse_manifest_failed]
+src = "Failed to parse {package_name} manifest file!"
+loc = "Nie udało się przetworzyć pliku manifestu {package_name}!"
+
+[error_missing_critical_file]
+src = "{package_name} package is missing critical file: {file_name}!"
+loc = "Pakiet {package_name} nie zawiera krytycznego pliku: {file_name}!"
+
+[error_file_signature_invalid]
+src = "File {file_name} signature is invalid!"
+loc = "Podpis pliku {file_name} jest nieprawidłowy!"
+
+[error_missing_signature]
+src = "{package_name} manifest file is missing signature for {file_name}!"
+loc = "Plik manifestu {package_name} nie zawiera podpisu dla {file_name}!"
+
+[error_github_api_limit]
+src = """
+Unauthorized GitHub API requests limit reached for your IP!
+
+GitHub servers will ignore further connection attempts for an hour.
+
+Set (another) *Proxy* or *GitHub Token* in *Launcher Settings* for instant access.
+"""
+loc = """
+Osiągnięto limit nieautoryzowanych żądań API GitHub dla Twojego IP!
+
+Serwery GitHub będą ignorować kolejne próby połączenia przez godzinę.
+
+Ustaw (inny) *Proxy* lub *Token GitHub* w *Ustawieniach Launchera*, aby uzyskać natychmiastowy dostęp.
+"""
+
+[error_remove_readonly_failed]
+src = "Failed to remove Read Only flag from file {path}: {error_text}!"
+loc = "Nie udało się usunąć flagi Tylko do odczytu z pliku {path}: {error_text}!"
+
+[error_file_not_exist]
+src = "File '{path}' does not exist!"
+loc = "Plik '{path}' nie istnieje!"
+
+[error_not_a_file]
+src = "File '{path}' is not a file!"
+loc = "Plik '{path}' nie jest plikiem!"
+
+[error_path_not_absolute]
+src = "File path '{path}' is not absolute!"
+loc = "Ścieżka pliku '{path}' nie jest absolutna!"
+
+[error_no_read_access]
+src = "Failed to read '{path}' file!"
+loc = "Nie udało się odczytać pliku '{path}'!"
+
+[error_file_readonly]
+src = "Failed to write '{path}': file is Read Only!"
+loc = "Nie udało się zapisać pliku '{path}': plik jest tylko do odczytu!"
+
+[error_no_write_access]
+src = "Failed to write '{path}': no write access!"
+loc = "Nie udało się zapisać pliku '{path}': brak uprawnień do zapisu!"
+
+[error_no_exe_access]
+src = "Failed run '{path}': no execute access!"
+loc = "Nie udało się uruchomić '{path}': brak uprawnień do wykonania!"
+
+[error_dir_not_absolute]
+src = "Directory path '{path}' is not absolute!"
+loc = "Ścieżka katalogu '{path}' nie jest absolutna!"
+
+[error_cant_read_folder]
+src = "Can't read from '{path}' folder!"
+loc = "Nie można odczytać zawartości folderu '{path}'!"
+
+[error_cant_write_folder]
+src = "Can't write to '{path}' folder!"
+loc = "Nie można zapisać w folderze '{path}'!"
+
+[error_cant_run_exe_folder]
+src = "Can't run .exe in '{path}' folder!"
+loc = "Nie można uruchomić pliku .exe w folderze '{path}'!"
+
+[error_cant_access_folder]
+src = "Can't access '{path}' folder!"
+loc = "Brak dostępu do folderu '{path}'!"
+
+[error_not_a_folder]
+src = "Path '{path}' is not a folder!"
+loc = "Ścieżka '{path}' nie jest folderem!"
+
+[error_cannot_set_root_absolute]
+src = "Cannot set root \"{root_path}\" for absolute path \"{path}\"!"
+loc = "Nie można ustawić root \"{root_path}\" dla absolutnej ścieżki \"{path}\"!"
+
+[error_curly_brackets_error]
+src = """
+Launcher initialization failed!
+
+Curly brackets {{ and }} in launcher path are not supported:
+{root_path}
+
+Please reinstall the launcher to another location.
+
+"""
+loc = """
+Inicjalizacja launchera nie powiodła się!
+
+Nawiasy klamrowe {{ i }} w ścieżce launchera nie są obsługiwane:
+{root_path}
+
+Zainstaluj launcher w innej lokalizacji.
+
+"""
+
+[error_dll_injector_file_not_found]
+src = "Injector file not found: {injector_lib_path}!"
+loc = "Nie znaleziono pliku injectora: {injector_lib_path}!"
+
+[error_dll_injector_load_failed]
+src = "Failed to load injector library!"
+loc = "Nie udało się załadować biblioteki injectora!"
+
+[error_dll_injector_unload_failed]
+src = "Failed to unload injector library!"
+loc = "Nie udało się odładować biblioteki injectora!"
+
+[dll_injector_shell_error_out_of_memory]
+src = "The operating system is out of memory/resources"
+loc = "System operacyjny nie ma wystarczającej ilości pamięci/zasobów"
+
+[dll_injector_shell_error_file_not_found]
+src = "File not found"
+loc = "Nie znaleziono pliku"
+
+[dll_injector_shell_error_path_not_found]
+src = "Path not found"
+loc = "Nie znaleziono ścieżki"
+
+[dll_injector_shell_error_access_denied]
+src = "Access denied"
+loc = "Odmowa dostępu"
+
+[dll_injector_shell_error_not_win32_app]
+src = ".exe file is invalid or not a Win32 app"
+loc = "Plik .exe jest nieprawidłowy lub nie jest aplikacją Win32"
+
+[dll_injector_shell_error_sharing_violation]
+src = "Sharing violation"
+loc = "Naruszenie współdzielenia pliku"
+
+[dll_injector_shell_error_no_app_association]
+src = "No application is associated with the file"
+loc = "Brak aplikacji skojarzonej z plikiem"
+
+[dll_injector_shell_error_incomplete_app_association]
+src = "File association is incomplete"
+loc = "Skojarzenie pliku jest niekompletne"
+
+[dll_injector_unknown_shell_error_code]
+src = "Unknown ShellExecute error code {error_code}"
+loc = "Nieznany kod błędu ShellExecute {error_code}"
+
+[error_dll_injector_process_start_failed]
+src = "Failed to start {process_name}: {error_text}!"
+loc = "Nie udało się uruchomić {process_name}: {error_text}!"
+
+[error_dll_injector_unknown_start_method]
+src = "Unknown process start method `{start_method}`!"
+loc = "Nieznana metoda uruchamiania procesu `{start_method}`!"
+
+[error_dll_injector_injection_failed]
+src = "Failed to inject {dll_paths}!"
+loc = "Nie udało się wstrzyknąć {dll_paths}!"
+
+[error_dll_injector_unhook_failed]
+src = "Invalid injector usage: {dll_path} was not unhooked!"
+loc = "Nieprawidłowe użycie injectora: {dll_path} nie zostało odhakowane!"
+
+[error_dll_injector_another_instance]
+src = "Another instance of 3DMigotoLoader is running!"
+loc = "Inna instancja 3DMigotoLoader jest uruchomiona!"
+
+[error_dll_injector_failed_to_load_dll]
+src = "Failed to load {dll_path}!"
+loc = "Nie udało się załadować {dll_path}!"
+
+[error_dll_injector_missing_entry_point]
+src = "Library {dll_path} is missing expected entry point!"
+loc = "Biblioteka {dll_path} nie zawiera oczekiwanego punktu wejścia!"
+
+[error_dll_injector_hook_setup_failed]
+src = "Failed to setup windows hook for {dll_path}!"
+loc = "Nie udało się ustawić hooka Windows dla {dll_path}!"
+
+[error_dll_injector_unknown_hook_error]
+src = "Unknown error while hooking {dll_path}!"
+loc = "Nieznany błąd podczas hookowania {dll_path}!"
+
+[error_dll_injector_hook_is_null]
+src = "Hook is NULL for {dll_path}!"
+loc = "Hook jest NULL dla {dll_path}!"
+
+[error_dll_injector_path_not_defined]
+src = "Invalid injector usage: dll path is not defined!"
+loc = "Nieprawidłowe użycie injectora: ścieżka do dll nie jest zdefiniowana!"
+
+[error_dll_injector_process_not_defined]
+src = "Invalid injector usage: target process is not defined!"
+loc = "Nieprawidłowe użycie injectora: proces docelowy nie jest zdefiniowany!"
+
+[error_dll_injector_dll_not_hooked]
+src = "Invalid injector usage: dll is not hooked!"
+loc = "Nieprawidłowe użycie injectora: dll nie jest podpięta!"
+
+[error_ssl_certificate_validation_failed]
+src = """
+Failed to validate SSL certificate of GitHub HTTPS connection!
+
+If you trust your proxy, uncheck *Verify SSL* in *Launcher Settings* and try again.
+"""
+loc = """
+Nie udało się zweryfikować certyfikatu SSL połączenia HTTPS z GitHub!
+
+Jeśli ufasz swojemu proxy, odznacz *Weryfikuj SSL* w *Ustawieniach Launchera* i spróbuj ponownie.
+"""
+
+[error_github_connection_failed]
+src = """
+Failed to establish HTTPS connection to GitHub!
+
+Please check your Antivirus, Firewall, Proxy and VPN settings.
+"""
+loc = """
+Nie udało się nawiązać połączenia HTTPS z GitHub!
+
+Sprawdź ustawienia antywirusa, zapory, proxy i VPN.
+"""
+
+[error_github_rate_limit_exceeded]
+src = "GitHub API rate limit exceeded!"
+loc = "Przekroczono limit żądań API GitHub!"
+
+[error_github_invalid_token]
+src = """
+GitHub Personal Access Token is invalid!
+
+Please configure correct token in launcher settings.
+"""
+loc = """
+GitHub Personal Access Token jest nieprawidłowy!
+
+Skonfiguruj poprawny token w ustawieniach launchera.
+"""
+
+[error_github_parse_response_failed]
+src = "Failed to parse GitHub response!"
+loc = "Nie udało się przetworzyć odpowiedzi GitHub!"
+
+[error_github_parse_version_failed]
+src = "Failed to parse latest release version!"
+loc = "Nie udało się przetworzyć wersji najnowszego wydania!"
+
+[error_github_parse_signature_failed]
+src = "Failed to parse signature!"
+loc = "Nie udało się przetworzyć podpisu!"
+
+[error_github_asset_not_found]
+src = "Failed to locate asset matching to '{asset_name_format}'!"
+loc = "Nie udało się znaleźć zasobu pasującego do '{asset_name_format}'!"
+
+[error_github_invalid_release_notes]
+src = "<font color=\"red\">⚠ Error! Invalid release notes format! ⚠</font>"
+loc = "<font color=\"red\">⚠ Błąd! Nieprawidłowy format notatek wydania! ⚠</font>"
+
+[error_github_unsigned_release]
+src = "<font color=\"red\">☢ Error! Release is unsigned! ☢</font>"
+loc = "<font color=\"red\">☢ Błąd! Wydanie nie jest podpisane! ☢</font>"
+
+[error_proxy_host_not_specified]
+src = "Proxy host is not specified!"
+loc = "Nie określono hosta proxy!"
+
+[error_proxy_port_not_specified]
+src = "Proxy port is not specified!"
+loc = "Nie określono portu proxy!"
+
+[error_proxy_port_must_be_numeric]
+src = "Proxy port must be numeric value!"
+loc = "Port proxy musi być liczbą!"
+
+[donate_and_wwmi]
+src = " and WWMI"
+loc = " oraz WWMI"
+
+[donate_popup_introduction]
+src = """
+Hey there — just a quick moment, I promise I won't interrupt again!
+
+I'm SpectrumQT, the developer behind XXMI Launcher{importer_info}.
+Looks like you've already enjoyed {num_sessions} {model_importer} sessions — awesome!
+"""
+loc = """
+Cześć — tylko chwila, obiecuję, że już nie będę przeszkadzać!
+
+Jestem SpectrumQT, twórca XXMI Launchera{importer_info}.
+Wygląda na to, że korzystałeś już z {num_sessions} sesji {model_importer} — super!
+"""
+
+[donate_wwmi_introduction]
+src = """
+Hello! Thank you for visiting {model_importer} Appreciation Corner!
+
+This page is a bit unique, since I can't list many names here.
+Simply because I'm soloing {model_importer} and XXMI Launcher development.
+"""
+loc = """
+Cześć! Dziękuję za odwiedzenie Kącika Wdzięczności dla {model_importer}!
+
+Ta strona jest nieco wyjątkowa, bo nie mogę tu podać wielu nazwisk.
+Po prostu sam rozwijam {model_importer} i XXMI Launcher.
+"""
+
+[donate_other_introduction]
+src = """
+Hello! Thank you for visiting {model_importer} Appreciation Corner!
+
+Here you can see the dev team fighting for {model_importer} behind the scenes.
+It's a tough battle — but shader hackers prevail!
+"""
+loc = """
+Cześć! Dziękuję za odwiedzenie Kącika Wdzięczności dla {model_importer}!
+
+Tutaj możesz zobaczyć zespół deweloperów walczących za {model_importer} za kulisami.
+To ciężka walka — ale hakerzy shaderów zwyciężają!
+"""
+
+[donate_wwmi_useful_check]
+src = "If you've been finding it useful, consider checking out"
+loc = "Jeśli uważasz, że to narzędzie jest przydatne, rozważ wsparcie przez"
+
+[donate_my_patreon_campaign]
+src = "my Patreon campaign."
+loc = "moją kampanię na Patreon."
+
+[donate_support_message]
+src = "Please consider supporting those who work hard every day to make {model_importer} possible!"
+loc = "Rozważ wsparcie osób, które codziennie ciężko pracują, aby {model_importer} mogło istnieć!"
+
+[donate_creators_single]
+src = "• Creator: "
+loc = "• Twórca: "
+
+[donate_creators_multiple]
+src = "• Creators: "
+loc = "• Twórcy: "
+
+[donate_maintainers_single]
+src = "• Maintainer:"
+loc = "• Opiekun:"
+
+[donate_maintainers_multiple]
+src = "• Maintainers:"
+loc = "• Opiekunowie:"
+
+[donate_launcher_handy]
+src = "Also, if the launcher has been handy, I'd appreciate you joining"
+loc = "Jeśli launcher okazał się pomocny, będę wdzięczny za dołączenie do"
+
+[donate_my_patreon_short]
+src = "my Patreon."
+loc = "mojego Patreona."
+
+[donate_close_button]
+src = "Close"
+loc = "Zamknij"
+
+[donate_close_countdown]
+src = "Close ({time_left})"
+loc = "Zamknij ({time_left})"
+
+[bottom_bar_initializing_launch]
+src = "Initializing game launch..."
+loc = "Inicjalizacja uruchamiania gry..."
+
+[bottom_bar_hooking]
+src = "Hooking {library} to {process}..."
+loc = "Podpinanie {library} do {process}..."
+
+[bottom_bar_verifying_hook]
+src = "Verifying {library} load into {process}..."
+loc = "Weryfikacja załadowania {library} do {process}..."
+
+[bottom_bar_injecting]
+src = "Injecting {library} to {process}..."
+loc = "Wstrzykiwanie {library} do {process}..."
+
+[bottom_bar_launching_game]
+src = "Launching game..."
+loc = "Uruchamianie gry..."
+
+[bottom_bar_waiting_process]
+src = "Waiting for {process} to start..."
+loc = "Oczekiwanie na uruchomienie {process}..."
+
+[bottom_bar_closing_launcher]
+src = "Closing launcher..."
+loc = "Zamykanie launchera..."
+
+[bottom_bar_checking_updates]
+src = "Checking for updates..."
+loc = "Sprawdzanie aktualizacji..."
+
+[bottom_bar_connecting_github]
+src = "Connecting to GitHub..."
+loc = "Łączenie z GitHub..."
+
+[bottom_bar_downloading]
+src = "Downloading {asset}..."
+loc = "Pobieranie {asset}..."
+
+[bottom_bar_verifying_integrity]
+src = "Verifying {asset} integrity..."
+loc = "Weryfikacja integralności {asset}..."
+
+[bottom_bar_initializing_installation]
+src = "Initializing update installation..."
+loc = "Inicjalizacja instalacji aktualizacji..."
+
+[bottom_bar_writing_file]
+src = "Writing {asset} on disk..."
+loc = "Zapisywanie {asset} na dysku..."
+
+[bottom_bar_moving_file]
+src = "Moving {asset}..."
+loc = "Przenoszenie {asset}..."
+
+[bottom_bar_unpacking]
+src = "Unpacking {asset}..."
+loc = "Rozpakowywanie {asset}..."
+
+[launcher_select_games_text]
+src = "Select Games To Mod:"
+loc = "Wybierz gry do modyfikacji:"
+
+[launcher_update_button_tooltip]
+src = """
+## Update packages to latest versions:
+{pending_update_message}
+
+<font color=\"#3366ff\">*Hover over versions in the bottom-left corner to view update descriptions.*</font>
+"""
+loc = """
+## Aktualizuj pakiety do najnowszych wersji:
+{pending_update_message}
+
+<font color=\"#3366ff\">*Najedź myszką na wersje w lewym dolnym rogu, aby zobaczyć opis aktualizacji.*</font>
+"""
+
+[launcher_start_button]
+src = "Start"
+loc = "Start"
+
+[launcher_install_button]
+src = "Install"
+loc = "Zainstaluj"
+
+[package_release_notes_up_to_date]
+src = """
+# What's new in {package_name} v{new_package_version}:
+{installed_release_notes}
+"""
+loc = """
+# Co nowego w {package_name} v{new_package_version}:
+{installed_release_notes}
+"""
+
+[package_release_notes_update_available]
+src = """
+# Update {package_name} to v{new_package_version} for:
+{latest_release_notes}
+"""
+loc = """
+# Zaktualizuj {package_name} do v{new_package_version}, aby:
+{latest_release_notes}
+"""
+
+[package_release_notes_not_installed]
+src = """
+Press **Install** button to setup the package.
+"""
+loc = """
+Naciśnij przycisk **Zainstaluj**, aby skonfigurować pakiet.
+"""
+
+[package_description_launcher]
+src = """
+*This package is XXMI Launcher App itself and defines its features.*
+"""
+loc = """
+*Ten pakiet to sam XXMI Launcher i definiuje jego funkcje.*
+"""
+
+[package_description_xxmi_libraries]
+src = """
+*XXMI Libraries package is custom 3dmigoto build fiddling with data between GPU and a game process.*
+"""
+loc = """
+*Pakiet XXMI Libraries to niestandardowa wersja 3dmigoto manipulująca danymi między GPU a procesem gry.*
+"""
+
+[package_description_model_importer]
+src = """
+*Model Importer package offers a set of API functions required for mods to work in given game.*
+"""
+loc = """
+*Pakiet Model Importer udostępnia zestaw funkcji API potrzebnych, aby mody działały w danej grze.*
+"""
+
+[package_description_tooltip_open_github_changelog]
+src = """
+<font color=\"#3366ff\">*<u>Left-Click</u> to open {package_name} Dev Blog on Patreon.*</font>
+<font color=\"#3366ff\">*<u>Right-Click</u> to open {package_name} GitHub releases for full changelog.*</font>
+"""
+loc = """
+<font color=\"#3366ff\">*<u>LPM</u> – otwórz Dev Blog {package_name} na Patreonie.*</font>
+<font color=\"#3366ff\">*<u>PPM</u> – otwórz wydania {package_name} na GitHub, aby zobaczyć pełny changelog.*</font>
+"""
+
+[package_description_tooltip_open_dev_blog]
+src = """
+<font color=\"#3366ff\">*<u>Left-Click</u> to open {package_name} GitHub releases for full changelog.*</font>
+"""
+loc = """
+<font color=\"#3366ff\">*<u>LPM</u> – otwórz wydania {package_name} na GitHub, aby zobaczyć pełny changelog.*</font>
+"""
+
+[package_release_notes]
+src = """
+{package_release_notes}
+
+{actions_tooltip}
+<font color=\"#aaaaaa\">{package_description}</font>
+"""
+loc = """
+{package_release_notes}
+
+{actions_tooltip}
+<font color=\"#aaaaaa\">{package_description}</font>
+"""
+
+[tool_bar_repair_button]
+src = "Repair {importer}"
+loc = "Napraw {importer}"
+
+[tool_bar_check_updates_button]
+src = "Check For Updates"
+loc = "Sprawdź aktualizacje"
+
+[tool_bar_add_shortcut_button]
+src = "Add Desktop Shortcut"
+loc = "Dodaj skrót na pulpit"
+
+[tool_bar_open_mods_button]
+src = "Open Mods Folder"
+loc = "Otwórz folder modów"
+
+[top_bar_xxmi_button_tooltip]
+src = "Manage Model Importers"
+loc = "Zarządzaj Model Importerami"
+
+[top_bar_wwmi_button_tooltip]
+src = "Wuthering Waves Model Importer"
+loc = "Wuthering Waves Model Importer"
+
+[top_bar_zzmi_button_tooltip]
+src = "Zenless Zone Zero Model Importer"
+loc = "Zenless Zone Zero Model Importer"
+
+[top_bar_srmi_button_tooltip]
+src = "Honkai: Star Rail Model Importer"
+loc = "Honkai: Star Rail Model Importer"
+
+[top_bar_gimi_button_tooltip]
+src = "Genshin Impact Model Importer"
+loc = "Genshin Impact Model Importer"
+
+[top_bar_himi_button_tooltip]
+src = "Honkai Impact Model Importer"
+loc = "Honkai Impact Model Importer"
+
+[top_bar_gamebanana_button_tooltip]
+src = "{importer} GameBanana"
+loc = "{importer} GameBanana"
+
+[top_bar_discord_button_tooltip]
+src = "AGMG Modding Community Discord"
+loc = "Discord społeczności AGMG Modding"
+
+[top_bar_github_button_tooltip]
+src = "XXMI Launcher GitHub"
+loc = "XXMI Launcher GitHub"
+
+[top_bar_donate_button_tooltip]
+src = "Support {importer}"
+loc = "Wesprzyj {importer}"
+
+[top_bar_settings_button_tooltip]
+src = "Open Settings"
+loc = "Otwórz ustawienia"
+
+[top_bar_minimize_button_tooltip]
+src = "Minimize"
+loc = "Minimalizuj"
+
+[top_bar_close_button_tooltip]
+src = "Close"
+loc = "Zamknij"
+
+[top_bar_unsafe_mode_text]
+src = "Unsafe Mode"
+loc = "Tryb niebezpieczny"
+
+[top_bar_unsafe_mode_text_tooltip]
+src = """
+Usage of 3-rd party 3dmigoto DLLs is allowed.
+Make sure to use ones only from a trusted source!
+"""
+loc = """
+Dozwolone jest używanie zewnętrznych DLL 3dmigoto.
+Upewnij się, że pochodzą tylko z zaufanego źródła!
+"""
+
+[message_text_theme_load_failed_no_folder]
+src = """
+Failed to load {theme} theme:
+
+Theme folder does not exist!
+"""
+loc = """
+Nie udało się załadować motywu {theme}:
+
+Folder motywu nie istnieje!
+"""
+
+[message_text_theme_load_failed_no_file]
+src = """
+Failed to load {theme} theme:
+
+Theme file `custom-tkinter-theme.json` does not exist!
+"""
+loc = """
+Nie udało się załadować motywu {theme}:
+
+Plik motywu `custom-tkinter-theme.json` nie istnieje!
+"""
+
+[message_title_theme_update_required]
+src = "Theme Update Required"
+loc = "Wymagana aktualizacja motywu"
+
+[message_button_theme_use_default]
+src = "Use Default"
+loc = "Użyj domyślnego"
+
+[message_button_patch_theme]
+src = "Patch Theme"
+loc = "Zaktualizuj motyw"
+
+[message_text_theme_update_required]
+src = """
+Selected {theme} theme cannot be loaded!
+
+Click `Use Default` to use default theme instead (ensures proper visuals).
+Click `Patch Theme` to replace `custom-tkinter-theme.json` with new one.
+"""
+loc = """
+Wybrany motyw {theme} nie może zostać załadowany!
+
+Kliknij `Użyj domyślnego`, aby użyć motywu domyślnego (zapewnia prawidłowy wygląd).
+Kliknij `Zaktualizuj motyw`, aby zastąpić `custom-tkinter-theme.json` nowym plikiem.
+"""
+
+[status_reloading_gui]
+src = "Reloading GUI..."
+loc = "Ponowne ładowanie GUI..."
+
+[advanced_settings_overwrite_ini_checkbox]
+src = "Overwrite d3dx.ini"
+loc = "Nadpisz d3dx.ini"
+
+[advanced_settings_overwrite_ini_checkbox_tooltip]
+src = """
+Enabled: {importer} updates will overwrite existing d3dx.ini to ensure its up-to-date state.
+Disabled: {importer} updates will keep existing d3dx.ini untouched.
+"""
+loc = """
+Włączone: aktualizacje {importer} nadpiszą istniejący plik d3dx.ini, aby był aktualny.
+Wyłączone: aktualizacje {importer} pozostawią istniejący plik d3dx.ini bez zmian.
+"""
+
+[advanced_settings_security_label]
+src = "Security:"
+loc = "Bezpieczeństwo:"
+
+[advanced_settings_unsafe_mode_checkbox]
+src = "Unsafe Mode"
+loc = "Tryb niebezpieczny"
+
+[advanced_settings_unsafe_mode_checkbox_tooltip]
+src = """
+Enabled: Allow 3-rd party 3dmigoto dlls.
+Disabled: Disallow 3-rd party 3dmigoto dlls.
+Note: If 3-rd party d3d11.dll does not support running from nested directories, it will fail to load.
+"""
+loc = """
+Włączone: zezwala na użycie zewnętrznych DLL 3dmigoto.
+Wyłączone: zabrania użycia zewnętrznych DLL 3dmigoto.
+Uwaga: jeśli zewnętrzny d3d11.dll nie wspiera uruchamiania z podfolderów, nie załaduje się poprawnie.
+"""
+
+[advanced_settings_run_pre_launch_checkbox]
+src = "Run Pre-Launch:"
+loc = "Uruchamianie wstępne:"
+
+[advanced_settings_option_checkbox_tooltip]
+src = """
+Enabled: Option will have stated effect.
+Disabled: Option will have no effect.
+"""
+loc = """
+Włączone: opcja będzie miała zadeklarowany efekt.
+Wyłączone: opcja nie będzie miała żadnego efektu.
+"""
+
+[advanced_settings_run_pre_launch_tooltip]
+src = """
+Windows console command to be executed before game exe launch.
+Note: If something needs to be done before the game start, do it here.
+"""
+loc = """
+Polecenie konsoli Windows wykonywane przed uruchomieniem pliku exe gry.
+Uwaga: Jeśli coś musi zostać wykonane przed startem gry, zrób to tutaj.
+"""
+
+[advanced_settings_wait_checkbox]
+src = "Wait"
+loc = "Czekaj"
+
+[advanced_settings_run_pre_launch_wait_checkbox_tooltip]
+src = """
+Enabled: Wait for (blocking) command to finish its execution before launching the game exe.
+"""
+loc = """
+Włączone: poczekaj na zakończenie (blokującego) polecenia przed uruchomieniem pliku exe gry.
+"""
+
+[advanced_settings_custom_launch_checkbox]
+src = "Custom Launch:"
+loc = "Własne uruchamianie:"
+
+[advanced_settings_custom_launch_entry_tooltip]
+src = """
+Windows console command to run when Start button is pressed instead of default game exe launch.
+Hint: If you want to change injection method only, just leave this field empty.
+Warning! This command also overrides `Launch Options` from General Settings.
+Note: If you want to start game exe with another custom exe, do it here.
+Example (equivalent for command internally used by launcher to start GI via FPS unlocker):
+`start /d \"C:\\Games\\XXMI Launcher\\Resources\\Packages\\GI-FPS-Unlocker\" unlockfps_nc.exe`
+"""
+loc = """
+Polecenie konsoli Windows wykonywane po naciśnięciu przycisku Start zamiast domyślnego uruchomienia pliku exe gry.
+Wskazówka: Jeśli chcesz zmienić tylko metodę wstrzykiwania, pozostaw to pole puste.
+Ostrzeżenie! To polecenie nadpisuje również `Launch Options` z Ustawień ogólnych.
+Uwaga: Jeśli chcesz uruchomić plik exe gry przez inny niestandardowy exe, zrób to tutaj.
+Przykład (odpowiednik polecenia używanego wewnętrznie przez launcher do uruchamiania GI przez FPS unlocker):
+`start /d \"C:\\Games\\XXMI Launcher\\Resources\\Packages\\GI-FPS-Unlocker\" unlockfps_nc.exe`
+"""
+
+[advanced_settings_custom_launch_inject_mode_option_menu_tooltip]
+src = """
+Defines the way of 3dmigoto injection into the game process started via Custom Launch.
+* Inject: Use WriteProcessMemory, more reliable but requires direct memory access.
+* Hook: Use SetWindowsHookEx, less reliable, but potentially less prominent for anti-cheats.
+* Bypass: Skip 3dmigoto injection and process only Inject Libraries field.
+"""
+loc = """
+Określa sposób wstrzykiwania 3dmigoto do procesu gry uruchomionego przez Własne uruchamianie.
+* Inject: używa WriteProcessMemory — bardziej niezawodne, ale wymaga bezpośredniego dostępu do pamięci.
+* Hook: używa SetWindowsHookEx — mniej niezawodne, ale potencjalnie mniej widoczne dla systemów anty‑cheat.
+* Bypass: pomija wstrzykiwanie 3dmigoto i przetwarza jedynie pole Inject Libraries.
+"""
+
+[advanced_settings_run_post_load_checkbox]
+src = "Run Post-Load:"
+loc = "Uruchom po załadowaniu:"
+
+[advanced_settings_run_post_load_checkbox_tooltip]
+src = """
+Windows console command to be executed after hooking d3d11.dll to launched game exe.
+Note: If something needs to be done after 3dmigoto injection, do it here.
+"""
+loc = """
+Polecenie konsoli Windows wykonywane po podpięciu d3d11.dll do uruchomionego pliku exe gry.
+Uwaga: Jeśli coś musi zostać wykonane po wstrzyknięciu 3dmigoto, zrób to tutaj.
+"""
+
+[advanced_settings_run_post_load_wait_checkbox_tooltip]
+src = """
+Enabled: Wait for (blocking) command to finish its execution before treating the game launch as complete.
+"""
+loc = """
+Włączone: poczekaj na zakończenie (blokującego) polecenia przed uznaniem uruchomienia gry za zakończone.
+"""
+
+[advanced_settings_inject_libraries_checkbox]
+src = "Inject Libraries:"
+loc = "Wstrzykiwane biblioteki:"
+
+[advanced_settings_inject_libraries_tooltip]
+src = """
+List of additional DLL paths to inject into the game process. 1 path per line.
+injection will be made via WriteProcessMemory method.
+Example (inject ReShade dll):
+`C:\\Games\\ReShade\\ReShade64.dll`
+"""
+loc = """
+Lista dodatkowych ścieżek DLL do wstrzyknięcia do procesu gry. Jedna ścieżka na linię.
+Wstrzykiwanie odbywa się metodą WriteProcessMemory.
+Przykład (wstrzyknięcie DLL ReShade):
+`C:\\Games\\ReShade\\ReShade64.dll`
+"""
+
+[launcher_settings_language_label]
+src = "Language:"
+loc = "Język:"
+
+[general_settings_engine_settings_label]
+src = "Engine Settings:"
+loc = "Ustawienia silnika:"
+
+[general_settings_game_folder_label]
+src = "Game Folder:"
+loc = "Folder gry:"
+
+[general_settings_game_folder_error_label]
+src = "Failed to detect Game Folder!"
+loc = "Nie udało się wykryć folderu gry!"
+
+[settings_browse_path_button]
+src = "Browse..."
+loc = "Przeglądaj..."
+
+[general_settings_detect_game_folder_button_tooltip]
+src = "Try to automatically detect existing installation folders."
+loc = "Spróbuj automatycznie wykryć istniejące foldery instalacyjne."
+
+[general_settings_launch_options_label]
+src = "Launch Options:"
+loc = "Opcje uruchamiania:"
+
+[general_settings_launch_options_entry_tooltip_wwmi]
+src = """
+**Enabled**: Start game via **Client-Win64-Shipping.exe** with specified command line arguments.
+
+- Disable intro: -SkipSplash
+
+**Disabled (default)**: Start game normally via **Wuthering Waves.exe** (most reliable way).
+<font color=\"red\">⚠ Game may crash with this option enabled! ⚠</font>
+"""
+loc = """
+**Włączone**: Uruchom grę przez **Client-Win64-Shipping.exe** z podanymi argumentami wiersza poleceń.
+
+- Wyłączenie intro: -SkipSplash
+
+**Wyłączone (domyślnie)**: Uruchom grę standardowo przez **Wuthering Waves.exe** (najbardziej niezawodna metoda).
+<font color=\"red\">⚠ Przy włączonej opcji gra może się zawiesić! ⚠</font>
+"""
+
+[general_settings_launch_options_entry_tooltip_default]
+src = """
+**Enabled**: Start game exe with specified command line arguments.
+**Disabled**: Ignore specified command line arguments and start game exe normally.
+"""
+loc = """
+**Włączone**: Uruchom plik exe gry z podanymi argumentami wiersza poleceń.
+**Wyłączone**: Zignoruj podane argumenty i uruchom grę normalnie.
+"""
+
+[general_settings_launch_options_about_button]
+src = "About..."
+loc = "O programie..."
+
+[general_settings_launch_options_about_button_tooltip]
+src = """
+Open {engine} command line arguments documentation webpage.
+Note: Game engine is customized by devs and some args may not work.
+"""
+loc = """
+Otwórz stronę dokumentacji argumentów wiersza poleceń silnika {engine}.
+Uwaga: Silnik gry jest modyfikowany przez deweloperów i niektóre argumenty mogą nie działać.
+"""
+
+[general_settings_start_method_label]
+src = "Start Method:"
+loc = "Metoda uruchamiania:"
+
+[general_settings_start_method_option_menu_tooltip]
+src = """
+**Native**: Create the game process directly. Usually it's the most reliable way.
+**Shell**: Start the game process via system console. Worth to try if you have some issues with Native.
+**Manual**: Skip launching the game on **Start** button press. Wait for user to launch it manually ({timeout}s timeout).
+"""
+loc = """
+**Native**: Utwórz proces gry bezpośrednio. Zazwyczaj najbardziej niezawodna metoda.
+**Shell**: Uruchom proces gry przez konsolę systemową. Warto spróbować w razie problemów z Native.
+**Manual**: Nie uruchamiaj gry po naciśnięciu przycisku **Start**. Oczekuj na ręczne uruchomienie przez użytkownika (limit {timeout}s).
+"""
+
+[general_settings_xxmi_delay_label]
+src = "XXMI Delay:"
+loc = "Opóźnienie XXMI:"
+
+[general_settings_xxmi_delay_entry_tooltip_base]
+src = """
+Delay in milliseconds for how long injected XXMI DLL (3dmigoto) must wait before initialization.
+{tooltip_footer}
+"""
+loc = """
+Opóźnienie w milisekundach określające, jak długo wstrzyknięta biblioteka XXMI DLL (3dmigoto) ma czekać przed inicjalizacją.
+{tooltip_footer}
+"""
+
+[general_settings_xxmi_delay_entry_tooltip_footer_wwmi]
+src = """
+<font color=\"red\">⚠ Wuthering Waves crashes on launch with wrong delay! ⚠</font>
+<font color=\"#8B8000\">⚠ If default value fails, try to increase or decrease it until WuWa stops crashing. ⚠</font>
+## Known values for Wuthering Waves 2.4:
+- **500**: Default, works for most users.
+- **150**: Minimal known value to work along with ReShade.
+- **50**: Minimal known value to work.
+- **1000+**: Some users need really huge delays.
+"""
+loc = """
+<font color=\"red\">⚠ Wuthering Waves zawiesza się przy uruchamianiu przy nieprawidłowym opóźnieniu! ⚠</font>
+<font color=\"#8B8000\">⚠ Jeśli domyślna wartość nie działa, spróbuj ją zwiększyć lub zmniejszyć, aż WuWa przestanie się zawieszać. ⚠</font>
+## Znane wartości dla Wuthering Waves 2.4:
+- **500**: Domyślna, działa u większości użytkowników.
+- **150**: Minimalna znana wartość działająca razem z ReShade.
+- **50**: Minimalna znana działająca wartość.
+- **1000+**: Niektórzy użytkownicy potrzebują bardzo dużych opóźnień.
+"""
+
+[general_settings_xxmi_delay_entry_tooltip_footer_general]
+src = """
+If game crashes with no mods, try to increase it. Start with steps of 50 and increase them as you go.
+"""
+loc = """
+Jeśli gra zawiesza się bez żadnych modów, spróbuj zwiększyć tę wartość. Zacznij od kroków co 50 i stopniowo je zwiększaj.
+"""
+
+[general_settings_process_priority_label]
+src = "Process Priority:"
+loc = "Priorytet procesu:"
+
+[general_settings_auto_config_label]
+src = "Auto Config:"
+loc = "Auto konfiguracja:"
+
+[general_settings_configure_game_checkbox]
+src = "Configure Game Settings"
+loc = "Konfiguruj ustawienia gry"
+
+[general_settings_configure_game_tooltip_gimi]
+src = """
+**Enabled**: Ensure GIMI-compatible in-game **Graphics Settings** before game start:
+
+- `Dynamic Character Resolution: Off`
+
+**Disabled**: In-game settings will not be affected.
+
+<font color=\"red\">⚠ Mods will not work with wrong settings! ⚠</font>
+"""
+loc = """
+**Włączone**: Upewnij się przed startem gry, że ustawienia **Grafiki** są zgodne z GIMI:
+
+- `Dynamic Character Resolution: Off`
+
+**Wyłączone**: Ustawienia w grze nie zostaną zmienione.
+
+<font color=\"red\">⚠ Mody nie będą działać przy nieprawidłowych ustawieniach! ⚠</font>
+"""
+
+[general_settings_configure_game_tooltip_wwmi]
+src = """
+**Enabled**: Ensure WWMI-compatible in-game **Graphics Settings** before game start:
+
+- `Graphics Quality: Quality`
+
+**Disabled**: In-game settings will not be affected.
+
+<font color=\"red\">⚠ Mods will not work with wrong settings! ⚠</font>
+"""
+loc = """
+**Włączone**: Upewnij się przed startem gry, że ustawienia **Grafiki** są zgodne z WWMI:
+
+- `Graphics Quality: Quality`
+
+**Wyłączone**: Ustawienia w grze nie zostaną zmienione.
+
+<font color=\"red\">⚠ Mody nie będą działać przy nieprawidłowych ustawieniach! ⚠</font>
+"""
+
+[general_settings_configure_game_tooltip_zzmi]
+src = """
+**Enabled**: Ensure ZZMI-compatible in-game **Graphics Settings** before game start:
+
+- `Character Quality: High`
+- `High-Precision Character Animation: Disabled`
+
+**Disabled**: In-game settings will not be affected.
+
+<font color=\"red\">⚠ Mods will not work with wrong settings! ⚠</font>
+"""
+loc = """
+**Włączone**: Upewnij się przed startem gry, że ustawienia **Grafiki** są zgodne z ZZMI:
+
+- `Character Quality: High`
+- `High-Precision Character Animation: Disabled`
+
+**Wyłączone**: Ustawienia w grze nie zostaną zmienione.
+
+<font color=\"red\">⚠ Mody nie będą działać przy nieprawidłowych ustawieniach! ⚠</font>
+"""
+
+[error_no_data_available_short]
+src = "N/A"
+loc = "N/A"
+
+[general_settings_disable_wounded_effect_checkbox]
+src = "Disable Wounded Effect"
+loc = "Wyłącz Wounded Effect"
+
+[general_settings_disable_wounded_effect_checkbox_tooltip]
+src = """
+Most mods do not support this effect, so textures usually break after few hits taken.
+**Enabled**: Turn the effect `Off`. Ensures proper rendering of modded textures.
+**Disabled**: Turn the effect `On`. Select this if you use `Injured Effect Remover` tool.
+"""
+loc = """
+Większość modów nie wspiera tego efektu, więc tekstury zwykle psują się po kilku trafieniach.
+**Włączone**: Wyłącza efekt `Off`. Zapewnia prawidłowe renderowanie zmodyfikowanych tekstur.
+**Wyłączone**: Włącza efekt `On`. Wybierz tę opcję, jeśli używasz narzędzia `Injured Effect Remover`.
+"""
+
+[general_settings_texture_boost_label]
+src = "Texture Boost:"
+loc = "Wzmocnienie tekstur:"
+
+[general_settings_use_all_mips_label]
+src = "Use All Mips"
+loc = "Użyj wszystkich MIPów"
+
+[general_settings_texture_streaming_pool_size_label]
+src = "Texture Pool Size:"
+loc = "Rozmiar puli tekstur:"
+
+[general_settings_texture_streaming_limit_pool_checkbox]
+src = "Limit Pool Size To VRAM"
+loc = "Ogranicz pulę do VRAM"
+
+[general_settings_mesh_lod_offset_label]
+src = "Mesh LOD Offset:"
+loc = "Przesunięcie LOD siatki:"
+
+[general_settings_open_file_button]
+src = "🔍 Open {file_name}"
+loc = "🔍 Otwórz {file_name}"
+
+[error_general_settings_file_not_found]
+src = "File does not exist: **{file_name}**!"
+loc = "Plik nie istnieje: **{file_name}**!"
+
+[general_settings_tweaks_label]
+src = "Tweaks:"
+loc = "Ustawienia dodatkowe:"
+
+[general_settings_unlock_fps_checkbox_force]
+src = "Force 120 FPS"
+loc = "Wymuś 120 FPS"
+
+[general_settings_unlock_fps_checkbox]
+src = "Unlock FPS:"
+loc = "Odblokuj FPS:"
+
+[general_settings_unlock_fps_checkbox_tooltip_wwmi]
+src = """
+This option allows to set FPS limit to 120 even on not officially supported devices.
+Please do note that with some hardware game refuses to go 120 FPS even with this tweak.
+**Enabled**: Sets `CustomFrameRate` to `120` in `LocalStorage.db` on game start.
+**Disabled**: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.
+"""
+loc = """
+Ta opcja pozwala ustawić limit FPS na 120 nawet na nieoficjalnie wspieranych urządzeniach.
+Należy pamiętać, że na niektórych konfiguracjach sprzętowych gra może odmówić pracy w 120 FPS mimo tej poprawki.
+**Włączone**: Ustawia `CustomFrameRate` na `120` w `LocalStorage.db` przy starcie gry.
+**Wyłączone**: Nie wpływa na ustawienia FPS, użyj ustawień w grze, aby cofnąć wymuszone 120 FPS.
+"""
+
+[general_settings_unlock_fps_checkbox_tooltip_srmi]
+src = """
+This option allows to set FPS limit to 120.
+**Enabled**: Updates Graphics Settings Windows Registry key with 120 FPS value on game start.
+**Disabled**: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.
+**Warning!** Tweak is supported only for the Global HSR client and will not work for CN.
+*Note: Edits `FPS` value in `HKEY_CURRENT_USER/SOFTWARE/Cognosphere/Star Rail/GraphicsSettings_Model_h2986158309`.* 
+"""
+loc = """
+Ta opcja pozwala ustawić limit FPS na 120.
+**Włączone**: Aktualizuje wartość FPS w kluczu rejestru Windows przy starcie gry.
+**Wyłączone**: Nie wpływa na ustawienia FPS, użyj ustawień w grze, aby cofnąć wymuszone 120 FPS.
+**Uwaga!** Poprawka działa tylko dla globalnego klienta HSR i nie działa dla CN.
+*Uwaga: Modyfikuje wartość `FPS` w `HKEY_CURRENT_USER/SOFTWARE/Cognosphere/Star Rail/GraphicsSettings_Model_h2986158309`.* 
+"""
+
+[general_settings_unlock_fps_checkbox_tooltip_gimi]
+src = """
+This option allows to set custom FPS limit.
+**Warning!**: To minimize game engine glitches set FPS to 120 / 180 / 240 etc.
+**Enabled**: Launch game via `unlockfps_nc.exe` and let it run in background to keep FPS tweak applied.
+**Disabled**: Launch game via original `.exe` file, has no effect on FPS.
+*Hint: If FPS Unlocker package is outdated, you can manually update \"unlockfps_nc.exe\" from original repository.*
+*Local Path*: `Resources/Packages/GI-FPS-Unlocker/unlockfps_nc.exe`
+*Original Repository*: `https://github.com/34736384/genshin-fps-unlock`
+"""
+loc = """
+Ta opcja pozwala ustawić niestandardowy limit FPS.
+**Uwaga!**: Aby zminimalizować błędy silnika gry ustaw FPS na 120 / 180 / 240 itd.
+**Włączone**: Uruchamia grę przez `unlockfps_nc.exe` i pozwala mu działać w tle, aby utrzymać poprawkę FPS.
+**Wyłączone**: Uruchamia grę przez oryginalny plik `.exe`, nie wpływa na FPS.
+*Podpowiedź: Jeśli pakiet FPS Unlocker jest nieaktualny, możesz ręcznie zaktualizować \"unlockfps_nc.exe\" z oryginalnego repozytorium.*
+*Lokalna ścieżka*: `Resources/Packages/GI-FPS-Unlocker/unlockfps_nc.exe`
+*Oryginalne repozytorium*: `https://github.com/34736384/genshin-fps-unlock`
+"""
+
+[general_settings_unlock_fps_checkbox_tooltip_himi]
+src = """
+This option allows to set custom FPS limit.
+**Enabled**: Updates Graphics Settings Windows Registry key with specified FPS value on game start.
+**Disabled**: Has no effect on FPS settings, use in-game settings to undo already tweaked FPS.
+"""
+loc = """
+Ta opcja pozwala ustawić niestandardowy limit FPS.
+**Włączone**: Aktualizuje wartość FPS w kluczu ustawień graficznych rejestru Windows przy starcie gry.
+**Wyłączone**: Nie wpływa na ustawienia FPS, użyj ustawień w grze, aby cofnąć wcześniej zmieniony limit FPS.
+"""
+
+[general_settings_window_mode_option_menu_tooltip]
+src = "Game window mode when started with FPS Unlocker."
+loc = "Tryb okna gry przy uruchomieniu z FPS Unlocker."
+
+[general_settings_apply_tweaks_checkbox]
+src = "Apply Performance Tweaks"
+loc = "Zastosuj poprawki wydajności"
+
+[general_settings_apply_tweaks_checkbox_tooltip]
+src = """
+**Enabled**: Add list of performance tweaks to `[SystemSettings]` section of `Engine.ini` on game start.
+**Disabled**: Do not add tweaks to `Engine.ini`. Already added ones will have to be removed manually.
+
+List of tweaks:
+{tweaks}
+"""
+loc = """
+**Włączone**: Dodaje listę poprawek wydajności do sekcji `[SystemSettings]` w `Engine.ini` przy starcie gry.
+**Wyłączone**: Nie dodaje poprawek do `Engine.ini`. Już dodane wpisy trzeba usunąć ręcznie.
+
+Lista poprawek:
+{tweaks}
+"""
+
+[general_settings_enable_hdr_checkbox]
+src = "Enable HDR"
+loc = "Włącz HDR"
+
+[general_settings_enable_hdr_checkbox_tooltip]
+src = """
+**Warning**! Your monitor must support HDR and `Use HDR` must be enabled in Windows Display settings!
+**Enabled**: Turn HDR On. Creates HDR registry record each time before the game launch.
+**Disabled**: Turn HDR Off. No extra action required, game auto-removes HDR registry record on launch.
+"""
+loc = """
+**Uwaga!** Monitor musi obsługiwać HDR, a opcja `Użyj HDR` musi być włączona w ustawieniach ekranu Windows.
+**Włączone**: Włącza HDR. Tworzy wpis HDR w rejestrze przed każdym uruchomieniem gry.
+**Wyłączone**: Wyłącza HDR. Brak dodatkowych działań, gra automatycznie usuwa wpis HDR przy starcie.
+"""
+
+[importer_settings_shader_hunting_label]
+src = "Shader Hunting:"
+loc = "Wyszukiwanie shaderów:"
+
+[importer_settings_enable_hunting_checkbox]
+src = "Enable Hunting"
+loc = "Włącz tryb Hunting"
+
+[importer_settings_enable_hunting_checkbox_tooltip]
+src = """
+Enabled: Allows to toggle Hunting Mode via Numpad [0] hotkey.
+* [d3dx.ini]: hunting = 2
+Disabled: Hunting Mode is hard disabled.
+* [d3dx.ini]: hunting = 0
+"""
+loc = """
+Włączone: Umożliwia przełączanie trybu Hunting skrótem Numpad [0].
+* [d3dx.ini]: hunting = 2
+Wyłączone: Tryb Hunting jest całkowicie wyłączony.
+* [d3dx.ini]: hunting = 0
+"""
+
+[importer_settings_dump_shaders_checkbox]
+src = "Dump Shaders"
+loc = "Dump'uj shadery"
+
+[importer_settings_dump_shaders_checkbox_tooltip]
+src = """
+Enabled: Hunting Mode [Copy Hash] key also saves selected shader as file in ShaderFixes.
+* [d3dx.ini]: marking_actions = clipboard hlsl asm regex
+Disabled: Hunting Mode [Copy Hash] only copies hash of selected shader to clipboard.
+* [d3dx.ini]: marking_actions = clipboard
+"""
+loc = """
+Włączone: Klawisz [Copy Hash] w trybie Hunting zapisuje wybrany shader jako plik w katalogu ShaderFixes.
+* [d3dx.ini]: marking_actions = clipboard hlsl asm regex
+Wyłączone: Klawisz [Copy Hash] kopiuje tylko hash wybranego shadera do schowka.
+* [d3dx.ini]: marking_actions = clipboard
+"""
+
+[importer_settings_error_handling_label]
+src = "Error Handling:"
+loc = "Obsługa błędów:"
+
+[importer_settings_mute_warnings_checkbox]
+src = "Mute Warnings"
+loc = "Wycisz ostrzeżenia"
+
+[importer_settings_mute_warnings_checkbox_tooltip]
+src = """
+Enabled: No error warnings or beeps whatsoever. Ignorance is bliss.
+* [d3dx.ini]: show_warnings = 0
+Disabled: Ini parser error warnings and beeps on F10 will haunt poor souls.
+* [d3dx.ini]: show_warnings = 1
+"""
+loc = """
+Włączone: Brak ostrzeżeń o błędach i jakichkolwiek sygnałów dźwiękowych.
+* [d3dx.ini]: show_warnings = 0
+Wyłączone: Ostrzeżenia parsera ini i sygnały dźwiękowe pod F10 będą nawiedzać biedne dusze.
+* [d3dx.ini]: show_warnings = 1
+"""
+
+[importer_settings_calls_logging_checkbox]
+src = "Calls Logging"
+loc = "Logowanie wywołań"
+
+[importer_settings_calls_logging_checkbox_tooltip]
+src = """
+Enabled: Log API usage.
+* [d3dx.ini]: calls = 1
+Disabled: Do not log calls. Maximum performance.
+* [d3dx.ini]: calls = 0
+"""
+loc = """
+Włączone: Loguje użycie API.
+* [d3dx.ini]: calls = 1
+Wyłączone: Nie loguje wywołań. Maksymalna wydajność.
+* [d3dx.ini]: calls = 0
+"""
+
+[importer_settings_debug_logging_checkbox]
+src = "Debug Logging"
+loc = "Logowanie debug"
+
+[importer_settings_debug_logging_checkbox_tooltip]
+src = """
+Enabled: Super verbose debug logging.
+* [d3dx.ini]: debug = 1
+Disabled: No debug logging. Maximum performance.
+* [d3dx.ini]: debug = 0
+"""
+loc = """
+Włączone: Bardzo szczegółowe logowanie debug.
+* [d3dx.ini]: debug = 1
+Wyłączone: Brak logowania debug. Maksymalna wydajność.
+* [d3dx.ini]: debug = 0
+"""
+
+[importer_settings_importer_folder_label]
+src = "Importer Folder:"
+loc = "Folder Importera:"
+
+[importer_settings_importer_folder_label_dynamic]
+src = "{importer} Folder:"
+loc = "Folder {importer}:"
+
+[importer_settings_importer_folder_entry_tooltip]
+src = """
+Path to folder containing `Mods` folder, `d3dx.ini` and other {importer} resources.
+**Absolute**: Set any arbitrary folder, i.e. `C:/Games/{importer}/`.
+**Relative**: Set any folder **inside** the Launcher folder, i.e. `{importer}/` (default).
+"""
+loc = """
+Ścieżka do folderu zawierającego katalog `Mods`, plik `d3dx.ini` oraz inne zasoby {importer}.
+**Bezwzględna**: Ustaw dowolny folder, np. `C:/Games/{importer}/`.
+**Względna**: Ustaw folder **wewnątrz** katalogu Launchera, np. `{importer}/` (domyślnie).
+"""
+
+[importer_settings_ini_protection_label]
+src = "Ini Protection:"
+loc = "Ochrona ini:"
+
+[importer_settings_enforce_rendering_checkbox]
+src = "Enforce Rendering Settings"
+loc = "Wymuś ustawienia renderowania"
+
+[importer_settings_enforce_rendering_checkbox_tooltip]
+src = """
+Enabled: Ensure {importer}-compatible [Rendering] section settings.
+* [d3dx.ini]: texture_hash = {texture_hash}
+* [d3dx.ini]: track_texture_updates = {track_texture_updates}
+Disabled: Settings above will not be forced into d3dx.ini.
+"""
+loc = """
+Włączone: Zapewnia zgodne z {importer} ustawienia sekcji [Rendering].
+* [d3dx.ini]: texture_hash = {texture_hash}
+* [d3dx.ini]: track_texture_updates = {track_texture_updates}
+Wyłączone: Powyższe ustawienia nie będą wymuszane w pliku d3dx.ini.
+"""
+
+[launcher_settings_start_behavior_label]
+src = "Start Behavior:"
+loc = "Zachowanie przy starcie:"
+
+[launcher_settings_auto_close_checkbox]
+src = "Close Launcher After Game Start"
+loc = "Zamknij Launchera po uruchomieniu gry"
+
+[launcher_settings_auto_close_checkbox_tooltip]
+src = """
+Enabled: Launcher will close itself once the game has started and 3dmigoto injection has been confirmed.
+Disabled: Launcher will keep itself running.
+"""
+loc = """
+Włączone: Launcher zamknie się automatycznie po uruchomieniu gry i potwierdzeniu wstrzyknięcia 3dmigoto.
+Wyłączone: Launcher pozostanie uruchomiony.
+"""
+
+[launcher_settings_timeout_label]
+src = "Timeout:"
+loc = "Limit czasu:"
+
+[launcher_settings_timeout_entry_tooltip]
+src = """
+Controls how long launcher should wait for the game to show its window after launch.
+Game process will be considered as crashed once timeout is met.
+Default value is **30**.
+"""
+loc = """
+Określa, jak długo launcher powinien czekać na pojawienie się okna gry po uruchomieniu.
+Proces gry zostanie uznany za awaryjny po upłynięciu limitu czasu.
+Wartość domyślna to **30**.
+"""
+
+[launcher_settings_update_policy_label]
+src = "Update Policy:"
+loc = "Polityka aktualizacji:"
+
+[launcher_settings_auto_update_checkbox]
+src = "Auto Update"
+loc = "Automatyczne aktualizacje"
+
+[launcher_settings_auto_update_checkbox_tooltip]
+src = """
+Enabled: Launcher and {importer} updates will be Downloaded and Installed automatically.
+Disabled: Use special [▲] button next to [Start] button to Download and Install updates manually.
+"""
+loc = """
+Włączone: Launcher i aktualizacje {importer} będą pobierane i instalowane automatycznie.
+Wyłączone: Użyj specjalnego przycisku [▲] obok przycisku [Start], aby pobrać i zainstalować aktualizacje ręcznie.
+"""
+
+[launcher_settings_update_channel_label]
+src = "Channel:"
+loc = "Kanał:"
+
+[launcher_settings_update_channel_option_menu_tooltip]
+src = """
+**Auto**: Detect update installation method automatically.
+**MSI**: Use native `.msi` installers to install updates.
+**ZIP**: Use portable `.zip` archives to install updates.
+"""
+loc = """
+**Auto**: Automatycznie wykrywa metodę instalacji aktualizacji.
+**MSI**: Używa natywnych instalatorów `.msi` do instalacji aktualizacji.
+**ZIP**: Używa przenośnych archiwów `.zip` do instalacji aktualizacji.
+"""
+
+[launcher_settings_theme_label]
+src = "UI Theme:"
+loc = "Motyw GUI:"
+
+[launcher_settings_theme_option_menu_tooltip]
+src = """
+Select launcher GUI theme.
+Warning! `Default` theme will be overwritten by launcher updates!
+To make a custom theme:
+1. Create a duplicate of `Default` folder in `Themes` folder.
+2. Rename the duplicate in a way you want it to be shown in Settings.
+3. Edit or replace any images (valid extensions: webp, jpeg, png, jpg).
+"""
+loc = """
+Wybierz motyw GUI launchera.
+Uwaga! Motyw `Default` zostanie nadpisany przez aktualizacje launchera!
+Aby stworzyć własny motyw:
+1. Utwórz kopię folderu `Default` w katalogu `Themes`.
+2. Zmień nazwę kopii, tak aby była widoczna w ustawieniach.
+3. Edytuj lub zamień dowolne obrazy (obsługiwane rozszerzenia: webp, jpeg, png, jpg).
+"""
+
+[launcher_settings_dev_mode_checkbox]
+src = "Dev Mode"
+loc = "Tryb deweloperski"
+
+[launcher_settings_dev_mode_checkbox_tooltip]
+src = """
+Enabled: Launcher will track changes in `custom-tkinter-theme.json` and apply them on the fly.
+Disabled: Theme changes will not be tracked.
+"""
+loc = """
+Włączone: Launcher będzie śledził zmiany w pliku `custom-tkinter-theme.json` i stosował je w locie.
+Wyłączone: Zmiany motywu nie będą śledzone.
+"""
+
+[launcher_settings_connection_label]
+src = "Connection:"
+loc = "Połączenie:"
+
+[launcher_settings_github_token_label]
+src = "GitHub Token:"
+loc = "Token GitHub:"
+
+[launcher_settings_github_token_entry_tooltip]
+src = """
+Your **Personal Access Token** on **GitHub** (i.e. `ghp_f7gy3A4eQ97jfy2983mfZu2Hy93yf2P3d798`).
+Allows to combat `GitHub API Requests Limit` error that usually happens with public proxies.
+It is totally free and only requires GitHub registration.
+To create new token:
+1. Click `[?]` button to open token creation webpage.
+2. Use `Generate new token (classic)` button.
+"""
+loc = """
+Twój **Personal Access Token** na **GitHub** (np. `ghp_f7gy3A4eQ97jfy2983mfZu2Hy93yf2P3d798`).
+Pozwala uniknąć błędu `GitHub API Requests Limit`, który często występuje przy używaniu publicznych proxy.
+Jest całkowicie darmowy i wymaga jedynie rejestracji na GitHub.
+Aby utworzyć nowy token:
+1. Kliknij przycisk `[?]`, aby otworzyć stronę tworzenia tokenu.
+2. Użyj przycisku `Generate new token (classic)`.
+"""
+
+[launcher_settings_github_token_create_button]
+src = "Create..."
+loc = "Utwórz..."
+
+[launcher_settings_github_token_create_button_tooltip]
+src = "Open **GitHub Personal Access Token** creation webpage."
+loc = "Otwórz stronę tworzenia **GitHub Personal Access Token**."
+
+[launcher_settings_verify_ssl_checkbox]
+src = "Verify SSL"
+loc = "Weryfikuj SSL"
+
+[launcher_settings_verify_ssl_checkbox_tooltip]
+src = """
+<font color=\"red\">⚠ Disable only if you trust your proxy or whatever else that breaks SSL. ⚠</font>
+**Enabled**: Validate SLL certificates for GitHub downloads to keep you secure.
+**Disabled**: Allow insecure connection vulnerable to man-in-middle attacks.
+"""
+loc = """
+<font color=\"red\">⚠ Wyłączaj tylko, jeśli ufasz swojemu proxy lub czemukolwiek, co psuje SSL. ⚠</font>
+**Włączone**: Weryfikuje certyfikaty SSL przy pobieraniu z GitHub, aby zapewnić bezpieczeństwo.
+**Wyłączone**: Pozwala na niezabezpieczone połączenie podatne na ataki typu man-in-the-middle.
+"""
+
+[launcher_settings_proxy_enable_checkbox]
+src = "Use Proxy:"
+loc = "Użyj proxy:"
+
+[launcher_settings_proxy_enable_checkbox_tooltip]
+src = """
+Controls how launcher connects to GitHub to download packages.
+**Enabled**: Use specified proxy server to access Internet.
+**Disabled**: Use default system Internet connection settings.
+"""
+loc = """
+Określa sposób łączenia się launchera z GitHub w celu pobierania pakietów.
+**Włączone**: Używa wskazanego serwera proxy do dostępu do Internetu.
+**Wyłączone**: Używa domyślnych ustawień połączenia internetowego systemu.
+"""
+
+[launcher_settings_proxy_type_label]
+src = "Type:"
+loc = "Typ:"
+
+[launcher_settings_proxy_type_option_menu_tooltip]
+src = """
+**HTTPS**: Good old proxy protocol. Offers best security.
+**SOCKS5**: Newer and less secure, but excels at bypassing firewalls.
+"""
+loc = """
+**HTTPS**: Klasyczny protokół proxy. Oferuje najwyższy poziom bezpieczeństwa.
+**SOCKS5**: Nowszy i mniej bezpieczny, ale skuteczny przy omijaniu zapór sieciowych.
+"""
+
+[launcher_settings_proxy_dns_checkbox]
+src = "Proxy DNS Via SOCKS5"
+loc = "Proxy DNS przez SOCKS5"
+
+[launcher_settings_proxy_dns_checkbox_tooltip]
+src = """
+**Enabled**: Use SOCKS5 proxy connection to route DNS requests.
+**Disabled**: DNS requests will be routed through your ISP.
+"""
+loc = """
+**Włączone**: Używa połączenia SOCKS5 do routowania zapytań DNS.
+**Wyłączone**: Zapytania DNS będą kierowane przez twojego dostawcę Internetu.
+"""
+
+[launcher_settings_proxy_host_label]
+src = "Host:"
+loc = "Host:"
+
+[launcher_settings_proxy_host_entry_tooltip]
+src = "Proxy IP address (i.e. `123.12.1.231`) or domain name (i.e. `proxyprovider.com`)."
+loc = "Proxy IP address (i.e. `123.12.1.231`) or domain name (i.e. `proxyprovider.com`)."
+
+[launcher_settings_proxy_port_label]
+src = "Port:"
+loc = "Port:"
+
+[launcher_settings_proxy_port_entry_tooltip]
+src = "Proxy port (i.e. `1080`)."
+loc = "Port Proxy (i.e. `1080`)."
+
+[launcher_settings_proxy_credentials_checkbox]
+src = "Proxy Requires Password"
+loc = "Proxy wymaga hasła"
+
+[launcher_settings_proxy_credentials_checkbox_tooltip]
+src = """
+**Enabled**: Use specified user name and password for the proxy server authentication.
+**Disabled**: Do not use any credentials when accessing a proxy server.
+"""
+loc = """
+**Włączone**: Używa podanej nazwy użytkownika i hasła do uwierzytelniania na serwerze proxy.
+**Wyłączone**: Nie używa żadnych danych logowania podczas łączenia z serwerem proxy.
+"""
+
+[launcher_settings_proxy_user_label]
+src = "User:"
+loc = "Użytkownik:"
+
+[launcher_settings_proxy_user_entry_tooltip]
+src = "User name provided by your proxy service."
+loc = "Nazwa użytkownika podana przez dostawcę proxy."
+
+[launcher_settings_proxy_password_label]
+src = "Password:"
+loc = "Hasło:"
+
+[launcher_settings_proxy_password_entry_tooltip]
+src = "Password provided by your proxy service."
+loc = "Hasło podane przez dostawcę proxy."
+
+[settings_tab_general]
+src = "General"
+loc = "Ogólne"
+
+[settings_tab_launcher]
+src = "Launcher"
+loc = "Launcher"
+
+[settings_tab_importer]
+src = "MI"
+loc = "MI"
+
+[settings_tab_advanced]
+src = "Advanced"
+loc = "Zaawansowane"
+
+[settings_title]
+src = "Settings"
+loc = "Ustawienia"
+
