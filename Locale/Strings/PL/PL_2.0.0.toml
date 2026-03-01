@@ -696,8 +696,8 @@ Please disable `Configure Game Settings` in launcher's General Settings and chec
 loc = """
 Nie udało się skonfigurować ustawień gry dla ZZMI!
 Wyłącz opcję `Konfiguruj ustawienia gry` w Ustawieniach ogólnych launchera i sprawdź ustawienia w grze:
-* Grafika > `Jakość postaci` musi być `Wysoka`.
-* Grafika > `Animacja postaci wysokiej precyzji` musi być `Wyłączona`.
+* Grafika > `Character Quality` musi być `High`.
+* Grafika > `High-Precision Character Animation` musi być `Disabled`.
 
 {error_text}
 """
@@ -1224,7 +1224,7 @@ loc = """
 
 [launcher_start_button]
 src = "Start"
-loc = "Start"
+loc = "Graj"
 
 [launcher_install_button]
 src = "Install"
@@ -1328,11 +1328,11 @@ loc = "Dodaj skrót na pulpit"
 
 [tool_bar_open_mods_button]
 src = "Open Mods Folder"
-loc = "Otwórz folder modów"
+loc = "Otwórz folder z modami"
 
 [top_bar_xxmi_button_tooltip]
 src = "Manage Model Importers"
-loc = "Zarządzaj Model Importerami"
+loc = "Zarządzaj Importerami Modeli"
 
 [top_bar_wwmi_button_tooltip]
 src = "Wuthering Waves Model Importer"
@@ -1534,9 +1534,9 @@ Example (equivalent for command internally used by launcher to start GI via FPS 
 `start /d \"C:\\Games\\XXMI Launcher\\Resources\\Packages\\GI-FPS-Unlocker\" unlockfps_nc.exe`
 """
 loc = """
-Polecenie konsoli Windows wykonywane po naciśnięciu przycisku Start zamiast domyślnego uruchomienia pliku exe gry.
+Polecenie konsoli Windows wykonywane po naciśnięciu przycisku Graj zamiast domyślnego uruchomienia pliku exe gry.
 Wskazówka: Jeśli chcesz zmienić tylko metodę wstrzykiwania, pozostaw to pole puste.
-Ostrzeżenie! To polecenie nadpisuje również `Launch Options` z Ustawień ogólnych.
+Ostrzeżenie! To polecenie nadpisuje również `Opcje uruchamiania` z Ustawień ogólnych.
 Uwaga: Jeśli chcesz uruchomić plik exe gry przez inny niestandardowy exe, zrób to tutaj.
 Przykład (odpowiednik polecenia używanego wewnętrznie przez launcher do uruchamiania GI przez FPS unlocker):
 `start /d \"C:\\Games\\XXMI Launcher\\Resources\\Packages\\GI-FPS-Unlocker\" unlockfps_nc.exe`
@@ -1677,9 +1677,9 @@ src = """
 **Manual**: Skip launching the game on **Start** button press. Wait for user to launch it manually ({timeout}s timeout).
 """
 loc = """
-**Native**: Utwórz proces gry bezpośrednio. Zazwyczaj najbardziej niezawodna metoda.
+**Native**: Uruchom proces gry bezpośrednio. Zazwyczaj najbardziej niezawodna metoda.
 **Shell**: Uruchom proces gry przez konsolę systemową. Warto spróbować w razie problemów z Native.
-**Manual**: Nie uruchamiaj gry po naciśnięciu przycisku **Start**. Oczekuj na ręczne uruchomienie przez użytkownika (limit {timeout}s).
+**Manual**: Nie uruchamiaj gry po naciśnięciu przycisku **Graj**. Oczekuj na ręczne uruchomienie przez użytkownika (limit {timeout}s).
 """
 
 [general_settings_xxmi_delay_label]
@@ -2136,7 +2136,7 @@ Wartość domyślna to **30**.
 
 [launcher_settings_update_policy_label]
 src = "Update Policy:"
-loc = "Polityka aktualizacji:"
+loc = "Tryb aktualizacji:"
 
 [launcher_settings_auto_update_checkbox]
 src = "Auto Update"
@@ -2149,7 +2149,7 @@ Disabled: Use special [▲] button next to [Start] button to Download and Instal
 """
 loc = """
 Włączone: Launcher i aktualizacje {importer} będą pobierane i instalowane automatycznie.
-Wyłączone: Użyj specjalnego przycisku [▲] obok przycisku [Start], aby pobrać i zainstalować aktualizacje ręcznie.
+Wyłączone: Użyj specjalnego przycisku [▲] obok przycisku [Graj], aby pobrać i zainstalować aktualizacje ręcznie.
 """
 
 [launcher_settings_update_channel_label]
