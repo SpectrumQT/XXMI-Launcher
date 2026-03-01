@@ -1,0 +1,73 @@
+[message_title_model_importer_loading_failed]
+src = "{importer} Loading Failed"
+loc = "Nie udało się załadować {importer}"
+
+[error_package_corrupted_by_antivirus]
+src = """
+**{package_name}** package is corrupted by antivirus (e.g. Windows Defender).
+
+Antiviruses update frequently, try again later, or consider whitelisting paths:
+
+- `{package_folder_path}`
+- `{xxmi_deployment_path}`
+
+Error: {error_text}
+
+This is likely a [false positive]({false_positive_link}). Libraries are built from [open source]({repo_link}) using [GitHub Actions]({github_actions_link}) and downloaded from [GitHub releases]({releases_link}).
+"""
+loc = """
+Pakiet **{package_name}** został uszkodzony przez program antywirusowy (np. Windows Defender).
+
+Antywirusy aktualizują się często – spróbuj ponownie później lub rozważ dodanie do wyjątków:
+
+- `{package_folder_path}`
+- `{xxmi_deployment_path}`
+
+Błąd: {error_text}
+
+Prawdopodobnie jest to [fałszywy alarm]({false_positive_link}). Biblioteki są budowane z [open source]({repo_link}) przy użyciu [GitHub Actions]({github_actions_link}) i pobierane z [GitHub releases]({releases_link}).
+"""
+
+[error_title_package_corrupted_by_antivirus]
+src = "Data Corruption Detected"
+loc = "Wykryto uszkodzenie danych"
+
+[error_xxmi_libs_package_corruption]
+src = """
+**XXMI Libraries** package is corrupted.
+
+Details: {error_text}
+"""
+loc = """
+Pakiet **XXMI Libraries** jest uszkodzony.
+
+Szczegóły: {error_text}
+"""
+
+[message_title_package_repair]
+src = "Package Repair Available"
+loc = "Dostępna naprawa pakietu"
+
+[message_text_package_repair]
+src = """
+{error_text}
+
+Would you like to repair the package automatically?
+"""
+loc = """
+{error_text}
+
+Czy chcesz automatycznie naprawić pakiet?
+"""
+
+[message_button_repair_package]
+src = "Repair"
+loc = "Napraw"
+
+[error_title_package_download_failed]
+src = "{package} Package Download Failed"
+loc = "Nie udało się pobrać pakietu {package}"
+
+[error_title_package_install_failed]
+src = "{package} Package Installation Failed"
+loc = "Nie udało się zainstalować pakietu {package}"
