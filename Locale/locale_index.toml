@@ -26,4 +26,4 @@ codepage = "1251"
 [PL]
 display_name = "Polski"
 keywords = ["pl_PL", "Polish", "Poland"]
-codepage = "1252"
+codepage = "1250"
