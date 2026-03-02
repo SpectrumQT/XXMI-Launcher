@@ -1,0 +1,230 @@
+[top_bar_efmi_button_tooltip]
+src = "Arknights: Endfield Model Importer"
+loc = "Arknights: Endfield Model Importer"
+
+[general_settings_force_ultra_high_lod_bias_label]
+src = "Max LOD Bias"
+loc = "Maks. LOD Bias"
+
+[general_settings_force_ultra_high_lod_bias_tooltip]
+src = """
+**Enabled**: Set **LOD Bias** to **Ultra High** to force full resolution LOD textures.
+**Disabled**: Keep **LOD Bias** setting untouched. Select this if **Use All Mips** is enabled below.
+"""
+loc = """
+**Włączone**: Ustaw **LOD Bias** na **Ultra High**, aby wymusić pełną rozdzielczość tekstur LOD.
+**Wyłączone**: Pozostaw ustawienie **LOD Bias** bez zmian. Wybierz tę opcję, jeśli poniżej włączone jest **Use All Mips**.
+"""
+
+[locale_list_conjunction_or]
+src = "or"
+loc = "lub"
+
+[locale_list_conjunction_and]
+src = "and"
+loc = "i"
+
+[locale_list_separator]
+src = ", "
+loc = ", "
+
+[general_settings_game_folder_tooltip]
+src = """
+## Path to the folder containing the game executable
+* Usually named: {game_folder_names:bold:or_list}.
+* Contains files: {game_exe_names:bold:or_list}.
+* Contains folders: {game_folder_children:bold:and_list}.
+"""
+loc = """
+## Ścieżka do folderu z plikiem wykonywalnym gry
+* Zazwyczaj nazwana: {game_folder_names:bold:or_list}.
+* Zawiera pliki: {game_exe_names:bold:or_list}.
+* Zawiera foldery: {game_folder_children:bold:and_list}.
+"""
+
+[general_settings_mesh_lod_offset_tooltip]
+src = """
+## Controls LoD meshes deploying behavior (when full animated models are replaced with simplified ones):
+
+* Default is **-10**, known range where full mesh remains always loaded is from **-1** to **-12** (depending on PC).
+* Mods are currently created for full meshes and cannot (easily) be applied to LoDs.
+
+*Applied to CVars=r.Kuro.SkeletalMesh.LODDistanceScaleDeviceOffset value in all sections of DeviceProfiles.ini*
+"""
+loc = """
+## Kontroluje sposób wyświetlania siatek LoD (kiedy pełne modele animowane są zastępowane uproszczonymi):
+
+* Domyślnie **-10**, znany zakres, w którym pełna siatka jest zawsze załadowana: **-1** do **-12** (w zależności od PC).
+* Mody są tworzone dla pełnych siatek i nie można ich (łatwo) zastosować do LoD.
+
+*Zastosowane do CVars=r.Kuro.SkeletalMesh.LODDistanceScaleDeviceOffset we wszystkich sekcjach DeviceProfiles.ini*
+"""
+
+[general_settings_texture_boost_entry_tooltip]
+src = """
+## Controls how aggressively higher-resolution textures are pushed to VRAM:
+
+Serves as a multiplier to streaming priorities configured for textures.
+
+* If modded textures are not loading, try increasing it to **25** or **30**.
+    - ⚡ Too high values may increase VRAM usage and can cause stuttering if the pool is small.
+
+This value may require fine tuning to minimize modded textures loading delay:
+
+* Start tuning with **20.0** **(default)**.
+    - ✅ This baseline value should work for most PCs.
+
+* If modded textures are loading fine, gradually decrease until small textures (like eyes) start breaking.
+    - ✅ A value just above this “breaking point” typically gives minimal texture loading delay while staying VRAM-friendly.
+
+*Applied to CVars=r.Streaming.Boost value in all sections of DeviceProfiles.ini*
+"""
+loc = """
+## Kontroluje, jak agresywnie tekstury wysokiej rozdzielczości są ładowane do VRAM:
+
+Służy jako mnożnik priorytetów strumieniowania skonfigurowanych dla tekstur.
+
+* Jeśli tekstury z modów się nie ładują, spróbuj zwiększyć do **25** lub **30**.
+    - ⚡ Zbyt wysokie wartości mogą zwiększyć użycie VRAM i powodować przycinanie przy małym poolu.
+
+Wartość ta może wymagać drobnego dostrojenia, aby zminimalizować opóźnienia w ładowaniu modowanych tekstur:
+
+* Zacznij od **20.0** **(domyślnie)**.
+    - ✅ Ta wartość bazowa powinna działać na większości PC.
+
+* Jeśli tekstury z modów ładują się poprawnie, stopniowo zmniejszaj aż małe tekstury (np. oczy) zaczną się psuć.
+    - ✅ Wartość tuż powyżej “punktu krytycznego” minimalizuje opóźnienia ładowania przy zachowaniu rozsądnego użycia VRAM.
+
+*Zastosowane do CVars=r.Streaming.Boost we wszystkich sekcjach DeviceProfiles.ini*
+"""
+
+[general_settings_texture_min_boost_label]
+src = "Minimal Boost:"
+loc = "Minimalny Boost:"
+
+[general_settings_texture_min_boost_entry_tooltip]
+src = """
+## Defines a minimum streaming priority for textures:
+
+Values above **0** **(default)** set a priority floor that texture streaming priorities cannot go below.
+
+- ⚡ Use only if modded textures aren't loading regardless configured **Texture Boost** value.
+- ⚡ Same as with **Texture Boost**, always look for small textures (like eyes) when tuning the value.
+
+*Applied to CVars=r.Streaming.MinBoost value in all sections of DeviceProfiles.ini*
+"""
+loc = """
+## Określa minimalny priorytet strumieniowania tekstur:
+
+Wartości powyżej **0** **(domyślnie)** ustalają minimalny próg priorytetu, poniżej którego priorytety strumieniowania nie mogą spaść.
+
+- ⚡ Używaj tylko, jeśli tekstury z modów się nie ładują niezależnie od ustawienia **Texture Boost**.
+- ⚡ Podobnie jak w przypadku **Texture Boost**, zawsze sprawdzaj małe tekstury (np. oczy) przy dostrajaniu wartości.
+
+*Zastosowane do CVars=r.Streaming.MinBoost we wszystkich sekcjach DeviceProfiles.ini*
+"""
+
+[general_settings_use_all_mips_tooltip]
+src = """
+## Controls whether texture resolution limits are applied:
+
+* **Enabled** **(default)**: Disable resolution restrictions from LOD Bias.
+    - ✅ Allows to load full resolution textures at cost of higher VRAM usage.
+    - ⚡ If it has no effect or consumes too much VRAM, try to enable **Max LOD Bias** instead.
+
+* **Disabled**: Enable resolution restrictions from LOD Bias.
+    - ⚡ Modded textures won't load if disabled without Max (Ultra High) LOD Bias enabled.
+
+*Applied to CVars=r.Streaming.UseAllMips value in all sections of DeviceProfiles.ini*
+"""
+loc = """
+## Kontroluje, czy stosować ograniczenia rozdzielczości tekstur:
+
+* **Włączone** **(domyślnie)**: Wyłącz ograniczenia rozdzielczości z LOD Bias.
+    - ✅ Pozwala ładować tekstury w pełnej rozdzielczości kosztem większego zużycia VRAM.
+    - ⚡ Jeśli brak efektu lub zużywa za dużo VRAM, spróbuj zamiast tego włączyć **Max LOD Bias**.
+
+* **Wyłączone**: Włącz ograniczenia rozdzielczości z LOD Bias.
+    - ⚡ Tekstury z modów się nie załadują, jeśli wyłączone bez włączonego Max (Ultra High) LOD Bias.
+
+*Zastosowane do CVars=r.Streaming.UseAllMips we wszystkich sekcjach DeviceProfiles.ini*
+"""
+
+[general_settings_texture_streaming_pool_size_entry_tooltip]
+src = """
+## Controls how much VRAM the game can use for textures:
+
+* Set to **0** **(default)** for **automatic control** (based on available VRAM).
+* Set to specific value (e.g. 4096) for precise VRAM management.
+
+*Applied to CVars=r.Streaming.PoolSize value in all sections of DeviceProfiles.ini*
+"""
+loc = """
+## Kontroluje, ile VRAM gra może użyć na tekstury:
+
+* Ustaw na **0** **(domyślnie)** dla **automatycznej kontroli** (w oparciu o dostępny VRAM).
+* Ustaw konkretną wartość (np. 4096) dla precyzyjnego zarządzania VRAM.
+
+*Zastosowane do CVars=r.Streaming.PoolSize we wszystkich sekcjach DeviceProfiles.ini*
+"""
+
+[general_settings_texture_streaming_limit_pool_checkbox_tooltip]
+src = """
+## Sets the upper limit for how much VRAM the game can use for textures:
+
+* **Enabled** **(default)** – Limits texture pool size based on your GPU's available VRAM.
+    - ✅ Helps prevent crashes or stuttering on low VRAM systems.
+    - ⚡ May reduce texture quality or cause pop-ins if too restrictive on high-end GPUs.
+
+* **Disabled** – Unlocks maximum texture pool size, even if it exceeds your GPU's safe limits.
+    - ✅ Can improve texture quality and reduce pop-ins on powerful systems.
+    - ⚡ Risk of performance drops, stutters, or crashes if VRAM runs out.
+
+*Applied to CVars=r.Streaming.LimitPoolSizeToVRAM value in all sections of DeviceProfiles.ini*
+"""
+loc = """
+## Ustawia górny limit VRAM, jaki gra może użyć na tekstury:
+
+* **Włączone** **(domyślnie)** – Ogranicza wielkość puli tekstur w oparciu o dostępny VRAM GPU.
+    - ✅ Pomaga zapobiegać awariom lub przycinaniu na systemach z małym VRAM.
+    - ⚡ Może obniżyć jakość tekstur lub powodować pop-iny na high-end GPU, jeśli zbyt restrykcyjne.
+
+* **Wyłączone** – Odblokowuje maksymalną wielkość puli tekstur, nawet jeśli przekracza bezpieczne limity GPU.
+    - ✅ Może poprawić jakość tekstur i zmniejszyć pop-iny na mocnych systemach.
+    - ⚡ Ryzyko spadków wydajności, przycięć lub crashy, jeśli VRAM się skończy.
+
+*Zastosowane do CVars=r.Streaming.LimitPoolSizeToVRAM we wszystkich sekcjach DeviceProfiles.ini*
+"""
+
+[general_settings_texture_streaming_fixed_pool_size_checkbox]
+src = "Use Fixed Pool Size"
+loc = "Użyj stałej wielkości puli"
+
+[general_settings_texture_streaming_fixed_pool_size_checkbox_tooltip]
+src = """
+## Controls automatic pool size grow/shrink capabilities:
+
+* **Enabled** **(default)** – Locks texture pool size to value calculated on game start.
+    - ✅ Eliminates modded textures loading delay by minimizing texture mip levels pop in/out.
+    - ⚡ Pool size is locked on game start, low end GPU users may want to close as much apps as possible.
+
+* **Disabled** – Allows game engine to dynamically resize pool.
+    - ✅ Provides more freedom to both engine (allows mips streaming) and user (no need to close apps).
+    - ⚡ Introduces short delay to modded textures loading unless **Texture Boost** values is perfectly tuned.
+
+*Applied to CVars=r.Streaming.UseFixedPoolSize value in all sections of DeviceProfiles.ini*
+"""
+loc = """
+## Kontroluje automatyczne zwiększanie/zmniejszanie puli tekstur:
+
+* **Włączone** **(domyślnie)** – Blokuje rozmiar puli tekstur na wartość obliczoną przy starcie gry.
+    - ✅ Eliminuje opóźnienia w ładowaniu modowanych tekstur poprzez minimalizowanie pop-in/out poziomów mip.
+    - ⚡ Rozmiar puli jest zablokowany na start, użytkownicy słabszych GPU powinni zamknąć jak najwięcej aplikacji.
+
+* **Wyłączone** – Pozwala silnikowi gry dynamicznie zmieniać rozmiar puli.
+    - ✅ Daje więcej swobody zarówno silnikowi (umożliwia streaming mipów), jak i użytkownikowi (bez potrzeby zamykania aplikacji).
+    - ⚡ Wprowadza krótkie opóźnienia w ładowaniu modowanych tekstur, jeśli **Texture Boost** nie jest perfekcyjnie dostrojony.
+
+*Zastosowane do CVars=r.Streaming.UseFixedPoolSize we wszystkich sekcjach DeviceProfiles.ini*
+"""
+
