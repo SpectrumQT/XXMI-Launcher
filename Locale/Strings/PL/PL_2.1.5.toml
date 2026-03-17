@@ -1,0 +1,23 @@
+[error_old_3dmloader]
+src = """
+Provided **3dmloader.dll** is too old, it's missing **Inject** method.
+
+Please put **3dmloader.dll** from **v0.7.5+** to `Packages/XXMI` or use **Hook** method (without **Inject Libraries**).
+"""
+loc = """
+Dostarczony plik **3dmloader.dll** jest zbyt stary, brakuje w nim metody **Inject**.
+
+Umieść **3dmloader.dll** w wersji **v0.7.5+** w folderze `Packages/XXMI` lub użyj metody **Hook** (bez **Inject Libraries**).
+"""
+
+[error_dll_injector_setup_failed]
+src = """
+Failed to setup injector library!
+
+Error: {error_text}
+"""
+loc = """
+Nie udało się skonfigurować biblioteki injektora!
+
+Błąd: {error_text}
+"""
