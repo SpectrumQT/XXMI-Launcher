@@ -38,6 +38,9 @@ class EFMIConfig(ModelImporterConfig):
             'Rendering': {
                 'texture_hash': 0,
                 'track_texture_updates': 0,
+                'track_region_hashes': 1,
+                'track_implicit_index_buffers': 1,
+                'allow_buffer_resize': 0,
             },
         },
         'calls_logging': {
@@ -93,6 +96,7 @@ class EFMIPackage(ModelImporterPackage):
             exit_after_update=False,
             installation_path='EFMI/',
             requirements=['XXMI'],
+            required_versions={'XXMI': '1.7.5'},
         ))
         self.autodetect_patterns = {
             'common': re.compile(r'([a-zA-Z]:[^:\"\']*EndField[^:\"\']*)'),

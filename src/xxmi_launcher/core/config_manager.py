@@ -170,6 +170,18 @@ class AppConfig:
         except:
             pass
 
+    def run_patch_217(self):
+        importer = self.Importers.__dict__['EFMI']
+        # Force re-enable rendering setting enforcement to ensure d3dx.ini update for Endfield 1.1
+        importer.Migoto.enforce_rendering = True
+        # Reload enforced rendering settings from package configuration
+        ini_overrides = importer.Importer.d3dx_ini
+        new_config = type(importer)()
+        try:
+            ini_overrides['enforce_rendering'] = new_config.Importer.d3dx_ini['enforce_rendering']
+        except:
+            pass
+
     def upgrade(self, old_version, new_version):
         # Save config to file and exit early if old version is empty (aka fresh installation)
         if not old_version:
@@ -183,6 +195,7 @@ class AppConfig:
             '1.9.5': self.run_patch_195,
             '2.0.1': self.run_patch_201,
             '2.1.6': self.run_patch_216,
+            '2.1.7': self.run_patch_216,
         }
         applied_patches = []
         for patch_version, patch_func in patches.items():

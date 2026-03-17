@@ -430,7 +430,9 @@ class ModManager:
         self.ini_validator.d3dx_ini_keywords = {'[loader', '[system', '[stereo', '[commandlistunbindallrendertargets'}
         self.ini_validator.d3dx_ini_option_values = {'include': {'include_recursive': 'mods', 'exclude_recursive': 'disabled*'}}
 
-        if Config.Launcher.active_importer in ['WWMI', 'EFMI']:
+        if Config.Launcher.active_importer == 'EFMI':
+            self.ini_validator.unwanted_triggers = {'ib'}
+        elif Config.Launcher.active_importer == 'WWMI':
             self.ini_validator.unwanted_triggers = {'ib', 'vb0'}
 
         self.ini_validator.unwanted_files = {'shaderfixes': {'3dvision2sbs.ini', 'help.ini', 'mouse.ini', 'upscale.ini'}}
