@@ -190,10 +190,6 @@ Cierre el juego manualmente y presione [Aceptar] para continuar.
 src = "XXMI package is missing critical file: {file_name}!"
 loc = "¡El paquete XXMI no tiene un archivo crítico: {file_name}!"
 
-[error_gimi_game_exe_not_found]
-src = "Game executable {game_exe_name} or {game_exe_name_cn} not found!"
-loc = "¡No se encuentra el ejecutable del juego {game_exe_name} o {game_exe_name_cn}!"
-
 [error_gimi_dcr_config_failed]
 src = """
 {error_text}
@@ -2375,4 +2371,3 @@ loc = "Avanzado"
 [settings_title]
 src = "Settings"
 loc = "Configuración"
-

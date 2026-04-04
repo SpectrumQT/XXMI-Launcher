@@ -190,10 +190,6 @@ loc = """
 src = "XXMI package is missing critical file: {file_name}!"
 loc = "XXMI 패키지에 중요 파일이 누락되었습니다: {file_name}!"
 
-[error_gimi_game_exe_not_found]
-src = "Game executable {game_exe_name} or {game_exe_name_cn} not found!"
-loc = "게임 실행 파일 {game_exe_name} 또는 {game_exe_name_cn}을(를) 찾을 수 없습니다!"
-
 [error_gimi_dcr_config_failed]
 src = """
 {error_text}

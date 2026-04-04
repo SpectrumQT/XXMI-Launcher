@@ -190,10 +190,6 @@ Proszę zamknąć grę ręcznie i nacisnąć [OK], aby kontynuować.
 src = "XXMI package is missing critical file: {file_name}!"
 loc = "Pakiet XXMI nie zawiera krytycznego pliku: {file_name}!"
 
-[error_gimi_game_exe_not_found]
-src = "Game executable {game_exe_name} or {game_exe_name_cn} not found!"
-loc = "Nie znaleziono pliku wykonywalnego gry {game_exe_name} ani {game_exe_name_cn}!"
-
 [error_gimi_dcr_config_failed]
 src = """
 {error_text}
@@ -1878,7 +1874,7 @@ This option allows to set FPS limit to 120.
 **Enabled**: Updates Graphics Settings Windows Registry key with 120 FPS value on game start.
 **Disabled**: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.
 **Warning!** Tweak is supported only for the Global HSR client and will not work for CN.
-*Note: Edits `FPS` value in `HKEY_CURRENT_USER/SOFTWARE/Cognosphere/Star Rail/GraphicsSettings_Model_h2986158309`.* 
+*Note: Edits `FPS` value in `HKEY_CURRENT_USER/SOFTWARE/Cognosphere/Star Rail/GraphicsSettings_Model_h2986158309`.*
 """
 loc = """
 Ta opcja pozwala ustawić limit FPS na 120.
@@ -2363,4 +2359,3 @@ loc = "Zaawansowane"
 [settings_title]
 src = "Settings"
 loc = "Ustawienia"
-

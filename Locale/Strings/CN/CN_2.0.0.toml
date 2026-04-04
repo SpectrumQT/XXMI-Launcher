@@ -402,10 +402,6 @@ loc = """
 src = "Unknown system settings entry format: {setting}!"
 loc = "未知的系统设置条目格式：{setting}！"
 
-[error_gimi_game_exe_not_found]
-src = "Game executable {game_exe_name} or {game_exe_name_cn} not found!"
-loc = "未找到游戏可执行文件 {game_exe_name} 或 {game_exe_name_cn}！"
-
 [error_gimi_dcr_config_failed]
 src = """
 {error_text}
@@ -2367,4 +2363,3 @@ loc = """
 [general_settings_unlock_fps_checkbox]
 src = "Unlock FPS:"
 loc = "解锁帧率："
-

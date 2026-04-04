@@ -194,10 +194,6 @@ loc = """
 src = "XXMI package is missing critical file: {file_name}!"
 loc = "В пакете XXMI отсутствует критический файл: {file_name}!"
 
-[error_gimi_game_exe_not_found]
-src = "Game executable {game_exe_name} or {game_exe_name_cn} not found!"
-loc = "Файл игры {game_exe_name} или {game_exe_name_cn} не найден!"
-
 [error_gimi_dcr_config_failed]
 src = """
 {error_text}
@@ -2427,4 +2423,3 @@ loc = "Продвинутые"
 [settings_title]
 src = "Settings"
 loc = "Настройки"
-

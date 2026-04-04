@@ -190,10 +190,6 @@ Please close the game manually and press [OK] to continue.
 src = "XXMI package is missing critical file: {file_name}!"
 loc = "XXMI package is missing critical file: {file_name}!"
 
-[error_gimi_game_exe_not_found]
-src = "Game executable {game_exe_name} or {game_exe_name_cn} not found!"
-loc = "Game executable {game_exe_name} or {game_exe_name_cn} not found!"
-
 [error_gimi_dcr_config_failed]
 src = """
 {error_text}
@@ -2363,4 +2359,3 @@ loc = "Advanced"
 [settings_title]
 src = "Settings"
 loc = "Settings"
-
