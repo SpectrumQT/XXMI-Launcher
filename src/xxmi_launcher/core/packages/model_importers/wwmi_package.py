@@ -44,6 +44,8 @@ class WWMIConfig(ModelImporterConfig):
             'Rendering': {
                 'texture_hash': 1,
                 'track_texture_updates': 1,
+                'track_region_hashes': 0,
+                'allow_buffer_resize': 1,
             },
         },
         'calls_logging': {
@@ -226,26 +228,23 @@ class WWMIPackage(ModelImporterPackage):
         game_exe_path = self.validate_game_exe_path(game_path)
         if Config.Importers.WWMI.Importer.use_launch_options:
             # Start WW directly to support launch options customization
-            return game_exe_path, ['-dx11'], str(game_exe_path.parent)
+            return game_exe_path, ['-dx11', '-ENGINEINI=Kuro_Please_Add_Force_LOD0_For_Characters_To_Settings_Engine.ini'], str(game_exe_path.parent)
         else:
             # Start WW via wrapper exe (solves crashes for NVidia Optimus and some Steam version users)
-            return game_path / 'Wuthering Waves.exe', ['-dx11'], str(game_path)
+            return game_path / 'Wuthering Waves.exe', ['-dx11', '-ENGINEINI=Kuro_Please_Add_Force_LOD0_For_Characters_To_Settings_Engine.ini'], str(game_path)
 
     def initialize_game_launch(self, game_path: Path):
         # Configure LocalStorage.db
         if any([Config.Importers.WWMI.Importer.configure_game, Config.Importers.WWMI.Importer.unlock_fps]):
             self.configure_settings(game_path)
         # Configure Engine.ini
-        if Config.Active.Importer.apply_perf_tweaks:
-            self.update_engine_ini(game_path)
+        self.update_engine_ini(game_path)
         # Configure GameUserSettings.ini
         if Config.Importers.WWMI.Importer.unlock_fps:
             self.update_game_user_settings_ini(game_path)
         # Prevent further configuration if WWMI isn't going to be used
         if not Config.Active.Importer.is_xxmi_dll_used():
             return
-        # Configure DeviceProfiles.ini
-        self.update_device_profiles_ini(game_path)
 
     def configure_settings(self, game_path: Path):
         Events.Fire(Events.Application.StatusUpdate(status=L('status_configuring_settings', 'Configuring in-game settings...')))
@@ -321,7 +320,7 @@ class WWMIPackage(ModelImporterPackage):
                 """).format(error_text=e)) from e
 
     def update_engine_ini(self, game_path: Path):
-        engine_ini_path = game_path / 'Client' / 'Saved' / 'Config' / 'WindowsNoEditor' / 'Engine.ini'
+        engine_ini_path = game_path / 'Client' / 'Binaries' / 'Win64' / 'Kuro_Please_Add_Force_LOD0_For_Characters_To_Settings_Engine.ini'
 
         Events.Fire(Events.Application.StatusUpdate(
             status=L('status_updating_file', 'Updating {file_name}...').format(file_name=engine_ini_path.name))
@@ -346,37 +345,6 @@ class WWMIPackage(ModelImporterPackage):
         # console_variables = Config.Importers.WWMI.Importer.engine_ini.get('ConsoleVariables', None)
         # default_streaming_boost = console_variables.get('r.Streaming.Boost', None) if console_variables else None
 
-        if Config.Importers.WWMI.Importer.apply_perf_tweaks:
-            for section_name, section_data in Config.Importers.WWMI.Importer.perf_tweaks.items():
-                for option_name, option_value in section_data.items():
-                    ini.set_option(section_name, option_name, option_value)
-
-        if ini.is_modified():
-            Paths.App.write_file(engine_ini_path, ini.to_string())
-
-    def update_device_profiles_ini(self, game_path: Path):
-        device_profiles_ini_path = game_path / 'Client' / 'Saved' / 'Config' / 'WindowsNoEditor' / 'DeviceProfiles.ini'
-
-        Events.Fire(Events.Application.StatusUpdate(
-            status=L('status_updating_file', 'Updating {file_name}...').format(file_name=device_profiles_ini_path.name))
-        )
-
-        if not device_profiles_ini_path.exists():
-            Paths.verify_path(device_profiles_ini_path.parent)
-            Paths.App.write_file(device_profiles_ini_path, '')
-
-        Events.Fire(Events.PathManager.VerifyFileAccess(path=device_profiles_ini_path, write=True))
-        with open(device_profiles_ini_path, 'r', encoding='utf-8') as f:
-            ini = IniHandler(IniHandlerSettings(option_value_spacing=False, inline_comments=True, add_section_spacing=True, right_split=True), f)
-
-        # # Remove UsingNewKuroStreaming option (ancient 3rd-party configs set it to 0 with bad results)
-        # ini.remove_option('r.Streaming.UsingNewKuroStreaming')
-        #
-        # # Remove Boost option if it matches configured MinBoost (mostly to clear one from pre-3.0 auto-config)
-        # ini.remove_option('r.Streaming.Boost',
-        #                   section_name='ConsoleVariables',
-        #                   option_value=Config.Importers.WWMI.Importer.texture_streaming_boost)
-
         console_variables_options = {
             # Controls how far game starts to replace weighted meshes with LoDs
             'r.Kuro.SkeletalMesh.LODDistanceScaleDeviceOffset': Config.Importers.WWMI.Importer.mesh_lod_distance_offset,
@@ -399,25 +367,23 @@ class WWMIPackage(ModelImporterPackage):
         }
         log.debug(f'Using console variables: {console_variables_options}')
 
-        section_names = [
-            'Windows_Highest DeviceProfile', 'Windows_VeryHigh DeviceProfile', 'Windows_High DeviceProfile',
-            'Windows_Mid DeviceProfile', 'Windows_Low DeviceProfile', 'Windows_Lowest DeviceProfile'
-        ]
+        section_name = 'ConsoleVariables'
 
-        for section_name in section_names:
+        for option_name, option_value in console_variables_options.items():
+            # Remove duplicate settings
+            option_values = ini.get_option_values(option_name, section_name=section_name)
+            if len(option_values) > 1:
+                ini.remove_option(option_name, section_name=section_name, option_value=option_value, not_equal=True)
+            # Set option value
+            ini.set_option(section_name, option_name, option_value)
 
-            for option_name, option_value in console_variables_options.items():
-                # Append `CVars=` "prefix" to option name
-                option_name = f'CVars={option_name}'
-                # Remove duplicate settings
-                option_values = ini.get_option_values(option_name, section_name=section_name)
-                if len(option_values) > 1:
-                    ini.remove_option(option_name, section_name=section_name, option_value=option_value, not_equal=True)
-                # Set option value
-                ini.set_option(section_name, option_name, option_value)
+        if Config.Importers.WWMI.Importer.apply_perf_tweaks:
+            for section_name, section_data in Config.Importers.WWMI.Importer.perf_tweaks.items():
+                for option_name, option_value in section_data.items():
+                    ini.set_option(section_name, option_name, option_value)
 
         if ini.is_modified():
-            Paths.App.write_file(device_profiles_ini_path, ini.to_string())
+            Paths.App.write_file(engine_ini_path, ini.to_string())
 
     def update_game_user_settings_ini(self, game_path: Path):
         Events.Fire(Events.Application.StatusUpdate(status=L('status_updating_file', 'Updating {file_name}...').format(file_name='GameUserSettings.ini')))

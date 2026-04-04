@@ -687,8 +687,6 @@ class DisableWoundedEffectCheckbox(UICheckbox):
 #             * Set to lower value (e.g. `15`) for better performance.
 #                 - ✅ Reduce FPS cost by allowing the game to use LoD meshes for distant animated objects.
 #                 - ⚡ LoDs may look wrong due to modded textures being applied to original LoD meshes.
-#
-#             *Applied to CVars=r.Kuro.SkeletalMesh.LODDistanceScale value in all sections of DeviceProfiles.ini*
 #         """))
 
 
@@ -716,8 +714,6 @@ class MeshLODDistanceOffsetEntry(UIEntry):
             
             * Default is **-10**, known range where full mesh remains always loaded is from **-1** to **-12** (depending on PC).
             * Mods are currently created for full meshes and cannot (easily) be applied to LoDs.
-                
-            *Applied to CVars=r.Kuro.SkeletalMesh.LODDistanceScaleDeviceOffset value in all sections of DeviceProfiles.ini*
         """))
 
 
@@ -755,8 +751,6 @@ class TextureStreamingBoostEntry(UIEntry):
             
             * If modded textures are loading fine, gradually decrease until small textures (like eyes) start breaking.
                 - ✅ A value just above this “breaking point” typically gives minimal texture loading delay while staying VRAM-friendly.
-            
-            *Applied to CVars=r.Streaming.Boost value in all sections of DeviceProfiles.ini*
         """))
 
 
@@ -786,8 +780,6 @@ class TextureStreamingMinBoostEntry(UIEntry):
 
             - ⚡ Use only if modded textures aren't loading regardless configured **Texture Boost** value.
             - ⚡ Same as with **Texture Boost**, always look for small textures (like eyes) when tuning the value.
-            
-            *Applied to CVars=r.Streaming.MinBoost value in all sections of DeviceProfiles.ini*
         """))
 
 
@@ -806,8 +798,6 @@ class TextureStreamingUseAllMipsCheckbox(UICheckbox):
             
             * **Disabled**: Enable resolution restrictions from LOD Bias.
                 - ⚡ Modded textures won't load if disabled without Max (Ultra High) LOD Bias enabled.
-                
-            *Applied to CVars=r.Streaming.UseAllMips value in all sections of DeviceProfiles.ini*
         """))
 
 
@@ -835,8 +825,6 @@ class TextureStreamingPoolSizeEntry(UIEntry):
 
             * Set to **0** **(default)** for **automatic control** (based on available VRAM).
             * Set to specific value (e.g. 4096) for precise VRAM management.
-
-            *Applied to CVars=r.Streaming.PoolSize value in all sections of DeviceProfiles.ini*
         """))
 
 
@@ -856,8 +844,6 @@ class TextureStreamingLimitPoolToVramCheckbox(UICheckbox):
             * **Disabled** – Unlocks maximum texture pool size, even if it exceeds your GPU's safe limits.
                 - ✅ Can improve texture quality and reduce pop-ins on powerful systems.
                 - ⚡ Risk of performance drops, stutters, or crashes if VRAM runs out.
-
-            *Applied to CVars=r.Streaming.LimitPoolSizeToVRAM value in all sections of DeviceProfiles.ini*
         """))
 
 
@@ -867,7 +853,7 @@ class TextureStreamingFixedPoolSizeCheckbox(UICheckbox):
             text=L('general_settings_texture_streaming_fixed_pool_size_checkbox', 'Use Fixed Pool Size'),
             variable=Vars.Active.Importer.texture_streaming_fixed_pool_size,
             master=master)
-        self.set_tooltip(L('general_settings_texture_streaming_fixed_pool_size_checkbox_tooltip', """
+        tooltip = L('general_settings_texture_streaming_fixed_pool_size_checkbox_tooltip', """
             ## Controls automatic pool size grow/shrink capabilities:
             
             * **Enabled** **(default)** – Locks texture pool size to value calculated on game start.
@@ -877,9 +863,9 @@ class TextureStreamingFixedPoolSizeCheckbox(UICheckbox):
             * **Disabled** – Allows game engine to dynamically resize pool.
                 - ✅ Provides more freedom to both engine (allows mips streaming) and user (no need to close apps).
                 - ⚡ Introduces short delay to modded textures loading unless **Texture Boost** values is perfectly tuned.
+        """)
 
-            *Applied to CVars=r.Streaming.UseFixedPoolSize value in all sections of DeviceProfiles.ini*
-        """))
+        self.set_tooltip(tooltip)
 
 
 class OpenGameConfigButton(UIButton):
@@ -892,11 +878,11 @@ class OpenGameConfigButton(UIButton):
             font=('Roboto', 14),
             auto_width=True,
             master=master)
-        self.set_tooltip(L('general_settings_open_file_button_tooltip', 'Open **{file_name}** in default text editor file for manual tweaking.').format(file_name='DeviceProfiles.ini'))
+        self.set_tooltip(L('general_settings_open_file_button_tooltip', 'Open **{file_name}** in default text editor file for manual tweaking.').format(file_name='Engine.ini'))
 
     def open_engine_ini(self):
         game_folder = Events.Call(Events.ModelImporter.ValidateGameFolder(Config.Active.Importer.game_folder))
-        engine_ini = game_folder / 'Client' / 'Saved' / 'Config' / 'WindowsNoEditor' / 'Engine.ini'
+        engine_ini = game_folder / 'Client' / 'Binaries' / 'Win64' / 'Kuro_Please_Add_Force_LOD0_For_Characters_To_Settings_Engine.ini'
         if engine_ini.is_file():
             subprocess.Popen([f'{str(engine_ini)}'], shell=True)
         else:
