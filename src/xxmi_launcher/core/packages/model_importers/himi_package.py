@@ -44,6 +44,8 @@ class HIMIConfig(ModelImporterConfig):
             'Rendering': {
                 'texture_hash': 0,
                 'track_texture_updates': 0,
+                'track_region_hashes': 0,
+                'allow_buffer_resize': 1,
             },
         },
         'calls_logging': {

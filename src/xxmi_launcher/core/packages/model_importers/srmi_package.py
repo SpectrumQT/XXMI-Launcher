@@ -41,6 +41,9 @@ class SRMIConfig(ModelImporterConfig):
             'Rendering': {
                 'texture_hash': 0,
                 'track_texture_updates': 0,
+                'track_region_hashes': 0,
+                'track_implicit_index_buffers': 1,
+                'allow_buffer_resize': 1,
             },
         },
         'calls_logging': {
