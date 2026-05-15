@@ -1,0 +1,2361 @@
+[message_title_message]
+src = "Message"
+loc = "メッセージ"
+
+[message_button_ok]
+src = "OK"
+loc = "OK"
+
+[message_title_error]
+src = "Error"
+loc = "エラー"
+
+[message_title_warning]
+src = "Warning"
+loc = "警告"
+
+[message_title_info]
+src = "Info"
+loc = "情報"
+
+[message_button_confirm]
+src = "Confirm"
+loc = "確認"
+
+[message_button_cancel]
+src = "Cancel"
+loc = "キャンセル"
+
+[application_failed_parse_args]
+src = "Failed to parse args: {args}"
+loc = "引数の解析に失敗しました: {args}"
+
+[message_text_config_was_reset]
+src = "Failed to load configuration! Falling back to defaults."
+loc = "設定の読み込みに失敗しました! デフォルトの設定に切り替えます。"
+
+[status_initializing_update]
+src = "Initializing update..."
+loc = "アップデートを初期化中 ..."
+
+[message_button_load_backup_config]
+src = "Load Backup"
+loc = "バックアップを読み込む"
+
+[message_button_load_default_config]
+src = "Load Default"
+loc = "デフォルトを読み込む"
+
+[message_text_config_load_failed]
+src = "Failed to load configuration!"
+loc = "設定の読み込みに失敗しました!"
+
+[error_unknown_model_importer]
+src = "Unknown model importer {importer}!"
+loc = "{importer} は不明なモデルインポーターです!"
+
+[error_unknown_model_importer_arg]
+src = "Unknown model importer supplied as command line arg `--xxmi={arg_xxmi}`!"
+loc = "不明なモデルインポーターがコマンドライン引数 `--xxmi={arg_xxmi}` で指定されました!"
+
+[error_unknown_model_importer_setting]
+src = "Unknown model importer `{importer}` supplied with `active_importer` setting!"
+loc = "`active_importer` 設定に、不明なモデルインポーター `{importer}` が指定されています!"
+
+[error_version_list_fetch_failed]
+src = """
+Failed to get latest versions list from GitHub!
+
+{error_text}
+"""
+loc = """
+GitHubから最新バージョンのリストを取得できませんでした!
+
+{error_text}
+"""
+
+[message_title_update_available]
+src = "Update Available"
+loc = "アップデートが利用可能です"
+
+[message_button_install_update]
+src = "Update"
+loc = "アップデート"
+
+[message_button_skip_update]
+src = "Skip"
+loc = "スキップ"
+
+[message_text_already_up_to_date]
+src = "No updates available!"
+loc = "既に最新版です!"
+
+[message_title_file_write_failed_read_only]
+src = "File Read Only Error"
+loc = "読み取り専用ファイルエラー"
+
+[message_text_file_write_failed_read_only]
+src = """
+Failed to write Read Only file {path}!
+
+Press [Confirm] to remove this flag and continue.
+"""
+loc = """
+読み取り専用ファイル {path} の書き込みに失敗しました!
+
+[確認] でこのフラグを解除し、続行してください。
+"""
+
+[error_critical_file_write_failed]
+src = "Failed to write critical file: {path}!"
+loc = "重要なファイルの書き込みに失敗しました: {path}"
+
+[message_button_reset_unsecure_setting]
+src = "Reset"
+loc = "リセット"
+
+[message_button_keep_unsecure_setting]
+src = "Keep"
+loc = "保持"
+
+[message_text_unsecure_setting_validation_failed]
+src = """
+Failed to validate unsecure settings!
+
+{msg}
+"""
+loc = """
+危険な設定の検証に失敗しました!
+
+{msg}
+"""
+
+[error_theme_resource_not_found]
+src = """
+Resource not found:
+
+{resource_path}
+
+Hint: You can also use other extensions: {extensions}
+"""
+loc = """
+リソースが見つかりません:
+
+{resource_path}
+
+ヒント: 他の拡張機能も利用できます: {extensions}
+"""
+
+[status_waiting_installer]
+src = "Waiting for installer to start..."
+loc = "インストーラーの起動を待機しています ..."
+
+[error_launcher_installer_start_failed]
+src = """
+Failed to start {asset_name}!
+
+Was it blocked by Antivirus software or security settings?
+"""
+loc = """
+{asset_name} の起動に失敗しました!
+
+ウイルス対策ソフトやセキュリティ設定によってブロックされていませんか?
+"""
+
+[launcher_shortcut_description]
+src = "Shortcut to XXMI Launcher"
+loc = "XXMI Launcher へのショートカット"
+
+[error_migoto_game_start_failed]
+src = "Failed to start {process_name}!"
+loc = "{process_name} の起動に失敗しました!"
+
+[status_ensuring_game_closed]
+src = "Ensuring the game is closed..."
+loc = "ゲームが終了済みか確認しています ..."
+
+[message_text_game_stop_failed]
+src = """
+Failed to stop {process_name}!
+
+Please close the game manually and press [OK] to continue.
+"""
+loc = """
+{process_name} の停止に失敗しました!
+
+ゲームを手動で閉じて、[OK] を押して続行してください。
+"""
+
+[error_xxmi_missing_critical_file]
+src = "XXMI package is missing critical file: {file_name}!"
+loc = "XXMI パッケージに重要なファイル {file_name} が欠落しています!"
+
+[error_gimi_dcr_config_failed]
+src = """
+{error_text}
+
+If nothing helps:
+1. Disable `Configure Game Settings` in launcher's `General Settings`
+2. Configure in-game `Graphics Settings` manually:
+* Graphics > `Dynamic Character Resolution` must be `Off`.
+"""
+loc = """
+{error_text}
+
+それでも解決しない場合:
+1. ランチャーの `一般設定` で `ゲーム設定の自動構成` を無効にしてください。
+2. ゲーム内で `画面` 設定を手動で変更してください:
+* 画面 > `キャラクター動的解像度` を `オフ` にしてください。
+"""
+
+[error_gimi_fps_unlocker_config_failed]
+src = """
+Failed to configure FPS Unlocker!
+
+{error_text}
+"""
+loc = """
+FPS アンロッカーの設定に失敗しました!
+
+{error_text}
+"""
+
+[error_gimi_hdr_enable_failed]
+src = """
+Failed to enable HDR!
+
+{error_text}
+"""
+loc = """
+HDR の有効化に失敗しました!
+
+{error_text}
+"""
+
+[error_gimi_registry_key_not_found]
+src = """
+Genshin Impact registry key is not found!
+
+Please start the game via original launcher to create the key and try again.
+"""
+loc = """
+原神のレジストリキーが見つかりません!
+
+公式ランチャーからゲームを起動してから、再試行してください。
+"""
+
+[error_gimi_unknown_settings_format]
+src = "Unknown Settings format: Data type {regtype} is not {expected_type} of REG_BINARY!"
+loc = "設定形式が不明です: データ型 {regtype} は REG_BINARY の {expected_type} ではありません!"
+
+[error_gimi_graphics_settings_not_found]
+src = """
+Graphics Settings record is not found in GI registry!
+
+Please start the game via official launcher to create the record and try again.
+"""
+loc = """
+原神のレジストリにグラフィック設定が見つかりません!
+
+公式ランチャーからゲームを起動してから、再試行してください。
+"""
+
+[error_gimi_graphics_data_key_not_found]
+src = "Unknown Graphics Settings format: \"graphicsData\" key not found!"
+loc = "グラフィック設定形式が不明です: \"graphicsData\" キーが見つかりません!"
+
+[error_gimi_global_perf_data_key_not_found]
+src = "Unknown Graphics Settings format: \"globalPerfData\" key not found!"
+loc = "グラフィック設定形式が不明です: \"globalPerfData\" キーが見つかりません!"
+
+[error_gimi_hdr_record_not_found]
+src = """
+HDR record is not found in GI registry!
+
+Please start the game via official launcher to create the record and try again.
+"""
+loc = """
+原神のレジストリにHDR設定が見つかりません!
+
+公式ランチャーからゲームを起動してから、再試行してください。
+"""
+
+[status_configuring_fps_unlocker]
+src = "Configuring FPS Unlocker..."
+loc = "FPS アンロッカーを設定しています ..."
+
+[message_text_fps_unlocker_manual_termination]
+src = """
+Failed to terminate FPS Unlocker!
+
+Please close it manually and press [OK] to continue.
+"""
+loc = """
+FPS アンロッカーを終了できませんでした！
+
+手動で終了し、[OK] をクリックして続行してください。
+"""
+
+[error_game_exe_not_found]
+src = "Game executable {exe_name} not found!"
+loc = "ゲーム実行ファイル {exe_name} が見つかりません!"
+
+[error_himi_fps_unlock_failed]
+src = "Failed to configure FPS: {error_text}"
+loc = "FPS の設定に失敗しました: {error_text}"
+
+[error_himi_registry_key_not_found]
+src = """
+Honkai Impact 3rd registry key is not found!
+
+Please start the game without FPS tweak, change FPS to any value to create the record and try again.
+
+Note: Tweak is supported only for the Global client and will not work for CN.
+"""
+loc = """
+崩壊3rdのレジストリキーが見つかりません!
+
+FPS設定機能を使用せずにゲームを起動し、FPSを任意の値に変更してから、再試行してください。
+
+注意: この設定機能はグローバル版クライアントでのみサポートされており、中国版では機能しません。
+"""
+
+[error_himi_graphics_settings_not_found]
+src = """
+Graphics Settings record is not found in Honkai Impact 3rd registry!
+
+Please start the game without FPS tweak, change FPS to any value to create the record and try again.
+"""
+loc = """
+原神のレジストリにグラフィック設定が見つかりません!
+
+FPS設定機能を使用せずにゲームを起動し、FPSを任意の値に変更してから、再試行してください。
+"""
+
+[error_himi_unknown_graphics_format]
+src = "Unknown Graphics Settings format: Data type {regtype} is not {expected_type} of REG_BINARY!"
+loc = "グラフィック設定形式が不明です: データ型 {regtype} は REG_BINARY の {expected_type} ではありません!"
+
+[error_himi_fps_key_not_found]
+src = "Unknown Graphics Settings format: \"TargetFrameRateForInLevel\" key not found!"
+loc = "グラフィック設定形式が不明です: \"TargetFrameRateForInLevel\" キーが見つかりません!"
+
+[error_model_importer_unknown_command]
+src = "Unknown command {name}!"
+loc = "{name} は不明なコマンドです"
+
+[error_model_importer_command_execution_failed]
+src = """
+Failed to execute `{name} = {value}` of auto_update.xcmd!
+{error_text}
+"""
+loc = """
+auto_update.xcmd の `{name} = {value}` 実行に失敗しました!
+{error_text}
+"""
+
+[error_model_importer_removal_scope_restricted]
+src = "File or folder removal is allowed only from Core or ShaderFixes folder!"
+loc = "ファイルやフォルダの削除は、Core フォルダまたは ShaderFixes フォルダからのみ許可されています!"
+
+[error_model_importer_removal_forbidden]
+src = "Explicit removal of entire Core or ShaderFixes folder is not allowed!"
+loc = "Core フォルダまたは ShaderFixes フォルダ全体を明示的に削除することは禁止されています!"
+
+[error_model_importer_game_folder_not_specified]
+src = "Game installation folder is not specified!"
+loc = "ゲームのインストールフォルダが指定されていません!"
+
+[error_model_importer_game_folder_not_found]
+src = "Specified game installation folder is not found!"
+loc = "指定されたゲームインストールフォルダは見つかりませんでした!"
+
+[message_text_game_detection_failed]
+src = """
+Automatic detection of the game installation failed!
+
+Please configure it manually with Game Folder option of General Settings.
+"""
+loc = """
+ゲームインストールの自動検出に失敗しました!
+
+一般設定内のゲームフォルダオプションから手動で設定してください。
+"""
+
+[message_button_open_settings]
+src = "Open Settings"
+loc = "設定を開く"
+
+[message_text_game_detected_single]
+src = """
+Detected game installation:
+
+{game_folder}
+
+Please check if it is desired Game Folder or change it in General Settings.
+"""
+loc = """
+検出されたゲームのインストールフォルダ:
+
+{game_folder}
+
+正しいフォルダかどうか確認するか、手動で一般設定で変更してください。
+"""
+
+[message_text_game_detected_multiple]
+src = """
+Detected game installations:
+
+Select desired Game Folder from the list below or set it in General Settings:
+
+"""
+loc = """
+検出されたゲームのインストールフォルダ:
+
+以下のリストから目的のゲームフォルダを選択するか、一般設定で変更してください:
+
+"""
+
+[message_text_game_folder_not_configured]
+src = """
+Game installation folder is not configured!
+
+Please set it with Game Folder option of General Settings.
+"""
+loc = """
+ゲームのインストールフォルダが指定されていません!
+
+一般設定内のゲームフォルダオプションから設定してください。
+"""
+
+[status_autodetecting_game]
+src = "Autodetecting game installation folder..."
+loc = "ゲームのインストールフォルダを自動検出しています ..."
+
+[error_launcher_in_game_folder]
+src = """
+
+Launcher must be installed outside of the game folder!
+
+Please reinstall the launcher to another location.
+"""
+loc = """
+
+ランチャーはゲームフォルダの外にインストールする必要があります!
+
+ランチャーを別の場所に再インストールしてください。
+"""
+
+[error_model_importer_in_game_folder]
+src = """
+
+{importer} Folder must be located outside of the Game Folder!
+
+Please chose another location for Settings > {importer} > {importer} Folder.
+"""
+loc = """
+
+{importer} フォルダは、ゲームフォルダの外に配置する必要があります！
+
+設定 > {importer} > {importer} フォルダ で、別の場所を選択してください。
+"""
+
+[error_model_importer_installation_failed]
+src = """
+{importer} Installation Failed:
+{error_text}
+"""
+loc = """
+{importer} インストール失敗:
+{error_text}
+"""
+
+[status_updating_ini]
+src = "Updating d3dx.ini..."
+loc = "d3dx.ini を更新しています ..."
+
+[error_ini_missing_setting]
+src = "Config is missing {setting_name} setting!"
+loc = "設定ファイル内に {setting_name} がありません!"
+
+[error_ini_missing_value]
+src = "Config is missing value for section `{section}` option `{option}` key `{key}`"
+loc = "設定ファイルのセクション `{section}` のオプション `{option}` のキー `{key}` に値がありません"
+
+[error_set_ini_option_failed]
+src = "Failed to set section {section} option {option} to {value}: {error_text}"
+loc = "セクション {section} のオプション {option} を {value} に設定できませんでした: {error_text}"
+
+[message_button_restore]
+src = "Restore"
+loc = "復元"
+
+[message_text_model_importer_installation_damaged]
+src = """
+{importer} installation is damaged!
+Details: Missing critical file: {file_name}!
+Would you like to restore {importer} automatically?
+"""
+loc = """
+{importer} のインストールに問題が発生しました!
+重要なファイル {file_name} が見つかりません!
+{importer} を自動的に復元しますか?
+"""
+
+[model_importer_missing_critical_file]
+src = "Missing critical file: {file_name}!"
+loc = "重要なファイルが見つかりません: {file_name}"
+
+[model_importer_shortcut_description]
+src = "Start game with {importer} and skip launcher load"
+loc = "{importer} でゲームを起動し、ランチャーの読み込みをスキップします"
+
+[message_button_disable]
+src = "Disable"
+loc = "無効化"
+
+[message_button_ignore]
+src = "Ignore"
+loc = "無視"
+
+[message_button_abort]
+src = "Abort"
+loc = "中止"
+
+[error_cannot_start_with_d3dx_ini_in_mods]
+src = "Cannot start with d3dx.ini in Mods folder!"
+loc = "Mods フォルダ内の d3dx.ini では起動できません!"
+
+[error_malformed_model_importer_version]
+src = "Malformed {importer} version!"
+loc = "{importer} のバージョンが不正です!"
+
+[error_model_importer_version_not_found]
+src = "Failed to locate {importer} version!"
+loc = "{importer} のバージョンが見つかりませんでした!"
+
+[error_srmi_fps_unlock_failed]
+src = "Failed to force 120 FPS: {error_text}"
+loc = "120 FPS の強制に失敗しました: {error_text}"
+
+[error_srmi_registry_key_not_found]
+src = """
+Star Rail registry key is not found!
+
+Please start the game without 120 FPS tweak, change FPS to any value to create the record and try again.
+
+Note: Tweak is supported only for the Global HSR client and will not work for CN.
+"""
+loc = """
+崩壊：スターレイルのレジストリキーが見つかりません!
+
+120 FPS設定機能を使用せずにゲームを起動し、FPSを任意の値に変更してレコードを作成してから、再試行してください。
+
+注意: この設定機能はグローバル版クライアントでのみサポートされており、中国版では機能しません。
+"""
+
+[error_srmi_graphics_settings_not_found]
+src = """
+Graphics Settings record is not found in HSR registry!
+
+Please start the game without 120 FPS tweak, change FPS to any value to create the record and try again.
+"""
+loc = """
+崩壊：スターレイルのレジストリにグラフィック設定が見つかりません!
+
+120 FPS設定機能を使用せずにゲームを起動し、FPSを任意の値に変更してレコードを作成してから、再試行してください。
+"""
+
+[error_srmi_unknown_graphics_format]
+src = "Unknown Graphics Settings format: Data type {regtype} is not {expected_type} of REG_BINARY!"
+loc = "グラフィック設定形式が不明です: データ型 {regtype} は REG_BINARY の {expected_type} ではありません!"
+
+[error_srmi_fps_key_not_found]
+src = "Unknown Graphics Settings format: \"FPS\" key no found!"
+loc = "グラフィック設定形式が不明です: \"FPS\" キーが見つかりません!"
+
+[error_game_path_not_absolute]
+src = "Failed to normalize path {path}: Path is not absolute!"
+loc = "パス {path} の正規化に失敗しました: パスが絶対パスではありません!"
+
+[error_wuthering_waves_exe_not_found]
+src = "Failed to normalize path {path}: Wuthering Waves.exe not found!"
+loc = "パス {path} の正規化に失敗しました: Wuthering Waves.exe が見つかりません!"
+
+[error_wwmi_game_folder_missing_files]
+src = "Game folder must contain `Wuthering Waves.exe` and `Client` & `Engine` folders!"
+loc = "ゲームフォルダには `Wuthering Waves.exe` と `Client` および `Engine` フォルダが含まれている必要があります!"
+
+[message_text_wwmi_invalid_steam_installation]
+src = """
+Invalid Wuthering Waves installation detected for Steam:
+{game_path}
+
+{folder_name} folder with {exe_name} must be directly placed in:
+{common_folder}
+
+Please run game file repair via Steam or fix it manually.
+"""
+loc = """
+Steam版の無効な鳴潮のインストールが検出されました:
+{game_path}
+
+{exe_name} を含む {folder_name} フォルダは、直接以下に配置する必要があります:
+{common_folder}
+
+Steamからゲームファイルの修復を実行するか、手動で修正してください。
+"""
+
+[error_steam_game_repair_required]
+src = "Game installation must be repaired via Steam!"
+loc = "ゲームのインストールをSteam経由で修復する必要があります!"
+
+[error_game_folder_missing_folder]
+src = "Game folder must contain {dir_name} folder!"
+loc = "ゲームフォルダには {dir_name} フォルダが含まれている必要があります!"
+
+[status_configuring_settings]
+src = "Configuring in-game settings..."
+loc = "ゲーム内設定を構成しています ..."
+
+[message_title_wounded_effect_detected]
+src = "Wounded Effect Detected"
+loc = "負傷エフェクトを検出"
+
+[message_button_keep_enabled]
+src = "Keep Enabled"
+loc = "有効のままにする"
+
+[message_text_wounded_effect_detected]
+src = """
+Looks like Wounded Effect is enabled in game settings.
+It is not supported by most mods and textures will break after few hits taken.
+
+Click `Disable` to turn it Off and ensure proper rendering of modded textures.
+Click `Keep Enabled` if you never get hit or use Injured Effect Remover tool.
+"""
+loc = """
+ゲーム設定で負傷エフェクト (キャラクターのダメージ表現) が有効になっているようです。
+ほとんどのMODはこのエフェクトをサポートしていないため、数回攻撃を受けるとテクスチャが崩れます。
+
+「無効化」をクリックしてオフにし、MODのテクスチャが正しくレンダリングされるようにしてください。
+攻撃を受けない場合や、Injured Effect Removerツールを使用している場合は、「有効のままにする」をクリックしてください。
+"""
+
+[error_wwmi_fps_unlock_failed]
+src = """
+Failed to force 120 FPS!
+Please disable `Force 120 FPS` in launcher's General Settings.
+
+{error_text}
+"""
+loc = """
+120 FPSの強制に失敗しました!
+ランチャーの一般設定で `Force 120 FPS` を無効にしてください。
+
+{error_text}
+"""
+
+[error_wwmi_game_config_failed]
+src = """
+Failed to configure in-game settings for WWMI!
+Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:
+* Graphics > `Graphics Quality` must be `Quality`.
+
+{error_text}
+"""
+loc = """
+WWMIのゲーム内設定の構成に失敗しました!
+ランチャーの一般設定で `ゲーム設定の自動構成` を無効にし、ゲーム内設定を確認してください:
+* グラフィック > `グラフィックプリセット` を `グラフィック優先` にする必要があります。
+
+{error_text}
+"""
+
+[status_updating_file]
+src = "Updating {file_name}..."
+loc = "{file_name} を更新しています ..."
+
+[error_local_storage_init_failed]
+src = "Failed to initialize LocalStorage: {error_text}"
+loc = "LocalStorageの初期化に失敗しました: {error_text}"
+
+[error_zzmi_game_config_failed]
+src = """
+Failed to configure in-game settings for ZZMI!
+Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:
+* Graphics > `Character Quality` must be `High`.
+* Graphics > `High-Precision Character Animation` must be `Disabled`.
+
+{error_text}
+"""
+loc = """
+ZZMIのゲーム内設定の構成に失敗しました!
+ランチャーの一般設定で `ゲーム設定の自動構成` を無効にし、ゲーム内設定を確認してください:
+* 画面 > `キャラグラフィック` を `高` にする必要があります。
+* 画面 > `キャラクター動的解像度` を `OFF` にする必要があります。
+
+{error_text}
+"""
+
+[error_zzmi_unknown_settings_format]
+src = "Unknown system settings entry format: {setting}!"
+loc = "不明なシステム設定エントリの形式です: {setting}!"
+
+[error_updater_start_failed]
+src = """
+Failed to start XXMI Updater.exe!
+
+Was it blocked by Antivirus software or security settings?
+"""
+loc = """
+XXMI Updater.exeの起動に失敗しました!
+
+ウイルス対策ソフトやセキュリティ設定によってブロックされていませんか?
+"""
+
+[error_package_version_detect_failed]
+src = """
+Failed to detect installed {package_name} version:
+
+{error_text}
+"""
+loc = """
+インストールされている {package_name} のバージョンの検出に失敗しました:
+
+{error_text}
+"""
+
+[package_manager_detect_latest_failed]
+src = """
+Failed to detect latest {package_name} version:
+
+{error_text}
+"""
+loc = """
+最新の {package_name} のバージョンの検出に失敗しました:
+
+{error_text}
+"""
+
+[error_downloaded_data_verification_failed]
+src = """
+Downloaded data integrity verification failed!
+Please restart the launcher and try again!
+"""
+loc = """
+ダウンロードしたデータの整合性検証に失敗しました!
+ランチャーを再起動して再試行してください!
+"""
+
+[package_manager_file_verification_failed]
+src = """
+{asset_name} data integrity verification failed!
+Please restart the launcher and try again!
+"""
+loc = """
+{asset_name} のデータの整合性検証に失敗しました!
+ランチャーを再起動して再試行してください!
+"""
+
+[error_missing_manifest]
+src = "{package_name} package is missing manifest file!"
+loc = "{package_name} パッケージにマニフェストファイルがありません!"
+
+[error_parse_manifest_failed]
+src = "Failed to parse {package_name} manifest file!"
+loc = "{package_name} のマニフェストファイルの解析に失敗しました!"
+
+[error_missing_critical_file]
+src = "{package_name} package is missing critical file: {file_name}!"
+loc = "{package_name} パッケージに重要なファイル {file_name} が欠落しています!"
+
+[error_file_signature_invalid]
+src = "File {file_name} signature is invalid!"
+loc = "ファイル {file_name} の署名が無効です!"
+
+[error_missing_signature]
+src = "{package_name} manifest file is missing signature for {file_name}!"
+loc = "{package_name} のマニフェストファイルに {file_name} の署名がありません!"
+
+[error_github_api_limit]
+src = """
+Unauthorized GitHub API requests limit reached for your IP!
+
+GitHub servers will ignore further connection attempts for an hour.
+
+Set (another) *Proxy* or *GitHub Token* in *Launcher Settings* for instant access.
+"""
+loc = """
+お使いのIPからの未承認のGitHub APIリクエスト制限に達しました!
+
+GitHubのサーバーは、今後1時間、接続試行を無視します。
+
+すぐにアクセスするには、*ランチャー設定* で (別の) *プロキシ* または *GitHub Token* を設定してください。
+"""
+
+[error_remove_readonly_failed]
+src = "Failed to remove Read Only flag from file {path}: {error_text}!"
+loc = "ファイル {path} から読み取り専用フラグを解除できませんでした: {error_text}!"
+
+[error_file_not_exist]
+src = "File '{path}' does not exist!"
+loc = "ファイル '{path}' が存在しません!"
+
+[error_not_a_file]
+src = "File '{path}' is not a file!"
+loc = "ファイル '{path}' はファイルではありません!"
+
+[error_path_not_absolute]
+src = "File path '{path}' is not absolute!"
+loc = "ファイルパス '{path}' が絶対パスではありません!"
+
+[error_no_read_access]
+src = "Failed to read '{path}' file!"
+loc = "ファイル '{path}' の読み込みに失敗しました!"
+
+[error_file_readonly]
+src = "Failed to write '{path}': file is Read Only!"
+loc = "'{path}' の書き込みに失敗しました: ファイルが読み取り専用です!"
+
+[error_no_write_access]
+src = "Failed to write '{path}': no write access!"
+loc = "'{path}' の書き込みに失敗しました: 書き込み権限がありません!"
+
+[error_no_exe_access]
+src = "Failed run '{path}': no execute access!"
+loc = "'{path}' の実行に失敗しました: 実行権限がありません!"
+
+[error_dir_not_absolute]
+src = "Directory path '{path}' is not absolute!"
+loc = "ディレクトリパス '{path}' が絶対パスではありません!"
+
+[error_cant_read_folder]
+src = "Can't read from '{path}' folder!"
+loc = "'{path}' フォルダから読み込むことができません!"
+
+[error_cant_write_folder]
+src = "Can't write to '{path}' folder!"
+loc = "'{path}' フォルダに書き込むことができません!"
+
+[error_cant_run_exe_folder]
+src = "Can't run .exe in '{path}' folder!"
+loc = "'{path}' フォルダ内の.exeを実行できません!"
+
+[error_cant_access_folder]
+src = "Can't access '{path}' folder!"
+loc = "'{path}' フォルダにアクセスできません!"
+
+[error_not_a_folder]
+src = "Path '{path}' is not a folder!"
+loc = "パス '{path}' はフォルダではありません!"
+
+[error_cannot_set_root_absolute]
+src = "Cannot set root \"{root_path}\" for absolute path \"{path}\"!"
+loc = "絶対パス \"{path}\" にルート \"{root_path}\" を設定できません!"
+
+[error_curly_brackets_error]
+src = """
+Launcher initialization failed!
+
+Curly brackets {{ and }} in launcher path are not supported:
+{root_path}
+
+Please reinstall the launcher to another location.
+
+"""
+loc = """
+ランチャーの初期化に失敗しました!
+
+ランチャーのパスに波括弧 {{ および }} を含めることはサポートされていません:
+{root_path}
+
+ランチャーを別の場所に再インストールしてください。
+
+"""
+
+[error_dll_injector_file_not_found]
+src = "Injector file not found: {injector_lib_path}!"
+loc = "インジェクターファイルが見つかりません: {injector_lib_path}!"
+
+[error_dll_injector_load_failed]
+src = "Failed to load injector library!"
+loc = "インジェクターライブラリの読み込みに失敗しました!"
+
+[error_dll_injector_unload_failed]
+src = "Failed to unload injector library!"
+loc = "インジェクターライブラリのアンロードに失敗しました!"
+
+[dll_injector_shell_error_out_of_memory]
+src = "The operating system is out of memory/resources"
+loc = "オペレーティングシステムのメモリ/リソースが不足しています"
+
+[dll_injector_shell_error_file_not_found]
+src = "File not found"
+loc = "ファイルが見つかりません"
+
+[dll_injector_shell_error_path_not_found]
+src = "Path not found"
+loc = "パスが見つかりません"
+
+[dll_injector_shell_error_access_denied]
+src = "Access denied"
+loc = "アクセスが拒否されました"
+
+[dll_injector_shell_error_not_win32_app]
+src = ".exe file is invalid or not a Win32 app"
+loc = ".exe ファイルが無効であるか、Win32アプリではありません"
+
+[dll_injector_shell_error_sharing_violation]
+src = "Sharing violation"
+loc = "共有違反"
+
+[dll_injector_shell_error_no_app_association]
+src = "No application is associated with the file"
+loc = "このファイルに関連付けられているアプリケーションがありません"
+
+[dll_injector_shell_error_incomplete_app_association]
+src = "File association is incomplete"
+loc = "ファイルの関連付けが不完全です"
+
+[dll_injector_unknown_shell_error_code]
+src = "Unknown ShellExecute error code {error_code}"
+loc = "不明な ShellExecute エラーコード {error_code}"
+
+[error_dll_injector_process_start_failed]
+src = "Failed to start {process_name}: {error_text}!"
+loc = "{process_name} の起動に失敗しました: {error_text}!"
+
+[error_dll_injector_unknown_start_method]
+src = "Unknown process start method `{start_method}`!"
+loc = "不明なプロセス起動メソッド `{start_method}`!"
+
+[error_dll_injector_injection_failed]
+src = "Failed to inject {dll_paths}!"
+loc = "{dll_paths} のインジェクトに失敗しました!"
+
+[error_dll_injector_unhook_failed]
+src = "Invalid injector usage: {dll_path} was not unhooked!"
+loc = "無効なインジェクターの使用: {dll_path} のフックが解除されていません!"
+
+[error_dll_injector_another_instance]
+src = "Another instance of 3DMigotoLoader is running!"
+loc = "3DMigotoLoaderの別のインスタンスが実行中です!"
+
+[error_dll_injector_failed_to_load_dll]
+src = "Failed to load {dll_path}!"
+loc = "{dll_path} の読み込みに失敗しました!"
+
+[error_dll_injector_missing_entry_point]
+src = "Library {dll_path} is missing expected entry point!"
+loc = "ライブラリ {dll_path} に必要なエントリポイントがありません!"
+
+[error_dll_injector_hook_setup_failed]
+src = "Failed to setup windows hook for {dll_path}!"
+loc = "{dll_path} のWindowsフックのセットアップに失敗しました!"
+
+[error_dll_injector_unknown_hook_error]
+src = "Unknown error while hooking {dll_path}!"
+loc = "{dll_path} のフック中に不明なエラーが発生しました!"
+
+[error_dll_injector_hook_is_null]
+src = "Hook is NULL for {dll_path}!"
+loc = "{dll_path} のフックがNULLです!"
+
+[error_dll_injector_path_not_defined]
+src = "Invalid injector usage: dll path is not defined!"
+loc = "無効なインジェクターの使用: dllパスが定義されていません!"
+
+[error_dll_injector_process_not_defined]
+src = "Invalid injector usage: target process is not defined!"
+loc = "無効なインジェクターの使用: ターゲットプロセスが定義されていません!"
+
+[error_dll_injector_dll_not_hooked]
+src = "Invalid injector usage: dll is not hooked!"
+loc = "無効なインジェクターの使用: dllがフックされていません!"
+
+[error_ssl_certificate_validation_failed]
+src = """
+Failed to validate SSL certificate of GitHub HTTPS connection!
+
+If you trust your proxy, uncheck *Verify SSL* in *Launcher Settings* and try again.
+"""
+loc = """
+GitHub HTTPS接続のSSL証明書の検証に失敗しました!
+
+プロキシを信頼している場合は、*ランチャー設定* で *SSLを検証* のチェックを外して再試行してください。
+"""
+
+[error_github_connection_failed]
+src = """
+Failed to establish HTTPS connection to GitHub!
+
+Please check your Antivirus, Firewall, Proxy and VPN settings.
+"""
+loc = """
+GitHubへのHTTPS接続の確立に失敗しました!
+
+ウイルス対策ソフト、ファイアウォール、プロキシ、VPNの設定を確認してください。
+"""
+
+[error_github_rate_limit_exceeded]
+src = "GitHub API rate limit exceeded!"
+loc = "GitHub APIのレート制限を超過しました!"
+
+[error_github_invalid_token]
+src = """
+GitHub Personal Access Token is invalid!
+
+Please configure correct token in launcher settings.
+"""
+loc = """
+GitHubパーソナルアクセストークンが無効です!
+
+ランチャー設定で正しいトークンを設定してください。
+"""
+
+[error_github_parse_response_failed]
+src = "Failed to parse GitHub response!"
+loc = "GitHubのレスポンスの解析に失敗しました!"
+
+[error_github_parse_version_failed]
+src = "Failed to parse latest release version!"
+loc = "最新リリースバージョンの解析に失敗しました!"
+
+[error_github_parse_signature_failed]
+src = "Failed to parse signature!"
+loc = "署名の解析に失敗しました!"
+
+[error_github_asset_not_found]
+src = "Failed to locate asset matching to '{asset_name_format}'!"
+loc = "'{asset_name_format}' に一致するアセットが見つかりませんでした!"
+
+[error_github_invalid_release_notes]
+src = "<font color=\"red\">⚠ Error! Invalid release notes format! ⚠</font>"
+loc = "<font color=\"red\">⚠ エラー! リリースノートの形式が無効です! ⚠</font>"
+
+[error_github_unsigned_release]
+src = "<font color=\"red\">☢ Error! Release is unsigned! ☢</font>"
+loc = "<font color=\"red\">☢ エラー! リリースに署名がありません! ☢</font>"
+
+[error_proxy_host_not_specified]
+src = "Proxy host is not specified!"
+loc = "プロキシホストが指定されていません!"
+
+[error_proxy_port_not_specified]
+src = "Proxy port is not specified!"
+loc = "プロキシポートが指定されていません!"
+
+[error_proxy_port_must_be_numeric]
+src = "Proxy port must be numeric value!"
+loc = "プロキシポートは数値である必要があります!"
+
+[donate_and_wwmi]
+src = " and WWMI"
+loc = " および WWMI"
+
+[donate_popup_introduction]
+src = """
+Hey there — just a quick moment, I promise I won't interrupt again!
+
+I'm SpectrumQT, the developer behind XXMI Launcher{importer_info}.
+Looks like you've already enjoyed {num_sessions} {model_importer} sessions — awesome!
+"""
+loc = """
+こんにちは — 少しだけお時間をください。もう邪魔はしません!
+
+私はXXMI Launcher{importer_info}の開発者であるSpectrumQTです。
+すでに {num_sessions} 回も {model_importer} をご利用いただいているようですね — 素晴らしい!
+"""
+
+[donate_wwmi_introduction]
+src = """
+Hello! Thank you for visiting {model_importer} Appreciation Corner!
+
+This page is a bit unique, since I can't list many names here.
+Simply because I'm soloing {model_importer} and XXMI Launcher development.
+"""
+loc = """
+こんにちは! {model_importer} 感謝コーナーをご覧いただきありがとうございます!
+
+私は {model_importer} と XXMI Launcher の開発を一人で行っているため、
+このページには多くの名前を載せることができず、少しユニークなものになっています。
+"""
+
+[donate_other_introduction]
+src = """
+Hello! Thank you for visiting {model_importer} Appreciation Corner!
+
+Here you can see the dev team fighting for {model_importer} behind the scenes.
+It's a tough battle — but shader hackers prevail!
+"""
+loc = """
+こんにちは! {model_importer} 感謝コーナーをご覧いただきありがとうございます!
+
+ここでは、{model_importer} のために舞台裏で戦っている開発チームを紹介しています。
+厳しい戦いですが、シェーダーハッカーたちは勝利を収めています!
+"""
+
+[donate_wwmi_useful_check]
+src = "If you've been finding it useful, consider checking out"
+loc = "もし便利だと感じていただけたなら、ぜひこちらをチェックしてみてください"
+
+[donate_my_patreon_campaign]
+src = "my Patreon campaign."
+loc = "私のPatreonキャンペーン。"
+
+[donate_support_message]
+src = "Please consider supporting those who work hard every day to make {model_importer} possible!"
+loc = "{model_importer} を実現するために日々努力している人々へのサポートをご検討ください!"
+
+[donate_creators_single]
+src = "• Creator: "
+loc = "• クリエイター: "
+
+[donate_creators_multiple]
+src = "• Creators: "
+loc = "• クリエイター: "
+
+[donate_maintainers_single]
+src = "• Maintainer:"
+loc = "• メンテナー:"
+
+[donate_maintainers_multiple]
+src = "• Maintainers:"
+loc = "• メンテナー:"
+
+[donate_launcher_handy]
+src = "Also, if the launcher has been handy, I'd appreciate you joining"
+loc = "また、ランチャーが役に立っている場合は、ぜひこちらにご参加ください"
+
+[donate_my_patreon_short]
+src = "my Patreon."
+loc = "私のPatreon。"
+
+[donate_close_button]
+src = "Close"
+loc = "閉じる"
+
+[donate_close_countdown]
+src = "Close ({time_left})"
+loc = "閉じる ({time_left})"
+
+[bottom_bar_initializing_launch]
+src = "Initializing game launch..."
+loc = "ゲームの起動を初期化しています ..."
+
+[bottom_bar_hooking]
+src = "Hooking {library} to {process}..."
+loc = "{library} を {process} にフックしています ..."
+
+[bottom_bar_verifying_hook]
+src = "Verifying {library} load into {process}..."
+loc = "{library} が {process} に読み込まれたか検証しています ..."
+
+[bottom_bar_injecting]
+src = "Injecting {library} to {process}..."
+loc = "{library} を {process} にインジェクトしています ..."
+
+[bottom_bar_launching_game]
+src = "Launching game..."
+loc = "ゲームを起動しています ..."
+
+[bottom_bar_waiting_process]
+src = "Waiting for {process} to start..."
+loc = "{process} の起動を待機しています ..."
+
+[bottom_bar_closing_launcher]
+src = "Closing launcher..."
+loc = "ランチャーを閉じています ..."
+
+[bottom_bar_checking_updates]
+src = "Checking for updates..."
+loc = "アップデートを確認しています ..."
+
+[bottom_bar_connecting_github]
+src = "Connecting to GitHub..."
+loc = "GitHubに接続しています ..."
+
+[bottom_bar_downloading]
+src = "Downloading {asset}..."
+loc = "{asset} をダウンロードしています ..."
+
+[bottom_bar_verifying_integrity]
+src = "Verifying {asset} integrity..."
+loc = "{asset} の整合性を検証しています ..."
+
+[bottom_bar_initializing_installation]
+src = "Initializing update installation..."
+loc = "アップデートのインストールを初期化しています ..."
+
+[bottom_bar_writing_file]
+src = "Writing {asset} on disk..."
+loc = "ディスクに {asset} を書き込んでいます ..."
+
+[bottom_bar_moving_file]
+src = "Moving {asset}..."
+loc = "{asset} を移動しています ..."
+
+[bottom_bar_unpacking]
+src = "Unpacking {asset}..."
+loc = "{asset} を展開しています ..."
+
+[launcher_select_games_text]
+src = "Select Games To Mod:"
+loc = "MODを適用するゲームを選択:"
+
+[launcher_update_button_tooltip]
+src = """
+## Update packages to latest versions:
+{pending_update_message}
+
+<font color=\"#3366ff\">*Hover over versions in the bottom-left corner to view update descriptions.*</font>
+"""
+loc = """
+## パッケージを最新バージョンに更新:
+{pending_update_message}
+
+<font color=\"#3366ff\">*左下のバージョンにカーソルを合わせると、アップデートの概要が表示されます。*</font>
+"""
+
+[launcher_start_button]
+src = "Start"
+loc = "スタート"
+
+[launcher_install_button]
+src = "Install"
+loc = "インストール"
+
+[package_release_notes_up_to_date]
+src = """
+# What's new in {package_name} v{new_package_version}:
+{installed_release_notes}
+"""
+loc = """
+# {package_name} v{new_package_version} の新機能:
+{installed_release_notes}
+"""
+
+[package_release_notes_update_available]
+src = """
+# Update {package_name} to v{new_package_version} for:
+{latest_release_notes}
+"""
+loc = """
+# {package_name} を v{new_package_version} に更新して以下を適用:
+{latest_release_notes}
+"""
+
+[package_release_notes_not_installed]
+src = """
+Press **Install** button to setup the package.
+"""
+loc = """
+**インストール** ボタンを押してパッケージをセットアップしてください。
+"""
+
+[package_description_launcher]
+src = """
+*This package is XXMI Launcher App itself and defines its features.*
+"""
+loc = """
+*このパッケージは XXMI Launcher アプリそのものであり、その機能を定義します。*
+"""
+
+[package_description_xxmi_libraries]
+src = """
+*XXMI Libraries package is custom 3dmigoto build fiddling with data between GPU and a game process.*
+"""
+loc = """
+*XXMI Libraries パッケージは、GPUとゲームプロセス間のデータを処理するカスタムの3dmigotoビルドです。*
+"""
+
+[package_description_model_importer]
+src = """
+*Model Importer package offers a set of API functions required for mods to work in given game.*
+"""
+loc = """
+*Model Importer パッケージは、指定されたゲームでMODを動作させるために必要なAPI関数のセットを提供します。*
+"""
+
+[package_description_tooltip_open_github_changelog]
+src = """
+<font color=\"#3366ff\">*<u>Left-Click</u> to open {package_name} Dev Blog on Patreon.*</font>
+<font color=\"#3366ff\">*<u>Right-Click</u> to open {package_name} GitHub releases for full changelog.*</font>
+"""
+loc = """
+<font color=\"#3366ff\">*<u>左クリック</u> で Patreon の {package_name} 開発ブログを開きます。*</font>
+<font color=\"#3366ff\">*<u>右クリック</u> で完全な変更履歴が記載された {package_name} の GitHub リリースを開きます。*</font>
+"""
+
+[package_description_tooltip_open_dev_blog]
+src = """
+<font color=\"#3366ff\">*<u>Left-Click</u> to open {package_name} GitHub releases for full changelog.*</font>
+"""
+loc = """
+<font color=\"#3366ff\">*<u>左クリック</u> で完全な変更履歴が記載された {package_name} の GitHub リリースを開きます。*</font>
+"""
+
+[package_release_notes]
+src = """
+{package_release_notes}
+
+{actions_tooltip}
+<font color=\"#aaaaaa\">{package_description}</font>
+"""
+loc = """
+{package_release_notes}
+
+{actions_tooltip}
+<font color=\"#aaaaaa\">{package_description}</font>
+"""
+
+[tool_bar_repair_button]
+src = "Repair {importer}"
+loc = "{importer} を修復"
+
+[tool_bar_check_updates_button]
+src = "Check For Updates"
+loc = "アップデートを確認"
+
+[tool_bar_add_shortcut_button]
+src = "Add Desktop Shortcut"
+loc = "デスクトップショートカットを追加"
+
+[tool_bar_open_mods_button]
+src = "Open Mods Folder"
+loc = "Mods フォルダを開く"
+
+[top_bar_xxmi_button_tooltip]
+src = "Manage Model Importers"
+loc = "モデルインポーターを管理"
+
+[top_bar_wwmi_button_tooltip]
+src = "Wuthering Waves Model Importer"
+loc = "Wuthering Waves Model Importer"
+
+[top_bar_zzmi_button_tooltip]
+src = "Zenless Zone Zero Model Importer"
+loc = "Zenless Zone Zero Model Importer"
+
+[top_bar_srmi_button_tooltip]
+src = "Honkai: Star Rail Model Importer"
+loc = "Honkai: Star Rail Model Importer"
+
+[top_bar_gimi_button_tooltip]
+src = "Genshin Impact Model Importer"
+loc = "Genshin Impact Model Importer"
+
+[top_bar_himi_button_tooltip]
+src = "Honkai Impact Model Importer"
+loc = "Honkai Impact Model Importer"
+
+[top_bar_gamebanana_button_tooltip]
+src = "{importer} GameBanana"
+loc = "{importer} GameBanana"
+
+[top_bar_discord_button_tooltip]
+src = "AGMG Modding Community Discord"
+loc = "AGMG Modding Community Discord"
+
+[top_bar_github_button_tooltip]
+src = "XXMI Launcher GitHub"
+loc = "XXMI Launcher GitHub"
+
+[top_bar_donate_button_tooltip]
+src = "Support {importer}"
+loc = "{importer} を支援"
+
+[top_bar_settings_button_tooltip]
+src = "Open Settings"
+loc = "設定を開く"
+
+[top_bar_minimize_button_tooltip]
+src = "Minimize"
+loc = "最小化"
+
+[top_bar_close_button_tooltip]
+src = "Close"
+loc = "閉じる"
+
+[top_bar_unsafe_mode_text]
+src = "Unsafe Mode"
+loc = "アンセーフモード"
+
+[top_bar_unsafe_mode_text_tooltip]
+src = """
+Usage of 3-rd party 3dmigoto DLLs is allowed.
+Make sure to use ones only from a trusted source!
+"""
+loc = """
+サードパーティ製の3dmigoto DLLの使用が許可されています。
+必ず信頼できるソースのもののみを使用してください!
+"""
+
+[message_text_theme_load_failed_no_folder]
+src = """
+Failed to load {theme} theme:
+
+Theme folder does not exist!
+"""
+loc = """
+{theme} テーマの読み込みに失敗しました:
+
+テーマフォルダが存在しません!
+"""
+
+[message_text_theme_load_failed_no_file]
+src = """
+Failed to load {theme} theme:
+
+Theme file `custom-tkinter-theme.json` does not exist!
+"""
+loc = """
+{theme} テーマの読み込みに失敗しました:
+
+テーマファイル `custom-tkinter-theme.json` が存在しません!
+"""
+
+[message_title_theme_update_required]
+src = "Theme Update Required"
+loc = "テーマの更新が必要です"
+
+[message_button_theme_use_default]
+src = "Use Default"
+loc = "デフォルトを使用"
+
+[message_button_patch_theme]
+src = "Patch Theme"
+loc = "テーマにパッチを適用"
+
+[message_text_theme_update_required]
+src = """
+Selected {theme} theme cannot be loaded!
+
+Click `Use Default` to use default theme instead (ensures proper visuals).
+Click `Patch Theme` to replace `custom-tkinter-theme.json` with new one.
+"""
+loc = """
+選択された {theme} テーマを読み込めません!
+
+「デフォルトを使用」をクリックすると、代わりにデフォルトのテーマが使用されます（適切な見た目が保証されます）。
+「テーマにパッチを適用」をクリックすると、`custom-tkinter-theme.json` を新しいものに置き換えます。
+"""
+
+[status_reloading_gui]
+src = "Reloading GUI..."
+loc = "GUIを再読み込みしています ..."
+
+[advanced_settings_overwrite_ini_checkbox]
+src = "Overwrite d3dx.ini"
+loc = "d3dx.ini を上書きする"
+
+[advanced_settings_overwrite_ini_checkbox_tooltip]
+src = """
+Enabled: {importer} updates will overwrite existing d3dx.ini to ensure its up-to-date state.
+Disabled: {importer} updates will keep existing d3dx.ini untouched.
+"""
+loc = """
+有効: {importer} のアップデート時に既存の d3dx.ini を上書きし、最新の状態を保ちます。
+無効: {importer} のアップデート時に既存の d3dx.ini をそのまま保持します。
+"""
+
+[advanced_settings_security_label]
+src = "Security:"
+loc = "セキュリティ:"
+
+[advanced_settings_unsafe_mode_checkbox]
+src = "Unsafe Mode"
+loc = "アンセーフモード"
+
+[advanced_settings_unsafe_mode_checkbox_tooltip]
+src = """
+Enabled: Allow 3-rd party 3dmigoto dlls.
+Disabled: Disallow 3-rd party 3dmigoto dlls.
+Note: If 3-rd party d3d11.dll does not support running from nested directories, it will fail to load.
+"""
+loc = """
+有効: サードパーティ製の 3dmigoto DLL を許可します。
+無効: サードパーティ製の 3dmigoto DLL を許可しません。
+注意: サードパーティ製の d3d11.dll がネストされたディレクトリからの実行をサポートしていない場合、読み込みに失敗します。
+"""
+
+[advanced_settings_run_pre_launch_checkbox]
+src = "Run Pre-Launch:"
+loc = "起動前実行:"
+
+[advanced_settings_option_checkbox_tooltip]
+src = """
+Enabled: Option will have stated effect.
+Disabled: Option will have no effect.
+"""
+loc = """
+有効: オプションは記載された効果を持ちます。
+無効: オプションは効果を持ちません。
+"""
+
+[advanced_settings_run_pre_launch_tooltip]
+src = """
+Windows console command to be executed before game exe launch.
+Note: If something needs to be done before the game start, do it here.
+"""
+loc = """
+ゲームexeの起動前に実行されるWindowsコンソールコマンド。
+注意: ゲーム開始前に何か行う必要がある場合は、ここで設定します。
+"""
+
+[advanced_settings_wait_checkbox]
+src = "Wait"
+loc = "待機"
+
+[advanced_settings_run_pre_launch_wait_checkbox_tooltip]
+src = """
+Enabled: Wait for (blocking) command to finish its execution before launching the game exe.
+"""
+loc = """
+有効: ゲームexeを起動する前に、コマンド（ブロッキング）の実行が完了するのを待機します。
+"""
+
+[advanced_settings_custom_launch_checkbox]
+src = "Custom Launch:"
+loc = "カスタム起動:"
+
+[advanced_settings_custom_launch_entry_tooltip]
+src = """
+Windows console command to run when Start button is pressed instead of default game exe launch.
+Hint: If you want to change injection method only, just leave this field empty.
+Warning! This command also overrides `Launch Options` from General Settings.
+Note: If you want to start game exe with another custom exe, do it here.
+Example (equivalent for command internally used by launcher to start GI via FPS unlocker):
+`start /d \"C:\\Games\\XXMI Launcher\\Resources\\Packages\\GI-FPS-Unlocker\" unlockfps_nc.exe`
+"""
+loc = """
+デフォルトのゲームexeの代わりに、スタートボタンが押された時に実行されるWindowsコンソールコマンド。
+ヒント: インジェクトの方式のみを変更したい場合は、このフィールドを空のままにしてください。
+警告! このコマンドは一般設定の `起動オプション` も上書きします。
+注意: 別のカスタムexeを使用してゲームexeを起動したい場合は、ここで設定します。
+例 (FPSアンロッカー経由で原神を起動するためにランチャーが内部で使用するコマンドと同等):
+`start /d \"C:\\Games\\XXMI Launcher\\Resources\\Packages\\GI-FPS-Unlocker\" unlockfps_nc.exe`
+"""
+
+[advanced_settings_custom_launch_inject_mode_option_menu_tooltip]
+src = """
+Defines the way of 3dmigoto injection into the game process started via Custom Launch.
+* Inject: Use WriteProcessMemory, more reliable but requires direct memory access.
+* Hook: Use SetWindowsHookEx, less reliable, but potentially less prominent for anti-cheats.
+* Bypass: Skip 3dmigoto injection and process only Inject Libraries field.
+"""
+loc = """
+カスタム起動経由で開始されたゲームプロセスへの3dmigotoのインジェクト方式を定義します。
+* Inject: WriteProcessMemoryを使用します。信頼性は高いですが、直接のメモリアクセスが必要です。
+* Hook: SetWindowsHookExを使用します。信頼性は低いですが、アンチチートで目立ちにくい可能性があります。
+* Bypass: 3dmigotoのインジェクトをスキップし、[Inject Libraries] フィールドのみを処理します。
+"""
+
+[advanced_settings_run_post_load_checkbox]
+src = "Run Post-Load:"
+loc = "読み込み後実行:"
+
+[advanced_settings_run_post_load_checkbox_tooltip]
+src = """
+Windows console command to be executed after hooking d3d11.dll to launched game exe.
+Note: If something needs to be done after 3dmigoto injection, do it here.
+"""
+loc = """
+起動したゲームexeに d3d11.dll をフックした後に実行されるWindowsコンソールコマンド。
+注意: 3dmigotoのインジェクト後に何か行う必要がある場合は、ここで設定します。
+"""
+
+[advanced_settings_run_post_load_wait_checkbox_tooltip]
+src = """
+Enabled: Wait for (blocking) command to finish its execution before treating the game launch as complete.
+"""
+loc = """
+有効: ゲームの起動を完了として扱う前に、コマンド（ブロッキング）の実行が完了するのを待機します。
+"""
+
+[advanced_settings_inject_libraries_checkbox]
+src = "Inject Libraries:"
+loc = "ライブラリをインジェクト:"
+
+[advanced_settings_inject_libraries_tooltip]
+src = """
+List of additional DLL paths to inject into the game process. 1 path per line.
+injection will be made via WriteProcessMemory method.
+Example (inject ReShade dll):
+`C:\\Games\\ReShade\\ReShade64.dll`
+"""
+loc = """
+ゲームプロセスにインジェクトする追加のDLLパスのリスト。1行につき1つのパス。
+インジェクトは WriteProcessMemory 方式で行われます。
+例 (ReShadeのdllをインジェクトする場合):
+`C:\\Games\\ReShade\\ReShade64.dll`
+"""
+
+[launcher_settings_language_label]
+src = "Language:"
+loc = "言語:"
+
+[general_settings_engine_settings_label]
+src = "Engine Settings:"
+loc = "エンジン設定:"
+
+[general_settings_game_folder_label]
+src = "Game Folder:"
+loc = "ゲームフォルダ:"
+
+[general_settings_game_folder_error_label]
+src = "Failed to detect Game Folder!"
+loc = "ゲームフォルダの検出に失敗しました!"
+
+[settings_browse_path_button]
+src = "Browse..."
+loc = "参照..."
+
+[general_settings_detect_game_folder_button_tooltip]
+src = "Try to automatically detect existing installation folders."
+loc = "既存のインストールフォルダを自動検出してみます。"
+
+[general_settings_launch_options_label]
+src = "Launch Options:"
+loc = "起動オプション:"
+
+[general_settings_launch_options_entry_tooltip_wwmi]
+src = """
+**Enabled**: Start game via **Client-Win64-Shipping.exe** with specified command line arguments.
+
+- Disable intro: -SkipSplash
+
+**Disabled (default)**: Start game normally via **Wuthering Waves.exe** (most reliable way).
+<font color=\"red\">⚠ Game may crash with this option enabled! ⚠</font>
+"""
+loc = """
+**有効**: 指定されたコマンドライン引数を使用して **Client-Win64-Shipping.exe** からゲームを起動します。
+
+- イントロを無効化: -SkipSplash
+
+**無効 (デフォルト)**: **Wuthering Waves.exe** を介して通常通りゲームを起動します (最も信頼性の高い方法)。
+<font color=\"red\">⚠ このオプションを有効にするとゲームがクラッシュする可能性があります! ⚠</font>
+"""
+
+[general_settings_launch_options_entry_tooltip_default]
+src = """
+**Enabled**: Start game exe with specified command line arguments.
+**Disabled**: Ignore specified command line arguments and start game exe normally.
+"""
+loc = """
+**有効**: 指定されたコマンドライン引数を使用してゲームexeを起動します。
+**無効**: 指定されたコマンドライン引数を無視し、通常通りゲームexeを起動します。
+"""
+
+[general_settings_launch_options_about_button]
+src = "About..."
+loc = "詳細..."
+
+[general_settings_launch_options_about_button_tooltip]
+src = """
+Open {engine} command line arguments documentation webpage.
+Note: Game engine is customized by devs and some args may not work.
+"""
+loc = """
+{engine} のコマンドライン引数ドキュメントのウェブページを開きます。
+注意: ゲームエンジンは開発者によってカスタマイズされており、一部の引数が機能しない場合があります。
+"""
+
+[general_settings_start_method_label]
+src = "Start Method:"
+loc = "起動メソッド:"
+
+[general_settings_start_method_option_menu_tooltip]
+src = """
+**Native**: Create the game process directly. Usually it's the most reliable way.
+**Shell**: Start the game process via system console. Worth to try if you have some issues with Native.
+**Manual**: Skip launching the game on **Start** button press. Wait for user to launch it manually ({timeout}s timeout).
+"""
+loc = """
+**Native**: ゲームプロセスを直接作成します。通常はこれが最も信頼性の高い方法です。
+**Shell**: システムコンソール経由でゲームプロセスを起動します。Nativeで問題が発生する場合に試す価値があります。
+**Manual**: **スタート** ボタンを押したときのゲームの起動をスキップします。ユーザーが手動で起動するのを待機します（タイムアウト {timeout} 秒）。
+"""
+
+[general_settings_xxmi_delay_label]
+src = "XXMI Delay:"
+loc = "XXMI 遅延:"
+
+[general_settings_xxmi_delay_entry_tooltip_base]
+src = """
+Delay in milliseconds for how long injected XXMI DLL (3dmigoto) must wait before initialization.
+{tooltip_footer}
+"""
+loc = """
+インジェクトされた XXMI DLL (3dmigoto) が初期化前に待機する遅延時間（ミリ秒）。
+{tooltip_footer}
+"""
+
+[general_settings_xxmi_delay_entry_tooltip_footer_wwmi]
+src = """
+<font color=\"red\">⚠ Wuthering Waves crashes on launch with wrong delay! ⚠</font>
+<font color=\"#8B8000\">⚠ If default value fails, try to increase or decrease it until WuWa stops crashing. ⚠</font>
+## Known values for Wuthering Waves 2.4:
+- **500**: Default, works for most users.
+- **150**: Minimal known value to work along with ReShade.
+- **50**: Minimal known value to work.
+- **1000+**: Some users need really huge delays.
+"""
+loc = """
+<font color=\"red\">⚠ 遅延が間違っていると鳴潮は起動時にクラッシュします! ⚠</font>
+<font color=\"#8B8000\">⚠ デフォルト値で失敗する場合は、ゲームがクラッシュしなくなるまで増減を試してください。 ⚠</font>
+## 鳴潮 バージョン2.4の既知の設定値:
+- **500**: デフォルト。ほとんどのユーザーで動作します。
+- **150**: ReShadeと一緒に動作することが確認されている最小値。
+- **50**: 動作することが確認されている最小値。
+- **1000以上**: 一部のユーザーでは非常に大きな遅延が必要です。
+"""
+
+[general_settings_xxmi_delay_entry_tooltip_footer_general]
+src = """
+If game crashes with no mods, try to increase it. Start with steps of 50 and increase them as you go.
+"""
+loc = """
+MODなしでもゲームがクラッシュする場合は、遅延を増やしてみてください。最初は50刻みで徐々に増やしていきます。
+"""
+
+[general_settings_process_priority_label]
+src = "Process Priority:"
+loc = "プロセス優先度:"
+
+[general_settings_auto_config_label]
+src = "Auto Config:"
+loc = "自動構成:"
+
+[general_settings_configure_game_checkbox]
+src = "Configure Game Settings"
+loc = "ゲーム設定の自動構成"
+
+[general_settings_configure_game_tooltip_gimi]
+src = """
+**Enabled**: Ensure GIMI-compatible in-game **Graphics Settings** before game start:
+
+- `Dynamic Character Resolution: Off`
+
+**Disabled**: In-game settings will not be affected.
+
+<font color=\"red\">⚠ Mods will not work with wrong settings! ⚠</font>
+"""
+loc = """
+**有効**: ゲーム起動前に GIMI と互換性のあるゲーム内の **グラフィック設定** を保証します:
+
+- `キャラクター動的解像度: オフ`
+
+**無効**: ゲーム内設定には影響を与えません。
+
+<font color=\"red\">⚠ 設定が間違っているとMODは機能しません! ⚠</font>
+"""
+
+[general_settings_configure_game_tooltip_wwmi]
+src = """
+**Enabled**: Ensure WWMI-compatible in-game **Graphics Settings** before game start:
+
+- `Graphics Quality: Quality`
+
+**Disabled**: In-game settings will not be affected.
+
+<font color=\"red\">⚠ Mods will not work with wrong settings! ⚠</font>
+"""
+loc = """
+**有効**: ゲーム起動前に WWMI と互換性のあるゲーム内の **グラフィック設定** を保証します:
+
+- `グラフィック品質: 品質`
+
+**無効**: ゲーム内設定には影響を与えません。
+
+<font color=\"red\">⚠ 設定が間違っているとMODは機能しません! ⚠</font>
+"""
+
+[general_settings_configure_game_tooltip_zzmi]
+src = """
+**Enabled**: Ensure ZZMI-compatible in-game **Graphics Settings** before game start:
+
+- `Character Quality: High`
+- `High-Precision Character Animation: Disabled`
+
+**Disabled**: In-game settings will not be affected.
+
+<font color=\"red\">⚠ Mods will not work with wrong settings! ⚠</font>
+"""
+loc = """
+**有効**: ゲーム起動前に ZZMI と互換性のあるゲーム内の **グラフィック設定** を保証します:
+
+- `キャラクター品質: 高`
+- `高精度キャラクターアニメーション: 無効`
+
+**無効**: ゲーム内設定には影響を与えません。
+
+<font color=\"red\">⚠ 設定が間違っているとMODは機能しません! ⚠</font>
+"""
+
+[error_no_data_available_short]
+src = "N/A"
+loc = "N/A"
+
+[general_settings_disable_wounded_effect_checkbox]
+src = "Disable Wounded Effect"
+loc = "負傷エフェクトを無効化"
+
+[general_settings_disable_wounded_effect_checkbox_tooltip]
+src = """
+Most mods do not support this effect, so textures usually break after few hits taken.
+**Enabled**: Turn the effect `Off`. Ensures proper rendering of modded textures.
+**Disabled**: Turn the effect `On`. Select this if you use `Injured Effect Remover` tool.
+"""
+loc = """
+ほとんどのMODはこのエフェクトをサポートしていないため、数回攻撃を受けるとテクスチャが崩れます。
+**有効**: エフェクトを `オフ` にします。MODのテクスチャが正しくレンダリングされるようにします。
+**無効**: エフェクトを `オン` にします。`Injured Effect Remover` ツールを使用する場合はこれを選択してください。
+"""
+
+[general_settings_texture_boost_label]
+src = "Texture Boost:"
+loc = "テクスチャブースト:"
+
+[general_settings_use_all_mips_label]
+src = "Use All Mips"
+loc = "すべてのミップを使用"
+
+[general_settings_texture_streaming_pool_size_label]
+src = "Texture Pool Size:"
+loc = "テクスチャプールサイズ:"
+
+[general_settings_texture_streaming_limit_pool_checkbox]
+src = "Limit Pool Size To VRAM"
+loc = "プールサイズをVRAMに制限"
+
+[general_settings_mesh_lod_offset_label]
+src = "Mesh LOD Offset:"
+loc = "メッシュ LOD オフセット:"
+
+[general_settings_open_file_button]
+src = "🔍 Open {file_name}"
+loc = "🔍 {file_name} を開く"
+
+[error_general_settings_file_not_found]
+src = "File does not exist: **{file_name}**!"
+loc = "ファイルが存在しません: **{file_name}**!"
+
+[general_settings_tweaks_label]
+src = "Tweaks:"
+loc = "調整:"
+
+[general_settings_unlock_fps_checkbox_force]
+src = "Force 120 FPS"
+loc = "120 FPS を強制"
+
+[general_settings_unlock_fps_checkbox]
+src = "Unlock FPS:"
+loc = "FPSアンロック:"
+
+[general_settings_unlock_fps_checkbox_tooltip_wwmi]
+src = """
+This option allows to set FPS limit to 120 even on not officially supported devices.
+Please do note that with some hardware game refuses to go 120 FPS even with this tweak.
+**Enabled**: Sets `CustomFrameRate` to `120` in `LocalStorage.db` on game start.
+**Disabled**: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.
+"""
+loc = """
+公式にはサポートされていないデバイスでも、FPSの上限を120に設定できるオプションです。
+一部のハードウェアでは、この調整を行ってもゲームが120FPSを出さない場合があることに注意してください。
+**有効**: ゲーム開始時に `LocalStorage.db` の `CustomFrameRate` を `120` に設定します。
+**無効**: FPS設定に影響を与えません。すでに強制された120 FPSを元に戻すには、ゲーム内の設定を使用してください。
+"""
+
+[general_settings_unlock_fps_checkbox_tooltip_srmi]
+src = """
+This option allows to set FPS limit to 120.
+**Enabled**: Updates Graphics Settings Windows Registry key with 120 FPS value on game start.
+**Disabled**: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.
+**Warning!** Tweak is supported only for the Global HSR client and will not work for CN.
+*Note: Edits `FPS` value in `HKEY_CURRENT_USER/SOFTWARE/Cognosphere/Star Rail/GraphicsSettings_Model_h2986158309`.*
+"""
+loc = """
+FPSの上限を120に設定できるオプションです。
+**有効**: ゲーム開始時に、Windowsレジストリのグラフィック設定キーを120FPSの値で更新します。
+**無効**: FPS設定に影響を与えません。すでに強制された120 FPSを元に戻すには、ゲーム内の設定を使用してください。
+**警告!** この調整はグローバル版HSRクライアントでのみサポートされており、中国版では機能しません。
+*注意: `HKEY_CURRENT_USER/SOFTWARE/Cognosphere/Star Rail/GraphicsSettings_Model_h2986158309` の `FPS` の値を編集します。*
+"""
+
+[general_settings_unlock_fps_checkbox_tooltip_gimi]
+src = """
+This option allows to set custom FPS limit.
+**Warning!**: To minimize game engine glitches set FPS to 120 / 180 / 240 etc.
+**Enabled**: Launch game via `unlockfps_nc.exe` and let it run in background to keep FPS tweak applied.
+**Disabled**: Launch game via original `.exe` file, has no effect on FPS.
+*Hint: If FPS Unlocker package is outdated, you can manually update \"unlockfps_nc.exe\" from original repository.*
+*Local Path*: `Resources/Packages/GI-FPS-Unlocker/unlockfps_nc.exe`
+*Original Repository*: `https://github.com/34736384/genshin-fps-unlock`
+"""
+loc = """
+カスタムFPS上限を設定できるオプションです。
+**警告!**: ゲームエンジンの不具合を最小限に抑えるには、FPSを 120 / 180 / 240 などに設定してください。
+**有効**: `unlockfps_nc.exe` 経由でゲームを起動し、バックグラウンドで実行してFPS調整を適用し続けます。
+**無効**: オリジナルの `.exe` ファイル経由でゲームを起動します。FPSには影響を与えません。
+*ヒント: FPS Unlockerパッケージが古くなっている場合は、元のリポジトリから「unlockfps_nc.exe」を手動で更新できます。*
+*ローカルパス*: `Resources/Packages/GI-FPS-Unlocker/unlockfps_nc.exe`
+*元のリポジトリ*: `https://github.com/34736384/genshin-fps-unlock`
+"""
+
+[general_settings_unlock_fps_checkbox_tooltip_himi]
+src = """
+This option allows to set custom FPS limit.
+**Enabled**: Updates Graphics Settings Windows Registry key with specified FPS value on game start.
+**Disabled**: Has no effect on FPS settings, use in-game settings to undo already tweaked FPS.
+"""
+loc = """
+カスタムFPS上限を設定できるオプションです。
+**有効**: ゲーム開始時に、Windowsレジストリのグラフィック設定キーを指定されたFPSの値で更新します。
+**無効**: FPS設定に影響を与えません。すでに調整されたFPSを元に戻すには、ゲーム内の設定を使用してください。
+"""
+
+[general_settings_window_mode_option_menu_tooltip]
+src = "Game window mode when started with FPS Unlocker."
+loc = "FPSアンロッカーで起動したときのゲームのウィンドウモード。"
+
+[general_settings_apply_tweaks_checkbox]
+src = "Apply Performance Tweaks"
+loc = "パフォーマンス調整を適用"
+
+[general_settings_apply_tweaks_checkbox_tooltip]
+src = """
+**Enabled**: Add list of performance tweaks to `[SystemSettings]` section of `Engine.ini` on game start.
+**Disabled**: Do not add tweaks to `Engine.ini`. Already added ones will have to be removed manually.
+
+List of tweaks:
+{tweaks}
+"""
+loc = """
+**有効**: ゲーム開始時に、`Engine.ini` の `[SystemSettings]` セクションにパフォーマンス調整のリストを追加します。
+**無効**: `Engine.ini` に調整を追加しません。すでに追加されているものは手動で削除する必要があります。
+
+調整のリスト:
+{tweaks}
+"""
+
+[general_settings_enable_hdr_checkbox]
+src = "Enable HDR"
+loc = "HDRを有効化"
+
+[general_settings_enable_hdr_checkbox_tooltip]
+src = """
+**Warning**! Your monitor must support HDR and `Use HDR` must be enabled in Windows Display settings!
+**Enabled**: Turn HDR On. Creates HDR registry record each time before the game launch.
+**Disabled**: Turn HDR Off. No extra action required, game auto-removes HDR registry record on launch.
+"""
+loc = """
+**警告**! モニターがHDRをサポートしており、Windowsのディスプレイ設定で `HDRを使用する` が有効になっている必要があります!
+**有効**: HDRをオンにします。ゲームを起動するたびにHDRのレジストリレコードを作成します。
+**無効**: HDRをオフにします。特別なアクションは必要なく、ゲームは起動時にHDRのレジストリレコードを自動で削除します。
+"""
+
+[importer_settings_shader_hunting_label]
+src = "Shader Hunting:"
+loc = "シェーダーハンティング:"
+
+[importer_settings_enable_hunting_checkbox]
+src = "Enable Hunting"
+loc = "ハンティングを有効化"
+
+[importer_settings_enable_hunting_checkbox_tooltip]
+src = """
+Enabled: Allows to toggle Hunting Mode via Numpad [0] hotkey.
+* [d3dx.ini]: hunting = 2
+Disabled: Hunting Mode is hard disabled.
+* [d3dx.ini]: hunting = 0
+"""
+loc = """
+有効: テンキーの [0] ホットキーでハンティングモードを切り替えられるようになります。
+* [d3dx.ini]: hunting = 2
+無効: ハンティングモードは完全に無効化されます。
+* [d3dx.ini]: hunting = 0
+"""
+
+[importer_settings_dump_shaders_checkbox]
+src = "Dump Shaders"
+loc = "シェーダーをダンプ"
+
+[importer_settings_dump_shaders_checkbox_tooltip]
+src = """
+Enabled: Hunting Mode [Copy Hash] key also saves selected shader as file in ShaderFixes.
+* [d3dx.ini]: marking_actions = clipboard hlsl asm regex
+Disabled: Hunting Mode [Copy Hash] only copies hash of selected shader to clipboard.
+* [d3dx.ini]: marking_actions = clipboard
+"""
+loc = """
+有効: ハンティングモードの [ハッシュをコピー] キーで、選択したシェーダーをShaderFixesにファイルとして保存します。
+* [d3dx.ini]: marking_actions = clipboard hlsl asm regex
+無効: ハンティングモードの [ハッシュをコピー] では、選択したシェーダーのハッシュをクリップボードにコピーするだけです。
+* [d3dx.ini]: marking_actions = clipboard
+"""
+
+[importer_settings_error_handling_label]
+src = "Error Handling:"
+loc = "エラー処理:"
+
+[importer_settings_mute_warnings_checkbox]
+src = "Mute Warnings"
+loc = "警告をミュート"
+
+[importer_settings_mute_warnings_checkbox_tooltip]
+src = """
+Enabled: No error warnings or beeps whatsoever. Ignorance is bliss.
+* [d3dx.ini]: show_warnings = 0
+Disabled: Ini parser error warnings and beeps on F10 will haunt poor souls.
+* [d3dx.ini]: show_warnings = 1
+"""
+loc = """
+有効: エラー警告やビープ音は一切鳴りません。知らぬが仏。
+* [d3dx.ini]: show_warnings = 0
+無効: F10キーを押したときのIniパーサーエラーの警告やビープ音が鳴り響きます。
+* [d3dx.ini]: show_warnings = 1
+"""
+
+[importer_settings_calls_logging_checkbox]
+src = "Calls Logging"
+loc = "コールのログを記録"
+
+[importer_settings_calls_logging_checkbox_tooltip]
+src = """
+Enabled: Log API usage.
+* [d3dx.ini]: calls = 1
+Disabled: Do not log calls. Maximum performance.
+* [d3dx.ini]: calls = 0
+"""
+loc = """
+有効: APIの使用状況をログに記録します。
+* [d3dx.ini]: calls = 1
+無効: コールをログに記録しません。パフォーマンスが最大化されます。
+* [d3dx.ini]: calls = 0
+"""
+
+[importer_settings_debug_logging_checkbox]
+src = "Debug Logging"
+loc = "デバッグログ"
+
+[importer_settings_debug_logging_checkbox_tooltip]
+src = """
+Enabled: Super verbose debug logging.
+* [d3dx.ini]: debug = 1
+Disabled: No debug logging. Maximum performance.
+* [d3dx.ini]: debug = 0
+"""
+loc = """
+有効: 非常に詳細なデバッグログを記録します。
+* [d3dx.ini]: debug = 1
+無効: デバッグログを記録しません。パフォーマンスが最大化されます。
+* [d3dx.ini]: debug = 0
+"""
+
+[importer_settings_importer_folder_label]
+src = "Importer Folder:"
+loc = "Importer フォルダ:"
+
+[importer_settings_importer_folder_label_dynamic]
+src = "{importer} Folder:"
+loc = "{importer} フォルダ:"
+
+[importer_settings_importer_folder_entry_tooltip]
+src = """
+Path to folder containing `Mods` folder, `d3dx.ini` and other {importer} resources.
+**Absolute**: Set any arbitrary folder, i.e. `C:/Games/{importer}/`.
+**Relative**: Set any folder **inside** the Launcher folder, i.e. `{importer}/` (default).
+"""
+loc = """
+`Mods` フォルダ、`d3dx.ini`、その他の {importer} リソースを含むフォルダへのパス。
+**絶対パス**: 任意のフォルダを設定します。例: `C:/Games/{importer}/`。
+**相対パス**: ランチャーフォルダの **内側** にある任意のフォルダを設定します。例: `{importer}/` (デフォルト)。
+"""
+
+[importer_settings_ini_protection_label]
+src = "Ini Protection:"
+loc = "Ini 保護:"
+
+[importer_settings_enforce_rendering_checkbox]
+src = "Enforce Rendering Settings"
+loc = "レンダリング設定を強制"
+
+[importer_settings_enforce_rendering_checkbox_tooltip]
+src = """
+Enabled: Ensure {importer}-compatible [Rendering] section settings.
+* [d3dx.ini]: texture_hash = {texture_hash}
+* [d3dx.ini]: track_texture_updates = {track_texture_updates}
+Disabled: Settings above will not be forced into d3dx.ini.
+"""
+loc = """
+有効: {importer} と互換性のある [Rendering] セクションの設定を保証します。
+* [d3dx.ini]: texture_hash = {texture_hash}
+* [d3dx.ini]: track_texture_updates = {track_texture_updates}
+無効: 上記の設定は d3dx.ini に強制されません。
+"""
+
+[launcher_settings_start_behavior_label]
+src = "Start Behavior:"
+loc = "起動時の挙動:"
+
+[launcher_settings_auto_close_checkbox]
+src = "Close Launcher After Game Start"
+loc = "ゲーム起動後にランチャーを閉じる"
+
+[launcher_settings_auto_close_checkbox_tooltip]
+src = """
+Enabled: Launcher will close itself once the game has started and 3dmigoto injection has been confirmed.
+Disabled: Launcher will keep itself running.
+"""
+loc = """
+有効: ゲームが開始され、3dmigotoのインジェクトが確認されると、ランチャー自体を閉じます。
+無効: ランチャーを実行したままにします。
+"""
+
+[launcher_settings_timeout_label]
+src = "Timeout:"
+loc = "タイムアウト:"
+
+[launcher_settings_timeout_entry_tooltip]
+src = """
+Controls how long launcher should wait for the game to show its window after launch.
+Game process will be considered as crashed once timeout is met.
+Default value is **30**.
+"""
+loc = """
+起動後、ランチャーがゲームのウィンドウ表示を待機する時間を制御します。
+タイムアウトに達すると、ゲームプロセスはクラッシュしたとみなされます。
+デフォルト値は **30** です。
+"""
+
+[launcher_settings_update_policy_label]
+src = "Update Policy:"
+loc = "更新ポリシー:"
+
+[launcher_settings_auto_update_checkbox]
+src = "Auto Update"
+loc = "自動アップデート"
+
+[launcher_settings_auto_update_checkbox_tooltip]
+src = """
+Enabled: Launcher and {importer} updates will be Downloaded and Installed automatically.
+Disabled: Use special [▲] button next to [Start] button to Download and Install updates manually.
+"""
+loc = """
+有効: ランチャーと {importer} のアップデートは自動的にダウンロードおよびインストールされます。
+無効: [スタート] ボタンの横にある専用の [▲] ボタンを使用して、手動でアップデートをダウンロードおよびインストールします。
+"""
+
+[launcher_settings_update_channel_label]
+src = "Channel:"
+loc = "チャネル:"
+
+[launcher_settings_update_channel_option_menu_tooltip]
+src = """
+**Auto**: Detect update installation method automatically.
+**MSI**: Use native `.msi` installers to install updates.
+**ZIP**: Use portable `.zip` archives to install updates.
+"""
+loc = """
+**Auto**: アップデートのインストール方法を自動的に検出します。
+**MSI**: ネイティブの `.msi` インストーラーを使用してアップデートをインストールします。
+**ZIP**: ポータブルな `.zip` アーカイブを使用してアップデートをインストールします。
+"""
+
+[launcher_settings_theme_label]
+src = "UI Theme:"
+loc = "UI テーマ:"
+
+[launcher_settings_theme_option_menu_tooltip]
+src = """
+Select launcher GUI theme.
+Warning! `Default` theme will be overwritten by launcher updates!
+To make a custom theme:
+1. Create a duplicate of `Default` folder in `Themes` folder.
+2. Rename the duplicate in a way you want it to be shown in Settings.
+3. Edit or replace any images (valid extensions: webp, jpeg, png, jpg).
+"""
+loc = """
+ランチャーのGUIテーマを選択します。
+警告! `Default` テーマはランチャーのアップデートによって上書きされます!
+カスタムテーマを作成するには:
+1. `Themes` フォルダ内に `Default` フォルダの複製を作成します。
+2. 設定に表示させたい名前に複製をリネームします。
+3. 画像を編集または置き換えます (有効な拡張子: webp, jpeg, png, jpg)。
+"""
+
+[launcher_settings_dev_mode_checkbox]
+src = "Dev Mode"
+loc = "開発者モード"
+
+[launcher_settings_dev_mode_checkbox_tooltip]
+src = """
+Enabled: Launcher will track changes in `custom-tkinter-theme.json` and apply them on the fly.
+Disabled: Theme changes will not be tracked.
+"""
+loc = """
+有効: ランチャーは `custom-tkinter-theme.json` の変更を追跡し、オンザフライで適用します。
+無効: テーマの変更は追跡されません。
+"""
+
+[launcher_settings_connection_label]
+src = "Connection:"
+loc = "接続:"
+
+[launcher_settings_github_token_label]
+src = "GitHub Token:"
+loc = "GitHub トークン:"
+
+[launcher_settings_github_token_entry_tooltip]
+src = """
+Your **Personal Access Token** on **GitHub** (i.e. `ghp_f7gy3A4eQ97jfy2983mfZu2Hy93yf2P3d798`).
+Allows to combat `GitHub API Requests Limit` error that usually happens with public proxies.
+It is totally free and only requires GitHub registration.
+To create new token:
+1. Click `[?]` button to open token creation webpage.
+2. Use `Generate new token (classic)` button.
+"""
+loc = """
+**GitHub** の **Personal Access Token** (例: `ghp_f7gy3A4eQ97jfy2983mfZu2Hy93yf2P3d798`)。
+公開プロキシなどでよく発生する `GitHub API Requests Limit` (リクエスト制限) エラーを回避できます。
+完全無料で、GitHubへの登録のみが必要です。
+新しいトークンを作成するには:
+1. `[?]` ボタンをクリックして、トークン作成のウェブページを開きます。
+2. `Generate new token (classic)` ボタンを使用します。
+"""
+
+[launcher_settings_github_token_create_button]
+src = "Create..."
+loc = "作成..."
+
+[launcher_settings_github_token_create_button_tooltip]
+src = "Open **GitHub Personal Access Token** creation webpage."
+loc = "**GitHub Personal Access Token** の作成ウェブページを開きます。"
+
+[launcher_settings_verify_ssl_checkbox]
+src = "Verify SSL"
+loc = "SSLを検証"
+
+[launcher_settings_verify_ssl_checkbox_tooltip]
+src = """
+<font color=\"red\">⚠ Disable only if you trust your proxy or whatever else that breaks SSL. ⚠</font>
+**Enabled**: Validate SLL certificates for GitHub downloads to keep you secure.
+**Disabled**: Allow insecure connection vulnerable to man-in-middle attacks.
+"""
+loc = """
+<font color=\"red\">⚠ プロキシなど、SSLを妨げるものを信頼している場合のみ無効にしてください。 ⚠</font>
+**有効**: セキュリティを保つため、GitHubのダウンロード時にSSL証明書を検証します。
+**無効**: 中間者攻撃の脆弱性がある安全でない接続を許可します。
+"""
+
+[launcher_settings_proxy_enable_checkbox]
+src = "Use Proxy:"
+loc = "プロキシを使用:"
+
+[launcher_settings_proxy_enable_checkbox_tooltip]
+src = """
+Controls how launcher connects to GitHub to download packages.
+**Enabled**: Use specified proxy server to access Internet.
+**Disabled**: Use default system Internet connection settings.
+"""
+loc = """
+ランチャーがパッケージをダウンロードするためにGitHubに接続する方法を制御します。
+**有効**: 指定されたプロキシサーバーを使用してインターネットにアクセスします。
+**無効**: デフォルトのシステムのインターネット接続設定を使用します。
+"""
+
+[launcher_settings_proxy_type_label]
+src = "Type:"
+loc = "種類:"
+
+[launcher_settings_proxy_type_option_menu_tooltip]
+src = """
+**HTTPS**: Good old proxy protocol. Offers best security.
+**SOCKS5**: Newer and less secure, but excels at bypassing firewalls.
+"""
+loc = """
+**HTTPS**: 古き良きプロキシプロトコル。最高のセキュリティを提供します。
+**SOCKS5**: より新しくセキュリティは劣りますが、ファイアウォールのバイパスに優れています。
+"""
+
+[launcher_settings_proxy_dns_checkbox]
+src = "Proxy DNS Via SOCKS5"
+loc = "SOCKS5 経由で DNS をプロキシ"
+
+[launcher_settings_proxy_dns_checkbox_tooltip]
+src = """
+**Enabled**: Use SOCKS5 proxy connection to route DNS requests.
+**Disabled**: DNS requests will be routed through your ISP.
+"""
+loc = """
+**有効**: SOCKS5 プロキシ接続を使用してDNSリクエストをルーティングします。
+**無効**: DNSリクエストはISP経由でルーティングされます。
+"""
+
+[launcher_settings_proxy_host_label]
+src = "Host:"
+loc = "ホスト:"
+
+[launcher_settings_proxy_host_entry_tooltip]
+src = "Proxy IP address (i.e. `123.12.1.231`) or domain name (i.e. `proxyprovider.com`)."
+loc = "プロキシの IPアドレス (例: `123.12.1.231`) または ドメイン名 (例: `proxyprovider.com`)。"
+
+[launcher_settings_proxy_port_label]
+src = "Port:"
+loc = "ポート:"
+
+[launcher_settings_proxy_port_entry_tooltip]
+src = "Proxy port (i.e. `1080`)."
+loc = "プロキシのポート (例: `1080`)。"
+
+[launcher_settings_proxy_credentials_checkbox]
+src = "Proxy Requires Password"
+loc = "プロキシにパスワードが必要"
+
+[launcher_settings_proxy_credentials_checkbox_tooltip]
+src = """
+**Enabled**: Use specified user name and password for the proxy server authentication.
+**Disabled**: Do not use any credentials when accessing a proxy server.
+"""
+loc = """
+**有効**: プロキシサーバーの認証に、指定されたユーザー名とパスワードを使用します。
+**無効**: プロキシサーバーにアクセスする際に認証情報を使用しません。
+"""
+
+[launcher_settings_proxy_user_label]
+src = "User:"
+loc = "ユーザー:"
+
+[launcher_settings_proxy_user_entry_tooltip]
+src = "User name provided by your proxy service."
+loc = "プロキシサービスによって提供されたユーザー名。"
+
+[launcher_settings_proxy_password_label]
+src = "Password:"
+loc = "パスワード:"
+
+[launcher_settings_proxy_password_entry_tooltip]
+src = "Password provided by your proxy service."
+loc = "プロキシサービスによって提供されたパスワード。"
+
+[settings_tab_general]
+src = "General"
+loc = "一般"
+
+[settings_tab_launcher]
+src = "Launcher"
+loc = "ランチャー"
+
+[settings_tab_importer]
+src = "MI"
+loc = "MI"
+
+[settings_tab_advanced]
+src = "Advanced"
+loc = "詳細"
+
+[settings_title]
+src = "Settings"
+loc = "設定"

@@ -1,0 +1,382 @@
+[message_title_fatal_error]
+src = "Fatal Error"
+loc = "重大なエラー"
+
+[error_launcher_crashed_on_init]
+src = """
+Launcher has crashed during initialization:
+
+Log file: {log_path}
+
+Error: {error_text}
+"""
+loc = """
+ランチャー初期化中にクラッシュしました:
+
+Log file: {log_path}
+
+Error: {error_text}
+"""
+
+[message_title_rogue_ini_notification]
+src = "Stability Warning"
+loc = "安定性に関する警告"
+
+[message_text_rogue_ini_in_mods_detected]
+src = """
+Detected mods with ini files containing **d3dx.ini**-exclusive options:
+
+{mod_list}
+
+Listed files [usually cause]({link_wiki_d3dx_ini_shipping}) silent errors, glitches and crashes.
+"""
+loc = """
+**d3dx.ini** に固有のオプションを含むiniファイルが検出されました:
+
+{mod_list}
+
+リストされたファイルは、[通常、]({link_wiki_d3dx_ini_shipping}) サイレントエラー、不具合、およびクラッシュを引き起こします。
+"""
+
+[message_button_disable_ini_files]
+src = "Disable Ini Files"
+loc = "INIファイルを無効化"
+
+[message_title_performance_notification]
+src = "Performance Notification"
+loc = "パフォーマンス通知"
+
+[message_text_global_triggers_in_mods_detected]
+src = """
+Detected mods with notable global performance impact:
+
+{checkbox_widget}
+
+Listed mods are using [unlimited resource slot triggers]({link_wiki_global_triggers_usage}).
+"""
+loc = """
+システム全体のパフォーマンスに顕著な影響を与えることが確認されたMOD:
+
+{checkbox_widget}
+
+リストされているMODは、[無制限のリソーススロットトリガー]({link_wiki_global_triggers_usage})を使用しています。
+"""
+
+[message_button_disable_selected]
+src = "Disable Selected"
+loc = "選択項目を無効化"
+
+[optimizing_ini_files_in_folder]
+src = "Optimizing INI files in {folder_name} folder..."
+loc = "{folder_name} フォルダ内の INI ファイルを最適化しています ..."
+
+[tool_bar_optimize_mods_button]
+src = "Optimize Mods"
+loc = "MODを最適化"
+
+[message_title_optimization_results]
+src = "Optimization Results"
+loc = "最適化結果"
+
+[message_text_optimization_results]
+src = """
+Successfully introduced following optimizations:
+
+{optimization_results:md_list}
+
+Check out {log_link} for more details.
+"""
+loc = """
+以下の最適化を正常に導入しました:
+
+{optimization_results:md_list}
+
+詳細については {log_link} をご覧ください。
+"""
+
+[optimization_results_disabled_mods]
+src = "Disabled {disabled_mods_count} mods."
+loc = "{disabled_mods_count} 個のMODを無効化しました。"
+
+[optimization_results_disabled_files]
+src = "Disabled {disabled_files_count} INI files."
+loc = "{disabled_files_count} 個のINIファイルを無効化しました。"
+
+[optimization_results_edited_lines]
+src = "Edited {edited_lines_count} lines in {edited_files_count} INI files."
+loc = "{edited_files_count} 個のINIファイル内の {edited_lines_count} 行を変更しました。"
+
+
+[message_text_optimization_no_results]
+src = "All supported optimizations are already applied!"
+loc = "サポートされている最適化はすべてすでに適用されています!"
+
+[error_dll_inject_process_not_found]
+src = "Process {pid} not found"
+loc = "プロセス PID {pid} が見つかりません"
+
+[error_dll_inject_invalid_dll_path]
+src = "Invalid DLL path {dll_path}"
+loc = "DLLパス {dll_path} が不正です"
+
+[error_dll_inject_kernel32_fail]
+src = "Failed to resolve kernel32.dll"
+loc = "kernel32.dll の解決に失敗しました"
+
+[error_dll_inject_loadlibrary_fail]
+src = "Failed to resolve LoadLibraryW"
+loc = "LoadLibraryW の解決に失敗しました"
+
+[error_dll_inject_remote_alloc_fail]
+src = "Failed to allocate remote memory"
+loc = "リモートメモリの割り当てに失敗しました"
+
+[error_dll_inject_write_memory_fail]
+src = "Failed to write DLL path to process memory"
+loc = "プロセスメモリへのDLLパスの書き込みに失敗しました"
+
+[error_dll_inject_thread_fail]
+src = "Failed to create remote thread"
+loc = "リモートスレッドの作成に失敗しました"
+
+[error_dll_inject_thread_timeout]
+src = "Injection thread timed out"
+loc = "インジェクションスレッドがタイムアウトしました"
+
+[error_dll_inject_thread_wait_fail]
+src = "Injection thread wait failed"
+loc = "インジェクションスレッドの待機に失敗しました"
+
+[error_dll_inject_injection_failed]
+src = "DLL injection failed"
+loc = "DLLインジェクションに失敗しました"
+
+[error_dll_inject_unknown_error]
+src = "Unknown low level error"
+loc = "不明な低レベルエラーが発生しました"
+
+[error_unknown_error_code]
+src = "Unknown error code {error_code}"
+loc = "不明なエラーコード: {error_code}"
+
+[error_dll_injector_failed]
+src = """
+Failed to inject {dll_path}:
+{error_text}!
+"""
+loc = """
+{dll_path} のインジェクションに失敗しました:
+{error_text}
+"""
+
+[error_dll_injector_extra_library_failed]
+src = """
+Failed to inject extra library {dll_path}:
+{error_text}!
+Please check Advanced Settings → Inject Libraries.
+"""
+loc = """
+追加ライブラリ {dll_path} のインジェクションに失敗しました:
+{error_text}
+「詳細設定」→「インジェクトするライブラリ」を確認してください。
+"""
+
+[error_msvc_integrity_verification_failed_md]
+src = """
+**Microsoft Visual C++ Redistributable** is damaged or not installed!
+
+Please try to reinstall it from [Microsoft Website]({page_link}) ([direct download]({direct_link})).
+
+Log file: {log_path}
+
+Error: {error_text}
+"""
+loc = """
+**Microsoft Visual C++ 再頒布可能パッケージ**が破損しているか、インストールされていません!
+
+[Microsoft Webサイト]({page_link}) ([ダイレクトダウンロード]({direct_link})) から再インストールを試してください。
+
+ログファイル: {log_path}
+
+エラー: {error_text}
+"""
+
+[error_msvc_integrity_verification_failed_plain]
+src = """
+Microsoft Visual V C++ Redistributable is damaged or not installed!
+
+Please reinstall it from https://aka.ms/vs/17/release/vc_redist.x64.exe
+
+Log file: {log_path}
+
+Error: {error_text}
+"""
+loc = """
+Microsoft Visual C++ 再頒布可能パッケージが破損しているか、インストールされていません!
+
+https://aka.ms/vs/17/release/vc_redist.x64.exe から再インストールしてください。
+
+ログファイル: {log_path}
+
+エラー: {error_text}
+"""
+
+[error_model_importer_auto_select_failed]
+src = """
+Failed to auto-select importer for `{path}`!
+
+Try to add `--nogui --xxmi WWMI` args (or GIMI, SRMI, ZZMI, HIMI, EFMI).
+"""
+loc = """
+`{path}` のインポーターの自動選択に失敗しました!
+
+引数 `--nogui --xxmi WWMI` (または GIMI, SRMI, ZZMI, HIMI, EFMI) の追加を試してください。
+"""
+
+[application_update_found]
+src = "{package} update found: {current} → {latest}"
+loc = "{package} のアップデートが見つかりました: {current} → {latest}"
+
+[locale_list_conjunction_spacing]
+src = "\\\\s"
+loc = " "
+
+[message_text_duplicate_libraries_detected]
+src = """
+Your Mods folder contains some libraries that are already included into {importer}!
+
+Would you like to disable following duplicates automatically (recommended)?
+
+{duplicates}
+"""
+loc = """
+Mods フォルダに、既に {importer} に含まれているライブラリが存在します!
+
+以下の重複ファイルを自動的に無効化しますか？（推奨）
+
+{duplicates}
+"""
+
+[error_extra_library_not_found]
+src = """
+Failed to inject extra library {dll_path}:
+File not found!
+Please check Advanced Settings → Inject Libraries.
+"""
+loc = """
+追加ライブラリ {dll_path} のインジェクションに失敗しました:
+ファイルが見つかりません!
+「詳細設定」→「ライブラリのインジェクション」を確認してください。
+"""
+
+[error_set_readonly_failed]
+src = "Failed to set Read Only flag on file {path}: {error_text}!"
+loc = "ファイル {path} を「読み取り専用」に設定できませんでした: {error_text}"
+
+[message_button_remove_flag]
+src = "Remove Flag"
+loc = "フラグを削除"
+
+[donate_wwmi_footer]
+src = """
+It's all about building better tools for the entire {model_importer} community.
+
+The more patrons, the stronger is motivation to shape new big features!
+"""
+loc = """
+すべては {model_importer} コミュニティ全体のために、より良いツールを構築することを目指しています。
+
+支援者が増えるほど、新しい大きな機能を形にするためのモチベーションに繋がります!
+"""
+
+[general_settings_start_method_native]
+src = "Native"
+loc = "ネイティブ"
+
+[general_settings_start_method_shell]
+src = "Shell"
+loc = "シェル"
+
+[general_settings_start_method_manual]
+src = "Manual"
+loc = "手動"
+
+[general_settings_process_priority_low]
+src = "Low"
+loc = "低"
+
+[general_settings_process_priority_below_normal]
+src = "Below Normal"
+loc = "通常以下"
+
+[general_settings_process_priority_normal]
+src = "Normal"
+loc = "通常"
+
+[general_settings_process_priority_above_normal]
+src = "Above Normal"
+loc = "通常以上"
+
+[general_settings_process_priority_high]
+src = "High"
+loc = "高"
+
+[general_settings_process_priority_realtime]
+src = "Realtime"
+loc = "リアルタイム"
+
+[general_settings_process_priority_option_menu_tooltip]
+src = """
+Set process priority for the game exe.
+"""
+loc = """
+ゲーム本体（exe）のプロセス優先度を設定します。
+"""
+
+[general_settings_open_file_button_tooltip]
+src = "Open **{file_name}** in default text editor file for manual tweaking."
+loc = "手動で調整するために、デフォルトのテキストエディタで **{file_name}** を開きます。"
+
+[general_settings_window_mode_windowed]
+src = "Windowed"
+loc = "ウィンドウ"
+
+[general_settings_window_mode_borderless]
+src = "Borderless"
+loc = "ボーダーレス"
+
+[general_settings_window_mode_fullscreen]
+src = "Fullscreen"
+loc = "フルスクリーン"
+
+[general_settings_window_mode_exclusive_fullscreen]
+src = "Exclusive Fullscreen"
+loc = "排他的フルスクリーン"
+
+[error_migoto_game_detection_timeout]
+src = """
+Failed to detect window of game process {process_name}!
+
+If game window takes more than {start_timeout} seconds to appear, adjust **Timeout** in **General Settings**.
+
+If game crashed, try to follow the [Crash Isolation Checklist]({checklist_link}).
+"""
+loc = """
+ゲームプロセス {process_name} のウィンドウを検出できませんでした!
+
+ウィンドウが表示されるまでに {start_timeout} 秒以上かかる場合は、「一般設定」の「タイムアウト」を調整してください。
+
+ゲームがクラッシュした場合は、[クラッシュ分離チェックリスト]({checklist_link})に従ってください。
+"""
+
+[message_text_locale_errors]
+src = """
+Detected errors in active localization files:
+
+{locale_errors:md_list}
+"""
+loc = """
+有効なローカライズファイルにエラーが検出されました:
+
+{locale_errors:md_list}
+"""
