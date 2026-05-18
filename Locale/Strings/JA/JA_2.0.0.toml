@@ -291,7 +291,7 @@ Failed to terminate FPS Unlocker!
 Please close it manually and press [OK] to continue.
 """
 loc = """
-FPS アンロッカーを終了できませんでした！
+FPS アンロッカーを終了できませんでした!
 
 手動で終了し、[OK] をクリックして続行してください。
 """
