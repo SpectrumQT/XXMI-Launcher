@@ -11,7 +11,7 @@ Log file: {log_path}
 Error: {error_text}
 """
 loc = """
-ランチャー初期化中にクラッシュしました:
+ランチャー起動中にクラッシュしました:
 
 Log file: {log_path}
 
