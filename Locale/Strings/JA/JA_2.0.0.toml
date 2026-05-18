@@ -1569,9 +1569,10 @@ loc = """
 [advanced_settings_run_post_load_wait_checkbox_tooltip]
 src = """
 Enabled: Wait for (blocking) command to finish its execution before treating the game launch as complete.
+
 """
 loc = """
-有効: ゲームの起動を完了として扱う前に、コマンド（ブロッキング）の実行が完了するのを待機します。
+有効: ゲームの起動が完了したものとして扱う前に、コマンドの実行が完了するのを待機します。
 """
 
 [advanced_settings_inject_libraries_checkbox]
@@ -1614,7 +1615,7 @@ loc = "参照 ..."
 
 [general_settings_detect_game_folder_button_tooltip]
 src = "Try to automatically detect existing installation folders."
-loc = "既存のインストールフォルダを自動検出してみます。"
+loc = "既存のインストールフォルダの自動検出を試みます。"
 
 [general_settings_launch_options_label]
 src = "Launch Options:"
@@ -1650,7 +1651,7 @@ loc = """
 
 [general_settings_launch_options_about_button]
 src = "About..."
-loc = "詳細..."
+loc = "詳細 ..."
 
 [general_settings_launch_options_about_button_tooltip]
 src = """
@@ -1658,7 +1659,7 @@ Open {engine} command line arguments documentation webpage.
 Note: Game engine is customized by devs and some args may not work.
 """
 loc = """
-{engine} のコマンドライン引数ドキュメントのウェブページを開きます。
+{engine} のコマンドライン引数ドキュメントのWebページを開きます。
 注意: ゲームエンジンは開発者によってカスタマイズされており、一部の引数が機能しない場合があります。
 """
 
@@ -1674,8 +1675,8 @@ src = """
 """
 loc = """
 **Native**: ゲームプロセスを直接作成します。通常はこれが最も信頼性の高い方法です。
-**Shell**: システムコンソール経由でゲームプロセスを起動します。Nativeで問題が発生する場合に試す価値があります。
-**Manual**: **スタート** ボタンを押したときのゲームの起動をスキップします。ユーザーが手動で起動するのを待機します（タイムアウト {timeout} 秒）。
+**Shell**: システムコンソール経由でゲームプロセスを起動します。Native で問題が発生する場合に試す価値があります。
+**Manual**: **起動** ボタンを押したときのゲームの起動をスキップします。ユーザーが手動で起動するのを待機します (タイムアウト {timeout} 秒)。
 """
 
 [general_settings_xxmi_delay_label]
@@ -1688,7 +1689,7 @@ Delay in milliseconds for how long injected XXMI DLL (3dmigoto) must wait before
 {tooltip_footer}
 """
 loc = """
-インジェクトされた XXMI DLL (3dmigoto) が初期化前に待機する遅延時間（ミリ秒）。
+インジェクトされた XXMI DLL (3dmigoto) が初期化前に待機する遅延時間 (ミリ秒) 。
 {tooltip_footer}
 """
 
@@ -1703,12 +1704,12 @@ src = """
 - **1000+**: Some users need really huge delays.
 """
 loc = """
-<font color=\"red\">⚠ 遅延が間違っていると鳴潮は起動時にクラッシュします! ⚠</font>
-<font color=\"#8B8000\">⚠ デフォルト値で失敗する場合は、ゲームがクラッシュしなくなるまで増減を試してください。 ⚠</font>
-## 鳴潮 バージョン2.4の既知の設定値:
-- **500**: デフォルト。ほとんどのユーザーで動作します。
-- **150**: ReShadeと一緒に動作することが確認されている最小値。
-- **50**: 動作することが確認されている最小値。
+<font color=\"red\">⚠ 遅延の値が間違っていると鳴潮は起動時にクラッシュします! ⚠</font>
+<font color=\"#8B8000\">⚠ デフォルト値で失敗する場合は、ゲームがクラッシュしなくなるまで増減してみてください。 ⚠</font>
+## 鳴潮 バージョン2.4 の時点での既知の設定値:
+- **500**: デフォルトの値。ほとんどのユーザーで動作します。
+- **150**: ReShade併用時で動作することが確認されている最小値。
+- **50**: 動作が確認されている最小値。
 - **1000以上**: 一部のユーザーでは非常に大きな遅延が必要です。
 """
 
@@ -1717,7 +1718,7 @@ src = """
 If game crashes with no mods, try to increase it. Start with steps of 50 and increase them as you go.
 """
 loc = """
-MODなしでもゲームがクラッシュする場合は、遅延を増やしてみてください。最初は50刻みで徐々に増やしていきます。
+MODなしでもゲームがクラッシュする場合は、遅延を増やしてみてください。50刻みから始め、徐々に増やしてください。
 """
 
 [general_settings_process_priority_label]
@@ -1765,7 +1766,7 @@ src = """
 loc = """
 **有効**: ゲーム起動前に WWMI と互換性のあるゲーム内の **グラフィック設定** を保証します:
 
-- `グラフィック品質: 品質`
+- `グラフィック品質: グラフィック優先`
 
 **無効**: ゲーム内設定には影響を与えません。
 
@@ -1787,7 +1788,7 @@ loc = """
 **有効**: ゲーム起動前に ZZMI と互換性のあるゲーム内の **グラフィック設定** を保証します:
 
 - `キャラクター品質: 高`
-- `高精度キャラクターアニメーション: 無効`
+- `キャラクター動的解像度: 無効`
 
 **無効**: ゲーム内設定には影響を与えません。
 
@@ -1862,7 +1863,7 @@ Please do note that with some hardware game refuses to go 120 FPS even with this
 **Disabled**: Has no effect on FPS settings, use in-game settings to undo already forced 120 FPS.
 """
 loc = """
-公式にはサポートされていないデバイスでも、FPSの上限を120に設定できるオプションです。
+公式にはサポートされていないデバイスでも、FPSの上限を 120 に設定できるオプションです。
 一部のハードウェアでは、この調整を行ってもゲームが120FPSを出さない場合があることに注意してください。
 **有効**: ゲーム開始時に `LocalStorage.db` の `CustomFrameRate` を `120` に設定します。
 **無効**: FPS設定に影響を与えません。すでに強制された120 FPSを元に戻すには、ゲーム内の設定を使用してください。
@@ -1878,9 +1879,9 @@ This option allows to set FPS limit to 120.
 """
 loc = """
 FPSの上限を120に設定できるオプションです。
-**有効**: ゲーム開始時に、Windowsレジストリのグラフィック設定キーを120FPSの値で更新します。
-**無効**: FPS設定に影響を与えません。すでに強制された120 FPSを元に戻すには、ゲーム内の設定を使用してください。
-**警告!** この調整はグローバル版HSRクライアントでのみサポートされており、中国版では機能しません。
+**有効**: ゲーム開始時に、Windowsレジストリのグラフィック設定キーを 120 FPS の値で更新します。
+**無効**: FPS設定に影響を与えません。すでに強制された 120 FPS を元に戻すには、ゲーム内の設定を使用してください。
+**警告!** この調整はグローバル版クライアントでのみサポートされており、中国版では機能しません。
 *注意: `HKEY_CURRENT_USER/SOFTWARE/Cognosphere/Star Rail/GraphicsSettings_Model_h2986158309` の `FPS` の値を編集します。*
 """
 
@@ -1896,10 +1897,10 @@ This option allows to set custom FPS limit.
 """
 loc = """
 カスタムFPS上限を設定できるオプションです。
-**警告!**: ゲームエンジンの不具合を最小限に抑えるには、FPSを 120 / 180 / 240 などに設定してください。
+**警告!**: ゲームエンジンの不具合を最小限に抑えるには、FPSを 120 / 180 / 240 など 60 の倍数に設定してください。
 **有効**: `unlockfps_nc.exe` 経由でゲームを起動し、バックグラウンドで実行してFPS調整を適用し続けます。
 **無効**: オリジナルの `.exe` ファイル経由でゲームを起動します。FPSには影響を与えません。
-*ヒント: FPS Unlockerパッケージが古くなっている場合は、元のリポジトリから「unlockfps_nc.exe」を手動で更新できます。*
+*ヒント: FPS Unlocker パッケージが古くなっている場合は、元のリポジトリから `unlockfps_nc.exe` を手動で更新できます。*
 *ローカルパス*: `Resources/Packages/GI-FPS-Unlocker/unlockfps_nc.exe`
 *元のリポジトリ*: `https://github.com/34736384/genshin-fps-unlock`
 """
@@ -1913,16 +1914,16 @@ This option allows to set custom FPS limit.
 loc = """
 カスタムFPS上限を設定できるオプションです。
 **有効**: ゲーム開始時に、Windowsレジストリのグラフィック設定キーを指定されたFPSの値で更新します。
-**無効**: FPS設定に影響を与えません。すでに調整されたFPSを元に戻すには、ゲーム内の設定を使用してください。
+**無効**: FPS設定に影響を与えません。すでに調整されたFPSを元に戻すには、ゲーム内のグラフィック設定を使用してください。
 """
 
 [general_settings_window_mode_option_menu_tooltip]
 src = "Game window mode when started with FPS Unlocker."
-loc = "FPSアンロッカーで起動したときのゲームのウィンドウモード。"
+loc = "FPSアンロッカーで起動したときのゲームのウィンドウモード"
 
 [general_settings_apply_tweaks_checkbox]
 src = "Apply Performance Tweaks"
-loc = "パフォーマンス調整を適用"
+loc = "パフォーマンス最適化を適用"
 
 [general_settings_apply_tweaks_checkbox_tooltip]
 src = """
@@ -1933,8 +1934,8 @@ List of tweaks:
 {tweaks}
 """
 loc = """
-**有効**: ゲーム開始時に、`Engine.ini` の `[SystemSettings]` セクションにパフォーマンス調整のリストを追加します。
-**無効**: `Engine.ini` に調整を追加しません。すでに追加されているものは手動で削除する必要があります。
+**有効**: ゲーム開始時に `Engine.ini` の `[SystemSettings]` セクションにパフォーマンス最適化の項目を追加します。
+**無効**: `Engine.ini` に最適化の項目を追加しません。すでに追加されているものは手動で削除する必要があります。
 
 調整のリスト:
 {tweaks}
@@ -1962,7 +1963,7 @@ loc = "シェーダーハンティング:"
 
 [importer_settings_enable_hunting_checkbox]
 src = "Enable Hunting"
-loc = "ハンティングを有効化"
+loc = "ハンティングモードを有効化"
 
 [importer_settings_enable_hunting_checkbox_tooltip]
 src = """
@@ -1990,9 +1991,9 @@ Disabled: Hunting Mode [Copy Hash] only copies hash of selected shader to clipbo
 * [d3dx.ini]: marking_actions = clipboard
 """
 loc = """
-有効: ハンティングモードの [ハッシュをコピー] キーで、選択したシェーダーをShaderFixesにファイルとして保存します。
+有効: ハンティングモードの [Copy Hash] キーで、選択したシェーダーをShaderFixesにファイルとして保存します。
 * [d3dx.ini]: marking_actions = clipboard hlsl asm regex
-無効: ハンティングモードの [ハッシュをコピー] では、選択したシェーダーのハッシュをクリップボードにコピーするだけです。
+無効: ハンティングモードの [Copy Hash] では、選択したシェーダーのハッシュをクリップボードにコピーするだけです。
 * [d3dx.ini]: marking_actions = clipboard
 """
 
@@ -2002,7 +2003,7 @@ loc = "エラー処理:"
 
 [importer_settings_mute_warnings_checkbox]
 src = "Mute Warnings"
-loc = "警告をミュート"
+loc = "警告を消す"
 
 [importer_settings_mute_warnings_checkbox_tooltip]
 src = """
@@ -2012,7 +2013,7 @@ Disabled: Ini parser error warnings and beeps on F10 will haunt poor souls.
 * [d3dx.ini]: show_warnings = 1
 """
 loc = """
-有効: エラー警告やビープ音は一切鳴りません。知らぬが仏。
+有効: エラー警告やビープ音は一切鳴りません。まさに知らぬが仏です。
 * [d3dx.ini]: show_warnings = 0
 無効: F10キーを押したときのIniパーサーエラーの警告やビープ音が鳴り響きます。
 * [d3dx.ini]: show_warnings = 1
@@ -2020,7 +2021,7 @@ loc = """
 
 [importer_settings_calls_logging_checkbox]
 src = "Calls Logging"
-loc = "コールのログを記録"
+loc = "APIコールのログを記録"
 
 [importer_settings_calls_logging_checkbox_tooltip]
 src = """
@@ -2032,7 +2033,7 @@ Disabled: Do not log calls. Maximum performance.
 loc = """
 有効: APIの使用状況をログに記録します。
 * [d3dx.ini]: calls = 1
-無効: コールをログに記録しません。パフォーマンスが最大化されます。
+無効: APIコールをログに記録しません。パフォーマンスが最大化されます。
 * [d3dx.ini]: calls = 0
 """
 
@@ -2048,9 +2049,9 @@ Disabled: No debug logging. Maximum performance.
 * [d3dx.ini]: debug = 0
 """
 loc = """
-有効: 非常に詳細なデバッグログを記録します。
+有効: 非常に詳細なデバッグ用のログを記録します。
 * [d3dx.ini]: debug = 1
-無効: デバッグログを記録しません。パフォーマンスが最大化されます。
+無効: デバッグ用のログを記録しません。パフォーマンスが最大化されます。
 * [d3dx.ini]: debug = 0
 """
 
@@ -2110,7 +2111,7 @@ Enabled: Launcher will close itself once the game has started and 3dmigoto injec
 Disabled: Launcher will keep itself running.
 """
 loc = """
-有効: ゲームが開始され、3dmigotoのインジェクトが確認されると、ランチャー自体を閉じます。
+有効: ゲームが開始され、3dmigoto のインジェクトが確認されると、ランチャー自体を閉じます。
 無効: ランチャーを実行したままにします。
 """
 
@@ -2145,7 +2146,7 @@ Disabled: Use special [▲] button next to [Start] button to Download and Instal
 """
 loc = """
 有効: ランチャーと {importer} のアップデートは自動的にダウンロードおよびインストールされます。
-無効: [スタート] ボタンの横にある専用の [▲] ボタンを使用して、手動でアップデートをダウンロードおよびインストールします。
+無効: [起動] ボタンの横にある専用の [▲] ボタンを使用して、手動でアップデートをダウンロードおよびインストールします。
 """
 
 [launcher_settings_update_channel_label]
@@ -2181,9 +2182,9 @@ loc = """
 ランチャーのGUIテーマを選択します。
 警告! `Default` テーマはランチャーのアップデートによって上書きされます!
 カスタムテーマを作成するには:
-1. `Themes` フォルダ内に `Default` フォルダの複製を作成します。
-2. 設定に表示させたい名前に複製をリネームします。
-3. 画像を編集または置き換えます (有効な拡張子: webp, jpeg, png, jpg)。
+1. `Themes` フォルダ内に `Default` フォルダのコピーを作成します。
+2. そのコピーを設定に表示させたい名前にリネームします。
+3. 画像を編集または置き換えます。(有効な拡張子: webp, jpeg, png, jpg)
 """
 
 [launcher_settings_dev_mode_checkbox]
@@ -2196,7 +2197,7 @@ Enabled: Launcher will track changes in `custom-tkinter-theme.json` and apply th
 Disabled: Theme changes will not be tracked.
 """
 loc = """
-有効: ランチャーは `custom-tkinter-theme.json` の変更を追跡し、オンザフライで適用します。
+有効: ランチャーは `custom-tkinter-theme.json` の変更を追跡し、即時に適用します。
 無効: テーマの変更は追跡されません。
 """
 
@@ -2222,17 +2223,17 @@ loc = """
 公開プロキシなどでよく発生する `GitHub API Requests Limit` (リクエスト制限) エラーを回避できます。
 完全無料で、GitHubへの登録のみが必要です。
 新しいトークンを作成するには:
-1. `[?]` ボタンをクリックして、トークン作成のウェブページを開きます。
+1. `[?]` ボタンをクリックして、トークン作成のWebページを開きます。
 2. `Generate new token (classic)` ボタンを使用します。
 """
 
 [launcher_settings_github_token_create_button]
 src = "Create..."
-loc = "作成..."
+loc = "作成 ..."
 
 [launcher_settings_github_token_create_button_tooltip]
 src = "Open **GitHub Personal Access Token** creation webpage."
-loc = "**GitHub Personal Access Token** の作成ウェブページを開きます。"
+loc = "**GitHub Personal Access Token** を作成するWebページを開きます。"
 
 [launcher_settings_verify_ssl_checkbox]
 src = "Verify SSL"
@@ -2268,7 +2269,7 @@ loc = """
 
 [launcher_settings_proxy_type_label]
 src = "Type:"
-loc = "種類:"
+loc = "タイプ:"
 
 [launcher_settings_proxy_type_option_menu_tooltip]
 src = """
@@ -2300,7 +2301,7 @@ loc = "ホスト:"
 
 [launcher_settings_proxy_host_entry_tooltip]
 src = "Proxy IP address (i.e. `123.12.1.231`) or domain name (i.e. `proxyprovider.com`)."
-loc = "プロキシの IPアドレス (例: `123.12.1.231`) または ドメイン名 (例: `proxyprovider.com`)。"
+loc = "プロキシの IPアドレス (例: `123.12.1.231`) または ドメイン名 (例: `proxyprovider.com`)"
 
 [launcher_settings_proxy_port_label]
 src = "Port:"
