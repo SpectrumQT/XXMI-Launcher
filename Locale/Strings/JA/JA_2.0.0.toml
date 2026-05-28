@@ -246,7 +246,7 @@ loc = """
 
 [error_gimi_unknown_settings_format]
 src = "Unknown Settings format: Data type {regtype} is not {expected_type} of REG_BINARY!"
-loc = "設定形式が不明です: データ型 {regtype} は REG_BINARY の {expected_type} ではありません!"
+loc = "不明な設定フォーマット: データ型 {regtype} は REG_BINARY の {expected_type} ではありません!"
 
 [error_gimi_graphics_settings_not_found]
 src = """
@@ -262,11 +262,11 @@ loc = """
 
 [error_gimi_graphics_data_key_not_found]
 src = "Unknown Graphics Settings format: \"graphicsData\" key not found!"
-loc = "グラフィック設定形式が不明です: \"graphicsData\" キーが見つかりません!"
+loc = "不明なグラフィック設定フォーマット: \"graphicsData\" キーが見つかりません!"
 
 [error_gimi_global_perf_data_key_not_found]
 src = "Unknown Graphics Settings format: \"globalPerfData\" key not found!"
-loc = "グラフィック設定形式が不明です: \"globalPerfData\" キーが見つかりません!"
+loc = "不明なグラフィック設定フォーマット: \"globalPerfData\" キーが見つかりません!"
 
 [error_gimi_hdr_record_not_found]
 src = """
@@ -455,7 +455,7 @@ Please chose another location for Settings > {importer} > {importer} Folder.
 """
 loc = """
 
-{importer} フォルダは、ゲームフォルダの外に配置する必要があります！
+{importer} フォルダは、ゲームフォルダの外に配置する必要があります!
 
 設定 > {importer} > {importer} フォルダ で、別の場所を選択してください。
 """
@@ -1900,7 +1900,7 @@ loc = """
 **警告!**: ゲームエンジンの不具合を最小限に抑えるには、FPSを 120 / 180 / 240 など 60 の倍数に設定してください。
 **有効**: `unlockfps_nc.exe` 経由でゲームを起動し、バックグラウンドで実行してFPS調整を適用し続けます。
 **無効**: オリジナルの `.exe` ファイル経由でゲームを起動します。FPSには影響を与えません。
-*ヒント: FPS Unlocker パッケージが古くなっている場合は、元のリポジトリから `unlockfps_nc.exe` を手動で更新できます。*
+*ヒント: FPS アンロッカーパッケージが古くなっている場合は、元のリポジトリから `unlockfps_nc.exe` を手動で更新できます。*
 *ローカルパス*: `Resources/Packages/GI-FPS-Unlocker/unlockfps_nc.exe`
 *元のリポジトリ*: `https://github.com/34736384/genshin-fps-unlock`
 """
@@ -1919,7 +1919,7 @@ loc = """
 
 [general_settings_window_mode_option_menu_tooltip]
 src = "Game window mode when started with FPS Unlocker."
-loc = "FPSアンロッカーで起動したときのゲームのウィンドウモード"
+loc = "FPS アンロッカーで起動したときのゲームのウィンドウモード"
 
 [general_settings_apply_tweaks_checkbox]
 src = "Apply Performance Tweaks"

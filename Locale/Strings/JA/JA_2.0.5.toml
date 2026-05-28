@@ -252,7 +252,7 @@ Would you like to disable following duplicates automatically (recommended)?
 loc = """
 Mods フォルダに、既に {importer} に含まれているライブラリが存在します!
 
-以下の重複ファイルを自動的に無効化しますか？（推奨）
+以下の重複ファイルを自動的に無効化しますか? (推奨)
 
 {duplicates}
 """
@@ -330,7 +330,7 @@ src = """
 Set process priority for the game exe.
 """
 loc = """
-ゲーム本体（exe）のプロセス優先度を設定します。
+ゲーム本体のプロセス優先度を設定します。
 """
 
 [general_settings_open_file_button_tooltip]
@@ -366,7 +366,7 @@ loc = """
 
 ウィンドウが表示されるまでに {start_timeout} 秒以上かかる場合は、**一般設定** の **タイムアウト** を調整してください。
 
-ゲームがクラッシュした場合は、[クラッシュ分離チェックリスト]({checklist_link})に従ってください。
+ゲームがクラッシュした場合は、[クラッシュ対策チェックリスト]({checklist_link})に従ってください。
 """
 
 [message_text_locale_errors]
