@@ -549,7 +549,7 @@ Note: Tweak is supported only for the Global HSR client and will not work for CN
 loc = """
 崩壊：スターレイルのレジストリキーが見つかりません!
 
-120 FPS設定機能を使用せずにゲームを起動し、FPSを任意の値に変更してレコードを作成してから、再試行してください。
+120 FPS設定機能を使用せずにゲームを起動し、FPSを任意の値に変更してから、再試行してください。
 
 注意: この設定機能はグローバル版クライアントでのみサポートされており、中国版では機能しません。
 """
@@ -563,7 +563,7 @@ Please start the game without 120 FPS tweak, change FPS to any value to create t
 loc = """
 崩壊：スターレイルのレジストリにグラフィック設定が見つかりません!
 
-120 FPS設定機能を使用せずにゲームを起動し、FPSを任意の値に変更してレコードを作成してから、再試行してください。
+120 FPS設定機能を使用せずにゲームを起動し、FPSを任意の値に変更してから、再試行してください。
 """
 
 [error_srmi_unknown_graphics_format]
@@ -651,7 +651,7 @@ Please disable `Force 120 FPS` in launcher's General Settings.
 """
 loc = """
 120 FPSの強制に失敗しました!
-ランチャーの一般設定で `Force 120 FPS` を無効にしてください。
+ランチャーの一般設定で `120 FPS を強制` を無効にしてください。
 
 {error_text}
 """
@@ -789,7 +789,7 @@ Set (another) *Proxy* or *GitHub Token* in *Launcher Settings* for instant acces
 loc = """
 お使いのIPからの未承認の GitHub API リクエスト制限に達しました!
 
-GitHub のサーバーは、今後1時間、接続試行を無視します。
+GitHub のサーバーは、今後1時間は接続の試行を無視します。
 
 すぐにアクセスするには、*ランチャー設定* で (別の) *プロキシ* または *GitHub Token* を設定してください。
 """
@@ -1731,7 +1731,7 @@ loc = "自動構成:"
 
 [general_settings_configure_game_checkbox]
 src = "Configure Game Settings"
-loc = "ゲーム設定の自動構成"
+loc = "ゲーム設定の自動変更"
 
 [general_settings_configure_game_tooltip_gimi]
 src = """
@@ -1744,13 +1744,13 @@ src = """
 <font color=\"red\">⚠ Mods will not work with wrong settings! ⚠</font>
 """
 loc = """
-**有効**: ゲーム起動前に GIMI と互換性のあるゲーム内の **グラフィック設定** を保証します:
+**有効**: ゲーム起動前にゲーム内の **画面** 設定を GIMI と互換性のある設定に変更します:
 
 - `キャラクター動的解像度: オフ`
 
 **無効**: ゲーム内設定には影響を与えません。
 
-<font color=\"red\">⚠ 設定が間違っているとMODは機能しません! ⚠</font>
+<font color=\"red\">⚠ この設定にしないとMODは機能しません! ⚠</font>
 """
 
 [general_settings_configure_game_tooltip_wwmi]
@@ -1764,13 +1764,13 @@ src = """
 <font color=\"red\">⚠ Mods will not work with wrong settings! ⚠</font>
 """
 loc = """
-**有効**: ゲーム起動前に WWMI と互換性のあるゲーム内の **グラフィック設定** を保証します:
+**有効**: ゲーム起動前にゲーム内の **グラフィック設定** を WWMI と互換性のある設定に変更します:
 
 - `グラフィック品質: グラフィック優先`
 
 **無効**: ゲーム内設定には影響を与えません。
 
-<font color=\"red\">⚠ 設定が間違っているとMODは機能しません! ⚠</font>
+<font color=\"red\">⚠ この設定にしないとMODは機能しません! ⚠</font>
 """
 
 [general_settings_configure_game_tooltip_zzmi]
@@ -1785,14 +1785,14 @@ src = """
 <font color=\"red\">⚠ Mods will not work with wrong settings! ⚠</font>
 """
 loc = """
-**有効**: ゲーム起動前に ZZMI と互換性のあるゲーム内の **グラフィック設定** を保証します:
+**有効**: ゲーム起動前にゲーム内の **画面** 設定を ZZMI と互換性のある設定に変更します:
 
 - `キャラクター品質: 高`
 - `キャラクター動的解像度: 無効`
 
 **無効**: ゲーム内設定には影響を与えません。
 
-<font color=\"red\">⚠ 設定が間違っているとMODは機能しません! ⚠</font>
+<font color=\"red\">⚠ この設定にしないとMODは機能しません! ⚠</font>
 """
 
 [error_no_data_available_short]
