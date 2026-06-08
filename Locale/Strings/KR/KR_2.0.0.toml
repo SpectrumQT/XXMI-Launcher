@@ -1814,26 +1814,6 @@ loc = """
 **비활성화**: 효과를 `켜기`로 설정합니다. `부상 효과 제거기(Injured Effect Remover)` 도구를 사용하는 경우 선택하세요.
 """
 
-[general_settings_texture_boost_label]
-src = "Texture Boost:"
-loc = "텍스처 부스트:"
-
-[general_settings_use_all_mips_label]
-src = "Use All Mips"
-loc = "모든 Mips 사용"
-
-[general_settings_texture_streaming_pool_size_label]
-src = "Texture Pool Size:"
-loc = "텍스처 풀 크기:"
-
-[general_settings_texture_streaming_limit_pool_checkbox]
-src = "Limit Pool Size To VRAM"
-loc = "풀 크기를 VRAM으로 제한"
-
-[general_settings_mesh_lod_offset_label]
-src = "Mesh LOD Offset:"
-loc = "메쉬 LOD 오프셋:"
-
 [general_settings_open_file_button]
 src = "🔍 Open {file_name}"
 loc = "🔍 {file_name} 열기"

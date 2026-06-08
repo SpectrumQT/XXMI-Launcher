@@ -41,27 +41,3 @@ loc = """
 * 包含文件：{game_exe_names:bold:or_list}。
 * 包含文件夹：{game_folder_children:bold:and_list}。
 """
-
-[general_settings_mesh_lod_offset_label]
-src = "Mesh LOD Offset:"
-loc = "模型 LOD 偏移："
-
-[general_settings_texture_boost_label]
-src = "Texture Boost:"
-loc = "Ускорение текстур:"
-
-[general_settings_texture_min_boost_label]
-src = "Minimal Boost:"
-loc = "最小加速："
-
-[general_settings_use_all_mips_label]
-src = "Use All Mips"
-loc = "使用所有 Mip 级别"
-
-[general_settings_texture_streaming_limit_pool_checkbox]
-src = "Limit Pool Size To VRAM"
-loc = "限制池大小到显存"
-
-[general_settings_texture_streaming_fixed_pool_size_checkbox]
-src = "Use Fixed Pool Size"
-loc = "使用固定纹理池大小"

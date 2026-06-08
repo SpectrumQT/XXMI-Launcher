@@ -1814,26 +1814,6 @@ Większość modów nie wspiera tego efektu, więc tekstury zwykle psują się p
 **Wyłączone**: Włącza efekt `On`. Wybierz tę opcję, jeśli używasz narzędzia `Injured Effect Remover`.
 """
 
-[general_settings_texture_boost_label]
-src = "Texture Boost:"
-loc = "Wzmocnienie tekstur:"
-
-[general_settings_use_all_mips_label]
-src = "Use All Mips"
-loc = "Użyj wszystkich MIPów"
-
-[general_settings_texture_streaming_pool_size_label]
-src = "Texture Pool Size:"
-loc = "Rozmiar puli tekstur:"
-
-[general_settings_texture_streaming_limit_pool_checkbox]
-src = "Limit Pool Size To VRAM"
-loc = "Ogranicz pulę do VRAM"
-
-[general_settings_mesh_lod_offset_label]
-src = "Mesh LOD Offset:"
-loc = "Przesunięcie LOD siatki:"
-
 [general_settings_open_file_button]
 src = "🔍 Open {file_name}"
 loc = "🔍 Otwórz {file_name}"

@@ -1,0 +1,21 @@
+[general_settings_mesh_lod_base_fov_label]
+src = "Mesh LOD Base FOV:"
+loc = "メッシュLODの基本FoV："
+
+[general_settings_mesh_lod_base_fov_tooltip]
+src = """
+## Minimal camera FoV value when full mesh of player character is replaced with simplified LoD:
+
+* Default is **165**, which should be enough for the most part of in-game scenes.
+* The further away the camera is from active character, the bigger the FoV value is.
+
+*Applied to ConsoleVariables → r.Kuro.SkeletalMesh.DistanceLODBaseFOV value in Engine.ini*
+"""
+loc = """
+## プレイヤーキャラクターのフルメッシュが簡略化されたLoDに置き換えられる際の、カメラFoVの最小値：
+
+* デフォルト値は **165** で、ほとんどのゲーム内シーンでは十分です。
+* カメラが操作中のキャラクターから離れるほど、FoV値は大きくなります。
+
+*Engine.ini 内の ConsoleVariables → r.Kuro.SkeletalMesh.DistanceLODBaseFOV に適用されます*
+"""

@@ -1569,7 +1569,6 @@ loc = """
 [advanced_settings_run_post_load_wait_checkbox_tooltip]
 src = """
 Enabled: Wait for (blocking) command to finish its execution before treating the game launch as complete.
-
 """
 loc = """
 有効: ゲームの起動が完了したものとして扱う前に、コマンドの実行が完了するのを待機します。
@@ -1814,26 +1813,6 @@ loc = """
 **有効**: エフェクトを `オフ` にします。MODのテクスチャが正しくレンダリングされるようにします。
 **無効**: エフェクトを `オン` にします。`Injured Effect Remover` ツールを使用する場合はこれを選択してください。
 """
-
-[general_settings_texture_boost_label]
-src = "Texture Boost:"
-loc = "テクスチャブースト:"
-
-[general_settings_use_all_mips_label]
-src = "Use All Mips"
-loc = "すべてのミップを使用"
-
-[general_settings_texture_streaming_pool_size_label]
-src = "Texture Pool Size:"
-loc = "テクスチャプールサイズ:"
-
-[general_settings_texture_streaming_limit_pool_checkbox]
-src = "Limit Pool Size To VRAM"
-loc = "プールサイズをVRAMに制限"
-
-[general_settings_mesh_lod_offset_label]
-src = "Mesh LOD Offset:"
-loc = "メッシュ LOD オフセット:"
 
 [general_settings_open_file_button]
 src = "🔍 Open {file_name}"

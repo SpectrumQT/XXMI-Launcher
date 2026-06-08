@@ -1910,10 +1910,6 @@ loc = """
 **Отключено**: Включить эффект. Используйте только совместно с **Injured Effect Remover**.
 """
 
-[general_settings_texture_streaming_pool_size_label]
-src = "Texture Pool Size:"
-loc = "Размер пула текстур:"
-
 [general_settings_open_file_button]
 src = "🔍 Open {file_name}"
 loc = "🔍 Открыть {file_name}"

@@ -2284,10 +2284,6 @@ loc = "模型导入器"
 src = "Advanced"
 loc = "高级"
 
-[general_settings_texture_streaming_pool_size_label]
-src = "Texture Pool Size:"
-loc = "纹理池大小："
-
 [general_settings_engine_settings_label]
 src = "Engine Settings:"
 loc = "引擎设置："

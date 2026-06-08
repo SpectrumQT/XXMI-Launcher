@@ -42,30 +42,6 @@ loc = """
 * Содержит папки: {game_folder_children:bold:and_list}.
 """
 
-[general_settings_mesh_lod_offset_label]
-src = "Mesh LOD Offset:"
-loc = "Дальность LOD моделей:"
-
-[general_settings_texture_boost_label]
-src = "Texture Boost:"
-loc = "Ускорение текстур:"
-
-[general_settings_texture_min_boost_label]
-src = "Minimal Boost:"
-loc = "Минимальное ускорение:"
-
-[general_settings_use_all_mips_label]
-src = "Use All Mips"
-loc = "Разблокировать MIP-текстуры"
-
-[general_settings_texture_streaming_limit_pool_checkbox]
-src = "Limit Pool Size To VRAM"
-loc = "Ограничить пул объёмом VRAM"
-
-[general_settings_texture_streaming_fixed_pool_size_checkbox]
-src = "Use Fixed Pool Size"
-loc = "Зафиксировать размер пула"
-
 [importer_settings_calls_logging_checkbox]
 src = "Calls Logging"
 loc = "Журнал Вызовов"

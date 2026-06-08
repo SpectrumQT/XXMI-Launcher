@@ -106,7 +106,6 @@ loc = "{disabled_files_count} 個のINIファイルを無効化しました。"
 src = "Edited {edited_lines_count} lines in {edited_files_count} INI files."
 loc = "{edited_files_count} 個のINIファイル内の {edited_lines_count} 行を変更しました。"
 
-
 [message_text_optimization_no_results]
 src = "All supported optimizations are already applied!"
 loc = "サポートされている最適化はすべてすでに適用されています!"

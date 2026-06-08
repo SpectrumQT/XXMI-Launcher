@@ -1826,26 +1826,6 @@ La mayoría de los mods no admiten este efecto, por lo que las texturas suelen r
 **Deshabilitado**: Activa el efecto. Selecciona esta opción si utilizas la herramienta \"Injured Effect Remover\".
 """
 
-[general_settings_texture_boost_label]
-src = "Texture Boost:"
-loc = "Mejora de texturas:"
-
-[general_settings_use_all_mips_label]
-src = "Use All Mips"
-loc = "Usar todos los Mips"
-
-[general_settings_texture_streaming_pool_size_label]
-src = "Texture Pool Size:"
-loc = "Tamaño del grupo de texturas:"
-
-[general_settings_texture_streaming_limit_pool_checkbox]
-src = "Limit Pool Size To VRAM"
-loc = "Limitar el tamaño del grupo a la VRAM"
-
-[general_settings_mesh_lod_offset_label]
-src = "Mesh LOD Offset:"
-loc = "Desplazamiento de LOD de malla:"
-
 [general_settings_open_file_button]
 src = "🔍 Open {file_name}"
 loc = "🔍 Abrir {file_name}"

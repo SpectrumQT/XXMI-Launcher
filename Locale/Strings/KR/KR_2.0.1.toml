@@ -41,11 +41,3 @@ loc = """
 * 포함된 파일: {game_exe_names:bold:or_list}.
 * 포함된 폴더: {game_folder_children:bold:and_list}.
 """
-
-[general_settings_texture_min_boost_label]
-src = "Minimal Boost:"
-loc = "최소 Boost:"
-
-[general_settings_texture_streaming_fixed_pool_size_checkbox]
-src = "Use Fixed Pool Size"
-loc = "고정 풀 크기 사용"

@@ -1,0 +1,21 @@
+[general_settings_mesh_lod_base_fov_label]
+src = "Mesh LOD Base FOV:"
+loc = "FoV base de LOD de malla:"
+
+[general_settings_mesh_lod_base_fov_tooltip]
+src = """
+## Minimal camera FoV value when full mesh of player character is replaced with simplified LoD:
+
+* Default is **165**, which should be enough for the most part of in-game scenes.
+* The further away the camera is from active character, the bigger the FoV value is.
+
+*Applied to ConsoleVariables → r.Kuro.SkeletalMesh.DistanceLODBaseFOV value in Engine.ini*
+"""
+loc = """
+## Valor mínimo de FoV de la cámara cuando la malla completa del personaje jugador se reemplaza por un LoD simplificado:
+
+* El valor predeterminado es **165**, suficiente para la mayoría de las escenas del juego.
+* Cuanto más lejos esté la cámara del personaje activo, mayor será el valor de FoV.
+
+*Se aplica al valor ConsoleVariables → r.Kuro.SkeletalMesh.DistanceLODBaseFOV en Engine.ini*
+"""
