@@ -13,6 +13,11 @@ display_name = "Español"
 keywords = ["es_MX", "Spanish", "Latinoamérica"]
 codepage = "1252"
 
+[JA]
+display_name = "日本語"
+keywords = ["ja_JP", "Japanese", "Japan"]
+codepage = "932"
+
 [KR]
 display_name = "한국어"
 keywords = ["ko_KR", "Korean", "Korea"]
