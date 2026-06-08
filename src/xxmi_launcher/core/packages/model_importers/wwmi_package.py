@@ -127,6 +127,7 @@ class WWMIPackage(ModelImporterPackage):
             installation_path='WWMI/',
             requirements=['XXMI'],
         ))
+        self.use_hook: bool = False
 
     def get_installed_version(self):
         try:
