@@ -1,0 +1,51 @@
+[top_bar_efmi_button_tooltip]
+src = "Arknights: Endfield Model Importer"
+loc = "Arknights: Endfield Model Importer"
+
+[general_settings_force_ultra_high_lod_bias_label]
+src = "Max LOD Bias"
+loc = "LOD バイアス最大化"
+
+[general_settings_force_ultra_high_lod_bias_tooltip]
+src = """
+**Enabled**: Set **LOD Bias** to **Ultra High** to force full resolution LOD textures.
+**Disabled**: Keep **LOD Bias** setting untouched. Select this if **Use All Mips** is enabled below.
+"""
+loc = """
+**有効**: **LODバイアス** を **Ultra High** に設定します。これによりフル解像度のLODテクスチャが強制的に使用されます。
+**無効**: **LODバイアス** の設定を変更しません。以下の **全ミップを使用** が有効になっている場合は、こちらを選択してください。
+"""
+
+[locale_list_conjunction_or]
+src = "or"
+loc = "か"
+
+[locale_list_conjunction_and]
+src = "and"
+loc = "と"
+
+[locale_list_separator]
+src = ", "
+loc = "、"
+
+[general_settings_game_folder_tooltip]
+src = """
+## Path to the folder containing the game executable
+* Usually named: {game_folder_names:bold:or_list}.
+* Contains files: {game_exe_names:bold:or_list}.
+* Contains folders: {game_folder_children:bold:and_list}.
+"""
+loc = """
+## ゲームの実行ファイルが含まれるフォルダのパス
+* 通常は: {game_folder_names:bold:or_list}
+* 含まれるファイル: {game_exe_names:bold:or_list}
+* 含まれるフォルダ: {game_folder_children:bold:and_list}
+"""
+
+[general_settings_texture_min_boost_label]
+src = "Minimal Boost:"
+loc = "最小ブースト:"
+
+[general_settings_texture_streaming_fixed_pool_size_checkbox]
+src = "Use Fixed Pool Size"
+loc = "固定プールサイズを使用"
