@@ -16,6 +16,9 @@ from gui.classes.widgets import UIText, UIImageButton
 
 
 class TopBarFrame(UIFrame):
+    IMPORTER_START_X = 40
+    IMPORTER_SPACING = 80
+
     def __init__(self, master, canvas, **kwargs):
         super().__init__(master=master, canvas=canvas, **kwargs)
 
@@ -45,6 +48,32 @@ class TopBarFrame(UIFrame):
         self.subscribe(Events.Application.ToggleImporter, self.handle_toggle_importer)
         self.handle_toggle_importer(event=None)
 
+    @classmethod
+    def get_importer_x(cls, index):
+        return cls.IMPORTER_START_X + cls.IMPORTER_SPACING * index
+
+    def refresh_importer_buttons(self):
+        for idx, importer_id in enumerate(Config.Launcher.enabled_importers):
+            Events.Fire(Events.GUI.LauncherFrame.ToggleImporter(importer_id=importer_id, index=idx, show=True))
+
+        idx = len(Config.Launcher.enabled_importers)
+        Events.Fire(Events.GUI.LauncherFrame.ToggleImporter(importer_id='XXMI', index=idx, show=True))
+
+    def reorder_importer_buttons(self, importer_id, target_index):
+        try:
+            current_index = Config.Launcher.enabled_importers.index(importer_id)
+        except ValueError:
+            return False
+
+        target_index = max(0, min(target_index, len(Config.Launcher.enabled_importers) - 1))
+        if current_index == target_index:
+            return False
+
+        Config.Launcher.enabled_importers.insert(target_index, Config.Launcher.enabled_importers.pop(current_index))
+        self.refresh_importer_buttons()
+
+        return True
+
     def _handle_button_press(self, event):
         self._offset_x = event.x
         self._offset_y = event.y
@@ -59,23 +88,17 @@ class TopBarFrame(UIFrame):
                 del Config.Launcher.enabled_importers[index]
                 Events.Fire(Events.GUI.LauncherFrame.ToggleImporter(importer_id=event.importer_id, index=0, show=False))
 
-                for idx, importer_id in enumerate(Config.Launcher.enabled_importers):
-                    if idx < index:
-                        continue
-                    Events.Fire(Events.GUI.LauncherFrame.ToggleImporter(importer_id=importer_id, index=idx, show=True))
-
             except ValueError:
                 Config.Launcher.enabled_importers.append(event.importer_id)
-                idx = len(Config.Launcher.enabled_importers) - 1
-                Events.Fire(Events.GUI.LauncherFrame.ToggleImporter(importer_id=event.importer_id, index=idx, show=True))
 
-        idx = len(Config.Launcher.enabled_importers)
-        Events.Fire(Events.GUI.LauncherFrame.ToggleImporter(importer_id='XXMI', index=idx, show=True))
+        self.refresh_importer_buttons()
 
 
 # region Importer Selection Buttons
 
 class ImporterSelectButton(UIImageButton):
+    DRAG_THRESHOLD = 12
+
     def __init__(self, master, importer_id, **kwargs):
         defaults = {}
         defaults.update(
@@ -97,11 +120,17 @@ class ImporterSelectButton(UIImageButton):
         defaults.update(kwargs)
         super().__init__(**defaults)
         self.importer_id = importer_id
+        self._drag_enabled = importer_id != 'XXMI'
+        self._drag_start_x = None
+        self._drag_origin_x = None
+        self._dragging = False
+        self._order_changed = False
         self.subscribe(Events.GUI.LauncherFrame.StageUpdate, self.handle_stage_update)
         self.subscribe(Events.Application.LoadImporter,
                        lambda event: self.set_selected(event.importer_id == importer_id))
         self.subscribe(Events.GUI.LauncherFrame.ToggleImporter, self.handle_toggle_importer)
         self.subscribe(Events.GUI.LauncherFrame.HoverImporter, self.handle_hover_importer)
+        self.bind("<B1-Motion>", self._handle_drag_motion)
 
         tooltips = {
             'XXMI': L('top_bar_xxmi_button_tooltip', 'Manage Model Importers'),
@@ -123,10 +152,65 @@ class ImporterSelectButton(UIImageButton):
     def _handle_button_press(self, event):
         if self.disabled:
             return
-        self.command()
+        self._drag_start_x = event.x
+        self._drag_origin_x = self._x
+        self._dragging = False
+        self._order_changed = False
 
     def _handle_button_release(self, event):
-        pass
+        if self.disabled:
+            return
+
+        was_dragging = self._dragging
+        order_changed = self._order_changed
+
+        self._drag_start_x = None
+        self._drag_origin_x = None
+        self._dragging = False
+        self._order_changed = False
+
+        if was_dragging:
+            try:
+                idx = Config.Launcher.enabled_importers.index(self.importer_id)
+            except ValueError:
+                return
+
+            self.master.refresh_importer_buttons()
+            self.move(x=self.master.get_importer_x(idx))
+
+            if order_changed:
+                Config.Config.save()
+                Events.Fire(Events.Application.ConfigUpdate())
+            return
+
+        if self.hovered:
+            self.command()
+
+    def _handle_drag_motion(self, event):
+        if self.disabled or not self._drag_enabled:
+            return
+        if self._drag_start_x is None or self.importer_id not in Config.Launcher.enabled_importers:
+            return
+
+        delta_x = event.x - self._drag_start_x
+        if not self._dragging and abs(delta_x) < self.DRAG_THRESHOLD:
+            return
+
+        if len(Config.Launcher.enabled_importers) <= 1:
+            return
+
+        self._dragging = True
+
+        min_x = self.master.get_importer_x(0)
+        max_x = self.master.get_importer_x(len(Config.Launcher.enabled_importers) - 1)
+        drag_x = max(min_x, min(max_x, self._drag_origin_x + delta_x))
+        target_index = int(round((drag_x - min_x) / self.master.IMPORTER_SPACING))
+
+        self.move(x=drag_x)
+
+        if self.master.reorder_importer_buttons(self.importer_id, target_index):
+            self._order_changed = True
+            self.move(x=drag_x)
 
     def handle_stage_update(self, event):
         if event.stage == Stage.Ready:
@@ -138,7 +222,8 @@ class ImporterSelectButton(UIImageButton):
         if event.importer_id != self.importer_id:
             return
         if event.show:
-            self.move(x=40 + 80 * event.index)
+            if not self._dragging:
+                self.move(x=self.master.get_importer_x(event.index))
             self.show()
         else:
             self.hide()
