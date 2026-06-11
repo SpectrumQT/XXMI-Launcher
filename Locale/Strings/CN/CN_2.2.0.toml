@@ -1,21 +1,3 @@
 [general_settings_mesh_lod_base_fov_label]
 src = "Mesh LOD Base FOV:"
 loc = "网格 LOD 基础视场角："
-
-[general_settings_mesh_lod_base_fov_tooltip]
-src = """
-## Minimal camera FoV value when full mesh of player character is replaced with simplified LoD:
-
-* Default is **165**, which should be enough for the most part of in-game scenes.
-* The further away the camera is from active character, the bigger the FoV value is.
-
-*Applied to ConsoleVariables → r.Kuro.SkeletalMesh.DistanceLODBaseFOV value in Engine.ini*
-"""
-loc = """
-## 当玩家角色的完整模型被简化 LOD 模型替换时，相机 FoV 的最小值：
-
-* 默认值为 **165**，足以满足大多数游戏场景。
-* 相机距离当前角色越远，FoV 值越大。
-
-*应用于 Engine.ini 中的 ConsoleVariables → r.Kuro.SkeletalMesh.DistanceLODBaseFOV*
-"""
