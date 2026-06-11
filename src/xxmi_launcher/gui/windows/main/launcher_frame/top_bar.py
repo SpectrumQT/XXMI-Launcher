@@ -192,7 +192,8 @@ class ImporterSelectButton(UIImageButton):
         if self._drag_start_x is None or self.importer_id not in Config.Launcher.enabled_importers:
             return
 
-        delta_x = event.x - self._drag_start_x
+        delta_x = (event.x - self._drag_start_x) / self._apply_widget_scaling(1.0)
+
         if not self._dragging and abs(delta_x) < self.DRAG_THRESHOLD:
             return
 
