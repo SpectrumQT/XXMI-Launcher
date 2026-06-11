@@ -241,6 +241,8 @@ class WWMIPackage(ModelImporterPackage):
             self.configure_settings(game_path)
         # Configure Engine.ini
         self.update_engine_ini(game_path)
+        # Configure UserEngine.ini
+        self.update_user_engine_ini(game_path)
         # Configure GameUserSettings.ini
         if Config.Importers.WWMI.Importer.unlock_fps:
             self.update_game_user_settings_ini(game_path)
@@ -346,10 +348,57 @@ class WWMIPackage(ModelImporterPackage):
         #         ini.set_option(section_name, option_name, option_value)
         # console_variables = Config.Importers.WWMI.Importer.engine_ini.get('ConsoleVariables', None)
         # default_streaming_boost = console_variables.get('r.Streaming.Boost', None) if console_variables else None
+
+        ini.remove_option('r.Kuro.SkeletalMesh.DistanceLODBaseFOV', section_name='ConsoleVariables')
+
+        for section_name, section_data in Config.Importers.WWMI.Importer.perf_tweaks.items():
+            for option_name, option_value in section_data.items():
+                if Config.Importers.WWMI.Importer.apply_perf_tweaks:
+                    ini.set_option(section_name, option_name, option_value)
+                else:
+                    ini.remove_option(option_name, section_name=section_name)
+
+        if ini.is_modified():
+            Paths.App.write_file(engine_ini_path, ini.to_string())
+
+
+    def update_user_engine_ini(self, game_path: Path):
+        engine_ini_path = game_path / 'Client' / 'Config' / 'UserEngine.ini'
+
+        Events.Fire(Events.Application.StatusUpdate(
+            status=L('status_updating_file', 'Updating {file_name}...').format(file_name=engine_ini_path.name))
+        )
+
+        if not engine_ini_path.exists():
+            Paths.verify_path(engine_ini_path.parent)
+            Paths.App.write_file(engine_ini_path, '')
+
+        Events.Fire(Events.PathManager.VerifyFileAccess(path=engine_ini_path, write=True))
+        with open(engine_ini_path, 'r', encoding='utf-8') as f:
+            ini = IniHandler(IniHandlerSettings(option_value_spacing=False, inline_comments=True, add_section_spacing=True, right_split=True), f)
+
         console_variables_options = {
             # Controls minimal camera FOV value when engine switches character LOD0 mesh to LOD1+.
             'r.Kuro.SkeletalMesh.DistanceLODBaseFOV': Config.Importers.WWMI.Importer.mesh_lod_distance_lod_base_fov,
             # 'r.Kuro.SkeletalMesh.DistanceLODFOV': Config.Importers.WWMI.Importer.mesh_lod_distance_lod_base_fov,
+            # Controls how far game starts to replace weighted meshes with LoDs
+            'r.Kuro.SkeletalMesh.LODDistanceScaleDeviceOffset': Config.Importers.WWMI.Importer.mesh_lod_distance_offset,
+            # Controls how aggressively higher resolution textures are pushed to VRAM
+            # Mods contain texture hashes only for original model and won't apply to LoDs
+            'r.Streaming.Boost': Config.Importers.WWMI.Importer.texture_streaming_boost,
+            # Controls the minimal texture boost floor value
+            'r.Streaming.MinBoost': Config.Importers.WWMI.Importer.texture_streaming_min_boost,
+            # Controls whether texture resolution limits imposed by LOD Bias are applied
+            'r.Streaming.UseAllMips': int(Config.Importers.WWMI.Importer.texture_streaming_use_all_mips),
+            # Controls amount of VRAM used for textures streaming
+            # When set to 0, tends to keep full resolution textures in VRAM, so LoDs don't break mods
+            'r.Streaming.PoolSize': Config.Importers.WWMI.Importer.texture_streaming_pool_size,
+            # Prevents pool size from exceeding VRAM
+            # Doesn't explicitly affect mods, but acts as failsafe for low and mid-range GPUs for PoolSize=0
+            'r.Streaming.LimitPoolSizeToVRAM': int(Config.Importers.WWMI.Importer.texture_streaming_limit_to_vram),
+            # Controls whether pool size can grow/shrink automatically or is locked to a fixed value
+            # When enabled, minimizes mip levels pop in/out at cost of pool size being locked after game start
+            'r.Streaming.UseFixedPoolSize': int(Config.Importers.WWMI.Importer.texture_streaming_fixed_pool_size),
         }
         log.debug(f'Using console variables: {console_variables_options}')
 
@@ -362,11 +411,6 @@ class WWMIPackage(ModelImporterPackage):
                 ini.remove_option(option_name, section_name=section_name, option_value=option_value, not_equal=True)
             # Set option value
             ini.set_option(section_name, option_name, option_value)
-
-        if Config.Importers.WWMI.Importer.apply_perf_tweaks:
-            for section_name, section_data in Config.Importers.WWMI.Importer.perf_tweaks.items():
-                for option_name, option_value in section_data.items():
-                    ini.set_option(section_name, option_name, option_value)
 
         if ini.is_modified():
             Paths.App.write_file(engine_ini_path, ini.to_string())
