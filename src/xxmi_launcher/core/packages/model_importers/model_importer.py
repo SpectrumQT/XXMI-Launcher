@@ -21,7 +21,7 @@ import core.event_manager as Events
 import core.config_manager as Config
 
 from core.locale_manager import L
-from core.config.enums import ProcessPriority, WindowMode, InjectMode, InjectModeLegacy
+from core.config.enums import StartMethod, ProcessStartMethodLegacy, ProcessPriority, WindowMode, InjectMode, InjectModeLegacy
 from core.package_manager import Package, PackageMetadata
 
 from core.mod_manager import ModManager
@@ -71,6 +71,7 @@ class ModelImporterConfig:
     d3dx_ini: dict[str, dict[str, dict[str, Any]]] = field(default_factory=lambda: {})
     configure_game: bool = True
     launch_count: int = -1
+    start_method: StartMethod = StartMethod.NATIVE
     # Removed
     custom_launch_inject_mode: InjectModeLegacy = InjectModeLegacy.OPTION_REMOVED
 

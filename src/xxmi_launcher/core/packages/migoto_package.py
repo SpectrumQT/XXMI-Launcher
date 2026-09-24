@@ -425,7 +425,7 @@ class MigotoInjector:
 
         try:
             injector.open_process(
-                start_method=Config.Active.Importer.process_start_method,
+                start_method=Config.Active.Importer.start_method,
                 exe_path=str(context.start_exe_path),
                 work_dir=context.work_dir,
                 start_args=context.start_args,
@@ -456,7 +456,7 @@ class MigotoInjector:
             Events.Fire(Events.Application.StartGameExe(process_name=context.process_name))
 
             injector.open_process(
-                start_method = Config.Active.Importer.process_start_method,
+                start_method = Config.Active.Importer.start_method,
                 exe_path = str(context.start_exe_path),
                 work_dir = context.work_dir,
                 start_args = context.start_args,
