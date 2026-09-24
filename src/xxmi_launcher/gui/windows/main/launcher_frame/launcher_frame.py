@@ -445,24 +445,41 @@ class PackageVersionText(UIImageButton):
     def get_tooltip(self):
         package = Events.Call(Events.PackageManager.GetPackage(self.package_name))
 
-        installed_release_notes = package.cfg.deployed_release_notes
+        installed_release_notes = None
 
-        if package.installed_version == package.cfg.latest_version:
-            package_release_notes = L('package_release_notes_up_to_date', """
-                # What's new in {package_name} v{new_package_version}:
-                {installed_release_notes}
+        if not package.deployed_version:
+            if package.installed_version:
+                package_release_notes = L('package_state_not_deployed', """
+                    # {package_name} is not deployed.
+                    Press **{launcher_start_button}** to deploy the installed package automatically.
+                """)
+            else:
+                package_release_notes = L('package_state_not_installed', """
+                    # {package_name} is not installed.
+                    Press **{launcher_install_button}** to install the package.
+                """)
+        elif package.deployed_version == "X.X.X":
+            package_release_notes = L('package_state_unknown_source', """
+                # {package_name} is not recognized.
+                If you installed it manually, continue with care.
+                Otherwise, consider running **Repair {active_importer}**.
             """)
-            installed_release_notes = installed_release_notes or package.cfg.latest_release_notes
         else:
-            package_release_notes = L('package_release_notes_update_available', """
-                # Update {package_name} to v{new_package_version} for:
-                {latest_release_notes}
-            """)
-
-        if not package.cfg.deployed_release_notes and not package.cfg.latest_release_notes:
-            package_release_notes = L('package_release_notes_not_installed', """
-                Press **Install** button to setup the package.
-            """)
+            if package.installed_version == package.cfg.latest_version and package.cfg.deployed_release_notes:
+                package_release_notes = L('package_release_notes_up_to_date', """
+                    # What's new in {package_name} v{new_package_version}:
+                    {installed_release_notes}
+                """)
+                installed_release_notes = package.cfg.deployed_release_notes
+            elif package.installed_version != package.cfg.latest_version and package.cfg.latest_release_notes:
+                package_release_notes = L('package_release_notes_update_available', """
+                    # Update {package_name} to v{new_package_version} for:
+                    {latest_release_notes}
+                """)
+            else:
+                package_release_notes = L('package_release_notes_unavailable', """
+                    # Package release notes are unavailable.
+                """)
 
         if self.package_name == 'Launcher':
             package_description = L('package_description_launcher', """
@@ -539,8 +556,8 @@ class XXMIVersionText(PackageVersionText):
         package_state = event.package_states.get('XXMI', None)
         if package_state is None:
             return
-        if package_state.installed_version:
-            self.set_text(f'XXMI {package_state.installed_version}')
+        if package_state.deployed_version:
+            self.set_text(f'XXMI {package_state.deployed_version}')
         else:
             self.set_text(f'XXMI N/A')
 

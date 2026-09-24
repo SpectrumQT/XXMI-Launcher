@@ -49,12 +49,38 @@ class MigotoPackage(Package):
         Events.Subscribe(Events.MigotoManager.OpenModsFolder, self.handle_open_mods_folder)
         Events.Subscribe(Events.MigotoManager.StartAndInject, self.handle_start_and_inject)
 
-    def get_installed_version(self):
+    def get_installed_version(self, dll_path: Path | None = None) -> str:
+        dll_path = dll_path or self.package_path / "d3d11.dll"
+
+        if not dll_path.is_file():
+            return ""
+
+        has_valid_signature = False
         try:
-            with open(self.package_path / 'Manifest.json', 'r') as f:
-                return json.load(f)['version']
-        except Exception as e:
-            return ''
+            self.verify_signature(dll_path)
+            has_valid_signature = True
+        except Exception:
+            pass
+
+        if has_valid_signature:
+            # Read XXMI DLL version directly from file. Supported for XXMI DLL v1.1.9+.
+            file_version = self.get_file_version(dll_path, max_parts=3)
+            # Old XXMI DLL files have file version frozen at 1.3.16 of original 3Dmigoto.
+            if file_version != "1.3.16":
+                return file_version
+
+            # Read XXMI DLL version from manifest.
+            try:
+                with open(self.package_path / "Manifest.json", 'r') as f:
+                    return json.load(f)["version"]
+            except Exception:
+                pass
+
+        return "X.X.X"
+
+    def get_deployed_version(self) -> str:
+        dll_path = Config.Active.Importer.importer_path / 'd3d11.dll'
+        return self.get_installed_version(dll_path)
 
     def wrap_av_error(self, e: Exception) -> Exception:
         return Errors.with_title(Exception(L('error_package_corrupted_by_antivirus', """
@@ -92,6 +118,7 @@ class MigotoPackage(Package):
             Events.Fire(Events.PackageManager.InitializeInstallation())
             self.move_contents(self.downloaded_asset_path, self.package_path)
             self.verify_files_integrity(self.package_path)
+            self.deploy_package_files(Config.Active.Importer.game_exe_name)
         except Exception as e:
             if Paths.App.is_av_error(e):
                 raise self.wrap_av_error(e)
@@ -192,8 +219,10 @@ class MigotoPackage(Package):
 
         return False, ''
 
-    def deploy_package_files(self, process_name: str, force: bool = False):
+    def deploy_package_files(self, process_name: str | None, force: bool = False):
         Events.Fire(Events.Application.Busy())
+
+        Paths.verify_path(Config.Active.Importer.importer_path)
 
         pending_removals = {}
         pending_deployments = {}
@@ -214,7 +243,7 @@ class MigotoPackage(Package):
                 pending_deployments[file_path] = message
                 continue
 
-        if pending_deployments or pending_removals:
+        if process_name and (pending_deployments or pending_removals):
             Events.Fire(Events.Application.StatusUpdate(status=L('status_ensuring_game_closed', 'Ensuring the game is closed...')))
             result, pid = wait_for_process_exit(process_name=process_name, timeout=5, kill_timeout=0)
             if result == WaitResult.Timeout:
@@ -256,6 +285,8 @@ class MigotoPackage(Package):
                 Config.Active.Importer.deployed_migoto_signatures[file_path.name] = original_signature
             else:
                 raise FileNotFoundError(L('error_xxmi_missing_critical_file', 'XXMI package is missing critical file: {file_name}!').format(file_name=file_path.name))
+
+        Events.Fire(Events.PackageManager.NotifyPackageVersions(detect_installed=True))
 
     def validate_deployed_files(self):
         Events.Fire(Events.Application.Busy())

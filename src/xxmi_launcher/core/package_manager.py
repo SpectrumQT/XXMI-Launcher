@@ -79,6 +79,7 @@ class Package:
         self.manager: PackageManager | None = None
         self.active = False
         self.installed_version: str = ''
+        self.deployed_version: str = ''
         self.state: PackageConfig
         self.download_url: str = ''
         self.signature: str | None = None
@@ -94,9 +95,16 @@ class Package:
     def get_installed_version(self) -> str:
         raise NotImplementedError(f'Method "get_installed_version" is not implemented for package {self.metadata.package_name}!')
 
+    def get_deployed_version(self) -> str:
+        raise NotImplementedError(f'Method "get_deployed_version" is not implemented for package {self.metadata.package_name}!')
+
     def detect_installed_version(self):
         try:
             self.installed_version = self.get_installed_version()
+            try:
+                self.deployed_version = self.get_deployed_version()
+            except NotImplementedError:
+                self.deployed_version = self.installed_version
         except Exception as e:
             self.installed_version = ''
             raise ValueError(L('error_package_version_detect_failed', """
@@ -500,6 +508,7 @@ class PackageManager:
             package_states={
                 package.metadata.package_name: PackageState(
                     installed_version=package.installed_version,
+                    deployed_version=package.deployed_version,
                     latest_version=package.cfg.latest_version if package.update_available() else package.installed_version,
                     skipped_version=package.cfg.skipped_version,
                 ) for package in self.packages.values() if package.active
