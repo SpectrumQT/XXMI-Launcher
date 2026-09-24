@@ -2,7 +2,7 @@ import sys
 import logging
 import subprocess
 import time
-
+import re
 import winshell
 import pythoncom
 import winreg
@@ -60,9 +60,14 @@ class LauncherPackage(Package):
         ))
         self.subscribe(Events.LauncherManager.CreateShortcut, lambda event: self.create_shortcut())
 
+        # Launcher releases come in 2 formats:
+        # * .msi (installer) - updated via Windows Installer
+        # * .zip (portable) - updated via custom exe (https://github.com/SpectrumQT/XXMI-Updater)
+        self._auto_update_channel: UpdateChannel = self.detect_update_channel()
+
         self.upgrade_installation()
 
-    def get_installed_version(self):
+    def get_installed_version(self) -> str:
         if '__compiled__' in globals() or getattr(sys, 'frozen', False):
             return self.get_file_version(sys.executable, max_parts=3)
         else:
@@ -80,6 +85,17 @@ class LauncherPackage(Package):
     def install_latest_version(self, clean):
         Events.Fire(Events.PackageManager.InitializeInstallation())
 
+        if self.get_update_channel() == UpdateChannel.MSI:
+            # Run MSI and let Windows Installer do the heavy lifting
+            self.run_msi_installer()
+        else:
+            # Use installer (updater) package (targeted at .zip)
+            # If we're not relying on Windows Installer for self-update, we'll have to do the heavy lifting ourselves
+            from core.packages.updater_package import UpdaterPackage
+            self.manager.register_package(UpdaterPackage())
+            Events.Fire(Events.UpdaterManager.UpdateLauncher(downloaded_asset_path=self.downloaded_asset_path))
+
+    def run_msi_installer(self):
         cmd = f'msiexec /i "{self.downloaded_asset_path}" /qr /norestart APPDIR="{Paths.App.Root}" CREATE_SHORTCUTS=""'
         log.debug(f'Calling `{cmd}`...')
         subprocess.Popen(cmd, shell=True)
@@ -116,27 +132,28 @@ class LauncherPackage(Package):
 
         return UpdateChannel.MSI
 
-    def update(self, clean=False):
-        # Launcher releases come in 2 formats:
-        # * .msi (installer) - updated via Windows Installer
-        # * .zip (portable) - updated via custom exe (https://github.com/SpectrumQT/XXMI-Updater)
-        if Config.Launcher.update_channel.upper() in [UpdateChannel.MSI, UpdateChannel.ZIP]:
-            # Use update channel override provided by user
-            update_channel = Config.Launcher.update_channel.upper()
+    def get_update_channel(self) -> UpdateChannel:
+        if Config.Launcher.update_channel == UpdateChannel.AUTO:
+            # Use automatically detected channel.
+            return self._auto_update_channel
         else:
-            # Autodetect installation format based (check for .msi registry record)
-            update_channel = self.detect_update_channel()
+            return Config.Launcher.update_channel
+
+    def detect_latest_version(self):
+        # Download .msi or .zip using default package update method.
+        # Deployment is handled by install_latest_version above.
+        update_channel = self.get_update_channel()
+        if update_channel == UpdateChannel.MSI:
+            self.metadata.asset_name_format = "XXMI-Launcher-Installer-Online-v%s.msi"
+            self.metadata.signature_pattern=r'^## Signature[\r\n]+- ((?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{4}|[A-Za-z0-9+\/]{3}=|[A-Za-z0-9+\/]{2}={2}))\r?$'
+        else:
+            self.metadata.asset_name_format = "XXMI-Launcher-Portable-v%s.zip"
+            self.metadata.signature_pattern=r'^## Signature Extra[\r\n]+- ((?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{4}|[A-Za-z0-9+\/]{3}=|[A-Za-z0-9+\/]{2}={2}))\r?$'
+        self.signature_pattern = re.compile(self.metadata.signature_pattern, re.MULTILINE)
+
         log.debug(f'Using {update_channel} update channel')
 
-        if update_channel == UpdateChannel.MSI:
-            # Use default package update method (targeted at .msi) and let Windows Installer do the heavy lifting
-            super().update()
-        else:
-            # Use installer (updater) package (targeted at .zip)
-            # If we're not relying on Windows Installer for self-update, we'll have to do the heavy lifting ourselves
-            from core.packages.updater_package import UpdaterPackage
-            self.manager.register_package(UpdaterPackage())
-            Events.Fire(Events.UpdaterManager.UpdateLauncher())
+        super().detect_latest_version()
 
     def upgrade_installation(self):
         # Grab new version info from exe

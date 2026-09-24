@@ -30,7 +30,7 @@ class UpdaterPackage(Package):
         ))
         self.exe_path = self.package_path / 'XXMI Updater.exe'
 
-        Events.Subscribe(Events.UpdaterManager.UpdateLauncher, lambda event: self.update_launcher())
+        Events.Subscribe(Events.UpdaterManager.UpdateLauncher, self.update_launcher)
 
     def get_installed_version(self):
         if self.exe_path.exists():
@@ -44,12 +44,26 @@ class UpdaterPackage(Package):
         self.move_contents(self.downloaded_asset_path, self.package_path)
         self.verify_files_integrity(self.package_path)
 
-    def update_launcher(self):
+    def update_launcher(self, event: Events.UpdaterManager.UpdateLauncher):
         self.manager.update_package(self, force=True)
 
         Events.Fire(Events.PackageManager.InitializeInstallation())
 
-        subprocess.Popen([self.exe_path, '--mode', 'Updater', '--channel', 'ZIP', '--dist_dir', str(Paths.App.Root)])
+        cmd = [
+            self.exe_path,
+            '--mode', 'Updater',
+            '--channel', 'ZIP',
+            '--dist_dir', str(Paths.App.Root),
+            '--src_dir', str(event.downloaded_asset_path)
+        ]
+
+        try:
+            log.debug("Starting updater, cmd=%s", cmd)
+            proc = subprocess.Popen(cmd, cwd=str(self.exe_path.parent))
+            log.debug("Started updater, PID=%s", proc.pid)
+        except Exception:
+            log.exception("Failed to start updater")
+            raise
 
         Events.Fire(Events.Application.WaitForProcess(process_name=self.exe_path.name))
 
