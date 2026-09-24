@@ -71,8 +71,11 @@ class LauncherPackage(Package):
     def get_last_installed_version(self):
         return self.get_installed_version()
 
-    def update_available(self):
-        return self.cfg.latest_version != '' and self.cfg.latest_version > self.get_installed_version()
+    def update_available(self) -> bool:
+        installed_version = self.get_installed_version()
+        if installed_version == "0.0.0":
+            return False
+        return self.cfg.latest_version != "" and self.cfg.latest_version > installed_version
 
     def install_latest_version(self, clean):
         Events.Fire(Events.PackageManager.InitializeInstallation())
