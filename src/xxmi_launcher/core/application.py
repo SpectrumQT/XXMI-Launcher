@@ -585,17 +585,23 @@ class Application:
             thread.start()
 
     def check_threads(self):
-        self.gui.after(50, self.check_threads)
-        # Remove finished threads from the list
-        self.threads = [thread for thread in self.threads if thread.is_alive()]
-        # Raise exceptions sent to error queue by threads
         try:
             if self.gui.state() != 'normal':
                 return
+        except Exception as e:
+            logging.error(e)
+            return
+
+        # Remove finished threads from the list.
+        self.threads = [thread for thread in self.threads if thread.is_alive()]
+
+        # Raise exceptions sent to error queue by threads.
+        try:
             self.report_thread_error()
-            # raise exception
         except Empty:
             pass
+
+        self.gui.after(50, self.check_threads)
 
     def report_thread_error(self):
         (error, trace) = self.error_queue.get_nowait()
