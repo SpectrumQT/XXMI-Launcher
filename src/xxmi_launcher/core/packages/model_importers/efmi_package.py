@@ -2,7 +2,7 @@ import re
 import logging
 
 from dataclasses import dataclass, field
-from typing import Dict, Union, Tuple, Optional, List
+from typing import Any
 from pathlib import Path
 
 import core.path_manager as Paths
@@ -20,15 +20,13 @@ log = logging.getLogger(__name__)
 
 @dataclass
 class EFMIConfig(ModelImporterConfig):
-    game_exe_names: List[str] = field(default_factory=lambda: ['Endfield.exe'])
-    game_folder_names: List[str] = field(default_factory=lambda: ['EndField Game'])
-    game_folder_children: List[str] = field(default_factory=lambda: ['Endfield_Data'])
+    game_exe_names: list[str] = field(default_factory=lambda: ['Endfield.exe'])
+    game_folder_names: list[str] = field(default_factory=lambda: ['EndField Game'])
+    game_folder_children: list[str] = field(default_factory=lambda: ['Endfield_Data'])
     process_timeout: int = 60
     importer_folder: str = 'EFMI/'
     launch_options: str = ''
-    d3dx_ini: Dict[
-        str, Dict[str, Dict[str, Union[str, int, float, Dict[str, Union[str, int, float]]]]]
-    ] = field(default_factory=lambda: {
+    d3dx_ini: dict[str, dict[str, dict[str, Any]]] = field(default_factory=lambda: {
         'core': {
             'Loader': {
                 'loader': 'XXMI Launcher.exe',
@@ -116,10 +114,10 @@ class EFMIPackage(ModelImporterPackage):
         except Exception as e:
             return ''
 
-    def get_start_cmd(self, game_path: Path) -> Tuple[Path, List[str], Optional[str]]:
+    def get_start_cmd(self, game_path: Path) -> tuple[Path, list[str], str | None]:
         game_exe_path = self.validate_game_exe_path(game_path)
         work_dir_path = str(game_exe_path.parent)
         return game_exe_path, ['-force-d3d11'], work_dir_path
 
-    def initialize_game_launch(self, game_path: Path):
+    def initialize_game_launch(self, game_path: Path | None):
         pass

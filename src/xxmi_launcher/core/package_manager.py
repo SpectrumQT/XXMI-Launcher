@@ -7,7 +7,6 @@ import os
 import json
 
 from dataclasses import dataclass, field, asdict
-from typing import Union, List, Dict, Optional, Tuple
 from pathlib import Path
 from dacite import from_dict
 from win32api import GetFileVersionInfo, HIWORD, LOWORD
@@ -30,7 +29,7 @@ class PackageMetadata:
     package_name: str = ''
     auto_load: bool = False
     installation_path: str = ''
-    requirements: List[str] = field(default_factory=lambda: [])
+    requirements: list[str] = field(default_factory=list)
     github_repo_owner: str = ''
     github_repo_name: str = ''
     asset_version_pattern: str = ''
@@ -54,7 +53,7 @@ class PackageConfig:
 @dataclass
 class Manifest:
     version: str = ''
-    signatures: Dict[str, str] = field(default_factory=lambda: {})
+    signatures: dict[str, str] = field(default_factory=dict)
 
     def as_json(self):
         return json.dumps(asdict(self), indent=4)
@@ -69,25 +68,25 @@ class Manifest:
 class Package:
     def __init__(self, metadata: PackageMetadata):
         self.metadata = metadata
-        self.cfg: Union[PackageConfig, None] = None
+        self.cfg: PackageConfig | None = None
         self.asset_version_pattern = re.compile(self.metadata.asset_version_pattern)
         self.signature_pattern = re.compile(self.metadata.signature_pattern, re.MULTILINE)
 
         self.security = Security(public_key=self.metadata.signature_public_key)
 
-        self.manager: Optional[PackageManager] = None
+        self.manager: PackageManager | None = None
         self.active = False
         self.installed_version: str = ''
         self.state: PackageConfig
         self.download_url: str = ''
-        self.signature: Union[str, None] = None
+        self.signature: str | None = None
         self.manifest = None
-        self.manifest_url: Optional[str] = None
+        self.manifest_url: str | None = None
         self.download_in_progress = False
 
         self.package_path = Paths.App.Resources / 'Packages' / self.metadata.package_name
-        self.downloaded_asset_path: Union[Path, None] = None
-        self.installed_asset_path: Union[Path, None] = None
+        self.downloaded_asset_path: Path | None = None
+        self.installed_asset_path: Path | None = None
 
     def get_installed_version(self) -> str:
         raise NotImplementedError(f'Method "get_installed_version" is not implemented for package {self.metadata.package_name}!')
@@ -103,7 +102,7 @@ class Package:
                 {error_text}
             """).format(package_name=self.metadata.package_name, error_text=e)) from e
 
-    def get_latest_version(self) -> Tuple[str, str, Union[str, None], str, str]:
+    def get_latest_version(self) -> tuple[str, str, str | None, str, str]:
         version, url, signature, release_notes, manifest_url = self.manager.github_client.fetch_latest_release(
             repo_owner=self.metadata.github_repo_owner,
             repo_name=self.metadata.github_repo_name,
@@ -266,7 +265,7 @@ class Package:
             raise ValueError(L('error_missing_signature', '{package_name} manifest file is missing signature for {file_name}!').format(package_name=self.metadata.package_name, file_name=file_path.name))
         return signature
 
-    def validate_files(self, file_paths: List[Path]):
+    def validate_files(self, file_paths: list[Path]):
         for file_path in file_paths:
             self.verify_signature(file_path)
 
@@ -356,13 +355,13 @@ class Package:
 
 @dataclass
 class PackageManagerConfig:
-    packages: Dict[str, PackageConfig] = field(default_factory=lambda: {})
+    packages: dict[str, PackageConfig] = field(default_factory=lambda: {})
 
 
 class PackageManager:
-    def __init__(self, packages: Optional[List[Package]] = None):
+    def __init__(self, packages: list[Package] | None = None):
         self.github_client = GitHubClient()
-        self.packages: Dict[str, Package] = {}
+        self.packages: dict[str, Package] = {}
         if packages is not None:
             for package in packages:
                 self.register_package(package)
@@ -392,7 +391,7 @@ class PackageManager:
         if package.metadata.auto_load:
             self.load_package(package)
 
-    def load_package(self, package: Union[Package, str]):
+    def load_package(self, package: Package | str):
         package = self.get_package(package)
         # Load required packages
         for required_package in package.metadata.requirements:
@@ -405,13 +404,13 @@ class PackageManager:
         if not package.cfg.deployed_version:
             package.cfg.deployed_version = package.installed_version
 
-    def unload_package(self, package: Union[Package, str]):
+    def unload_package(self, package: Package | str):
         package = self.get_package(package)
         package.unload()
         for required_package in package.metadata.requirements:
             self.unload_package(required_package)
 
-    def get_package(self, package: Union[Package, str]) -> Package:
+    def get_package(self, package: Package | str) -> Package:
         if isinstance(package, str):
             return self.packages[package]
         else:

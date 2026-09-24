@@ -12,7 +12,7 @@ import time
 
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, Union, Dict, List, Tuple
+from typing import Any, Self
 from dataclasses import dataclass, field
 from enum import Enum
 
@@ -38,9 +38,9 @@ class SettingType(Enum):
 
 @dataclass
 class ModelImporterConfig:
-    game_exe_names: List[str] = field(default_factory=lambda: [])
-    game_folder_names: List[str] = field(default_factory=lambda: [])
-    game_folder_children: List[str] = field(default_factory=lambda: [])
+    game_exe_names: list[str] = field(default_factory=lambda: [])
+    game_folder_names: list[str] = field(default_factory=lambda: [])
+    game_folder_children: list[str] = field(default_factory=lambda: [])
     package_name: str = ''
     importer_folder: str = ''
     game_folder: str = ''
@@ -66,11 +66,9 @@ class ModelImporterConfig:
     extra_libraries_enabled: bool = False
     extra_libraries: str = ''
     extra_libraries_signature: str = ''
-    deployed_migoto_signatures: Dict[str, str] = field(default_factory=lambda: {})
+    deployed_migoto_signatures: dict[str, str] = field(default_factory=lambda: {})
     shortcut_deployed: bool = False
-    d3dx_ini: Dict[
-        str, Dict[str, Dict[str, Union[str, int, float, Dict[str, Union[str, int, float]]]]]
-    ] = field(default_factory=lambda: {})
+    d3dx_ini: dict[str, dict[str, dict[str, Any]]] = field(default_factory=lambda: {})
     configure_game: bool = True
     launch_count: int = -1
 
@@ -83,7 +81,7 @@ class ModelImporterConfig:
             return Paths.App.Root / importer_path
 
     @property
-    def extra_dll_paths(self) -> List[Path]:
+    def extra_dll_paths(self) -> list[Path]:
         dll_paths = []
         for dll_path in self.extra_libraries.split('\n'):
             if len(dll_path) == 0:
@@ -119,6 +117,7 @@ class ModelImporterConfig:
         if self.importer_path / 'd3d11.dll' in self.extra_dll_paths:
             return True
         return False
+
 
 class ModelImporterCommandFileSection(Enum):
     PreInstall = 'PreInstall'
@@ -204,9 +203,9 @@ class ModelImporterPackage(Package):
         self.backups_path = None
         self.use_hook: bool = True
         self.ini = None
-        self.autodetect_patterns: Dict[str, re.Pattern] = {}
-        self.autodetect_files: Dict[str, List[str]] = {}
-        self.autodetect_known_paths: List[str] = []
+        self.autodetect_patterns: dict[str, re.Pattern] = {}
+        self.autodetect_files: dict[str, list[str]] = {}
+        self.autodetect_known_paths: list[str] = []
 
     def validate_game_path(self, game_folder) -> Path:
         game_path = Path(game_folder)
@@ -245,7 +244,7 @@ class ModelImporterPackage(Package):
         self.validate_game_exe_path(game_path)
         return game_path
 
-    def validate_game_folders(self, game_folders: List[Path]):
+    def validate_game_folders(self, game_folders: list[Path]):
         cache, known_paths = [], []
         for game_folder in set(game_folders):
             try:
@@ -447,7 +446,7 @@ class ModelImporterPackage(Package):
         # Install importer package and its requirements
         Events.Fire(Events.Application.Update(packages=[Config.Launcher.active_importer], force=True, reinstall=True))
 
-    def initialize_game_launch(self, game_path: Path):
+    def initialize_game_launch(self, game_path: Path | None):
         raise NotImplementedError
 
     def update_d3dx_ini(self, game_exe_path: Path):
@@ -519,7 +518,7 @@ class ModelImporterPackage(Package):
                         'Failed to set section {section} option {option} to {value}: {error_text}'
                    ).format(section=section, option=option, key=key, error_text=e)) from e
 
-    def get_start_cmd(self, game_path: Path) -> Tuple[Path, List[str], Optional[str]]:
+    def get_start_cmd(self, game_path: Path) -> tuple[Path, list[str], str | None]:
         game_exe_path = self.validate_game_exe_path(game_path)
         return game_exe_path, [], str(game_exe_path.parent)
 
@@ -619,7 +618,7 @@ class ModelImporterPackage(Package):
         Events.Fire(Events.MigotoManager.StartAndInject(game_exe_path=game_exe_path, start_exe_path=start_exe_path,
                                                         start_args=start_args, work_dir=work_dir, use_hook=self.use_hook))
 
-    def reg_search_game_folders(self, game_exe_files: List[str]):
+    def reg_search_game_folders(self, game_exe_files: list[str]):
         paths = []
 
         reg_key_paths = [
@@ -651,7 +650,7 @@ class ModelImporterPackage(Package):
 
         return paths
 
-    def autodetect_game_folders(self) -> List[Path]:
+    def autodetect_game_folders(self) -> list[Path]:
         paths = self.reg_search_game_folders(Config.Active.Importer.game_exe_names)
 
         for file_path_str, search_patterns in self.autodetect_files.items():
@@ -728,7 +727,7 @@ class ModelImporterPackage(Package):
 
         Config.Active.Importer.shortcut_deployed = True
 
-    def get_paths_from_hoyoplay(self, patterns: Union[re.Pattern, List[re.Pattern]], known_children: List[str] = None):
+    def get_paths_from_hoyoplay(self, patterns: re.Pattern | list[re.Pattern], known_children: list[str] = None):
         hoyoplay_path = Path(os.getenv('APPDATA')).parent / 'Roaming' / 'Cognosphere' / 'HYP'
         paths = []
         if hoyoplay_path.is_dir():
@@ -739,7 +738,7 @@ class ModelImporterPackage(Package):
                         paths += self.find_paths_in_file(file_path, patterns, known_children)
         return paths
 
-    def find_paths_in_file(self, file_path: Path, patterns: Union[re.Pattern, List[re.Pattern]], known_children: List[str] = None):
+    def find_paths_in_file(self, file_path: Path, patterns: re.Pattern | list[re.Pattern], known_children: list[str] = None):
         paths = []
         try:
             with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:

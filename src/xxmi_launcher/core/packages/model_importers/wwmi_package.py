@@ -5,7 +5,7 @@ import sqlite3
 import logging
 
 from dataclasses import dataclass, field
-from typing import Dict, Union, Optional, Tuple, List
+from typing import Any
 from pathlib import Path
 
 import core.path_manager as Paths
@@ -24,17 +24,15 @@ log = logging.getLogger(__name__)
 
 @dataclass
 class WWMIConfig(ModelImporterConfig):
-    game_exe_names: List[str] = field(default_factory=lambda: ['Wuthering Waves.exe'])
-    process_exe_names: List[str] = field(default_factory=lambda: ['Client-Win64-Shipping.exe'])
-    game_folder_names: List[str] = field(default_factory=lambda: ['Wuthering Waves Game'])
-    game_folder_children: List[str] = field(default_factory=lambda: ['Client', 'Data'])
+    game_exe_names: list[str] = field(default_factory=lambda: ['Wuthering Waves.exe'])
+    process_exe_names: list[str] = field(default_factory=lambda: ['Client-Win64-Shipping.exe'])
+    game_folder_names: list[str] = field(default_factory=lambda: ['Wuthering Waves Game'])
+    game_folder_children: list[str] = field(default_factory=lambda: ['Client', 'Data'])
     importer_folder: str = 'WWMI/'
     use_launch_options: bool = False
     launch_options: str = '-SkipSplash'
     xxmi_dll_init_delay: int = 500
-    d3dx_ini: Dict[
-        str, Dict[str, Dict[str, Union[str, int, float, Dict[str, Union[str, int, float]]]]]
-    ] = field(default_factory=lambda: {
+    d3dx_ini: dict[str, dict[str, dict[str, Any]]] = field(default_factory=lambda: {
         'core': {
             'Loader': {
                 'loader': 'XXMI Launcher.exe',
@@ -157,7 +155,7 @@ class WWMIPackage(ModelImporterPackage):
 
         raise ValueError(L('error_wuthering_waves_exe_not_found', 'Failed to normalize path {path}: Wuthering Waves.exe not found!').format(path=game_path_original))
 
-    def autodetect_game_folders(self) -> List[Path]:
+    def autodetect_game_folders(self) -> list[Path]:
         paths = self.reg_search_game_folders(Config.Active.Importer.process_exe_names)
 
         kuro_launcher_path = Path(os.getenv('APPDATA')) / 'KRLauncher'
@@ -226,7 +224,7 @@ class WWMIPackage(ModelImporterPackage):
         raise ValueError(L('error_game_exe_not_found', 'Game executable {exe_name} not found!').format(
             exe_name=' / '.join(Config.Active.Importer.game_exe_names)))
 
-    def get_start_cmd(self, game_path: Path) -> Tuple[Path, List[str], Optional[str]]:
+    def get_start_cmd(self, game_path: Path) -> tuple[Path, list[str], str | None]:
         game_exe_path = self.validate_game_exe_path(game_path)
         if Config.Importers.WWMI.Importer.use_launch_options:
             # Start WW directly to support launch options customization
@@ -235,7 +233,7 @@ class WWMIPackage(ModelImporterPackage):
             # Start WW via wrapper exe (solves crashes for NVidia Optimus and some Steam version users)
             return game_path / 'Wuthering Waves.exe', ['-dx11'], str(game_path)
 
-    def initialize_game_launch(self, game_path: Path):
+    def initialize_game_launch(self, game_path: Path | None):
         # Configure LocalStorage.db
         if any([Config.Importers.WWMI.Importer.configure_game, Config.Importers.WWMI.Importer.unlock_fps]):
             self.configure_settings(game_path)
@@ -437,7 +435,7 @@ class WWMIPackage(ModelImporterPackage):
 class SettingsManager:
     def __init__(self, game_path: Path):
         self.path = game_path / 'Client' / 'Saved' / 'LocalStorage'
-        self.db: Optional[LocalStorage] = None
+        self.db: LocalStorage | None = None
 
     def __enter__(self):
         Paths.verify_path(self.path)
@@ -465,10 +463,10 @@ class SettingsManager:
     def __exit__(self, exception_type, exception_value, exception_traceback):
         self.db.save()
 
-    def get_setting(self, key: str) -> Union[str, None]:
+    def get_setting(self, key: str) -> str | None:
         return self.db.get_value(key)
 
-    def set_setting(self, key: str, value: Union[int, float, str], lock: bool = False):
+    def set_setting(self, key: str, value: int | float | str, lock: bool = False):
         value = str(value)
         self.db.set_value(key, value)
         if lock:
@@ -636,7 +634,7 @@ class LocalStorage:
         self.disconnect()
         log.debug(f'[{self.path.name}]: File updated')
 
-    def get_value(self, key) -> Union[str, None]:
+    def get_value(self, key) -> str | None:
         result = self.cursor.execute(f"SELECT value FROM LocalStorage WHERE key='{key}'")
         data = result.fetchone()
         if data is None or len(data) != 1:
@@ -664,7 +662,7 @@ class LocalStorage:
         log.debug(f'[{self.path.name}]: Removed {key} value')
         self.modified = True
 
-    def get_trigger(self, name) -> Union[SQLiteTrigger, None]:
+    def get_trigger(self, name) -> SQLiteTrigger | None:
         result = self.cursor.execute(f"SELECT * FROM sqlite_master WHERE type='trigger' AND name='{name}'")
         data = result.fetchone()
         if data is None:
@@ -672,7 +670,7 @@ class LocalStorage:
         else:
             return SQLiteTrigger(name=data[1], table=data[2], body=data[4])
 
-    def get_all_triggers(self) -> Union[List[SQLiteTrigger], None]:
+    def get_all_triggers(self) -> list[SQLiteTrigger] | None:
         result = self.cursor.execute(f"SELECT * FROM sqlite_master WHERE type='trigger'")
         data = result.fetchmany()
         if data is None:

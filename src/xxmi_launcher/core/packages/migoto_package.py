@@ -3,8 +3,7 @@ import subprocess
 import json
 import time
 
-from typing import List
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 
 import core.error_manager as Errors

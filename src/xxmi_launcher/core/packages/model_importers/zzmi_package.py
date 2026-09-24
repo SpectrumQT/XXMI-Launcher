@@ -4,7 +4,7 @@ import logging
 import json
 
 from dataclasses import dataclass, field
-from typing import Dict, Union, List
+from typing import Any
 
 from pathlib import Path
 
@@ -25,14 +25,12 @@ log = logging.getLogger(__name__)
 
 @dataclass
 class ZZMIConfig(ModelImporterConfig):
-    game_exe_names: List[str] = field(default_factory=lambda: ['ZenlessZoneZero.exe', 'ZenlessZoneZeroBeta.exe'])
-    game_folder_names: List[str] = field(default_factory=lambda: ['ZenlessZoneZero Game'])
-    game_folder_children: List[str] = field(default_factory=lambda: ['ZenlessZoneZero_Data'])
+    game_exe_names: list[str] = field(default_factory=lambda: ['ZenlessZoneZero.exe', 'ZenlessZoneZeroBeta.exe'])
+    game_folder_names: list[str] = field(default_factory=lambda: ['ZenlessZoneZero Game'])
+    game_folder_children: list[str] = field(default_factory=lambda: ['ZenlessZoneZero_Data'])
     importer_folder: str = 'ZZMI/'
     launch_options: str = ''
-    d3dx_ini: Dict[
-        str, Dict[str, Dict[str, Union[str, int, float, Dict[str, Union[str, int, float]]]]]
-    ] = field(default_factory=lambda: {
+    d3dx_ini: dict[str, dict[str, dict[str, Any]]] = field(default_factory=lambda: {
         'core': {
             'Loader': {
                 'loader': 'XXMI Launcher.exe',
@@ -123,7 +121,7 @@ class ZZMIPackage(ModelImporterPackage):
         except Exception as e:
             return ''
 
-    def initialize_game_launch(self, game_path: Path):
+    def initialize_game_launch(self, game_path: Path | None):
         # Prevent further configuration if ZZMI isn't going to be used
         if not Config.Active.Importer.is_xxmi_dll_used():
             return

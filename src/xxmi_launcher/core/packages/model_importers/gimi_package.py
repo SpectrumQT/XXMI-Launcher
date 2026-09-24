@@ -7,7 +7,7 @@ import json
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, Union, Tuple, Optional, List
+from typing import Any
 from pathlib import Path
 
 import core.path_manager as Paths
@@ -26,15 +26,12 @@ log = logging.getLogger(__name__)
 
 @dataclass
 class GIMIConfig(ModelImporterConfig):
-    game_exe_names: List[str] = field(default_factory=lambda: ['GenshinImpact.exe', 'YuanShen.exe'])
-    game_folder_names: List[str] = field(default_factory=lambda: ['Genshin Impact Game'])
-    game_folder_children: List[str] = field(default_factory=lambda: ['GenshinImpact_Data'])
+    game_exe_names: list[str] = field(default_factory=lambda: ['GenshinImpact.exe', 'YuanShen.exe'])
+    game_folder_names: list[str] = field(default_factory=lambda: ['Genshin Impact Game'])
+    game_folder_children: list[str] = field(default_factory=lambda: ['GenshinImpact_Data'])
     importer_folder: str = 'GIMI/'
     launch_options: str = ''
-    process_start_method: str = 'Shell'
-    d3dx_ini: Dict[
-        str, Dict[str, Dict[str, Union[str, int, float, Dict[str, Union[str, int, float]]]]]
-    ] = field(default_factory=lambda: {
+    d3dx_ini: dict[str, dict[str, dict[str, Any]]] = field(default_factory=lambda: {
         'core': {
             'Loader': {
                 'loader': 'XXMI Launcher.exe',
@@ -133,7 +130,7 @@ class GIMIPackage(ModelImporterPackage):
         except Exception as e:
             return ''
 
-    def get_start_cmd(self, game_path: Path) -> Tuple[Path, List[str], Optional[str]]:
+    def get_start_cmd(self, game_path: Path) -> tuple[Path, list[str], str | None]:
         if Config.Importers.GIMI.Importer.unlock_fps:
             game_exe_path = Paths.App.Resources / 'Packages' / 'GI-FPS-Unlocker' / 'unlockfps_nc.exe'
             work_dir_path = str(game_exe_path.parent)
@@ -142,7 +139,7 @@ class GIMIPackage(ModelImporterPackage):
             work_dir_path = str(game_exe_path.parent)
         return game_exe_path, [], work_dir_path
 
-    def initialize_game_launch(self, game_path: Path):
+    def initialize_game_launch(self, game_path: Path | None):
         if Config.Importers.GIMI.Importer.unlock_fps:
             try:
                 self.configure_fps_unlocker()

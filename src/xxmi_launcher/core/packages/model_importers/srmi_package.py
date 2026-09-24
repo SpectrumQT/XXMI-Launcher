@@ -5,7 +5,7 @@ import winreg
 import json
 
 from dataclasses import dataclass, field
-from typing import Dict, Union, List
+from typing import Any
 from pathlib import Path
 
 import core.path_manager as Paths
@@ -24,14 +24,12 @@ log = logging.getLogger(__name__)
 
 @dataclass
 class SRMIConfig(ModelImporterConfig):
-    game_exe_names: List[str] = field(default_factory=lambda: ['StarRail.exe'])
-    game_folder_names: List[str] = field(default_factory=lambda: ['Star Rail Games'])
-    game_folder_children: List[str] = field(default_factory=lambda: ['StarRail_Data'])
+    game_exe_names: list[str] = field(default_factory=lambda: ['StarRail.exe'])
+    game_folder_names: list[str] = field(default_factory=lambda: ['Star Rail Games'])
+    game_folder_children: list[str] = field(default_factory=lambda: ['StarRail_Data'])
     importer_folder: str = 'SRMI/'
     launch_options: str = ''
-    d3dx_ini: Dict[
-        str, Dict[str, Dict[str, Union[str, int, float, Dict[str, Union[str, int, float]]]]]
-    ] = field(default_factory=lambda: {
+    d3dx_ini: dict[str, dict[str, dict[str, Any]]] = field(default_factory=lambda: {
         'core': {
             'Loader': {
                 'loader': 'XXMI Launcher.exe',
@@ -124,7 +122,7 @@ class SRMIPackage(ModelImporterPackage):
         except Exception as e:
             return ''
 
-    def initialize_game_launch(self, game_path: Path):
+    def initialize_game_launch(self, game_path: Path | None):
         if Config.Importers.SRMI.Importer.unlock_fps:
             try:
                 self.unlock_fps()

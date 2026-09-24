@@ -7,7 +7,7 @@ import json
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, Union, Tuple, Optional, List
+from typing import Any
 from pathlib import Path
 
 import core.path_manager as Paths
@@ -27,14 +27,12 @@ log = logging.getLogger(__name__)
 
 @dataclass
 class HIMIConfig(ModelImporterConfig):
-    game_exe_names: List[str] = field(default_factory=lambda: ['BH3.exe'])
-    game_folder_names: List[str] = field(default_factory=lambda: ['Honkai Impact 3rd game'])
-    game_folder_children: List[str] = field(default_factory=lambda: ['BH3_Data'])
+    game_exe_names: list[str] = field(default_factory=lambda: ['BH3.exe'])
+    game_folder_names: list[str] = field(default_factory=lambda: ['Honkai Impact 3rd game'])
+    game_folder_children: list[str] = field(default_factory=lambda: ['BH3_Data'])
     importer_folder: str = 'HIMI/'
     launch_options: str = ''
-    d3dx_ini: Dict[
-        str, Dict[str, Dict[str, Union[str, int, float, Dict[str, Union[str, int, float]]]]]
-    ] = field(default_factory=lambda: {
+    d3dx_ini: dict[str, dict[str, dict[str, Any]]] = field(default_factory=lambda: {
         'core': {
             'Loader': {
                 'loader': 'XXMI Launcher.exe',
@@ -131,12 +129,12 @@ class HIMIPackage(ModelImporterPackage):
             raise ValueError(L('error_game_exe_not_found', 'Game executable {exe_name} not found!').format(exe_name=game_exe_path.name))
         return game_exe_path
 
-    def get_start_cmd(self, game_path: Path) -> Tuple[Path, List[str], Optional[str]]:
+    def get_start_cmd(self, game_path: Path) -> tuple[Path, list[str], str | None]:
         game_exe_path = self.validate_game_exe_path(game_path)
         work_dir_path = str(game_exe_path.parent)
         return game_exe_path, [], work_dir_path
 
-    def initialize_game_launch(self, game_path: Path):
+    def initialize_game_launch(self, game_path: Path | None):
         if Config.Importers.HIMI.Importer.unlock_fps:
             try:
                 self.unlock_fps()
