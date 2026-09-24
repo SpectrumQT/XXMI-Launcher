@@ -18,6 +18,7 @@ import core.path_manager as Paths
 import core.config_manager as Config
 
 from core.locale_manager import L
+from core.events.package_manager import PackageManagerEvents, PackageState
 from core.utils.security import Security
 from core.utils.github_client import GitHubClient
 
@@ -354,69 +355,8 @@ class Package:
 
 
 @dataclass
-class PackageState:
-    installed_version: str
-    latest_version: str
-    skipped_version: str
-
-
-@dataclass
 class PackageManagerConfig:
     packages: Dict[str, PackageConfig] = field(default_factory=lambda: {})
-
-
-@dataclass
-class PackageManagerEvents:
-
-    @dataclass
-    class NotifyPackageVersions:
-        detect_installed: bool = True
-
-    @dataclass
-    class StartCheckUpdate:
-        pass
-
-    @dataclass
-    class InitializeDownload:
-        pass
-
-    @dataclass
-    class StartDownload:
-        asset_name: str
-
-    @dataclass
-    class UpdateDownloadProgress:
-        downloaded_bytes: int
-        total_bytes: int
-
-    @dataclass
-    class StartIntegrityVerification:
-        asset_name: str
-
-    @dataclass
-    class InitializeInstallation:
-        pass
-
-    @dataclass
-    class StartFileWrite:
-        asset_name: str
-
-    @dataclass
-    class StartFileMove:
-        asset_name: str
-
-    @dataclass
-    class StartUnpack:
-        asset_name: str
-
-    @dataclass
-    class VersionNotification:
-        auto_update: bool
-        package_states: Dict[str, PackageState]
-
-    @dataclass
-    class GetPackage:
-        package_name: str
 
 
 class PackageManager:

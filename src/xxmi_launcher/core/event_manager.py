@@ -1,25 +1,24 @@
 import logging
 
-from core import path_manager
-from core import application
-from core import package_manager
-from core.packages import updater_package
-from core.packages import launcher_package
-from core.packages import migoto_package
-from core.packages.model_importers import model_importer
-from gui import events as gui_events
+from core.events.path_manager import PathManagerEvents
+from core.events.application import ApplicationEvents
+from core.events.package_manager import PackageManagerEvents
+from core.events.updater_manager import UpdaterManagerEvents
+from core.events.launcher_manager import LauncherManagerEvents
+from core.events.migoto_manager import MigotoManagerEvents
+from core.events.model_importer import ModelImporterEvents
+from core.events.gui_events import GUIEvents
 
 log = logging.getLogger(__name__)
 
-
-PathManager = path_manager.PathManagerEvents
-Application = application.ApplicationEvents
-PackageManager = package_manager.PackageManagerEvents
-LauncherManager = launcher_package.LauncherManagerEvents
-UpdaterManager = updater_package.UpdaterManagerEvents
-MigotoManager = migoto_package.MigotoManagerEvents
-ModelImporter = model_importer.ModelImporterEvents
-GUI = gui_events.GUIEvents
+PathManager = PathManagerEvents
+Application = ApplicationEvents
+PackageManager = PackageManagerEvents
+UpdaterManager = UpdaterManagerEvents
+LauncherManager = LauncherManagerEvents
+MigotoManager = MigotoManagerEvents
+ModelImporter = ModelImporterEvents
+GUI = GUIEvents
 
 events = {}
 

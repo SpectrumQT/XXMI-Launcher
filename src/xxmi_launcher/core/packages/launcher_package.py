@@ -44,18 +44,6 @@ class LauncherManagerConfig:
     locale: str = ''
 
 
-@dataclass
-class LauncherManagerEvents:
-
-    @dataclass
-    class Update:
-        pass
-
-    @dataclass
-    class CreateShortcut:
-        pass
-
-
 class LauncherPackage(Package):
     def __init__(self):
         super().__init__(PackageMetadata(

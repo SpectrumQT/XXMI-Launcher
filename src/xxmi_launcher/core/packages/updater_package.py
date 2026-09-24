@@ -15,14 +15,6 @@ from core.utils.process_tracker import wait_for_process, WaitResult
 log = logging.getLogger(__name__)
 
 
-@dataclass
-class UpdaterManagerEvents:
-
-    @dataclass
-    class UpdateLauncher:
-        pass
-
-
 class UpdaterPackage(Package):
     def __init__(self):
         super().__init__(PackageMetadata(

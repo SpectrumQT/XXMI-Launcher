@@ -11,44 +11,9 @@ from pathlib import Path
 from dataclasses import dataclass, fields
 
 from core.locale_manager import L
+from core.events.path_manager import PathManagerEvents
 
 log = logging.getLogger(__name__)
-
-
-@dataclass
-class PathManagerEvents:
-
-    @dataclass
-    class VerifyFileAccess:
-        path: Path
-        abs_path: bool = True
-        read: bool = True
-        write: bool = False
-        exe: bool = False
-
-    @dataclass
-    class WriteFile:
-        path: Path
-        size: int
-
-    @dataclass
-    class RemovePath:
-        path: Path
-
-    @dataclass
-    class RenamePath:
-        src_path: Path
-        dst_path: Path
-
-    @dataclass
-    class CopyFile:
-        src_path: Path
-        dst_path: Path
-
-    @dataclass
-    class CopyDirectory:
-        src_path: Path
-        dst_path: Path
 
 
 import core.event_manager as Events

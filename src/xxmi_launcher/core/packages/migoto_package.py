@@ -22,22 +22,6 @@ log = logging.getLogger(__name__)
 
 
 @dataclass
-class MigotoManagerEvents:
-
-    @dataclass
-    class OpenModsFolder:
-        pass
-
-    @dataclass
-    class StartAndInject:
-        game_exe_path: Path
-        start_exe_path: Path
-        start_args: List[str] = field(default_factory=lambda: [])
-        work_dir: str = None
-        use_hook: bool = True
-
-
-@dataclass
 class MigotoManagerConfig:
     enforce_rendering: bool = True
     enable_hunting: bool = False
@@ -113,12 +97,12 @@ class MigotoPackage(Package):
                 raise self.wrap_av_error(e)
             raise
 
-    def handle_open_mods_folder(self, event: MigotoManagerEvents.OpenModsFolder):
+    def handle_open_mods_folder(self, event: Events.MigotoManager.OpenModsFolder):
         mods_path = Config.Active.Importer.importer_path / 'Mods'
         Paths.verify_path(mods_path)
         subprocess.Popen(['explorer.exe', mods_path])
 
-    def handle_start_and_inject(self, event: MigotoManagerEvents.StartAndInject):
+    def handle_start_and_inject(self, event: Events.MigotoManager.StartAndInject):
 
         injector = MigotoInjector.from_event(event, self.package_path / '3dmloader.dll')
 
@@ -313,7 +297,7 @@ class MigotoInjector:
         self.injector: DllInjector | None = None
 
     @classmethod
-    def from_event(cls, event: MigotoManagerEvents.StartAndInject, injector_path: Path):
+    def from_event(cls, event: Events.MigotoManager.StartAndInject, injector_path: Path):
         context = cls.get_launch_context(event)
         return cls(context, injector_path)
 
@@ -334,7 +318,7 @@ class MigotoInjector:
             self.run_direct_injector()
 
     @staticmethod
-    def get_launch_context(event: MigotoManagerEvents.StartAndInject) -> LaunchContext:
+    def get_launch_context(event: Events.MigotoManager.StartAndInject) -> LaunchContext:
 
         start_args = list(event.start_args)
         if Config.Active.Importer.use_launch_options:

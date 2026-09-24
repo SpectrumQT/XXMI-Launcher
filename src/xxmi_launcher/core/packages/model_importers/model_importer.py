@@ -35,34 +35,6 @@ class SettingType(Enum):
     Map = 'map'
 
 
-@dataclass
-class ModelImporterEvents:
-
-    @dataclass
-    class Install:
-        pass
-
-    @dataclass
-    class StartGame:
-        pass
-
-    @dataclass
-    class ValidateGameFolder:
-        game_folder: str
-
-    @dataclass
-    class CreateShortcut:
-        pass
-
-    @dataclass
-    class DetectGameFolder:
-        pass
-
-    @dataclass
-    class OptimizeMods:
-        silent: bool = True
-        reset_cache: bool = False
-
 
 @dataclass
 class ModelImporterConfig:
@@ -551,7 +523,7 @@ class ModelImporterPackage(Package):
         game_exe_path = self.validate_game_exe_path(game_path)
         return game_exe_path, [], str(game_exe_path.parent)
 
-    def optimize_mods(self, event: ModelImporterEvents.OptimizeMods):
+    def optimize_mods(self, event: Events.ModelImporter.OptimizeMods):
         Events.Fire(Events.Application.StatusUpdate(status=L('optimizing_ini_files_in_folder', 'Optimizing INI files in {folder_name} folder...').format(folder_name='Mods')))
 
         if not event.silent:

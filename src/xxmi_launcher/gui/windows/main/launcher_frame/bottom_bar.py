@@ -5,7 +5,7 @@ import core.config_manager as Config
 import gui.vars as Vars
 
 from core.locale_manager import L
-from gui.events import Stage
+from gui.enums import Stage
 from gui.classes.containers import UIFrame
 from gui.classes.widgets import UIButton, UIText, UIProgressBar, UILabel, UIImageButton, UIImage
 

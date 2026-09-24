@@ -7,7 +7,7 @@ import gui.vars as Vars
 
 from core.locale_manager import L
 
-from gui.events import Stage
+from gui.enums import Stage
 from gui.classes.containers import UIFrame
 from gui.classes.widgets import UIText, UIImageButton
 from gui.windows.main.launcher_frame.top_bar import TopBarFrame
