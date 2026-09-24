@@ -505,9 +505,7 @@ class ModelImporterPackage(Package):
     def set_default_ini_values(self, ini: IniHandler, setting_name: str, setting_type: SettingType, setting_value=None):
         settings = Config.Active.Importer.d3dx_ini.get(setting_name, None)
         if settings is None:
-            raise ValueError(L('error_ini_missing_setting',
-                'Config is missing {setting_name} setting!'
-            ).format(setting_name=setting_name))
+            settings = Config.Active.Importer.__class__().d3dx_ini.get(setting_name, None)
         for section, options in settings.items():
             for option, values in options.items():
 
