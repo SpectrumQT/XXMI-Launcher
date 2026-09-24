@@ -363,10 +363,8 @@ class MigotoInjector:
         process_flags |= ProcessPriorityClass(Config.Active.Importer.process_priority).get_process_flag()
 
         if not Config.Active.Importer.custom_launch_enabled:
-            use_hook = event.use_hook
             custom_launch_cmd = None
         else:
-            use_hook = Config.Active.Importer.custom_launch_inject_mode == 'Hook'
             custom_launch_cmd = Config.Active.Importer.custom_launch.strip() or None
 
         dll_paths = list(Config.Active.Importer.extra_dll_paths) if Config.Active.Importer.extra_libraries_enabled else []
@@ -377,7 +375,7 @@ class MigotoInjector:
             start_args=start_args,
             work_dir=event.work_dir,
             process_flags=process_flags,
-            use_hook=use_hook,
+            use_hook=event.use_hook,
             custom_launch_cmd=custom_launch_cmd,
             xxmi_dll_path=Config.Active.Importer.importer_path / 'd3d11.dll',
             inject_dll_paths=dll_paths,

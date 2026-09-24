@@ -14,6 +14,7 @@ import core.config_manager as Config
 from core.locale_manager import L
 from core.package_manager import PackageMetadata
 
+from core.config.enums import InjectMode
 from core.packages.model_importers.model_importer import ModelImporterPackage, ModelImporterConfig, Version
 from core.packages.migoto_package import MigotoManagerConfig
 
@@ -27,6 +28,7 @@ class HIMIConfig(ModelImporterConfig):
     game_folder_children: list[str] = field(default_factory=lambda: ['BH3_Data'])
     importer_folder: str = 'HIMI/'
     launch_options: str = ''
+    xxmi_dll_inject_mode: InjectMode = InjectMode.HOOK
     d3dx_ini: dict[str, dict[str, dict[str, Any]]] = field(default_factory=lambda: {
         'core': {
             'Loader': {

@@ -21,7 +21,7 @@ import core.event_manager as Events
 import core.config_manager as Config
 
 from core.locale_manager import L
-from core.config.enums import ProcessPriority, WindowMode
+from core.config.enums import ProcessPriority, WindowMode, InjectMode, InjectModeLegacy
 from core.package_manager import Package, PackageMetadata
 
 from core.mod_manager import ModManager
@@ -49,6 +49,7 @@ class ModelImporterConfig:
     overwrite_ini: bool = True
     process_priority: ProcessPriority = ProcessPriority.NORMAL
     process_timeout: int = 30
+    xxmi_dll_inject_mode: InjectMode = InjectMode.HOOK
     xxmi_dll_init_delay: int = 0
     window_mode: WindowMode = WindowMode.BORDERLESS
     run_pre_launch_enabled: bool = False
@@ -58,7 +59,6 @@ class ModelImporterConfig:
     custom_launch_enabled: bool = False
     custom_launch: str = ''
     custom_launch_signature: str = ''
-    custom_launch_inject_mode: str = 'Hook'
     run_post_load_enabled: bool = False
     run_post_load: str = ''
     run_post_load_signature: str = ''
@@ -71,6 +71,8 @@ class ModelImporterConfig:
     d3dx_ini: dict[str, dict[str, dict[str, Any]]] = field(default_factory=lambda: {})
     configure_game: bool = True
     launch_count: int = -1
+    # Removed
+    custom_launch_inject_mode: InjectModeLegacy = InjectModeLegacy.OPTION_REMOVED
 
     @property
     def importer_path(self) -> Path:
@@ -100,13 +102,10 @@ class ModelImporterConfig:
         return dll_paths
 
     def is_xxmi_dll_used(self) -> bool:
-        # Default Launch - XXMI DLL is always used
-        if not self.custom_launch_enabled:
+        # Always True for HOOK / DIRECT.
+        if self.xxmi_dll_inject_mode != InjectMode.SKIP:
             return True
-        # Custom Launch in Hook/Inject mode - XXMI DLL is always used
-        if self.custom_launch_inject_mode != 'Bypass':
-            return True
-        # Custom Launch in Bypass mode - XXMI DLL may be listed in Extra Libraries
+        # SKIP - XXMI DLL may be listed in Extra Libraries
         return self.is_xxmi_dll_in_extra_libraries()
 
     def is_xxmi_dll_in_extra_libraries(self) -> bool:
@@ -201,7 +200,6 @@ class ModelImporterPackage(Package):
     def __init__(self, metadata: PackageMetadata):
         super().__init__(metadata)
         self.backups_path = None
-        self.use_hook: bool = True
         self.ini = None
         self.autodetect_patterns: dict[str, re.Pattern] = {}
         self.autodetect_files: dict[str, list[str]] = {}
@@ -629,8 +627,10 @@ class ModelImporterPackage(Package):
 
         start_exe_path, start_args, work_dir = self.get_start_cmd(game_path)
 
+        use_hook = Config.Active.Importer.xxmi_dll_inject_mode == InjectMode.HOOK
+
         Events.Fire(Events.MigotoManager.StartAndInject(game_exe_path=game_exe_path, start_exe_path=start_exe_path,
-                                                        start_args=start_args, work_dir=work_dir, use_hook=self.use_hook))
+                                                        start_args=start_args, work_dir=work_dir, use_hook=use_hook))
 
     def reg_search_game_folders(self, game_exe_files: list[str]):
         paths = []

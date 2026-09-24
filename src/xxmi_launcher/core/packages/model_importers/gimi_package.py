@@ -15,7 +15,7 @@ import core.event_manager as Events
 import core.config_manager as Config
 
 from core.locale_manager import L
-from core.config.enums import WindowMode
+from core.config.enums import WindowMode, InjectMode
 from core.package_manager import PackageMetadata
 from core.utils.ini_handler import IniHandler, IniHandlerSettings
 from core.utils.process_tracker import wait_for_process_exit, WaitResult, ProcessPriorityClass
@@ -32,6 +32,7 @@ class GIMIConfig(ModelImporterConfig):
     game_folder_children: list[str] = field(default_factory=lambda: ['GenshinImpact_Data'])
     importer_folder: str = 'GIMI/'
     launch_options: str = ''
+    xxmi_dll_inject_mode: InjectMode = InjectMode.HOOK
     d3dx_ini: dict[str, dict[str, dict[str, Any]]] = field(default_factory=lambda: {
         'core': {
             'Loader': {

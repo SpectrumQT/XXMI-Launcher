@@ -15,6 +15,7 @@ from core.locale_manager import L
 from core.package_manager import PackageMetadata
 
 from core.utils.ini_handler import IniHandler, IniHandlerSettings
+from core.config.enums import InjectMode
 from core.packages.model_importers.model_importer import ModelImporterPackage, ModelImporterConfig, Version
 from core.packages.migoto_package import MigotoManagerConfig
 
@@ -31,6 +32,7 @@ class WWMIConfig(ModelImporterConfig):
     use_launch_options: bool = False
     launch_options: str = '-SkipSplash'
     xxmi_dll_init_delay: int = 500
+    xxmi_dll_inject_mode: InjectMode = InjectMode.DIRECT
     d3dx_ini: dict[str, dict[str, dict[str, Any]]] = field(default_factory=lambda: {
         'core': {
             'Loader': {

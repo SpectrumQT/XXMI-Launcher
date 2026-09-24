@@ -12,6 +12,7 @@ import core.config_manager as Config
 from core.locale_manager import L
 from core.package_manager import PackageMetadata
 
+from core.config.enums import InjectMode
 from core.packages.model_importers.model_importer import ModelImporterPackage, ModelImporterConfig, Version
 from core.packages.migoto_package import MigotoManagerConfig
 
@@ -26,6 +27,7 @@ class EFMIConfig(ModelImporterConfig):
     process_timeout: int = 60
     importer_folder: str = 'EFMI/'
     launch_options: str = ''
+    xxmi_dll_inject_mode: InjectMode = InjectMode.DIRECT
     d3dx_ini: dict[str, dict[str, dict[str, Any]]] = field(default_factory=lambda: {
         'core': {
             'Loader': {
@@ -52,7 +54,6 @@ class EFMIConfig(ModelImporterConfig):
             },
         },
     })
-    custom_launch_inject_mode: str = 'Inject'
 
 
 @dataclass
@@ -91,7 +92,6 @@ class EFMIPackage(ModelImporterPackage):
             r"C:\Program Files\GRYPHLINK\games\EndField Game",
             r"D:\GRYPHLINK\games\EndField Game"
         ]
-        self.use_hook: bool = False
 
     def get_installed_version(self):
         try:
