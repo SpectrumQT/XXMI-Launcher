@@ -414,8 +414,12 @@ class ModManager:
 
         Paths.verify_path(mods_path)
 
-        if Config.Launcher.active_importer in ['GIMI']:
-            libs_path = Config.Active.Importer.importer_path / 'Core' / 'GIMI' / 'Libraries'
+        libs_paths = {
+            "GIMI": Config.Active.Importer.importer_path / 'Core' / 'GIMI' / 'Libraries',
+            "ZZMI": Config.Active.Importer.importer_path / 'Core' / 'ZZMI' / 'Libraries',
+        }
+        libs_path = libs_paths.get(Config.Launcher.active_importer, None)
+        if libs_path:
             self.disable_duplicate_libraries(libs_path, mods_path, exclude_patterns, dry_run)
 
         self.ini_validator = IniValidator(
