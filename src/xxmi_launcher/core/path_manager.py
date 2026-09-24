@@ -9,6 +9,7 @@ import shutil
 
 from pathlib import Path
 from dataclasses import dataclass, fields
+from collections.abc import Iterator
 
 from core.locale_manager import L
 from core.events.path_manager import PathManagerEvents
@@ -401,6 +402,13 @@ class Paths:
         file_path = Path(file_path).resolve()
         assert_file_read(file_path)
         return file_path.read_bytes()
+
+    @staticmethod
+    def read_lines(file_path: Path | str, encoding: str = "utf-8") -> Iterator[str]:
+        file_path = Path(file_path).resolve()
+        assert_file_read(file_path)
+        with file_path.open("r", encoding=encoding) as file:
+            yield from file
 
     @classmethod
     def copy_file(cls, src_path: Path | str, dst_path: Path | str, silent: bool = False):
