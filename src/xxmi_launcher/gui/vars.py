@@ -1,6 +1,8 @@
+from tkinter import StringVar
 
 import customtkinter
 
+from enum import Enum
 from typing import Union
 from dataclasses import dataclass, field, fields
 
@@ -13,6 +15,32 @@ from core.packages.model_importers import wwmi_package
 from core.packages.model_importers import zzmi_package
 from core.packages.model_importers import srmi_package
 from core.packages.model_importers import gimi_package
+
+
+class EnumVar(StringVar):
+    def __init__(
+        self,
+        master=None,
+        value: Enum | None =None,
+        name=None
+    ):
+        self._enum_class = type(value)
+        value = value.name
+
+        super().__init__(
+            master=master,
+            value=value,
+            name=name,
+        )
+
+    def set(self, value: str | Enum):
+        if isinstance(value, Enum):
+            value = value.name
+        super().set(value)
+
+    def get(self) -> Enum:
+        value = super().get()
+        return self._enum_class[value]
 
 
 @dataclass
@@ -113,7 +141,7 @@ class AppSettings(Config.AppConfig):
             value = getattr(obj, obj_field.name)
             if hasattr(value, '__dataclass_fields__'):
                 self.convert_vars(value)
-            elif isinstance(value, str | int | float | bool):
+            elif isinstance(value, str | int | float | bool | Enum):
                 var = self.convert_value(value)
                 setattr(obj, obj_field.name, var)
 
@@ -122,6 +150,8 @@ class AppSettings(Config.AppConfig):
             return customtkinter.BooleanVar(master=self.gui, value=value)
         elif isinstance(value, str):
             return customtkinter.StringVar(master=self.gui, value=value)
+        elif isinstance(value, Enum):
+            return EnumVar(master=self.gui, value=value)
         elif isinstance(value, int):
             return customtkinter.IntVar(master=self.gui, value=value)
         elif isinstance(value, float):
@@ -139,6 +169,8 @@ class AppSettings(Config.AppConfig):
                 elif isinstance(value, dict | list | tuple) or (not dst_field.init and dst_field.default is None):
                     pass
                 else:
+                    if isinstance(value, Enum):
+                        value = value.name
                     var.set(value)
                     self.fire_on_write(var, value)
 
@@ -146,15 +178,21 @@ class AppSettings(Config.AppConfig):
         for dst_field in fields(dst):
             var = getattr(src, dst_field.name)
             value = getattr(dst, dst_field.name)
+
             if hasattr(value, '__dataclass_fields__'):
                 self.save_vars(var, value)
-            elif not dst_field.init and dst_field.default is None:
-                pass
-            elif isinstance(value, str | int | float | bool):
+                continue
+
+            if not dst_field.init and dst_field.default is None:
+                continue
+
+            if isinstance(value, str | int | float | bool | Enum):
                 var_value = var.get()
-                # Auto strip text input
+
+                # Strip text input.
                 if isinstance(var_value, str):
                     var_value = var_value.strip()
+
                 setattr(dst, dst_field.name, var_value)
                 self.fire_on_save(var, var_value, value)
 
