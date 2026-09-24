@@ -23,6 +23,19 @@ GUI = GUIEvents
 events = {}
 
 
+def _log_event(event) -> bool:
+    match event.__class__:
+        # Skip window movement logging.
+        case Application.MoveWindow:
+            return False
+        # Log only start and end of download.
+        case PackageManager.UpdateDownloadProgress:
+            if event.downloaded_bytes != 0 and event.downloaded_bytes != event.total_bytes:
+                return False
+
+    return True
+
+
 def Call(event_data, **kw):
     log.debug(f'Called: {str(event_data)}')
     callbacks = events.get(event_data.__class__.__qualname__, None)
@@ -37,7 +50,7 @@ def Call(event_data, **kw):
 
 
 def Fire(event_data, **kw):
-    if not event_data.__class__ == Application.MoveWindow:
+    if _log_event(event_data):
         log.debug(f'FIRED: {str(event_data)}')
     callbacks = events.get(event_data.__class__.__qualname__, None)
     if callbacks is not None:
