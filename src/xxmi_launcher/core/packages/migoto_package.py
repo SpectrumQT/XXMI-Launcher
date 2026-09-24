@@ -13,6 +13,7 @@ import core.config_manager as Config
 
 from core.locale_manager import L
 from core.package_manager import Package, PackageMetadata
+from core.config.enums import InputDisableMode, LogLevel
 
 from core.utils.dll_injector import DllInjector
 from core.utils.process_tracker import wait_for_process, WaitResult, ProcessPriorityClass, wait_for_process_exit
@@ -24,10 +25,13 @@ log = logging.getLogger(__name__)
 class MigotoManagerConfig:
     enforce_rendering: bool = True
     enable_hunting: bool = False
+    clear_unknown_settings: bool = True
     dump_shaders: bool = False
     mute_warnings: bool = True
-    calls_logging: bool = False
-    debug_logging: bool = False
+    input: bool = True
+    input_disable_mode: InputDisableMode = InputDisableMode.MODS
+    toggle_input: str = 'ctrl alt shift VK_END'
+    log_level: LogLevel = LogLevel.DISABLED
     unsafe_mode: bool = False
     unsafe_mode_signature: str = ''
 

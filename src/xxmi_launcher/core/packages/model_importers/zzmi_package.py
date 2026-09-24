@@ -42,21 +42,6 @@ class ZZMIConfig(ModelImporterConfig):
                 'allow_buffer_resize': 1,
             },
         },
-        'calls_logging': {
-            'Logging': {
-                'calls': {'on': 1, 'off': 0},
-            },
-        },
-        'debug_logging': {
-            'Logging': {
-                'debug': {'on': 1, 'off': 0},
-            },
-        },
-        'mute_warnings': {
-            'Logging': {
-                'show_warnings': {'on': 0, 'off': 1},
-            },
-        },
         'enable_hunting': {
             'Hunting': {
                 'hunting': {'on': 2, 'off': 0},

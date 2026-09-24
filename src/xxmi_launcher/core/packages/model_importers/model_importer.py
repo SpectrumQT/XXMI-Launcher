@@ -480,11 +480,21 @@ class ModelImporterPackage(Package):
         self.set_default_ini_values(ini, 'core', SettingType.Constant)
         if Config.Active.Migoto.enforce_rendering:
             self.set_default_ini_values(ini, 'enforce_rendering', SettingType.Constant)
-        self.set_default_ini_values(ini, 'calls_logging', SettingType.Bool, Config.Active.Migoto.calls_logging)
-        self.set_default_ini_values(ini, 'debug_logging', SettingType.Bool, Config.Active.Migoto.debug_logging)
-        self.set_default_ini_values(ini, 'mute_warnings', SettingType.Bool, Config.Active.Migoto.mute_warnings)
+
         self.set_default_ini_values(ini, 'enable_hunting', SettingType.Bool, Config.Active.Migoto.enable_hunting)
         self.set_default_ini_values(ini, 'dump_shaders', SettingType.Bool, Config.Active.Migoto.dump_shaders)
+
+        ini.set_option('System', 'clear_unknown_settings', 1 if Config.Active.Migoto.clear_unknown_settings else 0)
+
+        ini.set_option('Input', 'input', 1 if Config.Active.Migoto.input else 0)
+        option_values = ini.get_option_values('toggle_input', section_name='Input')
+        if len(option_values) == 0:
+            ini.set_option('Input', 'toggle_input', Config.Active.Migoto.toggle_input)
+
+        ini.set_option('Input', 'input_disable_mode', Config.Active.Migoto.input_disable_mode.name.lower())
+
+        ini.set_option('Logging', 'log_level', Config.Active.Migoto.log_level.name.lower())
+        ini.set_option('Logging', 'show_warnings', 0 if Config.Active.Migoto.mute_warnings else 1)
 
         if ini.is_modified():
             log.debug(f'Writing d3dx.ini...')
