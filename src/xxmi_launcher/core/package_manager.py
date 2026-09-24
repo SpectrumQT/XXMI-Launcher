@@ -32,6 +32,7 @@ class PackageMetadata:
     auto_load: bool = False
     installation_path: str = ''
     requirements: list[str] = field(default_factory=list)
+    required_versions: dict[str, str] = field(default_factory=dict)
     github_repo_owner: str = ''
     github_repo_name: str = ''
     asset_version_pattern: str = ''
