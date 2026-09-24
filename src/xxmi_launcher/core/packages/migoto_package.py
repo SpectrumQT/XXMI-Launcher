@@ -91,6 +91,7 @@ class MigotoPackage(Package):
         try:
             Events.Fire(Events.PackageManager.InitializeInstallation())
             self.move_contents(self.downloaded_asset_path, self.package_path)
+            self.verify_files_integrity(self.package_path)
         except Exception as e:
             if Paths.App.is_av_error(e):
                 raise self.wrap_av_error(e)

@@ -420,6 +420,12 @@ class ModelImporterPackage(Package):
         xxmi_cmd_handler.execute_command_section(ModelImporterCommandFileSection.PreInstall)
 
         self.move_contents(self.downloaded_asset_path, Config.Active.Importer.importer_path)
+        try:
+            self.verify_files_integrity(Config.Active.Importer.importer_path)
+        except Exception as e:
+            if not Config.Active.Importer.overwrite_ini:
+                self.restore(d3dx_ini_path)
+            raise e
 
         xxmi_cmd_handler = ModelImporterCommandFileHandler(Config.Active.Importer.importer_path / 'Core' / 'auto_update.xcmd')
         xxmi_cmd_handler.execute_command_section(ModelImporterCommandFileSection.PostInstall)

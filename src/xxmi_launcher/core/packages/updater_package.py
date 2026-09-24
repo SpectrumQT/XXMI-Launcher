@@ -42,6 +42,7 @@ class UpdaterPackage(Package):
         Events.Fire(Events.PackageManager.InitializeInstallation())
 
         self.move_contents(self.downloaded_asset_path, self.package_path)
+        self.verify_files_integrity(self.package_path)
 
     def update_launcher(self):
         self.manager.update_package(self, force=True)

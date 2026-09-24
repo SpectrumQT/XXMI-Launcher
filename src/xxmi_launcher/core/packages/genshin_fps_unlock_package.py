@@ -52,6 +52,7 @@ class GenshinFpsUnlockerPackage(Package):
         Events.Fire(Events.PackageManager.InitializeInstallation())
 
         self.move_contents(self.downloaded_asset_path, self.package_path)
+        self.verify_files_integrity(self.package_path)
 
     def validate_package_files(self):
         pass

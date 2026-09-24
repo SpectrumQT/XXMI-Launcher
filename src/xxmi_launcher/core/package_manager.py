@@ -5,11 +5,13 @@ import re
 import zipfile
 import os
 import json
+import hashlib
 
 from dataclasses import dataclass, field, asdict
 from pathlib import Path
 from dacite import from_dict
 from win32api import GetFileVersionInfo, HIWORD, LOWORD
+from textwrap import dedent
 
 import core.error_manager as Errors
 import core.event_manager as Events
@@ -87,6 +89,7 @@ class Package:
         self.package_path = Paths.App.Resources / 'Packages' / self.metadata.package_name
         self.downloaded_asset_path: Path | None = None
         self.installed_asset_path: Path | None = None
+        self.downloaded_asset_hashes: dict[Path, str] = {}
 
     def get_installed_version(self) -> str:
         raise NotImplementedError(f'Method "get_installed_version" is not implemented for package {self.metadata.package_name}!')
@@ -269,19 +272,94 @@ class Package:
         for file_path in file_paths:
             self.verify_signature(file_path)
 
+    @staticmethod
+    def get_file_sha256(path: Path) -> str:
+        return hashlib.sha256(Paths.App.read_bytes(path)).hexdigest()
+
     def unpack(self, file_path: Path, destination_path: Path):
         Events.Fire(Events.PackageManager.StartUnpack(asset_name=file_path.name))
 
-        with zipfile.ZipFile(file_path, 'r') as zip:
-            # Extract zip archive
-            zip.extractall(destination_path)
-            # Restore modification dates
+        destination_path = destination_path.resolve()
+
+        self.downloaded_asset_hashes.clear()
+
+        with zipfile.ZipFile(file_path, "r") as zip:
+            # Verify zip archive.
+            bad_file = zip.testzip()
+            if bad_file is not None:
+                raise RuntimeError(f"Corrupt ZIP entry: {bad_file}")
+
             for zip_info in zip.infolist():
-                extracted_file_path = os.path.join(destination_path, zip_info.filename)
+
+                relative_path = Path(zip_info.filename)
+                extracted_file_path = (destination_path / relative_path).resolve()
+
+                # Prevent path traversal outside destination_path.
+                if not extracted_file_path.is_relative_to(destination_path):
+                    raise RuntimeError(f"Invalid ZIP entry path: {zip_info.filename}")
+
+                # Entry is dir. Create directory tree.
+                if zip_info.is_dir():
+                    extracted_file_path.mkdir(parents=True, exist_ok=True)
+                    continue
+
+                # Entry is file. Create parent directory tree.
+                extracted_file_path.parent.mkdir(parents=True, exist_ok=True)
+
+                # Read the ZIP entry and write it to disk.
+                expected_data = zip.read(zip_info)
+                Paths.App.write_file(extracted_file_path, expected_data, silent=True)
+
+                # Calculate zipped data hash.
+                self.downloaded_asset_hashes[relative_path] = hashlib.sha256(expected_data).hexdigest()
+
+                # Restore modification date.
                 timestamp = time.mktime(zip_info.date_time + (0, 0, -1))
                 os.utime(extracted_file_path, (timestamp, timestamp))
 
         Paths.App.remove_path(file_path)
+
+        self.verify_files_integrity(destination_path)
+
+        log.debug(f"Successfully unpacked {len(self.downloaded_asset_hashes)} files from `{file_path}` to `{destination_path}`")
+
+    def verify_files_integrity(self, destination_path: Path, remove_on_failure: bool = True):
+        Events.Fire(Events.PackageManager.StartIntegrityVerification(asset_name=self.metadata.package_name))
+
+        if not self.downloaded_asset_hashes:
+            raise RuntimeError(f"verify_files_integrity called but {self.metadata.package_name} package has no downloaded assets")
+
+        bad_file = None
+
+        for relative_path, original_file_hash in self.downloaded_asset_hashes.items():
+            # Calculate file data hash from destination location.
+            file_path = (destination_path / relative_path).resolve()
+            file_hash = self.get_file_sha256(file_path)
+
+            if file_hash != original_file_hash:
+                bad_file = file_path
+                break
+
+        if bad_file is not None:
+
+            if remove_on_failure:
+                try:
+                    for relative_path in self.downloaded_asset_hashes.keys():
+                        file_path = (destination_path / relative_path).resolve()
+                        Paths.App.remove_path(file_path)
+                except Exception as e:
+                    log.debug(f"Failed to remove file: {e}")
+
+            raise RuntimeError(L('error_files_integrity_verification_failed', """
+                Files integrity verification failed!
+                 
+                Hash mismatch for asset file:
+                `{bad_file}`
+                
+                Please try to run **{launcher_install_button}** again or use **{tool_bar_repair_button}**.
+            """).format(bad_file=bad_file, importer=Config.Launcher.active_importer))
+
+        log.debug(f'Successfully verified integrity of all {len(self.downloaded_asset_hashes)} files in folder {destination_path}')
 
     def move(self, source_path: Path, destination_path: Path):
         Events.Fire(Events.PackageManager.StartFileMove(asset_name=source_path.name))
