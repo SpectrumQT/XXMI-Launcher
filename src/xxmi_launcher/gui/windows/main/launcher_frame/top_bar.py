@@ -179,7 +179,7 @@ class ImporterSelectButton(UIImageButton):
             self.move(x=self.master.get_importer_x(idx))
 
             if order_changed:
-                Config.Config.save()
+                Config.Manager.save()
                 Events.Fire(Events.Application.ConfigUpdate())
             return
 

@@ -105,7 +105,7 @@ class AppSettings(Config.AppConfig):
 
     def save(self):
         self.save_vars(self, self.cfg)
-        Config.ConfigSecurity.sign_settings(save_config=False)
+        Config.Manager.sign_settings(save_config=False)
         Events.Fire(Events.Application.ConfigUpdate())
 
     def convert_vars(self, obj):

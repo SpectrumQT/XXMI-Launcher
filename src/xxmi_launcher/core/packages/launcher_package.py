@@ -135,22 +135,14 @@ class LauncherPackage(Package):
             Events.Fire(Events.UpdaterManager.UpdateLauncher())
 
     def upgrade_installation(self):
-        # Grab old version info from config
-        old_version = Config.Launcher.config_version
-
         # Grab new version info from exe
         new_version = self.get_installed_version()
 
-        # Exit early if no version upgrade required
-        if old_version == new_version:
+        if new_version == "0.0.0":
             return
 
         # Upgrade existing config to the latest version
-        Config.Config.upgrade(old_version, new_version)
-
-        # Exit early if old version is empty (aka fresh installation)
-        if not old_version:
-            return
+        Config.Manager.migrate(new_version)
 
     def create_shortcut(self):
         pythoncom.CoInitialize()

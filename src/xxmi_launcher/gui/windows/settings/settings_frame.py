@@ -47,7 +47,7 @@ class SettingsFrame(UIFrame):
 
     def save_and_close(self, event=None):
         Vars.Settings.save()
-        Config.Config.save()
+        Config.Manager.save()
         self.hide()
         self._reset_frame()
 

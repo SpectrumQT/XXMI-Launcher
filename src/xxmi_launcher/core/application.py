@@ -132,7 +132,7 @@ class Application:
         self.load_importer(active_importer, update=False)
 
         if self.args.update:
-            Config.Config.save()
+            Config.Manager.save()
 
         Events.Subscribe(Events.Application.OpenSettings, self.handle_open_settings)
 
@@ -200,14 +200,14 @@ class Application:
             settings_frame.open_settings(tab_name=event.tab_name, wait_window=event.wait_window)
 
     def load_config(self):
-        cfg_backup_path = Paths.App.Backups / Config.Config.config_path.name
+        cfg_backup_path = Paths.App.Backups / Config.Manager.config_path.name
         try:
-            Config.Config.load()
+            Config.Manager.load()
             # Backup last successfully loaded config
-            if Config.Config.config_path.is_file():
-                Paths.App.copy_file(Config.Config.config_path, cfg_backup_path)
+            if Config.Manager.config_path.is_file():
+                Paths.App.copy_file(Config.Manager.config_path, cfg_backup_path)
         except Exception as e:
-            if Config.Config.config_path.is_file():
+            if Config.Manager.config_path.is_file():
                 error_dialogue = Events.Application.ShowError(
                     modal=True,
                     confirm_text=L('message_button_load_backup_config', 'Load Backup'),
@@ -216,7 +216,7 @@ class Application:
                 )
                 user_requested_backup_load = self.gui.show_messagebox(error_dialogue)
                 if user_requested_backup_load:
-                    Config.Config.load(cfg_backup_path)
+                    Config.Manager.load(cfg_backup_path)
             else:
                 raise e
 
@@ -354,10 +354,10 @@ class Application:
             Config.Launcher.enabled_importers.append(importer_id)
         # Load MI package
         Config.Active = getattr(Config.Importers, importer_id)
+        Config.Config.Active = Config.Active
         self.package_manager.load_package(importer_id)
         self.package_manager.notify_package_versions()
-        Config.ConfigSecurity.validate_config()
-        Events.Fire(Events.Application.ConfigUpdate())
+        Config.Manager.validate_config()
         # Check for updates
         if update and self.package_manager.get_package(importer_id).installed_version:
             self.run_as_thread(self.package_manager.update_packages, no_install=True, silent=True)
@@ -642,7 +642,7 @@ class Application:
         watchdog_thread.join()
         # Write config to ini file
         logging.debug(f'Saving config...')
-        Config.Config.save()
+        Config.Manager.save()
         # Report any errors left in queue
         while True:
             try:
