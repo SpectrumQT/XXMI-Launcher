@@ -1,22 +1,23 @@
 import time
 import psutil
 import subprocess
+import win32gui
+import win32process
 
 from typing import Tuple
 from enum import Enum
 from multiprocessing import Process, Value
 
-import win32gui
-import win32process
+from core.config.enums import ProcessPriority
 
 
-class ProcessPriority(Enum):
-    IDLE_PRIORITY_CLASS = 'Low'
-    BELOW_NORMAL_PRIORITY_CLASS = 'Below Normal'
-    NORMAL_PRIORITY_CLASS = 'Normal'
-    ABOVE_NORMAL_PRIORITY_CLASS = 'Above Normal'
-    HIGH_PRIORITY_CLASS = 'High'
-    REALTIME_PRIORITY_CLASS = 'Realtime'
+class ProcessPriorityClass(Enum):
+    IDLE_PRIORITY_CLASS = ProcessPriority.LOW
+    BELOW_NORMAL_PRIORITY_CLASS = ProcessPriority.BELOW_NORMAL
+    NORMAL_PRIORITY_CLASS = ProcessPriority.NORMAL
+    ABOVE_NORMAL_PRIORITY_CLASS = ProcessPriority.ABOVE_NORMAL
+    HIGH_PRIORITY_CLASS = ProcessPriority.HIGH
+    # REALTIME_PRIORITY_CLASS =
 
     def get_process_flag(self):
         return getattr(subprocess, self.name)
@@ -35,7 +36,7 @@ def get_hwnds_for_pid(pid, check_visibility: bool = False):
     return hwnds
 
 
-def get_process(process_id=None, process_name=None):
+def get_process(process_id=None, process_name=None) -> psutil.Process | None:
     for process in psutil.process_iter():
         try:
             if process.name() == process_name or process.pid == process_id:

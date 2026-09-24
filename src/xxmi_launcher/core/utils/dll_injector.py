@@ -12,6 +12,7 @@ from pathlib import Path
 from enum import Enum
 
 from core.locale_manager import L, LocaleString
+from core.config.enums import StartMethod
 
 
 log = logging.getLogger(__name__)
@@ -114,34 +115,33 @@ class DllInjector:
             raise ValueError(L('error_dll_injector_process_start_failed', 'Failed to start {process_name}: {error_text}!').format(process_name=exe_path.name, error_text=error_text))
 
     def open_process(self,
-                     start_method: str,
-                     exe_path: Optional[str],
-                     work_dir: Optional[str],
-                     start_args: Optional[List[str]],
-                     process_flags: Optional[int],
-                     process_name: Optional[str] = None,
-                     dll_paths: Optional[List[Path]] = None,
-                     cmd: Optional[str] = None,
-                     inject_timeout: int = 15):
+        start_method: StartMethod,
+        exe_path: Optional[str],
+        work_dir: Optional[str],
+        start_args: Optional[List[str]],
+        process_flags: Optional[int],
+        process_name: Optional[str] = None,
+        dll_paths: Optional[List[Path]] = None,
+        cmd: Optional[str] = None,
+    ):
 
-        log.debug(f'Starting game process {process_name} using {start_method} method: exe_path={exe_path}, work_dir={work_dir}, start_args={start_args}, process_flags={process_flags}, cmd={cmd}, dll_paths={dll_paths}')
+        log.debug(f'Starting game process {process_name} using {start_method.value} method: exe_path={exe_path}, work_dir={work_dir}, start_args={start_args}, process_flags={process_flags}, cmd={cmd}, dll_paths={dll_paths}')
 
-        start_method = start_method.upper()
+        match start_method:
+            case StartMethod.NATIVE:
+                if cmd is None:
+                    cmd = [exe_path] + start_args
+                    use_shell = False
+                else:
+                    use_shell = True
+                subprocess.Popen(cmd, creationflags=process_flags, cwd=work_dir, shell=use_shell)
 
-        if start_method == 'NATIVE':
-            if cmd is None:
-                cmd = [exe_path] + start_args
-                use_shell = False
-            else:
-                use_shell = True
-            subprocess.Popen(cmd, creationflags=process_flags, cwd=work_dir, shell=use_shell)
-
-        elif start_method == 'SHELL':
-            if cmd is None:
-                self.start_process(exe_path, work_dir, ' '.join(start_args))
-            else:
-                # cmd = ' '.join([f'start \"\" \"{exe_path}\"'] + start_args)
-                self.start_process('cmd.exe', None, f'/C "{cmd}"')
+            case StartMethod.SHELL:
+                if cmd is None:
+                    self.start_process(exe_path, work_dir, ' '.join(start_args))
+                else:
+                    # cmd = ' '.join([f'start \"\" \"{exe_path}\"'] + start_args)
+                    self.start_process('cmd.exe', None, f'/C "{cmd}"')
 
         elif start_method == 'MANUAL':
             log.debug(f'Waiting for user to start the game process {process_name}...')

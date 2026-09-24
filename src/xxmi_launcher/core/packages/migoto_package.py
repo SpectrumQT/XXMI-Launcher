@@ -15,7 +15,7 @@ from core.locale_manager import L
 from core.package_manager import Package, PackageMetadata
 
 from core.utils.dll_injector import DllInjector
-from core.utils.process_tracker import wait_for_process, WaitResult, ProcessPriority, wait_for_process_exit
+from core.utils.process_tracker import wait_for_process, WaitResult, ProcessPriorityClass, wait_for_process_exit
 
 log = logging.getLogger(__name__)
 
@@ -324,7 +324,7 @@ class MigotoInjector:
             start_args += Config.Active.Importer.launch_options.split()
 
         process_flags = subprocess.CREATE_NEW_CONSOLE | subprocess.CREATE_DEFAULT_ERROR_MODE
-        process_flags |= ProcessPriority(Config.Active.Importer.process_priority).get_process_flag()
+        process_flags |= ProcessPriorityClass(Config.Active.Importer.process_priority).get_process_flag()
 
         if not Config.Active.Importer.custom_launch_enabled:
             use_hook = event.use_hook

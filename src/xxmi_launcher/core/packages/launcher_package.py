@@ -17,6 +17,7 @@ import core.config_manager as Config
 from core.locale_manager import L
 from core.package_manager import Package, PackageMetadata
 
+from core.config.enums import UpdateChannel
 from core.utils.proxy import ProxyConfig
 from core.utils.process_tracker import wait_for_process, WaitResult
 
@@ -27,7 +28,7 @@ log = logging.getLogger(__name__)
 class LauncherManagerConfig:
     auto_update: bool = True
     pre_release: bool = False
-    update_channel: str = 'Auto'
+    update_channel: UpdateChannel = UpdateChannel.AUTO
     auto_close: bool = True
     start_timeout: int = 30
     gui_theme: str = 'Default'
@@ -94,29 +95,29 @@ class LauncherPackage(Package):
 
         time.sleep(1)
 
-    def detect_update_channel(self):
+    def detect_update_channel(self) -> UpdateChannel:
         try:
             launcher_key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, 'SOFTWARE\\SpectrumQT\\XXMI Launcher', 0, winreg.KEY_READ)
         except FileNotFoundError:
-            return 'ZIP'
+            return UpdateChannel.ZIP
 
         try:
             (path_value, regtype) = winreg.QueryValueEx(launcher_key, 'Path')
             if regtype != winreg.REG_SZ:
-                return 'ZIP'
+                return UpdateChannel.ZIP
         except FileNotFoundError:
-            return 'ZIP'
+            return UpdateChannel.ZIP
 
         if Path(path_value) != Paths.App.Root:
-            return 'ZIP'
+            return UpdateChannel.ZIP
 
-        return 'MSI'
+        return UpdateChannel.MSI
 
     def update(self, clean=False):
         # Launcher releases come in 2 formats:
         # * .msi (installer) - updated via Windows Installer
         # * .zip (portable) - updated via custom exe (https://github.com/SpectrumQT/XXMI-Updater)
-        if Config.Launcher.update_channel.upper() in ['MSI', 'ZIP']:
+        if Config.Launcher.update_channel.upper() in [UpdateChannel.MSI, UpdateChannel.ZIP]:
             # Use update channel override provided by user
             update_channel = Config.Launcher.update_channel.upper()
         else:
@@ -124,7 +125,7 @@ class LauncherPackage(Package):
             update_channel = self.detect_update_channel()
         log.debug(f'Using {update_channel} update channel')
 
-        if update_channel == 'MSI':
+        if update_channel == UpdateChannel.MSI:
             # Use default package update method (targeted at .msi) and let Windows Installer do the heavy lifting
             super().update()
         else:

@@ -2,17 +2,13 @@ from enum import Enum
 from dataclasses import dataclass, field
 
 from core.locale_manager import L
-
-
-class ProxyType(Enum):
-    HTTPS = 'HTTPS'
-    SOCKS5 = 'SOCKS5'
+from core.config.enums import ProxyType
 
 
 @dataclass
 class ProxyConfig:
     enable: bool = False
-    type: str = ProxyType.HTTPS.value
+    type: ProxyType = ProxyType.HTTPS
     host: str = ''
     port: str = ''
     use_credentials: bool = False
@@ -41,11 +37,6 @@ class ProxyManager:
 
         cfg.verify()
 
-        try:
-            proxy_type = ProxyType(cfg.type)
-        except Exception as e:
-            proxy_type = ProxyType.HTTPS
-
         host, port = cfg.host.strip(), cfg.port.strip()
 
         user, password = None, None
@@ -54,7 +45,7 @@ class ProxyManager:
             user = cfg.user.strip()
             password = cfg.password.strip()
 
-        if proxy_type == ProxyType.SOCKS5:
+        if cfg.type == ProxyType.SOCKS5:
             if cfg.proxy_dns_via_socks5:
                 scheme = 'socks5h'
             else:

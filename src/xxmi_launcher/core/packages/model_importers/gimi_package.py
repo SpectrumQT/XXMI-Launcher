@@ -15,9 +15,10 @@ import core.event_manager as Events
 import core.config_manager as Config
 
 from core.locale_manager import L
+from core.config.enums import WindowMode
 from core.package_manager import PackageMetadata
 from core.utils.ini_handler import IniHandler, IniHandlerSettings
-from core.utils.process_tracker import wait_for_process_exit, WaitResult, ProcessPriority
+from core.utils.process_tracker import wait_for_process_exit, WaitResult, ProcessPriorityClass
 from core.packages.model_importers.model_importer import ModelImporterPackage, ModelImporterConfig, Version
 from core.packages.migoto_package import MigotoManagerConfig
 
@@ -85,13 +86,6 @@ class GIMIPackageConfig:
     Migoto: MigotoManagerConfig = field(
         default_factory=lambda: MigotoManagerConfig()
     )
-
-
-class WindowMode(Enum):
-    Windowed = 'Windowed'
-    Borderless = 'Borderless'
-    Fullscreen = 'Fullscreen'
-    ExclusiveFullscreen = 'Exclusive Fullscreen'
 
 
 class GIMIPackage(ModelImporterPackage):
@@ -346,22 +340,19 @@ class GIMIPackage(ModelImporterPackage):
             modified = True
 
         process_priorities = {
-            ProcessPriority.IDLE_PRIORITY_CLASS: 5,
-            ProcessPriority.BELOW_NORMAL_PRIORITY_CLASS: 4,
-            ProcessPriority.NORMAL_PRIORITY_CLASS: 3,
-            ProcessPriority.ABOVE_NORMAL_PRIORITY_CLASS: 2,
-            ProcessPriority.HIGH_PRIORITY_CLASS: 1,
-            ProcessPriority.REALTIME_PRIORITY_CLASS: 0,
+            ProcessPriorityClass.IDLE_PRIORITY_CLASS: 5,
+            ProcessPriorityClass.BELOW_NORMAL_PRIORITY_CLASS: 4,
+            ProcessPriorityClass.NORMAL_PRIORITY_CLASS: 3,
+            ProcessPriorityClass.ABOVE_NORMAL_PRIORITY_CLASS: 2,
+            ProcessPriorityClass.HIGH_PRIORITY_CLASS: 1,
+            # ProcessPriorityClass.REALTIME_PRIORITY_CLASS: 0,
         }
-        try:
-            process_priority = ProcessPriority(Config.Active.Importer.process_priority)
-        except Exception as e:
-            process_priority = ProcessPriority.ABOVE_NORMAL_PRIORITY_CLASS
-            Config.Active.Importer.process_priority = process_priority.value
-        process_priority = process_priorities[process_priority]
+        process_priority_class = ProcessPriorityClass(Config.Active.Importer.process_priority)
 
-        if fps_config.get('Priority', None) != process_priority:
-            fps_config['Priority'] = process_priority
+        process_priority_int = process_priorities[process_priority_class]
+
+        if fps_config.get('Priority', None) != process_priority_int:
+            fps_config['Priority'] = process_priority_int
             modified = True
 
         if fps_config.get('AdditionalCommandLine', None) != Config.Active.Importer.launch_options:
@@ -369,34 +360,29 @@ class GIMIPackage(ModelImporterPackage):
             modified = True
 
         window_modes = {
-            WindowMode.Windowed: {
+            WindowMode.WINDOWED: {
                 'PopupWindow': False,
                 'Fullscreen': False,
                 'IsExclusiveFullscreen': False,
             },
-            WindowMode.Borderless: {
+            WindowMode.BORDERLESS: {
                 'PopupWindow': True,
                 'Fullscreen': False,
                 'IsExclusiveFullscreen': False,
             },
-            WindowMode.Fullscreen: {
+            WindowMode.FULLSCREEN: {
                 'PopupWindow': False,
                 'Fullscreen': True,
                 'IsExclusiveFullscreen': False,
             },
-            WindowMode.ExclusiveFullscreen: {
+            WindowMode.EXCLUSIVE_FULLSCREEN: {
                 'PopupWindow': False,
                 'Fullscreen': True,
                 'IsExclusiveFullscreen': True,
             },
         }
-        try:
-            window_mode = WindowMode(Config.Active.Importer.window_mode)
-        except Exception as e:
-            window_mode = WindowMode.Borderless
-            Config.Active.Importer.window_mode = window_mode.value
 
-        for setting, value in window_modes[window_mode].items():
+        for setting, value in window_modes[Config.Active.Importer.window_mode].items():
             if fps_config.get(setting, None) != value:
                 fps_config[setting] = value
                 modified = True

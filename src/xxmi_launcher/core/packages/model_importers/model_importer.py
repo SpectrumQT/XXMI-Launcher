@@ -21,6 +21,7 @@ import core.event_manager as Events
 import core.config_manager as Config
 
 from core.locale_manager import L
+from core.config.enums import ProcessPriority, WindowMode
 from core.package_manager import Package, PackageMetadata
 
 from core.mod_manager import ModManager
@@ -46,11 +47,10 @@ class ModelImporterConfig:
     game_folder: str = ''
     use_launch_options: bool = True
     overwrite_ini: bool = True
-    process_start_method: str = 'Native'
-    process_priority: str = 'Normal'
+    process_priority: ProcessPriority = ProcessPriority.NORMAL
     process_timeout: int = 30
     xxmi_dll_init_delay: int = 0
-    window_mode: str = 'Borderless'
+    window_mode: WindowMode = WindowMode.BORDERLESS
     run_pre_launch_enabled: bool = False
     run_pre_launch: str = ''
     run_pre_launch_signature: str = ''
