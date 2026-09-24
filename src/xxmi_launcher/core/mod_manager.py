@@ -269,8 +269,7 @@ class IniValidator:
         return any(fnmatch.fnmatch(part.lower(), pat.lower()) for part in path.parts for pat in patterns)
 
     def index_namespaces(self, folder_path: Path):
-        log.debug(f'Indexing namespaces for {folder_path}...')
-        namespace_pattern = re.compile(r'namespace\s*=\s*(.*)')
+        log.debug(f"Indexing namespaces for {folder_path}...")
         namespaces: dict[str, list[Path]] = {}
 
         for path in self.get_ini_files(folder_path):
@@ -280,24 +279,24 @@ class IniValidator:
                     continue
 
             try:
-                ini_lines = Paths.App.read_text(path).splitlines()
-                for line_id, line in enumerate(ini_lines):
-                    stripped_line = line.strip().lower()
-                    if not stripped_line:
+                for line in Paths.App.read_lines(path):
+                    stripped_line = line.lstrip()
+
+                    # Skip empty lines and comments
+                    if not stripped_line or stripped_line.startswith(';'):
                         continue
-                    if stripped_line[0] == ';':
-                        continue
-                    result = namespace_pattern.findall(stripped_line)
-                    if len(result) == 1:
-                        namespace = result[0]
-                        known_namespace = namespaces.get(namespace, None)
-                        if known_namespace:
-                            known_namespace.append(path)
-                        else:
-                            namespaces[namespace] = [path]
-                        break
+
+                    # Try to read the first non-empty and non-comment line as namespace.
+                    if stripped_line.lower().startswith("namespace"):
+                        parts = stripped_line.split("=", 1)
+                        if len(parts) == 2:
+                            namespace = parts[1].strip()
+                            namespaces.setdefault(namespace, []).append(path)
+
+                    break
+
             except Exception as e:
-                pass
+                log.debug(f"Namespace indexing error: {str(e)}")
 
         return namespaces
 
