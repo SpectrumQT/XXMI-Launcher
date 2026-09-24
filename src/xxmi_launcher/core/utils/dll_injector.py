@@ -121,7 +121,6 @@ class DllInjector:
         start_args: Optional[List[str]],
         process_flags: Optional[int],
         process_name: Optional[str] = None,
-        dll_paths: Optional[List[Path]] = None,
         cmd: Optional[str] = None,
     ):
 
@@ -142,18 +141,6 @@ class DllInjector:
                 else:
                     # cmd = ' '.join([f'start \"\" \"{exe_path}\"'] + start_args)
                     self.start_process('cmd.exe', None, f'/C "{cmd}"')
-
-        elif start_method == 'MANUAL':
-            log.debug(f'Waiting for user to start the game process {process_name}...')
-
-        else:
-            raise ValueError(L('error_dll_injector_unknown_start_method', 'Unknown process start method `{start_method}`!').format(start_method=start_method))
-
-        if dll_paths:
-            pid = self.inject_libraries(dll_paths, process_name, timeout=inject_timeout)
-            if pid == -1:
-                raise ValueError(L('error_dll_injector_injection_failed', 'Failed to inject {dll_paths}!').format(dll_paths=str(dll_paths)))
-
 
     def hook_library(self, dll_path: Path, target_process: str):
         if self.hook is not None:

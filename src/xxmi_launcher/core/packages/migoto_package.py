@@ -433,10 +433,11 @@ class MigotoInjector:
                 start_args=context.start_args,
                 process_flags=context.process_flags,
                 process_name=context.process_name,
-                dll_paths=dll_paths,
                 cmd=context.custom_launch_cmd,
-                inject_timeout=Config.Active.Importer.process_timeout,
             )
+
+            if dll_paths:
+                pid = injector.inject_libraries(dll_paths, context.process_name, timeout=Config.Active.Importer.process_timeout)
 
             # Wait until game window appears
             self.wait_for_window(context, injection_verified=True)
@@ -463,10 +464,11 @@ class MigotoInjector:
                 start_args = context.start_args,
                 process_flags = context.process_flags,
                 process_name = context.process_name,
-                dll_paths = context.inject_dll_paths,
                 cmd = context.custom_launch_cmd,
-                inject_timeout=Config.Active.Importer.process_timeout,
             )
+
+            if context.inject_dll_paths:
+                pid = injector.inject_libraries(context.inject_dll_paths, context.process_name, timeout=Config.Active.Importer.process_timeout)
 
             # Early DLL injection verification
             hooked = injector.wait_for_injection(5)
