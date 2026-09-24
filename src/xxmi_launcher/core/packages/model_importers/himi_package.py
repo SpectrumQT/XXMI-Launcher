@@ -1,12 +1,9 @@
 import re
-import os
 import logging
-import shutil
 import winreg
 import json
 
 from dataclasses import dataclass, field
-from enum import Enum
 from typing import Any
 from pathlib import Path
 
@@ -17,8 +14,6 @@ import core.config_manager as Config
 from core.locale_manager import L
 from core.package_manager import PackageMetadata
 
-from core.utils.ini_handler import IniHandler, IniHandlerSettings
-from core.utils.process_tracker import wait_for_process_exit, WaitResult, ProcessPriority
 from core.packages.model_importers.model_importer import ModelImporterPackage, ModelImporterConfig, Version
 from core.packages.migoto_package import MigotoManagerConfig
 

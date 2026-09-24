@@ -2,14 +2,11 @@ import sys
 import logging
 import os
 import argparse
-import shutil
 import subprocess
 import time
 import traceback
 
 from pathlib import Path
-from typing import Union, Callable, List, Optional
-from dataclasses import dataclass, field
 from threading import Thread, current_thread, main_thread
 from queue import Queue, Empty
 
@@ -18,7 +15,6 @@ import core.locale_manager as Locale
 import core.path_manager as Paths
 import core.event_manager as Events
 import core.config_manager as Config
-
 import core.utils.system_info as system_info
 
 from core.locale_manager import L
@@ -162,22 +158,21 @@ class Application:
             Events.Fire(Events.Application.Busy())
             Events.Fire(Events.Application.StatusUpdate(status=L('status_initializing_update', 'Initializing update...')))
 
+        # Trigger events required to initialize GUI state.
         Events.Fire(Events.Application.LoadImporter(importer_id=Config.Launcher.active_importer))
+        Events.Fire(Events.Application.ConfigUpdate())
+        Events.Fire(Events.PackageManager.NotifyPackageVersions(detect_installed=True))
 
         Events.Subscribe(Events.Application.Update,
-                         lambda event: self.run_as_thread(self.package_manager.update_packages, **event.__dict__))
+            lambda event: self.run_as_thread(self.package_manager.update_packages, **event.__dict__))
         Events.Subscribe(Events.Application.CheckForUpdates,
-                         lambda event: self.run_as_thread(self.check_for_updates))
+            lambda event: self.run_as_thread(self.check_for_updates))
         Events.Subscribe(Events.Application.LoadImporter,
-                         lambda event: self.run_as_thread(self.load_importer, importer_id=event.importer_id, reload=event.reload))
+            lambda event: self.run_as_thread(self.load_importer, importer_id=event.importer_id, reload=event.reload))
         Events.Subscribe(Events.Application.Launch,
-                         lambda event: self.run_as_thread(self.launch))
+            lambda event: self.run_as_thread(self.launch))
         Events.Subscribe(Events.Application.Restart,
-                         lambda event: self.run_as_thread(self.restart, delay=event.delay))
-
-        Events.Fire(Events.Application.ConfigUpdate())
-
-        Events.Fire(Events.PackageManager.NotifyPackageVersions(detect_installed=True))
+            lambda event: self.run_as_thread(self.restart, delay=event.delay))
 
         self.gui.after(100, self.run_as_thread, self.auto_update)
 
