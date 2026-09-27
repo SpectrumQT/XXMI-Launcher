@@ -57,7 +57,7 @@ class EpicManager:
     def launch(
         self,
         game: Game,
-        args: list[str],
+        args: str,
     ) -> bool:
         installation = self._require_game(game)
 
@@ -70,7 +70,7 @@ class EpicManager:
     def launch_app(
         self,
         installation: EpicApp,
-        args: list[str],
+        args: str,
     ) -> bool:
         uri = self._build_launch_uri(installation, args)
 
@@ -84,15 +84,14 @@ class EpicManager:
     @staticmethod
     def _build_launch_uri(
         installation: EpicApp,
-        args: list[str],
+        args: str,
     ) -> str:
         app = f"{installation.namespace_id}%3A{installation.item_id}%3A{installation.artifact_id}"
 
         query = "action=launch&silent=true"
 
         if args:
-            encoded_args = "%20".join(args)
-            query += f'&args="{encoded_args}"'
+            query += f'&args="{args.replace(' ', "%20")}"'
 
         return f"com.epicgames.launcher://apps/{app}?{query}"
 

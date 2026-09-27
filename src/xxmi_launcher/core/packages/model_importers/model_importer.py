@@ -74,6 +74,7 @@ class ModelImporterConfig:
     start_method: StartMethod = StartMethod.NATIVE
     # Removed
     custom_launch_inject_mode: InjectModeLegacy = InjectModeLegacy.OPTION_REMOVED
+    process_start_method: ProcessStartMethodLegacy = ProcessStartMethodLegacy.OPTION_REMOVED
 
     @property
     def importer_path(self) -> Path:

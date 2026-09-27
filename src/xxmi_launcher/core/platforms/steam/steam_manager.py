@@ -101,7 +101,7 @@ class SteamManager:
         with self._temporarily_stopped():
             return self.config.set_launch_options(app.app_id, options)
 
-    def launch(self, game: Game, args: list[str]) -> bool:
+    def launch(self, game: Game, args: str) -> bool:
         app = self._require_game(game)
         return  self.launch_app(app.app_id, args)
 
@@ -136,7 +136,7 @@ class SteamManager:
             True if Steam is stopped after the operation.
         """
         return self.process_manager.stop_with_args(
-            ["-shutdown"],
+            "-shutdown",
             timeout=timeout,
         )
 
@@ -152,7 +152,7 @@ class SteamManager:
             True if Steam is running after the operation.
         """
         return self.process_manager.restart(
-            stop_args=["-shutdown"],
+            stop_args="-shutdown",
             timeout=timeout,
         )
 
@@ -160,7 +160,7 @@ class SteamManager:
 
     # region Steam Application API
 
-    def launch_app(self, app_id: str, args: list[str]) -> bool:
+    def launch_app(self, app_id: str, args: str) -> bool:
         """
         Launch a Steam application by App ID.
 
@@ -170,8 +170,10 @@ class SteamManager:
         Returns:
             True if the launch command was started successfully.
         """
-        args = ["-applaunch", str(app_id)] + args
-        self.process_manager.start(args, check_running=False)
+        cmd_args = f"-applaunch {app_id}"
+        if args:
+            cmd_args += ' ' + args
+        self.process_manager.start(cmd_args, check_running=False)
 
         return True
 
