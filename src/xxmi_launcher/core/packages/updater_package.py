@@ -1,16 +1,13 @@
 import logging
-import subprocess
 import time
-
-from dataclasses import dataclass
 
 import core.path_manager as Paths
 import core.event_manager as Events
 
 from core.locale_manager import L
 from core.package_manager import Package, PackageMetadata
-
-from core.utils.process_tracker import wait_for_process, WaitResult
+from core.config.enums import StartMethod
+from core.utils.process_manager import ProcessManager, LaunchContext, ExecutableLaunch
 
 log = logging.getLogger(__name__)
 
@@ -49,26 +46,27 @@ class UpdaterPackage(Package):
 
         Events.Fire(Events.PackageManager.InitializeInstallation())
 
-        cmd = [
-            self.exe_path,
-            '--mode', 'Updater',
-            '--channel', 'ZIP',
-            '--dist_dir', str(Paths.App.Root),
-            '--src_dir', str(event.downloaded_asset_path)
-        ]
+        launch_context = LaunchContext(
+            start_method=StartMethod.NATIVE,
+            target=ExecutableLaunch(
+                exe_path=self.exe_path,
+                cmd_args=f'--mode Updater --channel ZIP --dist_dir "{Paths.App.Root}" --src_dir "{event.downloaded_asset_path}"',
+            ),
+            work_dir=self.exe_path.parent,
+        )
 
-        try:
-            log.debug("Starting updater, cmd=%s", cmd)
-            proc = subprocess.Popen(cmd, cwd=str(self.exe_path.parent))
-            log.debug("Started updater, PID=%s", proc.pid)
-        except Exception:
-            log.exception("Failed to start updater")
-            raise
+        manager = ProcessManager(launch_context)
+
+        manager.start()
 
         Events.Fire(Events.Application.WaitForProcess(process_name=self.exe_path.name))
 
-        result, pid = wait_for_process(self.exe_path.name, with_window=True, timeout=15)
-        if result == WaitResult.Timeout:
+        window_found = manager.wait_until_running(
+            timeout=15,
+            wait_for_window=True
+        )
+
+        if not window_found:
             raise ValueError(L('error_updater_start_failed', """
                 Failed to start XXMI Updater.exe!
                 

@@ -1,5 +1,5 @@
 import re
-import os
+import time
 import logging
 import shutil
 import winreg
@@ -17,10 +17,9 @@ import core.config_manager as Config
 from core.locale_manager import L
 from core.config.enums import WindowMode, InjectMode
 from core.package_manager import PackageMetadata
-from core.utils.ini_handler import IniHandler, IniHandlerSettings
-from core.utils.process_tracker import wait_for_process_exit, WaitResult, ProcessPriorityClass
 from core.packages.model_importers.model_importer import ModelImporterPackage, ModelImporterConfig, Version, StartMethod
 from core.packages.migoto_package import MigotoManagerConfig
+from core.utils.process_manager import ProcessManager, LaunchContext, ProcessPriorityClass
 
 log = logging.getLogger(__name__)
 
@@ -295,8 +294,12 @@ class GIMIPackage(ModelImporterPackage):
     def configure_fps_unlocker(self):
         Events.Fire(Events.Application.StatusUpdate(status=L('status_configuring_fps_unlocker', 'Configuring FPS Unlocker...')))
 
-        result, pid = wait_for_process_exit('unlockfps_nc.exe', timeout=10, kill_timeout=5)
-        if result == WaitResult.Timeout:
+        manager = ProcessManager(Path("unlockfps_nc.exe"))
+
+        if manager.stop(timeout=10):
+            # Wait a pi more for files to unlock.
+            time.sleep(3.141592653589793)
+        else:
             Events.Fire(Events.Application.ShowError(
                 modal=True,
                 message=L('message_text_fps_unlocker_manual_termination', """

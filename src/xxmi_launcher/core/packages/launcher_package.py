@@ -19,7 +19,8 @@ from core.package_manager import Package, PackageMetadata
 
 from core.config.enums import UpdateChannel
 from core.utils.proxy import ProxyConfig
-from core.utils.process_tracker import wait_for_process, WaitResult
+from core.config.enums import StartMethod
+from core.utils.process_manager import ProcessManager, LaunchContext, CommandLaunch
 
 log = logging.getLogger(__name__)
 
@@ -97,15 +98,27 @@ class LauncherPackage(Package):
 
     def run_msi_installer(self):
         cmd = f'msiexec /i "{self.downloaded_asset_path}" /qr /norestart APPDIR="{Paths.App.Root}" CREATE_SHORTCUTS=""'
-        log.debug(f'Calling `{cmd}`...')
-        subprocess.Popen(cmd, shell=True)
 
-        installer_process_name = 'EnhancedUI.exe'
+        launch_context = LaunchContext(
+            start_method=StartMethod.NATIVE,
+            target=CommandLaunch(
+                cmd=cmd,
+                process_name="EnhancedUI.exe",
+            ),
+        )
+
+        manager = ProcessManager(launch_context)
+
+        manager.start()
 
         Events.Fire(Events.Application.StatusUpdate(status=L('status_waiting_installer', 'Waiting for installer to start...')))
 
-        result, pid = wait_for_process(installer_process_name, with_window=True, timeout=15)
-        if result == WaitResult.Timeout:
+        window_found = manager.wait_until_running(
+            timeout=15,
+            wait_for_window=True
+        )
+
+        if not window_found:
             raise ValueError(L('error_launcher_installer_start_failed', """
                 Failed to start {asset_name}!
                 
