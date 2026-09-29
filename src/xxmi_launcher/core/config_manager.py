@@ -107,16 +107,17 @@ class ConfigManager:
         else:
             self.security.sign_settings()
 
-    def migrate(self, new_version: str) -> bool:
+    def migrate(self, new_version: str):
         old_version = self.config.Launcher.config_version
 
         # Exit early if no version upgrade required.
         if old_version == new_version:
-            return False  # Config not changed.
+            return
 
         migrator = ConfigMigrator(self.config)
 
-        return migrator.upgrade(old_version, new_version)
+        if migrator.upgrade(old_version, new_version):
+            self.save()
 
     def sign_settings(self, save_config: bool = True):
         self.security.sign_settings()
@@ -218,6 +219,49 @@ class ConfigMigrator:
                 log.debug('Could not apply config patch 2.1.9 to importer', exc_info=True)
 
         return changed
+
+    def _run_patch_230(self) -> bool:
+        for importer in self.config.Importers.__dict__.values():
+            importer_name = type(importer).__name__
+            # Handle legacy Custom Launch option.
+            if importer.Importer.custom_launch_enabled:
+                # Migrate Custom Launch option.
+                if importer.Importer.custom_launch:
+                    importer.Importer.game_launch = GameLaunch.CUSTOM
+                    log.debug(f"[{importer_name}]: Migrated CUSTOM_LAUNCH {importer.Importer.custom_launch_enabled} -> {importer.Importer.game_launch}")
+
+                # Handle legacy Inject Mode.
+                match importer.Importer.custom_launch_inject_mode:
+                    # Upgrade HOOK enum.
+                    case InjectModeLegacy.HOOK:
+                        importer.Importer.xxmi_dll_inject_mode = InjectMode.HOOK
+                    # Upgrade INJECT enum.
+                    case InjectModeLegacy.INJECT:
+                        importer.Importer.xxmi_dll_inject_mode = InjectMode.DIRECT
+                    # Handle BYPASS enum removal.
+                    case InjectModeLegacy.BYPASS:
+                        importer.Importer.xxmi_dll_inject_mode = InjectMode.SKIP
+                log.debug(f"[{importer_name}]: Migrated INJECT_MODE {importer.Importer.custom_launch_inject_mode} -> {importer.Importer.xxmi_dll_inject_mode}")
+
+            # Handle legacy start method.
+            match importer.Importer.process_start_method:
+                # Upgrade NATIVE enum.
+                case ProcessStartMethodLegacy.NATIVE:
+                    importer.Importer.start_method = StartMethod.NATIVE
+                # Upgrade SHELL enum.
+                case ProcessStartMethodLegacy.SHELL:
+                    importer.Importer.start_method = StartMethod.SHELL
+                # Handle MANUAL enum removal.
+                case ProcessStartMethodLegacy.MANUAL:
+                    importer.Importer.game_launch = GameLaunch.MANUAL
+            log.debug(f"[{importer_name}]: Migrated START_METHOD {importer.Importer.process_start_method} -> {importer.Importer.start_method}")
+
+            # Reset legacy options.
+            importer.Importer.custom_launch_enabled = False
+            importer.Importer.process_start_method = ProcessStartMethodLegacy.OPTION_REMOVED
+            importer.Importer.custom_launch_inject_mode = InjectModeLegacy.OPTION_REMOVED
+
+        return True
 
     # endregion
 

@@ -28,9 +28,9 @@ class StartMethod(ConfigEnum):
 
 class ProcessStartMethodLegacy(ConfigEnum):
     OPTION_REMOVED = "OPTION_REMOVED"
-    NATIVE = "OPTION_REMOVED"
-    SHELL = "OPTION_REMOVED"
-    MANUAL = "OPTION_REMOVED"
+    NATIVE = "NATIVE"
+    SHELL = "SHELL"
+    MANUAL = "MANUAL"
 
 
 class WindowMode(ConfigEnum):
@@ -57,9 +57,9 @@ class InjectMode(ConfigEnum):
 
 class InjectModeLegacy(ConfigEnum):
     OPTION_REMOVED = "OPTION_REMOVED"
-    INJECT = "OPTION_REMOVED"
-    HOOK = "OPTION_REMOVED"
-    BYPASS = "OPTION_REMOVED"
+    INJECT = "INJECT"
+    HOOK = "HOOK"
+    BYPASS = "BYPASS"
 
 
 class UpdateChannel(ConfigEnum):
