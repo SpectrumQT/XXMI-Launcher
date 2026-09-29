@@ -15,22 +15,27 @@ from core.locale_manager import L
 from core.package_manager import PackageMetadata
 
 from core.utils.ini_handler import IniHandler, IniHandlerSettings
-from core.config.enums import InjectMode
+from core.config.enums import InjectMode, GameLaunch
 from core.packages.model_importers.model_importer import ModelImporterPackage, ModelImporterConfig, Version
 from core.packages.migoto_package import MigotoManagerConfig
+from core.platforms.game import Game
+from core.utils.process_manager import LaunchContext
 
 log = logging.getLogger(__name__)
 
 
 @dataclass
 class WWMIConfig(ModelImporterConfig):
+    game: Game = Game.WUTHERING_WAVES
     game_exe_names: list[str] = field(default_factory=lambda: ['Wuthering Waves.exe'])
     process_exe_names: list[str] = field(default_factory=lambda: ['Client-Win64-Shipping.exe'])
     game_folder_names: list[str] = field(default_factory=lambda: ['Wuthering Waves Game'])
     game_folder_children: list[str] = field(default_factory=lambda: ['Client', 'Data'])
+    game_process_exe: str = "Client-Win64-Shipping.exe"
     importer_folder: str = 'WWMI/'
     use_launch_options: bool = False
     launch_options: str = '-SkipSplash'
+    d3d11_mode_cmd_args: str = "-dx11"
     xxmi_dll_init_delay: int = 500
     xxmi_dll_inject_mode: InjectMode = InjectMode.DIRECT
     d3dx_ini: dict[str, dict[str, dict[str, Any]]] = field(default_factory=lambda: {
@@ -112,7 +117,6 @@ class WWMIPackage(ModelImporterPackage):
             installation_path='WWMI/',
             requirements=['XXMI'],
         ))
-        self.use_hook: bool = False
 
     def get_installed_version(self):
         try:
@@ -202,37 +206,47 @@ class WWMIPackage(ModelImporterPackage):
                 raise ValueError(L('error_game_folder_missing_folder', 'Game folder must contain {dir_name} folder!').format(dir_name=dir_name))
         return game_path
 
-    def validate_game_exe_path(self, game_path: Path) -> Path:
-        for game_exe_name in Config.Active.Importer.process_exe_names:
-            game_exe_path = game_path / 'Client' / 'Binaries' / 'Win64' / game_exe_name
-            if game_exe_path.is_file():
-                return game_exe_path
-        raise ValueError(L('error_game_exe_not_found', 'Game executable {exe_name} not found!').format(
-            exe_name=' / '.join(Config.Active.Importer.game_exe_names)))
+    def override_launch_context(
+        self,
+        launch_context: LaunchContext,
+        game_path: Path | None,
+        game_exe_path: Path | None,
+    ) -> None:
+        if Config.Importers.WWMI.Importer.game_launch != GameLaunch.DIRECT:
+            return
 
-    def get_start_cmd(self, game_path: Path) -> tuple[Path, list[str], str | None]:
-        game_exe_path = self.validate_game_exe_path(game_path)
-        if Config.Importers.WWMI.Importer.use_launch_options:
-            # Start WW directly to support launch options customization
-            return game_exe_path, ['-dx11'], str(game_exe_path.parent)
+        if not Config.Importers.WWMI.Importer.use_launch_options:
+            # Start WW via wrapper exe (solves crashes for NVidia Optimus and some Steam version users).
+            launch_context.target.exe_path = game_path / "Wuthering Waves.exe"
+            launch_context.work_dir = game_path
         else:
-            # Start WW via wrapper exe (solves crashes for NVidia Optimus and some Steam version users)
-            return game_path / 'Wuthering Waves.exe', ['-dx11'], str(game_path)
+            # Start WW directly to support launch options customization
+            pass
 
-    def initialize_game_launch(self, game_path: Path | None):
-        # Configure LocalStorage.db
-        if any([Config.Importers.WWMI.Importer.configure_game, Config.Importers.WWMI.Importer.unlock_fps]):
-            self.configure_settings(game_path)
-        # Configure Engine.ini
-        self.update_engine_ini(game_path)
-        # Configure UserEngine.ini
-        self.update_user_engine_ini(game_path)
-        # Configure GameUserSettings.ini
+    def configure_game_settings(self, game_path: Path | None, game_exe_path: Path | None):
+        # Auto-config below requires reliably detectable installation location.
+        if Config.Importers.WWMI.Importer.game_launch not in [GameLaunch.DIRECT, GameLaunch.STEAM, GameLaunch.EPIC_GAMES]:
+            return
+        if not game_path:
+            return
+
+        # Configure GameUserSettings.ini.
         if Config.Importers.WWMI.Importer.unlock_fps:
             self.update_game_user_settings_ini(game_path)
-        # Prevent further configuration if WWMI isn't going to be used
+
+        # Configure LocalStorage.db.
+        if Config.Importers.WWMI.Importer.configure_game or Config.Importers.WWMI.Importer.unlock_fps:
+            self.configure_settings(game_path)
+
+        # Prevent further configuration if WWMI isn't going to be used.
         if not Config.Active.Importer.is_xxmi_dll_used():
             return
+
+        # Configure Engine.ini.
+        self.update_engine_ini(game_path)
+
+        # Configure UserEngine.ini.
+        self.update_user_engine_ini(game_path)
 
     def configure_settings(self, game_path: Path):
         Events.Fire(Events.Application.StatusUpdate(status=L('status_configuring_settings', 'Configuring in-game settings...')))

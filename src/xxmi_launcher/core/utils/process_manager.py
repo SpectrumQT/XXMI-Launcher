@@ -13,10 +13,22 @@ from pathlib import Path
 
 from core.locale_manager import L
 
-from core.config.enums import StartMethod
+from core.config.enums import StartMethod, ProcessPriority
 
 
 log = logging.getLogger(__name__)
+
+
+class ProcessPriorityClass(Enum):
+    IDLE_PRIORITY_CLASS = ProcessPriority.LOW
+    BELOW_NORMAL_PRIORITY_CLASS = ProcessPriority.BELOW_NORMAL
+    NORMAL_PRIORITY_CLASS = ProcessPriority.NORMAL
+    ABOVE_NORMAL_PRIORITY_CLASS = ProcessPriority.ABOVE_NORMAL
+    HIGH_PRIORITY_CLASS = ProcessPriority.HIGH
+    # REALTIME_PRIORITY_CLASS =
+
+    def get_process_flag(self):
+        return getattr(subprocess, self.name)
 
 
 @dataclass

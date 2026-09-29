@@ -15,10 +15,11 @@ import core.event_manager as Events
 import core.config_manager as Config
 
 from core.locale_manager import L
-from core.config.enums import WindowMode, InjectMode
+from core.config.enums import WindowMode, GameLaunch, InjectMode
 from core.package_manager import PackageMetadata
 from core.packages.model_importers.model_importer import ModelImporterPackage, ModelImporterConfig, Version, StartMethod
 from core.packages.migoto_package import MigotoManagerConfig
+from core.platforms.game import Game
 from core.utils.process_manager import ProcessManager, LaunchContext, ProcessPriorityClass
 
 log = logging.getLogger(__name__)
@@ -26,9 +27,11 @@ log = logging.getLogger(__name__)
 
 @dataclass
 class GIMIConfig(ModelImporterConfig):
+    game: Game = Game.GENSHIN_IMPACT
     game_exe_names: list[str] = field(default_factory=lambda: ['GenshinImpact.exe', 'YuanShen.exe'])
     game_folder_names: list[str] = field(default_factory=lambda: ['Genshin Impact Game'])
     game_folder_children: list[str] = field(default_factory=lambda: ['GenshinImpact_Data'])
+    game_process_exe: str = "GenshinImpact.exe"
     importer_folder: str = 'GIMI/'
     launch_options: str = ''
     start_method: StartMethod = StartMethod.SHELL
@@ -110,26 +113,20 @@ class GIMIPackage(ModelImporterPackage):
         except Exception as e:
             return ''
 
-    def get_start_cmd(self, game_path: Path) -> tuple[Path, list[str], str | None]:
+    def override_launch_context(
+        self,
+        launch_context: LaunchContext,
+        game_path: Path | None,
+        game_exe_path: Path | None,
+    ) -> None:
+        if Config.Importers.WWMI.Importer.game_launch != GameLaunch.DIRECT:
+            return
+
         if Config.Importers.GIMI.Importer.unlock_fps:
-            game_exe_path = Paths.App.Resources / 'Packages' / 'GI-FPS-Unlocker' / 'unlockfps_nc.exe'
-            work_dir_path = str(game_exe_path.parent)
-        else:
-            game_exe_path = self.validate_game_exe_path(game_path)
-            work_dir_path = str(game_exe_path.parent)
-        return game_exe_path, [], work_dir_path
+            launch_context.target.exe_path = Paths.App.Resources / 'Packages' / 'GI-FPS-Unlocker' / 'unlockfps_nc.exe'
+            launch_context.work_dir = launch_context.target.exe_path.parent
 
-    def initialize_game_launch(self, game_path: Path | None):
-        if Config.Importers.GIMI.Importer.unlock_fps:
-            try:
-                self.configure_fps_unlocker()
-            except Exception as e:
-                raise Exception(L('error_gimi_fps_unlocker_config_failed', """
-                    Failed to configure FPS Unlocker!
-
-                    {error_text}
-                """).format(error_text=e)) from e
-
+    def configure_game_settings(self, game_path: Path | None, game_exe_path: Path | None):
         if Config.Importers.GIMI.Importer.enable_hdr:
             try:
                 self.enable_hdr()
@@ -139,6 +136,17 @@ class GIMIPackage(ModelImporterPackage):
 
                     {error_text}
                 """).format(error_text=e)) from e
+
+        if Config.Importers.WWMI.Importer.game_launch == GameLaunch.DIRECT:
+            if Config.Importers.GIMI.Importer.unlock_fps:
+                try:
+                    self.configure_fps_unlocker()
+                except Exception as e:
+                    raise Exception(L('error_gimi_fps_unlocker_config_failed', """
+                        Failed to configure FPS Unlocker!
+    
+                        {error_text}
+                    """).format(error_text=e)) from e
 
         if not Config.Active.Importer.is_xxmi_dll_used():
             return

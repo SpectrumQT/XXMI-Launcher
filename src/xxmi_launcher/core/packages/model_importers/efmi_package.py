@@ -15,18 +15,22 @@ from core.package_manager import PackageMetadata
 from core.config.enums import InjectMode
 from core.packages.model_importers.model_importer import ModelImporterPackage, ModelImporterConfig, Version
 from core.packages.migoto_package import MigotoManagerConfig
+from core.platforms.game import Game
 
 log = logging.getLogger(__name__)
 
 
 @dataclass
 class EFMIConfig(ModelImporterConfig):
+    game: Game = Game.ARKNIGHTS_ENDFIELD
     game_exe_names: list[str] = field(default_factory=lambda: ['Endfield.exe'])
     game_folder_names: list[str] = field(default_factory=lambda: ['EndField Game'])
     game_folder_children: list[str] = field(default_factory=lambda: ['Endfield_Data'])
+    game_process_exe: str = "Endfield.exe"
     process_timeout: int = 60
     importer_folder: str = 'EFMI/'
     launch_options: str = ''
+    d3d11_mode_cmd_args: str = "-force-d3d11"
     xxmi_dll_inject_mode: InjectMode = InjectMode.DIRECT
     d3dx_ini: dict[str, dict[str, dict[str, Any]]] = field(default_factory=lambda: {
         'core': {
@@ -98,11 +102,3 @@ class EFMIPackage(ModelImporterPackage):
             return str(Version(Config.Importers.EFMI.Importer.importer_path / 'Core' / 'EFMI' / 'main.ini'))
         except Exception as e:
             return ''
-
-    def get_start_cmd(self, game_path: Path) -> tuple[Path, list[str], str | None]:
-        game_exe_path = self.validate_game_exe_path(game_path)
-        work_dir_path = str(game_exe_path.parent)
-        return game_exe_path, ['-force-d3d11'], work_dir_path
-
-    def initialize_game_launch(self, game_path: Path | None):
-        pass

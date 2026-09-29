@@ -17,15 +17,18 @@ from core.package_manager import PackageMetadata
 from core.config.enums import InjectMode
 from core.packages.model_importers.model_importer import ModelImporterPackage, ModelImporterConfig, Version
 from core.packages.migoto_package import MigotoManagerConfig
+from core.platforms.game import Game
 
 log = logging.getLogger(__name__)
 
 
 @dataclass
 class SRMIConfig(ModelImporterConfig):
+    game: Game = Game.HONKAI_STAR_RAIL
     game_exe_names: list[str] = field(default_factory=lambda: ['StarRail.exe'])
     game_folder_names: list[str] = field(default_factory=lambda: ['Star Rail Games'])
     game_folder_children: list[str] = field(default_factory=lambda: ['StarRail_Data'])
+    game_process_exe: str = "StarRail.exe"
     importer_folder: str = 'SRMI/'
     launch_options: str = ''
     xxmi_dll_inject_mode: InjectMode = InjectMode.HOOK
@@ -107,7 +110,7 @@ class SRMIPackage(ModelImporterPackage):
         except Exception as e:
             return ''
 
-    def initialize_game_launch(self, game_path: Path | None):
+    def configure_game_settings(self, game_path: Path | None, game_exe_path: Path | None):
         if Config.Importers.SRMI.Importer.unlock_fps:
             try:
                 self.unlock_fps()

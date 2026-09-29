@@ -32,6 +32,8 @@ from core.packages.model_importers.zzmi_package import ZZMIPackage
 from core.packages.model_importers.himi_package import HIMIPackage
 from core.packages.model_importers.efmi_package import EFMIPackage
 
+from core.game_launcher import Launcher
+
 
 class Application:
     def __init__(self, gui):
@@ -120,6 +122,10 @@ class Application:
 
         if self.args.create_shortcut:
             Events.Fire(Events.LauncherManager.CreateShortcut())
+
+        # Initialize launcher class.
+        self.launcher = Launcher
+        self.launcher.initialize(self.package_manager.get_package('XXMI'))
 
         # Get active MI from args, use one from config or fallback to XXMI homepage
         active_importer = self.get_active_importer()
@@ -351,6 +357,7 @@ class Application:
         Config.Active = getattr(Config.Importers, importer_id)
         Config.Config.Active = Config.Active
         self.package_manager.load_package(importer_id)
+        self.launcher.set_model_importer(self.package_manager.get_package(importer_id))
         self.package_manager.notify_package_versions()
         Config.Manager.validate_config()
         # Check for updates
@@ -533,8 +540,8 @@ class Application:
                 if Config.Active.Importer.run_pre_launch_wait:
                     process.wait()
 
-            # Signal active model importer package to start game and inject 3dmigoto
-            Events.Fire(Events.ModelImporter.StartGame())
+            # Start game and inject 3dmigoto
+            self.launcher.launch()
 
             # Execute specified shell command after successful injection
             if Config.Active.Importer.run_post_load_enabled and Config.Active.Importer.run_post_load != '':

@@ -22,6 +22,7 @@ from core.locale_manager import L
 from core.events.package_manager import PackageManagerEvents, PackageState
 from core.utils.security import Security
 from core.utils.github_client import GitHubClient
+from core.utils.process_manager import LaunchContext
 
 log = logging.getLogger(__name__)
 
@@ -438,6 +439,9 @@ class Package:
 
     def uninstall(self):
         pass
+
+    def run_pre_launch(self, launch_context: LaunchContext):
+        raise NotImplementedError()
 
 
 @dataclass

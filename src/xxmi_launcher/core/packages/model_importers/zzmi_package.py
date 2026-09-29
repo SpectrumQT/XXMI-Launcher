@@ -14,19 +14,23 @@ import core.config_manager as Config
 from core.locale_manager import L
 from core.package_manager import PackageMetadata
 
-from core.config.enums import InjectMode
+from core.config.enums import InjectMode, GameLaunch
 from core.packages.model_importers.model_importer import ModelImporterPackage, ModelImporterConfig, Version
 from core.packages.migoto_package import MigotoManagerConfig
 from core.utils.sleepy import Sleepy, JsonSerializer
+from core.platforms.game import Game
+from core.utils.process_manager import LaunchContext
 
 log = logging.getLogger(__name__)
 
 
 @dataclass
 class ZZMIConfig(ModelImporterConfig):
+    game: Game = Game.ZENLESS_ZONE_ZERO
     game_exe_names: list[str] = field(default_factory=lambda: ['ZenlessZoneZero.exe', 'ZenlessZoneZeroBeta.exe'])
     game_folder_names: list[str] = field(default_factory=lambda: ['ZenlessZoneZero Game'])
     game_folder_children: list[str] = field(default_factory=lambda: ['ZenlessZoneZero_Data'])
+    game_process_exe: str = "ZenlessZoneZero.exe"
     importer_folder: str = 'ZZMI/'
     launch_options: str = ''
     xxmi_dll_inject_mode: InjectMode = InjectMode.HOOK
@@ -106,43 +110,59 @@ class ZZMIPackage(ModelImporterPackage):
         except Exception as e:
             return ''
 
-    def initialize_game_launch(self, game_path: Path | None):
+    def override_launch_context(
+        self,
+        launch_context: LaunchContext,
+        game_path: Path | None,
+        game_exe_path: Path | None,
+    ) -> None:
+        if Config.Importers.WWMI.Importer.game_launch != GameLaunch.DIRECT:
+            return
+
+        # EGS ZZZ 3.2 crashes on login screen if work_dir is the same as ZenlessZoneZero.exe location.
+        launch_context.work_dir = None
+
+    def configure_game_settings(self, game_path: Path | None, game_exe_path: Path | None):
+        # Auto-config below requires reliably detectable installation location.
+        if Config.Importers.WWMI.Importer.game_launch not in [GameLaunch.DIRECT, GameLaunch.STEAM, GameLaunch.EPIC_GAMES]:
+            return
+        if not game_exe_path:
+            return
+
         # Prevent further configuration if ZZMI isn't going to be used
         if not Config.Active.Importer.is_xxmi_dll_used():
             return
+
         # Configure GENERAL_DATA.bin
         if Config.Importers.ZZMI.Importer.configure_game:
+            Events.Fire(Events.Application.StatusUpdate(status=L('status_configuring_settings', 'Configuring in-game settings...')))
+
             try:
-                self.configure_game_settings(game_path)
+                config_path = game_exe_path.parent / 'ZenlessZoneZero_Data' / 'Persistent' / 'LocalStorage' / 'GENERAL_DATA.bin'
+
+                settings_manager = SettingsManager(config_path)
+
+                # Load settings from GENERAL_DATA.bin or initialize new settings container
+                settings_manager.load_settings()
+
+                # Set "Image Quality" to "Custom"
+                settings_manager.set_system_setting('3', 3)
+                # Set "High-Precision Character Animation" to "Disabled"
+                settings_manager.set_system_setting('13162', 0)
+                # Set "Character Quality" to "High"
+                settings_manager.set_system_setting('99', 1)
+
+                # Write settings to GENERAL_DATA.bin
+                settings_manager.save_settings()
             except Exception as e:
                 raise ValueError(L('error_zzmi_game_config_failed', """
                     Failed to configure in-game settings for ZZMI!
-                    Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:
-                    * Graphics > `Character Quality` must be `High`.
-                    * Graphics > `High-Precision Character Animation` must be `Disabled`.
+                    Please disable **Configure Game Settings** in launcher's **General Settings** and check in-game settings:
+                    * **Graphics › Character Quality** must be **High**.
+                    * **Graphics › High-Precision Character Animation** must be **Disabled**.
                     
                     {error_text}
                 """).format(error_text=e)) from e
-
-    def configure_game_settings(self, game_path: Path):
-        Events.Fire(Events.Application.StatusUpdate(status=L('status_configuring_settings', 'Configuring in-game settings...')))
-
-        config_path = game_path / 'ZenlessZoneZero_Data' / 'Persistent' / 'LocalStorage' / 'GENERAL_DATA.bin'
-
-        settings_manager = SettingsManager(config_path)
-
-        # Load settings from GENERAL_DATA.bin or initialize new settings container
-        settings_manager.load_settings()
-
-        # Set "Image Quality" to "Custom"
-        settings_manager.set_system_setting('3', 3)
-        # Set "High-Precision Character Animation" to "Disabled"
-        settings_manager.set_system_setting('13162', 0)
-        # Set "Character Quality" to "High"
-        settings_manager.set_system_setting('99', 1)
-
-        # Write settings to GENERAL_DATA.bin
-        settings_manager.save_settings()
 
 
 class SettingsManager:
