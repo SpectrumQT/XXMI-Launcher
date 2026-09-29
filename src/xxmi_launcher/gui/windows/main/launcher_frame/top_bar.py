@@ -379,12 +379,24 @@ class SettingsButton(ControlButton):
             button_disabled_opacity=0.25,
             bg_disabled_opacity=0,
             button_image_path='button-system-settings.png',
-            command=lambda: Events.Fire((Events.Application.OpenSettings())),
+            command=self.open_settings,
             master=master)
         self.stage = None
         self.set_tooltip(L('top_bar_settings_button_tooltip', 'Open Settings'), delay=0.1)
         self.subscribe(Events.Application.LoadImporter, self.handle_load_importer)
         self.subscribe(Events.GUI.LauncherFrame.StageUpdate, self.handle_stage_update)
+        self.subscribe(Events.Application.OpenSettings, self.handle_open_settings)
+        self.subscribe(Events.Application.CloseSettings, self.handle_close_settings)
+
+    def open_settings(self):
+        self.set_disabled(True)
+        Events.Fire(Events.Application.OpenSettings())
+
+    def handle_open_settings(self, event):
+        self.set_disabled(True)
+
+    def handle_close_settings(self, event):
+        self.set_disabled(False)
 
     def handle_load_importer(self, event):
         self.set_disabled(self.stage != Stage.Ready or event.importer_id == 'XXMI')
