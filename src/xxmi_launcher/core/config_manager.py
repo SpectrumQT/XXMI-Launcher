@@ -239,23 +239,32 @@ Active: (
 def get_resource_path(element, filename: str | Path, extensions: str | list[str] | None = None):
     filename = Path(filename)
     search_extensions = [filename.suffix]
+
     if extensions is not None:
         search_extensions += [ext for ext in list(extensions) if ext != filename.suffix]
-    class_path = element.get_resource_path() / filename
+
+    if len(filename.parts) > 1:
+        class_path = filename
+    else:
+        class_path = element.get_resource_path() / filename
+
     for extension in search_extensions:
         resource_path = Config.theme_path / class_path.with_suffix(extension)
         if resource_path.is_file():
             return resource_path
+
     resource_path = Paths.App.Themes / 'Default' / class_path
+
     if not resource_path.is_file():
         raise FileNotFoundError(L('error_theme_resource_not_found', """
             Resource not found:
-            
+
             {resource_path}
-            
+
             Hint: You can also use other extensions: {extensions}
         """).format(
             resource_path=resource_path,
-            extensions = ", ".join(extensions or []))
+            extensions=", ".join(extensions or []))
         )
+
     return resource_path
