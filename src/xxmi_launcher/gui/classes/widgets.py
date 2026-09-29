@@ -1279,6 +1279,9 @@ class UIEntry(CTkEntry, UIWidget):
     def __init__(self,
                  master: Union[UIWindow, 'UIFrame'],
                  input_filter: Optional[str] = None,
+                 fg_color_disabled: Optional[Union[str, Tuple[str, str]]] = None,
+                 border_color_disabled: Optional[Union[str, Tuple[str, str]]] = None,
+                 text_color_disabled: Optional[Union[str, Tuple[str, str]]] = None,
                  **kwargs):
 
         UIWidget.__init__(self, master, **kwargs)
@@ -1288,9 +1291,9 @@ class UIEntry(CTkEntry, UIWidget):
         if self._input_filter is not None:
             self.setup_input_filter(master, kwargs)
 
-        self._fg_color_disabled = ThemeManager.theme["CTkEntry"].get("fg_color_disabled", None)
-        self._border_color_disabled = ThemeManager.theme["CTkEntry"].get("border_color_disabled", None)
-        self._text_color_disabled = ThemeManager.theme["CTkEntry"].get("text_color_disabled", None)
+        self._fg_color_disabled = ThemeManager.theme["CTkEntry"].get("fg_color_disabled", None) if fg_color_disabled is None else self._check_color_type(fg_color_disabled)
+        self._border_color_disabled = ThemeManager.theme["CTkEntry"].get("border_color_disabled", None) if border_color_disabled is None else self._check_color_type(border_color_disabled)
+        self._text_color_disabled = ThemeManager.theme["CTkEntry"].get("text_color_disabled", None) if text_color_disabled is None else self._check_color_type(text_color_disabled)
 
         CTkEntry.__init__(self, master, **kwargs)
 
@@ -1378,6 +1381,16 @@ class UIEntry(CTkEntry, UIWidget):
 
     def configure(self, require_redraw=False, **kwargs):
         if "state" in kwargs:
+            require_redraw = True
+
+        if 'fg_color_disabled' in kwargs:
+            self._fg_color_disabled = self._check_color_type(kwargs.pop('fg_color_disabled'))
+            require_redraw = True
+        if 'border_color_disabled' in kwargs:
+            self._border_color_disabled = self._check_color_type(kwargs.pop('border_color_disabled'))
+            require_redraw = True
+        if 'text_color_disabled' in kwargs:
+            self._text_color_disabled = self._check_color_type(kwargs.pop('text_color_disabled'))
             require_redraw = True
 
         font = kwargs.get('font', None)
