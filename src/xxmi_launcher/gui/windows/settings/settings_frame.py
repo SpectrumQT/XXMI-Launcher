@@ -14,8 +14,23 @@ class SettingsFrame(UIFrame):
 
         self.settings_frame = None
 
-        self.set_background_image(image_path='background-image.png', width=master.master.cfg.width,
-                                  height=master.master.cfg.height, x=0, y=0, anchor='nw', brightness=1.0, opacity=1)
+        self.set_background_image(
+            width=940,
+            height=560,
+            x=master.master.cfg.width/2,
+            y=master.master.cfg.height/2,
+            anchor='c',
+            fg_color='#1f2024',
+            border_color='gray',
+            border_radius=20,
+            border_width=1,
+            brightness=1.0,
+            opacity=1.0,
+            dim_opacity=0.5,
+            secondary_fill_color="#24252a",
+            split=0.25,
+            split_direction="vertical",
+        )
 
         self._offset_x = 0
         self._offset_y = 0
@@ -34,7 +49,7 @@ class SettingsFrame(UIFrame):
         Vars.Settings.initialize_vars()
         Vars.Settings.load()
         # self.grid(row=0, column=0, padx=(125), pady=(175,140), sticky='nsew')
-        self.place(x=124, y=167)
+        self.place(x=175, y=122)
 
         from gui.windows.settings.settings_tabs_frame import SettingsTabsFrame
         if not tab_name:
@@ -87,8 +102,8 @@ class SettingsFrame(UIFrame):
 class CloseButton(UIImageButton):
     def __init__(self, master):
         super().__init__(
-            x=1135,
-            y=155,
+            x=1085,
+            y=105,
             width=18,
             height=18,
             button_image_path='button-system-close.png',
@@ -106,4 +121,4 @@ class CloseButton(UIImageButton):
         self.set_tooltip(f'Close', delay=0.1)
 
     def close(self):
-        self.master.save_and_close()
+        Events.Fire(Events.Application.CloseSettings(save=True))

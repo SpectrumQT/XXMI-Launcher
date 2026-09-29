@@ -1,271 +1,223 @@
-from customtkinter import filedialog, ThemeManager
+import subprocess
+import webbrowser
+import re
+
+from dataclasses import dataclass
+from customtkinter import filedialog
+from urllib.parse import urlparse
 
 import core.event_manager as Events
 import core.config_manager as Config
+import core.path_manager as Paths
 import gui.vars as Vars
 
-from core.locale_manager import L
+from core.locale_manager import L, Locale
 
-from gui.classes.containers import UIFrame
-from gui.classes.widgets import UIButton, UILabel, UIEntry, UICheckbox
+from core.config.enums import InjectMode, InputDisableMode, LogLevel
 
-
-class ModelImporterSettingsFrame(UIFrame):
-    def __init__(self, master):
-        super().__init__(master)
-
-        self.grid_columnconfigure((0, 1, 2, 3, 5), weight=1)
-        self.grid_columnconfigure(4, weight=100)
-
-        # Importer Folder
-        self.put(ImporterFolderLabel(self)).grid(row=0, column=0, padx=(20, 0), pady=(0, 30), sticky='w')
-        self.put(ImporterFolderFrame(self)).grid(row=0, column=1, padx=(10, 20), pady=(0, 30), sticky='new', columnspan=4)
-
-        # XXMI Delay
-        self.put(MigotoInitDelayLabel(self)).grid(row=1, column=0, padx=(20, 0), pady=(0, 30), sticky='w')
-        self.put(MigotoInitDelayEntry(self)).grid(row=1, column=1, padx=(10, 20), pady=(0, 30), sticky='w', columnspan=4)
-
-        # Error Handling
-        self.put(ErrorHandlingLabel(self)).grid(row=2, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
-        self.put(MuteWarningsCheckbox(self)).grid(row=2, column=1, padx=10, pady=(0, 30), sticky='w')
-        self.put(CallsLoggingCheckbox(self)).grid(row=2, column=2, padx=10, pady=(0, 30), sticky='w')
-        self.put(DebugLoggingCheckbox(self)).grid(row=2, column=3, padx=10, pady=(0, 30), sticky='w')
-
-        # Shader Hunting
-        self.put(ShaderHuntingLabel(self)).grid(row=3, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
-        self.put(EnableHuntingCheckbox(self)).grid(row=3, column=1, padx=10, pady=(0, 30), sticky='w')
-        self.put(DumpShadersCheckbox(self)).grid(row=3, column=2, padx=10, pady=(0, 30), sticky='w')
-
-        # Fail-Safe
-        self.put(FailSafeLabel(self)).grid(row=4, column=0, padx=(20, 10), pady=(0, 30), sticky='w')
-        self.put(EnforceRenderingCheckbox(self)).grid(row=4, column=1, padx=10, pady=(0, 30), sticky='w', columnspan=2)
+from gui.windows.settings.settings_content_frame import SettingsContentFrame, SettingsSection, SettingsOption, OptionWidget, Condition
 
 
-class MigotoInitDelayLabel(UILabel):
+class ModelImporterSettingsFrame(SettingsContentFrame):
     def __init__(self, master):
         super().__init__(
-            text=L('general_settings_xxmi_delay_label', 'XXMI Delay:'),
-            font=('Microsoft YaHei', 14, 'bold'),
-            fg_color='transparent',
-            master=master)
+            master,
+            sections=(
 
+                SettingsSection(
+                    label_text=L("importer_settings_startup_section_label", "Startup"),
+                    options=(
 
-class MigotoInitDelayEntry(UIEntry):
-    def __init__(self, master):
-        super().__init__(
-            textvariable=Vars.Active.Importer.xxmi_dll_init_delay,
-            input_filter='INT',
-            width=50,
-            height=36,
-            font=('Arial', 14),
-            master=master)
+                        SettingsOption(
+                            label_text=L("importer_settings_importer_folder_label_dynamic", "{importer} Folder").format(importer=Config.Launcher.active_importer),
+                            widget=OptionWidget.INPUT_STR,
+                            value_variable="Vars.Active.Importer.importer_folder",
+                            input_button_text=L("settings_browse_path_button", "Browse..."),
+                            input_button_command=self.change_importer_folder,
+                            tooltip=L("importer_settings_importer_folder_entry_tooltip", """
+                                Path to folder containing **Mods** folder, **d3dx.ini** and other **{importer}** resources.
+                    
+                                * **Absolute**: Set any arbitrary folder, e.g. `C:/Games/{importer}/`.
+                                * **Relative**: Set any folder **inside** the Launcher folder, i.e. `{importer}/` (default).
+                            """).format(importer=Config.Launcher.active_importer),
+                        ),
 
-        self.set_tooltip(self.get_tooltip)
+                        SettingsOption(
+                            label_text=L("importer_settings_inject_mode_label", "XXMI DLL Injection Mode"),
+                            widget=OptionWidget.DROPDOWN,
+                            value_variable="Vars.Active.Importer.xxmi_dll_inject_mode",
+                            dropdown_values=InjectMode,
+                            tooltip=L("advanced_settings_custom_launch_inject_mode_option_menu_tooltip", """
+                                Defines the way of **XXMI DLL** injection into the game process.
+                                
+                                * **{general_settings_inject_mode_direct}:** Use `WriteProcessMemory`, more reliable but requires direct memory access.
+                                * **{general_settings_inject_mode_hook}:** Use `SetWindowsHookEx`, less reliable, but potentially less prominent for anti-cheats.
+                                * **{general_settings_inject_mode_skip}:** Skip **XXMI DLL** injection.
+                            """),
+                        ),
 
-    def get_tooltip(self):
-        msg = L('general_settings_xxmi_delay_entry_tooltip_base', """
-            Delay in milliseconds for how long injected XXMI DLL (3dmigoto) must wait before initialization.
-            {tooltip_footer}
-        """)
-        if Config.Launcher.active_importer == 'WWMI':
-            msg = msg.format(tooltip_footer=L('general_settings_xxmi_delay_entry_tooltip_footer_wwmi', """
-                <font color="red">⚠ Wuthering Waves crashes on launch with wrong delay! ⚠</font>
-                <font color="#8B8000">⚠ If default value fails, try to increase or decrease it until WuWa stops crashing. ⚠</font>
-                ## Known values for Wuthering Waves 2.4:
-                - **500**: Default, works for most users.
-                - **150**: Minimal known value to work along with ReShade.
-                - **50**: Minimal known value to work.
-                - **1000+**: Some users need really huge delays.
-            """))
-        else:
-            msg = msg.format(tooltip_footer=L('general_settings_xxmi_delay_entry_tooltip_footer_general', """
-                If game crashes with no mods, try to increase it. Start with steps of 50 and increase them as you go.
-            """))
+                        SettingsOption(
+                            label_text=L("general_settings_xxmi_delay_label", "XXMI DLL Initialization Delay"),
+                            widget=OptionWidget.INPUT_INT,
+                            value_variable="Vars.Active.Importer.xxmi_dll_init_delay",
+                            tooltip=L("general_settings_xxmi_delay_entry_tooltip_base", """
+                                Delay in milliseconds for how long injected XXMI DLL (3dmigoto) must wait before initialization.
+                                {tooltip_footer}
+                            """).format(
+                                tooltip_footer=({
+                                    "WWMI": L("general_settings_xxmi_delay_entry_tooltip_footer_wwmi", """
+                                        <font color="red">⚠ Wuthering Waves crashes on launch with wrong delay! ⚠</font>
+                                        <font color="#8B8000">⚠ If default value fails, try to increase or decrease it until WuWa stops crashing. ⚠</font>
+                                        ## Known values for Wuthering Waves 2.4:
+                                        - **500**: Default, works for most users.
+                                        - **150**: Minimal known value to work along with ReShade.
+                                        - **50**: Minimal known value to work.
+                                        - **1000+**: Some users need really huge delays.
+                                    """),
+                                }.get(
+                                    Config.Launcher.active_importer,
+                                    L("general_settings_xxmi_delay_entry_tooltip_footer_general", """
+                                        If game crashes with no mods, try to increase it. Start with steps of 50 and increase them as you go.
+                                    """),
+                                ) + '\n\n<font color="#666666">d3dx.ini › [System] › dll_initialization_delay</font>'),
+                            ),
+                        ),
 
-        return msg
+                        SettingsOption(
+                            label_text=L("importer_settings_ini_protection_label", "Config Protection"),
+                            widget=OptionWidget.CHECKBOX,
+                            value_variable="Vars.Active.Migoto.clear_unknown_settings",
+                            tooltip=L("importer_settings_enforce_rendering_checkbox_tooltip", """
+                                * **Enabled:** Ensure **{importer}**-compatible `d3dx.ini` settings.
+                                * **Disabled:** Required settings will not be applied to `d3dx.ini`.
+                            """).format(
+                                importer=Config.Launcher.active_importer,
+                                texture_hash=0 if Config.Launcher.active_importer != "WWMI" else 1,
+                                track_texture_updates=0 if Config.Launcher.active_importer != "WWMI" else 1
+                            ),
+                        ),
 
+                    ),
+                ),
 
-class ShaderHuntingLabel(UILabel):
-    def __init__(self, master):
-        super().__init__(
-            text=L('importer_settings_shader_hunting_label', 'Shader Hunting:'),
-            font=('Microsoft YaHei', 14, 'bold'),
-            fg_color='transparent',
-            master=master)
+                SettingsSection(
+                    label_text=L("importer_settings_usability_section_label", "Usability"),
+                    options=(
 
+                        SettingsOption(
+                            label_text=L("importer_settings_mute_warnings_checkbox", "Mute Warnings"),
+                            widget=OptionWidget.CHECKBOX,
+                            value_variable="Vars.Active.Migoto.mute_warnings",
+                            tooltip=L("importer_settings_mute_warnings_checkbox_tooltip", """
+                                Enable display of mod error warnings and beeping sound.
+                    
+                                * **Enabled:** No error warnings or beeps whatsoever. Ignorance is bliss.
+                                * **Disabled:** Mod error warnings and beeps on **F10** will haunt poor souls.
+                            """) + '\n\n<font color="#666666">d3dx.ini › [Logging] › show_warnings</font>',
+                        ),
 
-class EnableHuntingCheckbox(UICheckbox):
-    def __init__(self, master):
-        super().__init__(
-            text=L('importer_settings_enable_hunting_checkbox', 'Enable Hunting'),
-            variable=Vars.Active.Migoto.enable_hunting,
-            master=master)
-        self.set_tooltip(L('importer_settings_enable_hunting_checkbox_tooltip', """
-            Enabled: Allows to toggle Hunting Mode via Numpad [0] hotkey.
-            * [d3dx.ini]: hunting = 2
-            Disabled: Hunting Mode is hard disabled.
-            * [d3dx.ini]: hunting = 0
-        """))
+                        SettingsOption(
+                            label_text=L("importer_settings_clear_unknown_settings_checkbox", "Clear Unknown Mod Settings"),
+                            widget=OptionWidget.CHECKBOX,
+                            value_variable="Vars.Active.Migoto.clear_unknown_settings",
+                            tooltip=L("importer_settings_clear_unknown_settings_tooltip", """
+                                Controls clean-up of mod settings when the mods that defined them are no longer present.
+                    
+                                * **Enabled:** Clear unknown settings after **second** reload since mods removal.
+                                * **Disabled:** Do not clear unknown settings, keep them in **d3dx_user.ini** forever.
+                            """) + '\n\n<font color="#666666">d3dx.ini › [System] › clear_unknown_settings</font>',
+                        ),
 
+                    ),
+                ),
 
-class DumpShadersCheckbox(UICheckbox):
-    def __init__(self, master):
-        super().__init__(
-            text=L('importer_settings_dump_shaders_checkbox', 'Dump Shaders'),
-            variable=Vars.Active.Migoto.dump_shaders,
-            master=master)
-        self.set_tooltip(L('importer_settings_dump_shaders_checkbox_tooltip', """
-            Enabled: Hunting Mode [Copy Hash] key also saves selected shader as file in ShaderFixes.
-            * [d3dx.ini]: marking_actions = clipboard hlsl asm regex
-            Disabled: Hunting Mode [Copy Hash] only copies hash of selected shader to clipboard.
-            * [d3dx.ini]: marking_actions = clipboard
-        """))
+                SettingsSection(
+                    label_text=L("launcher_settings_input_section_label", "Input"),
+                    options=(
 
+                        SettingsOption(
+                            label_text=L("importer_settings_input_checkbox", "Enable By Default"),
+                            widget=OptionWidget.CHECKBOX,
+                            value_variable="Vars.Active.Migoto.input",
+                            tooltip=L("importer_settings_input_checkbox_tooltip", """
+                                Initial input state when game starts.
+                    
+                                * **Enabled:** All input is enabled.
+                                * **Disabled:** Input is disabled according to **{importer_settings_input_disable_mode_label}**.
+                            """) + '\n\n<font color="#666666">d3dx.ini › [Input] › input</font>',
+                        ),
 
-class ErrorHandlingLabel(UILabel):
-    def __init__(self, master):
-        super().__init__(
-            text=L('importer_settings_error_handling_label', 'Error Handling:'),
-            font=('Microsoft YaHei', 14, 'bold'),
-            fg_color='transparent',
-            master=master)
+                        SettingsOption(
+                            label_text=L("importer_settings_input_disable_mode_label", "Input Disabling Mode"),
+                            widget=OptionWidget.DROPDOWN,
+                            value_variable="Vars.Active.Migoto.input_disable_mode",
+                            dropdown_values=InputDisableMode,
+                            tooltip=L("importer_settings_input_disable_mode_option_menu_tooltip", """
+                                Determines which input is disabled when **{launcher_settings_input_section_label}** is **Disabled**.
+                    
+                                * **{importer_settings_input_disable_mode_mods}**: Disable input defined by mods.
+                                * **{importer_settings_input_disable_mode_all}**: Disable all input except the **Toggle Input** hotkey (**CTRL+ALT+SHIFT+END**).
+                            """) + '\n\n<font color="#666666">d3dx.ini › [Input] › input_disable_mode</font>',
+                        ),
 
+                    ),
+                ),
 
-class ImporterFolderFrame(UIFrame):
-    def __init__(self, master):
-        super().__init__(
-            border_color = ThemeManager.theme["CTkEntry"].get("border_color", None),
-            border_width = ThemeManager.theme["CTkEntry"].get("border_width", None),
-            fg_color = ThemeManager.theme["CTkEntry"].get("fg_color", None),
-            master=master)
+                SettingsSection(
+                    label_text=L("launcher_settings_hunting_section_label", "Shader Hunting"),
+                    options=(
 
-        self.grid_columnconfigure(0, weight=100)
+                        SettingsOption(
+                            label_text=L("importer_settings_enable_hunting_checkbox", "Enable Hunting"),
+                            widget=OptionWidget.CHECKBOX,
+                            value_variable="Vars.Active.Migoto.enable_hunting",
+                            tooltip=L("importer_settings_enable_hunting_checkbox_tooltip", """
+                                * **Enabled:** Allows to toggle **Hunting Mode** via Numpad [0] hotkey.
+                                * **Disabled:** **Hunting Mode** is hard disabled.
+                            """) + '\n\n<font color="#666666">d3dx.ini › [Hunting] › hunting</font>',
+                        ),
 
-        self.put(ImporterFolderEntry(self)).grid(row=0, column=0, padx=(4, 2), pady=(2, 0), sticky='new')
-        self.put(ChangeImporterFolderButton(self)).grid(row=0, column=1, padx=(0, 4), pady=(2, 2), sticky='ne')
+                        SettingsOption(
+                            label_text=L("importer_settings_dump_shaders_checkbox", "Dump Shaders"),
+                            widget=OptionWidget.CHECKBOX,
+                            value_variable="Vars.Active.Migoto.dump_shaders",
+                            tooltip=L("importer_settings_dump_shaders_checkbox_tooltip", """
+                                * **Enabled:** Hunting Mode [Copy Hash] key also saves selected shader as file in **ShaderFixes**.
+                                * **Disabled:** Hunting Mode [Copy Hash] only copies hash of selected shader to clipboard.
+                            """) + '\n\n<font color="#666666">d3dx.ini › [Hunting] › marking_actions</font>',
+                        ),
 
+                    ),
+                ),
 
-class MuteWarningsCheckbox(UICheckbox):
-    def __init__(self, master):
-        super().__init__(
-            text=L('importer_settings_mute_warnings_checkbox', 'Mute Warnings'),
-            variable=Vars.Active.Migoto.mute_warnings,
-            master=master)
-        self.set_tooltip(L('importer_settings_mute_warnings_checkbox_tooltip', """
-            Enabled: No error warnings or beeps whatsoever. Ignorance is bliss.
-            * [d3dx.ini]: show_warnings = 0
-            Disabled: Ini parser error warnings and beeps on F10 will haunt poor souls.
-            * [d3dx.ini]: show_warnings = 1
-        """))
+                SettingsSection(
+                    label_text=L("launcher_settings_logging_section_label", "Logging"),
+                    options=(
 
+                        SettingsOption(
+                            label_text=L("launcher_settings_log_verbosity_label", "Log File Output Verbosity"),
+                            widget=OptionWidget.DROPDOWN,
+                            value_variable="Vars.Active.Migoto.log_level",
+                            dropdown_values=LogLevel,
+                            tooltip=L("importer_settings_log_level_option_menu_tooltip", """
+                                Controls how verbose **d3d11_log.txt** file is.
+                                
+                                * **{importer_settings_log_level_disabled}**: Log nothing.
+                                * **{importer_settings_log_level_warning}**: Log warnings and overlay messages.
+                                * **{importer_settings_log_level_info}**: Also log API usage calls.
+                                * **{importer_settings_log_level_debug}**: Also log super verbose massive debug output.
+                            """) + '\n\n<font color="#666666">d3dx.ini › [Logging] › log_level</font>',
+                        ),
 
-class CallsLoggingCheckbox(UICheckbox):
-    def __init__(self, master):
-        super().__init__(
-            text=L('importer_settings_calls_logging_checkbox', 'Calls Logging'),
-            variable=Vars.Active.Migoto.calls_logging,
-            master=master)
-        self.set_tooltip(L('importer_settings_calls_logging_checkbox_tooltip', """
-            Enabled: Log API usage.
-            * [d3dx.ini]: calls = 1
-            Disabled: Do not log calls. Maximum performance.
-            * [d3dx.ini]: calls = 0
-        """))
+                    ),
+                ),
 
-
-class DebugLoggingCheckbox(UICheckbox):
-    def __init__(self, master):
-        super().__init__(
-            text=L('importer_settings_debug_logging_checkbox', 'Debug Logging'),
-            variable=Vars.Active.Migoto.debug_logging,
-            master=master)
-        self.set_tooltip(L('importer_settings_debug_logging_checkbox_tooltip', """
-            Enabled: Super verbose debug logging.
-            * [d3dx.ini]: debug = 1
-            Disabled: No debug logging. Maximum performance.
-            * [d3dx.ini]: debug = 0
-        """))
-
-
-class ImporterFolderLabel(UILabel):
-    def __init__(self, master):
-        super().__init__(
-            text=L('importer_settings_importer_folder_label', 'Importer Folder:'),
-            font=('Microsoft YaHei', 14, 'bold'),
-            fg_color='transparent',
-            master=master)
-        self.trace_save(Vars.Settings.Launcher.active_importer, self.handle_active_importer_update)
-
-    def handle_active_importer_update(self, var, val, old_val):
-        self.configure(text=L('importer_settings_importer_folder_label_dynamic', '{importer} Folder:').format(importer=val))
-
-
-class ImporterFolderEntry(UIEntry):
-    def __init__(self, master):
-        super().__init__(
-            textvariable=Vars.Active.Importer.importer_folder,
-            width=200,
-            height=32,
-            border_width=0,
-            font=('Arial', 14),
-            master=master)
-        self.set_tooltip(self.get_tooltip)
-
-    def get_tooltip(self):
-        return L('importer_settings_importer_folder_entry_tooltip', """
-            Path to folder containing `Mods` folder, `d3dx.ini` and other {importer} resources.
-            **Absolute**: Set any arbitrary folder, i.e. `C:/Games/{importer}/`.
-            **Relative**: Set any folder **inside** the Launcher folder, i.e. `{importer}/` (default).
-        """).format(importer=Config.Launcher.active_importer)
-
-
-class ChangeImporterFolderButton(UIButton):
-    def __init__(self, master):
-        super().__init__(
-            text=L('settings_browse_path_button', 'Browse...'),
-            command=self.change_importer_folder,
-            width=80,
-            height=32,
-            font=('Roboto', 14),
-            border_width=0,
-            master=master)
-        fg_color = ThemeManager.theme["CTkEntry"].get("fg_color", None)
-        self.configure(
-            fg_color=fg_color,
-            hover_color=fg_color,
-            text_color=["#000000", "#aaaaaa"],
-            text_color_hovered=["#000000", "#ffffff"],
+            ),
         )
 
-    def change_importer_folder(self):
+    @staticmethod
+    def change_importer_folder():
         importer_folder = filedialog.askdirectory(initialdir=Vars.Active.Importer.importer_folder.get())
-        if importer_folder == '':
+        if importer_folder == "":
             return
         Vars.Active.Importer.importer_folder.set(importer_folder)
-
-
-class FailSafeLabel(UILabel):
-    def __init__(self, master):
-        super().__init__(
-            text=L('importer_settings_ini_protection_label', 'Ini Protection:'),
-            font=('Microsoft YaHei', 14, 'bold'),
-            fg_color='transparent',
-            master=master)
-
-
-class EnforceRenderingCheckbox(UICheckbox):
-    def __init__(self, master):
-        super().__init__(
-            text=L('importer_settings_enforce_rendering_checkbox', 'Enforce Rendering Settings'),
-            variable=Vars.Active.Migoto.enforce_rendering,
-            master=master)
-        self.set_tooltip(L('importer_settings_enforce_rendering_checkbox_tooltip', """
-            Enabled: Ensure {importer}-compatible [Rendering] section settings.
-            * [d3dx.ini]: texture_hash = {texture_hash}
-            * [d3dx.ini]: track_texture_updates = {track_texture_updates}
-            Disabled: Settings above will not be forced into d3dx.ini.
-        """).format(
-            importer=Config.Launcher.active_importer,
-            texture_hash=0 if Config.Launcher.active_importer != "WWMI" else 1,
-            track_texture_updates=0 if Config.Launcher.active_importer != "WWMI" else 1
-        ))
