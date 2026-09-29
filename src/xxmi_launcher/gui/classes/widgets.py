@@ -876,6 +876,44 @@ class UILabel(UIWidget, CTkLabel):
             self._canvas.configure(bg=self._apply_appearance_mode(self._bg_color))
 
 
+class ColorizedCTkImage(CTkImage):
+    def __init__(
+        self,
+        template: Image.Image,
+        color,
+    ):
+        self._template = template.convert("RGBA")
+        self._color = color
+
+        super().__init__(
+            light_image=self._colorize(color),
+            dark_image=self._colorize(color),
+        )
+
+    def _colorize(self, color):
+        image = Image.new("RGBA", self._template.size, color)
+        image.putalpha(self._template.getchannel("A"))
+        return image
+
+    def set_color(self, color):
+        self._color = color
+
+        light_image = self._colorize(color)
+        dark_image = self._colorize(color)
+
+        # Update CTkImage's source images without configure(),
+        # because configure() invalidates the PhotoImage cache.
+        self._light_image = light_image
+        self._dark_image = dark_image
+
+        # Update already-created PhotoImages in place.
+        for size, photo in self._scaled_light_photo_images.items():
+            photo.paste(light_image.resize(size))
+
+        for size, photo in self._scaled_dark_photo_images.items():
+            photo.paste(dark_image.resize(size))
+
+
 class UIButton(UIWidget, CTkButton):
     def __init__(self,
                  master: Union[UIWindow, 'UIFrame'],
@@ -883,6 +921,8 @@ class UIButton(UIWidget, CTkButton):
                  select_color: Optional[Union[str, Tuple[str, str]]] = None,
                  text_color_hovered: Optional[Union[str, Tuple[str, str]]] = None,
                  text_color_selected: Optional[Union[str, Tuple[str, str]]] = None,
+                 fg_color_disabled: Optional[Union[str, Tuple[str, str]]] = None,
+                 border_color_disabled: Optional[Union[str, Tuple[str, str]]] = None,
                  auto_width: bool = False,
                  padx: int = 12,
                  **kwargs):
@@ -891,10 +931,20 @@ class UIButton(UIWidget, CTkButton):
 
         self._auto_width = auto_width
         self._padx = padx
-        self.image: Optional[CTkImage] = None
+
+        self._image_template = None
+        self.image = None
+
         if image_path is not None:
             self._supported_extensions = ['.webp', '.jpeg', '.png', '.jpg']
-            self.image = CTkImage(Image.open(str(Config.get_resource_path(self, image_path, self._supported_extensions))))
+            path = Config.get_resource_path(self, image_path, self._supported_extensions )
+
+            self._image_template = Image.open(str(path)).convert("RGBA")
+
+            self.image = ColorizedCTkImage(
+                template=self._image_template,
+                color="#ffffff",
+            )
 
         self.is_hovered = False
         self.is_selected = False
@@ -902,6 +952,8 @@ class UIButton(UIWidget, CTkButton):
         self._select_color: Union[str, Tuple[str, str]] = ThemeManager.theme["CTkButton"]["select_color"] if select_color is None else self._check_color_type(select_color)
         self._text_color_hovered: Union[str, Tuple[str, str]] = ThemeManager.theme["CTkButton"]["text_color_hovered"] if text_color_hovered is None else self._check_color_type(text_color_hovered)
         self._text_color_selected: Union[str, Tuple[str, str]] = ThemeManager.theme["CTkButton"]["text_color_selected"] if text_color_selected is None else self._check_color_type(text_color_selected)
+        self._fg_color_disabled = ThemeManager.theme["CTkButton"].get("fg_color_disabled", None) if fg_color_disabled is None else self._check_color_type(fg_color_disabled)
+        self._border_color_disabled = ThemeManager.theme["CTkButton"].get("border_color_disabled", None) if border_color_disabled is None else self._check_color_type(border_color_disabled)
 
         CTkButton.__init__(self, master, image=self.image, **kwargs)
 
@@ -912,6 +964,15 @@ class UIButton(UIWidget, CTkButton):
 
         self.unbind('<Button-1>')
 
+    def tk_color_to_rgb(self, color):
+        r, g, b = self.winfo_rgb(color)
+
+        return (
+            r // 256,
+            g // 256,
+            b // 256,
+        )
+
     def configure(self, require_redraw=False, **kwargs):
         if 'select_color' in kwargs:
             self._select_color = self._check_color_type(kwargs.pop('select_color'))
@@ -921,6 +982,12 @@ class UIButton(UIWidget, CTkButton):
             require_redraw = True
         if 'text_color_selected' in kwargs:
             self._text_color_selected = self._check_color_type(kwargs.pop('text_color_selected'))
+            require_redraw = True
+        if 'fg_color_disabled' in kwargs:
+            self._fg_color_disabled = self._check_color_type(kwargs.pop('fg_color_disabled'))
+            require_redraw = True
+        if 'border_color_disabled' in kwargs:
+            self._border_color_disabled = self._check_color_type(kwargs.pop('border_color_disabled'))
             require_redraw = True
 
         require_auto_width = False
@@ -945,10 +1012,38 @@ class UIButton(UIWidget, CTkButton):
     def _set_auto_width(self):
         scaling = self._apply_widget_scaling(1)
         offset = self._padx * 2
-        text_width = int(self._text_label.winfo_reqwidth() / scaling)
+        text_width = int(self._text_label.winfo_reqwidth() / scaling) if self._text_label else 0
         if scaling != 1:
             offset += self._apply_widget_scaling(2)
         self.configure(width=text_width + offset)
+
+    def _get_current_text_color(self):
+        if self._state == tkinter.DISABLED:
+            return self._text_color_disabled
+
+        if self.is_selected:
+            return self._text_color_selected
+
+        if self.is_hovered:
+            return self._text_color_hovered
+
+        return self._text_color
+
+    def _update_image_color(self):
+        if self.image is None:
+            return
+
+        color = self._get_current_text_color()
+
+        if color is None:
+            return
+
+        # Resolve ("light", "dark") correctly.
+        color = self._apply_appearance_mode(color)
+
+        self.image.set_color(self.tk_color_to_rgb(color))
+
+        self._image = self.image
 
     def _draw(self, no_color_updates=False):
         CTkBaseClass._draw(self, no_color_updates)
@@ -967,6 +1062,14 @@ class UIButton(UIWidget, CTkButton):
         else:
             self._canvas.delete("background_parts")
 
+        fg_color = self._fg_color
+        if self._state == tkinter.DISABLED and self._fg_color_disabled:
+            fg_color = self._fg_color_disabled
+
+        border_color = self._border_color
+        if self._state == tkinter.DISABLED and self._border_color_disabled:
+            border_color = self._border_color_disabled
+
         requires_recoloring = self._draw_engine.draw_rounded_rect_with_border(
             self._apply_widget_scaling(self._current_width),
             self._apply_widget_scaling(self._current_height),
@@ -975,22 +1078,26 @@ class UIButton(UIWidget, CTkButton):
 
         if no_color_updates is False or requires_recoloring:
 
+            self._update_image_color()
+
+            self._configure_button_cursors()
+
             self._canvas.configure(bg=self._apply_appearance_mode(self._bg_color))
 
             # set color for the button border parts (outline)
             self._canvas.itemconfig("border_parts",
-                                    outline=self._apply_appearance_mode(self._border_color),
-                                    fill=self._apply_appearance_mode(self._border_color))
+                                    outline=self._apply_appearance_mode(border_color),
+                                    fill=self._apply_appearance_mode(border_color))
 
             # set color for inner button parts
-            if self._fg_color == "transparent":
+            if fg_color == "transparent":
                 self._canvas.itemconfig("inner_parts",
                                         outline=self._apply_appearance_mode(self._bg_color),
                                         fill=self._apply_appearance_mode(self._bg_color))
             else:
                 self._canvas.itemconfig("inner_parts",
-                                        outline=self._apply_appearance_mode(self._fg_color),
-                                        fill=self._apply_appearance_mode(self._fg_color))
+                                        outline=self._apply_appearance_mode(fg_color),
+                                        fill=self._apply_appearance_mode(fg_color))
 
         # create text label if text given
         if self._text is not None and self._text != "":
@@ -1012,20 +1119,12 @@ class UIButton(UIWidget, CTkButton):
 
             if no_color_updates is False:
                 # set text_label fg color (text color)
+                self._text_label.configure(fg=self._apply_appearance_mode(self._get_current_text_color()))
 
-                if self.is_selected:
-                    self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color_selected)))
-                elif self.is_hovered:
-                    self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color_hovered)))
-                elif self._state == tkinter.DISABLED:
-                    self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color_disabled)))
-                else:
-                    self._text_label.configure(fg=self._apply_appearance_mode(self._text_color))
-
-                if self._apply_appearance_mode(self._fg_color) == "transparent":
+                if self._apply_appearance_mode(fg_color) == "transparent":
                     self._text_label.configure(bg=self._apply_appearance_mode(self._bg_color))
                 else:
-                    self._text_label.configure(bg=self._apply_appearance_mode(self._fg_color))
+                    self._text_label.configure(bg=self._apply_appearance_mode(fg_color))
 
         else:
             # delete text_label if no text given
@@ -1049,10 +1148,10 @@ class UIButton(UIWidget, CTkButton):
 
             if no_color_updates is False:
                 # set image_label bg color (background color of label)
-                if self._apply_appearance_mode(self._fg_color) == "transparent":
+                if self._apply_appearance_mode(fg_color) == "transparent":
                     self._image_label.configure(bg=self._apply_appearance_mode(self._bg_color))
                 else:
-                    self._image_label.configure(bg=self._apply_appearance_mode(self._fg_color))
+                    self._image_label.configure(bg=self._apply_appearance_mode(fg_color))
 
         else:
             # delete text_label if no text given
@@ -1061,73 +1160,81 @@ class UIButton(UIWidget, CTkButton):
                 self._image_label = None
                 self._create_grid()
 
+    def _update_visual_state(self):
+        if self._state == tkinter.DISABLED:
+            return
+
+        if self.is_hovered:
+            text_color = self._text_color_hovered
+            inner_parts_color = self._fg_color if self._hover_color is None else self._hover_color
+
+        elif self.is_selected and not self._click_animation_running:
+            text_color = self._text_color_selected
+            inner_parts_color = self._select_color
+
+        else:
+            text_color = self._text_color
+            if self._fg_color == "transparent":
+                inner_parts_color = self._bg_color
+            else:
+                inner_parts_color = self._fg_color
+
+        text_color = self._apply_appearance_mode(text_color)
+        inner_parts_color = self._apply_appearance_mode(inner_parts_color)
+
+        self._canvas.itemconfig("inner_parts", outline=inner_parts_color, fill=inner_parts_color)
+
+        if self._text_label is not None:
+            self._text_label.configure(
+                fg=text_color,
+                bg=inner_parts_color
+            )
+
+        if self._image_label is not None:
+            self._image_label.configure(bg=inner_parts_color)
+
+        if self.image is not None:
+            self.image.set_color(self.tk_color_to_rgb(text_color))
+
     def _on_enter(self, event=None):
         self.is_hovered = True
 
-        if self.is_hovered:
-            self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color_hovered)))
-        elif self._state == tkinter.DISABLED:
-            self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color_disabled)))
+        if self._state == tkinter.DISABLED:
+            return
 
-        if self._hover is True and self._state == "normal" or self.is_selected:
-            if self.is_selected:
-                inner_parts_color = self._select_color
-                self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color_selected)))
+        self._update_visual_state()
+
+    def _configure_button_cursors(self):
+        if not self._cursor_manipulation_enabled:
+            return
+
+        if self._state == tkinter.NORMAL and self._command is not None:
+            if sys.platform == "darwin":
+                cursor = "pointinghand"
+            elif sys.platform.startswith("win"):
+                cursor = "hand2"
             else:
-                if self._hover_color is None:
-                    inner_parts_color = self._fg_color
-                else:
-                    inner_parts_color = self._hover_color
+                cursor = "arrow"
+        else:
+            cursor = "arrow"
 
-                if self._state != tkinter.DISABLED:
-                    self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color_hovered)))
-                else:
-                    self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color_disabled)))
+        self._canvas.configure(cursor=cursor)
 
-            # set color of inner button parts to hover color
-            self._canvas.itemconfig("inner_parts",
-                                    outline=self._apply_appearance_mode(inner_parts_color),
-                                    fill=self._apply_appearance_mode(inner_parts_color))
+        if self._text_label is not None:
+            self._text_label.configure(cursor=cursor)
 
-            # set text_label bg color to button hover color
-            if self._text_label is not None:
-                self._text_label.configure(bg=self._apply_appearance_mode(inner_parts_color))
-
-            # set image_label bg color to button hover color
-            if self._image_label is not None:
-                self._image_label.configure(bg=self._apply_appearance_mode(inner_parts_color))
-
-        self._set_cursor()
+        if self._image_label is not None:
+            self._image_label.configure(cursor=cursor)
 
     def _on_leave(self, event=None):
         self.is_hovered = False
 
-        self._click_animation_running = False
-
-        self._set_cursor()
-
-        if self.is_selected:
+        if self._state == tkinter.DISABLED:
             return
 
-        if self._fg_color == "transparent":
-            inner_parts_color = self._bg_color
-        else:
-            inner_parts_color = self._fg_color
+        self._click_animation_running = False
 
-        # set color of inner button parts
-        self._canvas.itemconfig("inner_parts",
-                                outline=self._apply_appearance_mode(inner_parts_color),
-                                fill=self._apply_appearance_mode(inner_parts_color))
-
-        # set text_label bg color (label color)
-        if self._text_label is not None:
-            self._text_label.configure(bg=self._apply_appearance_mode(inner_parts_color))
-
-        # set image_label bg color (image bg color)
-        if self._image_label is not None:
-            self._image_label.configure(bg=self._apply_appearance_mode(inner_parts_color))
-
-        self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color)))
+        self._update_visual_state()
 
     def _clicked(self, event=None):
         if not self.is_hovered:
@@ -1140,26 +1247,9 @@ class UIButton(UIWidget, CTkButton):
             return
         super()._create_bindings(sequence)
 
-    def _set_cursor(self):
-        if self._cursor_manipulation_enabled:
-            if self._state == tkinter.DISABLED or not self.is_hovered:
-                if sys.platform == "darwin" and self._command is not None:
-                    self.configure(cursor="arrow")
-                elif sys.platform.startswith("win") and self._command is not None:
-                    self.configure(cursor="arrow")
-
-            elif self._state == tkinter.NORMAL:
-                if sys.platform == "darwin" and self._command is not None:
-                    self.configure(cursor="pointinghand")
-                elif sys.platform.startswith("win") and self._command is not None:
-                    self.configure(cursor="hand2")
-
     def set_selected(self, selected: bool = False):
         self.is_selected = selected
-        if selected:
-            self._on_enter()
-        else:
-            self._on_leave()
+        self._update_visual_state()
 
 
 class UIRadioButton(UIWidget, CTkRadioButton):
