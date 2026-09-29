@@ -170,10 +170,6 @@ class UIMainWindow(UIWindow, CTk):
     def show(self, hide=True):
         self.deiconify()
 
-    def _close(self):
-        self.after(0, self.destroy)
-        log.debug('GUI stopped')
-
     def is_shown(self):
         try:
             return self.state() == 'normal'

@@ -248,7 +248,9 @@ class MainWindow(UIMainWindow):
 
     def close(self):
         Events.Fire(Events.Application.Ready())
-        super().close()
+        log.debug("Stopping GUI...")
+        self.quit()
+        log.debug("GUI stopped")
 
     def show_messagebox(self, event=None, **kwargs):
         if not self.exists:
