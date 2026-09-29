@@ -272,10 +272,11 @@ class ModelImporterPackage(Package):
 
     def notify_game_folder_detection_failure(self):
         user_requested_settings = Events.Call(Events.Application.ShowError(
+            title=L('message_title_game_detection_failed', "Game Installation Not Found"),
             message=L('message_text_game_detection_failed', """
-                Automatic detection of the game installation failed!
-                
-                Please configure it manually with Game Folder option of General Settings.
+                Could not find the game installation on your device.
+    
+                Please set the **{general_settings_game_folder_label}** manually in **General Settings**.
             """),
             confirm_text=L('message_button_open_settings', 'Open Settings'),
             cancel_text=L('message_button_cancel', 'Cancel'),
@@ -289,12 +290,13 @@ class ModelImporterPackage(Package):
         if len(game_folders_index) == 1:
             game_folder_id = 0
             user_confirmed_game_folder = Events.Call(Events.Application.ShowInfo(
+                title=L('message_title_game_detected_single', "Game Installation Found"),
                 message=L('message_text_game_detected_single', """
-                    Detected game installation:
+                    Please confirm that this is the correct **{general_settings_game_folder_label}**:
                     
-                    {game_folder}
+                    `{game_folder}`
                     
-                    Please check if it is desired Game Folder or change it in General Settings.
+                    Alternatively, set it manually in **General Settings**.
                 """).format(game_folder=game_folders_index[0]),
                 confirm_text=L('message_button_confirm', 'Confirm'),
                 cancel_text=L('message_button_open_settings', 'Open Settings'),
@@ -304,10 +306,9 @@ class ModelImporterPackage(Package):
                 user_confirmed_game_folder = True
         else:
             (user_confirmed_game_folder, game_folder_id) = Events.Call(Events.Application.ShowWarning(
+                title=L('message_title_game_detected_multiple', "Multiple Game Installations Found"),
                 message=L('message_text_game_detected_multiple', """
-                    Detected game installations:
-                    
-                    Select desired Game Folder from the list below or set it in General Settings:
+                    Please select the correct **{general_settings_game_folder_label}** below, or set it in **General Settings**.
                     
                 """),
                 confirm_text=L('message_button_confirm', 'Confirm'),
@@ -319,10 +320,9 @@ class ModelImporterPackage(Package):
 
     def notify_game_folder_not_configured(self):
         user_requested_settings = Events.Call(Events.Application.ShowError(
+            title=L('message_title_game_folder_not_configured', "Game Installation Folder Not Configured"),
             message=L('message_text_game_folder_not_configured', """
-                Game installation folder is not configured!
-                
-                Please set it with Game Folder option of General Settings.
+                Please set **{general_settings_game_folder_label}** option of **General Settings**.
             """),
             confirm_text=L('message_button_open_settings', 'Open Settings'),
             cancel_text=L('message_button_cancel', 'Cancel'),
