@@ -1,6 +1,4 @@
-from tkinter import StringVar
-
-import customtkinter
+from customtkinter import BooleanVar, IntVar, DoubleVar, StringVar
 
 from enum import Enum
 from typing import Union
@@ -17,12 +15,38 @@ from core.packages.model_importers import srmi_package
 from core.packages.model_importers import gimi_package
 
 
-class EnumVar(StringVar):
+class GuiVarMixin:
+    def __init__(self, *args, dataclass_field=None, **kwargs):
+        self._field = dataclass_field
+        super().__init__(*args, **kwargs)
+
+    def get_default(self):
+        return self._field.default
+
+
+class GuiBooleanVar(GuiVarMixin, BooleanVar):
+    pass
+
+
+class GuiIntVar(GuiVarMixin, IntVar):
+    pass
+
+
+class GuiDoubleVar(GuiVarMixin, DoubleVar):
+    pass
+
+
+class GuiStringVar(GuiVarMixin, StringVar):
+    pass
+
+
+class GuiEnumVar(GuiVarMixin, StringVar):
     def __init__(
         self,
         master=None,
         value: Enum | None =None,
-        name=None
+        name=None,
+        **kwargs,
     ):
         self._enum_class = type(value)
         value = value.name
@@ -31,6 +55,7 @@ class EnumVar(StringVar):
             master=master,
             value=value,
             name=name,
+            **kwargs,
         )
 
     def set(self, value: str | Enum):
@@ -137,25 +162,47 @@ class AppSettings(Config.AppConfig):
         Events.Fire(Events.Application.ConfigUpdate())
 
     def convert_vars(self, obj):
-        for obj_field in fields(obj):
-            value = getattr(obj, obj_field.name)
+        for dataclass_field in fields(obj):
+            value = getattr(obj, dataclass_field.name)
+
             if hasattr(value, '__dataclass_fields__'):
                 self.convert_vars(value)
-            elif isinstance(value, str | int | float | bool | Enum):
-                var = self.convert_value(value)
-                setattr(obj, obj_field.name, var)
 
-    def convert_value(self, value):
+            elif isinstance(value, str | int | float | bool | Enum):
+                var = self.convert_value(value, dataclass_field)
+                setattr(obj, dataclass_field.name, var)
+
+    def convert_value(self, value, dataclass_field):
         if isinstance(value, bool):
-            return customtkinter.BooleanVar(master=self.gui, value=value)
+            return GuiBooleanVar(
+                master=self.gui,
+                value=value,
+                dataclass_field=dataclass_field,
+            )
         elif isinstance(value, str):
-            return customtkinter.StringVar(master=self.gui, value=value)
+            return GuiStringVar(
+                master=self.gui,
+                value=value,
+                dataclass_field=dataclass_field,
+            )
         elif isinstance(value, Enum):
-            return EnumVar(master=self.gui, value=value)
+            return GuiEnumVar(
+                master=self.gui,
+                value=value,
+                dataclass_field=dataclass_field,
+            )
         elif isinstance(value, int):
-            return customtkinter.IntVar(master=self.gui, value=value)
+            return GuiIntVar(
+                master=self.gui,
+                value=value,
+                dataclass_field=dataclass_field,
+            )
         elif isinstance(value, float):
-            return customtkinter.DoubleVar(master=self.gui, value=value)
+            return GuiDoubleVar(
+                master=self.gui,
+                value=value,
+                dataclass_field=dataclass_field,
+            )
         else:
             raise ValueError(f'Unsupported settings var type {type(value)}!')
 
