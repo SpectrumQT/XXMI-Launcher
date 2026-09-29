@@ -39,6 +39,10 @@ class EpicManager:
     def is_installed(self, game: Game) -> bool:
         return self._get_game(game) is not None
 
+    def get_game_path(self, game: Game) -> Path | None:
+        game = self._get_game(game)
+        return game.install_location if game else None
+
     def get_launch_options(self, game: Game) -> str | None:
         # Epic doesn't have an equivalent to Steam's per-game launch options
         # in this abstraction.

@@ -1,4 +1,5 @@
 from typing import Protocol
+from pathlib import Path
 
 from core.platforms.game import Game
 from core.platforms.game_platform import GamePlatform
@@ -31,6 +32,12 @@ class GamePlatformProtocol(Protocol):
         """
         ...
 
+    def get_game_path(self, game: Game) -> Path | None:
+        """
+        Return installation directory of the specified game or None if not installed.
+        """
+        ...
+
     def get_launch_options(self, game: Game) -> str | None:
         """
         Return the launch options configured for the specified game.
@@ -60,7 +67,7 @@ class GamePlatformProtocol(Protocol):
     def launch(
         self,
         game: Game,
-        args: list[str],
+        args: str,
     ) -> bool:
         """
         Launch the specified game with additional arguments.
