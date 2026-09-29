@@ -126,7 +126,9 @@ class SteamManager:
         Returns:
             True if Steam is running after the operation.
         """
-        return self.process_manager.start()
+        return self.process_manager.start(
+            args="-silent"
+        )
 
     def shutdown(
         self,
@@ -140,7 +142,7 @@ class SteamManager:
             True if Steam is stopped after the operation.
         """
         return self.process_manager.stop_with_args(
-            "-shutdown",
+            "-shutdown -silent",
             timeout=timeout,
         )
 
@@ -156,6 +158,7 @@ class SteamManager:
             True if Steam is running after the operation.
         """
         return self.process_manager.restart(
+            args="-silent",
             stop_args="-shutdown",
             timeout=timeout,
         )
@@ -174,7 +177,7 @@ class SteamManager:
         Returns:
             True if the launch command was started successfully.
         """
-        cmd_args = f"-applaunch {app_id}"
+        cmd_args = f"-silent -applaunch {app_id}"
         if args:
             cmd_args += ' ' + args
         self.process_manager.start(cmd_args, check_running=False)
