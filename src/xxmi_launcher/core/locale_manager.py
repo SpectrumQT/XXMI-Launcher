@@ -67,29 +67,58 @@ def fmt_and_list(value):
 class LocaleString(str):
     _pattern = re.compile(r"\{(\w+(?::\w+)*)\}")
 
-    def __new__(cls, string, key: str):
+    def __new__(
+        cls,
+        string,
+        key: str,
+        locale_engine: 'LocaleEngine | None' = None,
+        recursion: list[str] | None = None,
+    ):
+        # Resolve placeholders that refer to other locale keys when the LocaleString is created.
+        if locale_engine is not None:
+            string = locale_engine.resolve_localized_vars(key, string, recursion=recursion)
+
         obj = super().__new__(cls, str(string))
         obj.key = key
+        obj.locale_engine = locale_engine
         return obj
 
     def format(self, **kwargs) -> 'LocaleString':
-        # Extract formatters
+        # Resolve callable arguments before applying any formatters.
+        resolved_kwargs = {
+            key: value() if callable(value) else value
+            for key, value in kwargs.items()
+        }
+
+        # Extract formatter instructions from placeholders such as
+        # {name:bold} while leaving a normal {name} placeholder behind.
         instructions = {}
         template = self._pattern.sub(lambda m: self._replace(m, instructions), self)
-        # Apply formatters to kwargs
-        formatted_kwargs = kwargs.copy()
+
+        # Apply the requested formatters to runtime arguments.
+        formatted_kwargs = resolved_kwargs.copy()
         for var, fmts in instructions.items():
-            if var in kwargs:
-                value = kwargs[var]
-                for fmt in fmts:
-                    func = FORMATTERS.get(fmt)
-                    if func:
-                        value = func(value)
-                formatted_kwargs[var] = value
-        # Replace placeholders in string with formatted vars
+            if var not in resolved_kwargs:
+                continue
+
+            value = resolved_kwargs[var]
+            for fmt in fmts:
+                func = FORMATTERS.get(fmt)
+                if func:
+                    value = func(value)
+
+            formatted_kwargs[var] = value
+
+        # Substitute the formatted runtime arguments into the already localized template.
         formatted = template.format_map(Default(formatted_kwargs))
-        # Return mutated string with same locale key
-        return LocaleString(formatted, key=self.key)
+
+        # Preserve the locale metadata so further formatting continues to
+        # produce LocaleString instances associated with the same key/engine.
+        return LocaleString(
+            formatted,
+            key=self.key,
+            locale_engine=self.locale_engine,
+        )
 
     @staticmethod
     def _replace(match, instructions):
@@ -99,6 +128,18 @@ class LocaleString(str):
         formatters = parts[1:]
         instructions[var] = formatters
         return '{' + var + '}'
+
+    def relocalize(self):
+        locale_string = self.locale_engine.strings.get(self.key, None)
+
+        if locale_string is None:
+            return self
+
+        return LocaleString(
+            locale_string,
+            key=self.key,
+            locale_engine=self.locale_engine,
+        )
 
     def __repr__(self):
         return f"LocaleString({super().__repr__()}, key={self.key!r})"
@@ -162,6 +203,49 @@ class LocaleEngine:
         elif isinstance(locale_string, list):
             locale_string = random.choice(locale_string)
         return locale_string
+
+    def resolve_localized_vars(
+        self,
+        loc_key: str,
+        loc_string: str,
+        recursion: list[str] | None = None,
+    ) -> str:
+        # Keep track of the locale keys currently being resolved so a
+        # circular reference such as A -> B -> A cannot recurse forever.
+        if recursion is None:
+            recursion = []
+
+        if loc_key in recursion:
+            return loc_string
+
+        recursion = [*recursion, loc_key]
+
+        def replace(match):
+            token = match.group(1)
+
+            # Formatter suffixes belong to the eventual .format() call.
+            # For localization we only care about the actual variable name.
+            var = token.split(':', 1)[0]
+
+            # Leave circular references untouched rather than trying to resolve them indefinitely.
+            if var in recursion:
+                return match.group(0)
+
+            # A placeholder is only localized when its name is also a locale key.
+            # Otherwise it remains a normal runtime variable.
+            value = self.strings.get(var)
+            if value is None:
+                return match.group(0)
+
+            # Preserve the existing behavior for alternative translations:
+            # select one translation before recursively resolving its locale-key placeholders.
+            if isinstance(value, list):
+                value = random.choice(value)
+
+            # Resolve locale keys referenced by this value before returning it to the outer template.
+            return self.resolve_localized_vars(var, value, recursion)
+
+        return LocaleString._pattern.sub(replace, loc_string)
 
     def load_file_strings(self, path: Path, tag: str = 'loc'):
         with open(path, 'rb') as f:
@@ -282,10 +366,16 @@ class LocaleManager:
         self.active_locale: Optional[LocaleData] = None
 
     def get_string(self, key: str, string: str) -> 'LocaleString':
+        if not self.locale_engine:
+            log.debug(f"Failed to get_string for key `{key}`: locale engine not initialized")
+            return LocaleString(string, key)
+
         string = self.locale_engine.get_string(key, string)
+
         # if self.enable_guide_chan:
         #     string = self.guide_chan.get_string(key, string)
-        return LocaleString(string, key)
+
+        return LocaleString(string, key, self.locale_engine)
 
     def get_indexed_names(self) -> List[str]:
         return self.locale_index.get_names()
