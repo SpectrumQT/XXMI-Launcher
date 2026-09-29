@@ -63,33 +63,11 @@ class WWMIConfig(ModelImporterConfig):
             },
         },
     })
-    apply_perf_tweaks: bool = False
     unlock_fps: bool = False
     force_max_lod_bias: bool = False
     disable_wounded_fx: bool = False
     disable_wounded_fx_warned: bool = False
-    perf_tweaks: Dict[str, Dict[str, Union[str, int, float]]] = field(default_factory=lambda: {
-        'SystemSettings': {
-            'r.Streaming.HLODStrategy': 2,
-            'r.Streaming.PoolSizeForMeshes': -1,
-            'r.XGEShaderCompile': 0,
-            'FX.BatchAsync': 1,
-            'FX.EarlyScheduleAsync': 1,
-            'fx.Niagara.ForceAutoPooling': 1,
-            'wp.Runtime.KuroRuntimeStreamingRangeOverallScale': 0.5,
-            'tick.AllowAsyncTickCleanup': 1,
-            'tick.AllowAsyncTickDispatch': 1,
-        }
-    })
     mesh_lod_distance_lod_base_fov: int = 165
-    mesh_lod_distance_scale: float = 1.0
-    mesh_lod_distance_offset: int = -10
-    texture_streaming_boost: float = 20.0
-    texture_streaming_min_boost: float = 0.0
-    texture_streaming_use_all_mips: bool = True
-    texture_streaming_pool_size: int = 0
-    texture_streaming_limit_to_vram: bool = True
-    texture_streaming_fixed_pool_size: bool = True
 
 
 @dataclass
@@ -349,13 +327,6 @@ class WWMIPackage(ModelImporterPackage):
 
         ini.remove_option('r.Kuro.SkeletalMesh.DistanceLODBaseFOV', section_name='ConsoleVariables')
 
-        for section_name, section_data in Config.Importers.WWMI.Importer.perf_tweaks.items():
-            for option_name, option_value in section_data.items():
-                if Config.Importers.WWMI.Importer.apply_perf_tweaks:
-                    ini.set_option(section_name, option_name, option_value)
-                else:
-                    ini.remove_option(option_name, section_name=section_name)
-
         if ini.is_modified():
             Paths.App.write_file(engine_ini_path, ini.to_string())
 
@@ -378,25 +349,6 @@ class WWMIPackage(ModelImporterPackage):
         console_variables_options = {
             # Controls minimal camera FOV value when engine switches character LOD0 mesh to LOD1+.
             'r.Kuro.SkeletalMesh.DistanceLODBaseFOV': Config.Importers.WWMI.Importer.mesh_lod_distance_lod_base_fov,
-            # 'r.Kuro.SkeletalMesh.DistanceLODFOV': Config.Importers.WWMI.Importer.mesh_lod_distance_lod_base_fov,
-            # Controls how far game starts to replace weighted meshes with LoDs
-            'r.Kuro.SkeletalMesh.LODDistanceScaleDeviceOffset': Config.Importers.WWMI.Importer.mesh_lod_distance_offset,
-            # Controls how aggressively higher resolution textures are pushed to VRAM
-            # Mods contain texture hashes only for original model and won't apply to LoDs
-            'r.Streaming.Boost': Config.Importers.WWMI.Importer.texture_streaming_boost,
-            # Controls the minimal texture boost floor value
-            'r.Streaming.MinBoost': Config.Importers.WWMI.Importer.texture_streaming_min_boost,
-            # Controls whether texture resolution limits imposed by LOD Bias are applied
-            'r.Streaming.UseAllMips': int(Config.Importers.WWMI.Importer.texture_streaming_use_all_mips),
-            # Controls amount of VRAM used for textures streaming
-            # When set to 0, tends to keep full resolution textures in VRAM, so LoDs don't break mods
-            'r.Streaming.PoolSize': Config.Importers.WWMI.Importer.texture_streaming_pool_size,
-            # Prevents pool size from exceeding VRAM
-            # Doesn't explicitly affect mods, but acts as failsafe for low and mid-range GPUs for PoolSize=0
-            'r.Streaming.LimitPoolSizeToVRAM': int(Config.Importers.WWMI.Importer.texture_streaming_limit_to_vram),
-            # Controls whether pool size can grow/shrink automatically or is locked to a fixed value
-            # When enabled, minimizes mip levels pop in/out at cost of pool size being locked after game start
-            'r.Streaming.UseFixedPoolSize': int(Config.Importers.WWMI.Importer.texture_streaming_fixed_pool_size),
         }
         log.debug(f'Using console variables: {console_variables_options}')
 
