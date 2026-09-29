@@ -85,9 +85,20 @@ class MessageFrame(UIFrame):
         if target_height % 2 != 0:
             target_height += 1
 
-        self.set_background_image(width=target_width, height=target_height, x=master.master.cfg.width/2, y=master.master.cfg.height/2, anchor='c',
-                                  fg_color='#1f2024', border_color='gray', border_radius=20, border_width=1,
-                                  brightness=1.0, opacity=1.0, dim_opacity=0.5)
+        self.set_background_image(
+            width=target_width,
+            height=target_height,
+            x=master.master.cfg.width / 2,
+            y=master.master.cfg.height / 2,
+            anchor='c',
+            fg_color='#1f2024',
+            border_color='gray',
+            border_radius=20,
+            border_width=1,
+            brightness=1.0,
+            opacity=1.0,
+            dim_opacity=0.5
+        )
 
         title_x = master.master.cfg.width / 2 - target_width / 2 + 25
         title_y = master.master.cfg.height / 2 - target_height / 2 + 20
@@ -278,7 +289,7 @@ class ContentFrame(UIScrollableFrame):
         max_height: int = 260
     ):
 
-        super().__init__(master, width=max_width, height=max_height, hide_scrollbar=True)
+        super().__init__(master, width=max_width, height=max_height, hide_scrollbar=True, scroll_speed=4.0)
 
         self.configure(fg_color='#1f2024')
 
@@ -294,7 +305,6 @@ class ContentFrame(UIScrollableFrame):
             on_link_click=self.handle_link_click,
             events_enabled=True,
         )
-        self.message_widget.unbind_all('<MouseWheel>')
 
         # self.message_widget.html.config(
         #     # Set max width for word wrapping
@@ -377,6 +387,8 @@ class ContentFrame(UIScrollableFrame):
         self.message_widget.pack(fill="both", expand=True)
 
         self.update()
+
+        # self.message_widget.bind_all("<MouseWheel>", self._mouse_wheel_all, add="+")
 
         # self.message_widget.place(x=0, y=0, width=800, height=500)
         # self.message_widget.place(x=150, y=150)

@@ -3,6 +3,7 @@ from pathlib import Path
 
 from PIL import Image
 
+from tkinter import TclError
 from customtkinter import CTk, CTkToplevel, CTkBaseClass, CTkFrame, CTkCanvas, CTkTabview, CTkScrollableFrame
 
 from gui.classes.element import UIElementBase
@@ -97,11 +98,36 @@ class UITabView(UIElementBase, CTkTabview):
             self._segmented_button._buttons_dict[new_name] = self._segmented_button._buttons_dict[new_name]
             del self._segmented_button._buttons_dict[new_name]
 
+_CTK_SCROLLABLE_FRAME_GLOBAL_BINDINGS = {
+    "<MouseWheel>",
+    "<KeyPress-Shift_L>",
+    "<KeyPress-Shift_R>",
+    "<KeyRelease-Shift_L>",
+    "<KeyRelease-Shift_R>",
+}
 
 class UIScrollableFrame(CTkScrollableFrame, UIElementBase):
-    def __init__(self, master: Union[CTk, CTkToplevel], height, hide_scrollbar=False, fix_grid=False, **kwargs):
+    def __init__(
+        self,
+        master: Union[CTk, CTkToplevel],
+        height,
+        hide_scrollbar: bool = False,
+        fix_grid: bool = False,
+        scroll_speed: float = 1.0,
+        **kwargs
+    ):
         UIElementBase.__init__(self, **kwargs)
-        CTkScrollableFrame.__init__(self, master, height=height, **kwargs)
+
+        # Must exist BEFORE CTkScrollableFrame.__init__(), because
+        # CTkScrollableFrame.__init__() calls self.bind_all().
+        self._captured_bindings = []
+        self._capture_bindings = True
+
+        try:
+            CTkScrollableFrame.__init__(self, master, height=height, **kwargs)
+        finally:
+            self._capture_bindings = False
+
         # Fix customtkinter bug to allow launcher_frame with less than 200 px height
         self._scrollbar.configure(height=0)
         # Scrollbar auto-hiding
@@ -114,11 +140,79 @@ class UIScrollableFrame(CTkScrollableFrame, UIElementBase):
         self._scrollbar_hidden = False
         self._scrollbar_hidden_color = None
 
+        self._scroll_speed = scroll_speed
+
         self._apply_theme()
 
         # Call grid manager to workaround customtkinter bug that causes content to overlap with scrollbar
         if fix_grid:
             self.grid()
+
+    def bind_all(self, sequence=None, func=None, add=None):
+        """
+        CUSTOMTKINTER BUGFIX: Capture list of bindings and unbind them later during `destroy` to prevent leaking.
+        """
+        funcid = super().bind_all(sequence, func, add)
+
+        if getattr(self, "_capture_bindings", False) and sequence in _CTK_SCROLLABLE_FRAME_GLOBAL_BINDINGS:
+            self._captured_bindings.append((sequence, funcid))
+
+        return funcid
+
+    def destroy(self):
+        """
+        CUSTOMTKINTER BUGFIX: Unbind capture list of bindings to prevent leaking.
+        Remove CTkScrollableFrame's bind_all() callbacks before destroying the widget hierarchy.
+        """
+        # root = self._root()
+        for sequence, funcid in self._captured_bindings:
+            try:
+                # bind_all() uses the special Tcl bind tag "all".
+                # tkinter has no public API for removing only one bind_all() callback, so use its internal _unbind().
+                self._unbind(("bind", "all", sequence), funcid)
+                # root.unbind(sequence, funcid)
+            except TclError:
+                # The Tcl binding may already have disappeared.
+                pass
+
+        self._captured_bindings.clear()
+
+        super().destroy()
+
+    def _mouse_wheel_all(self, event):
+        event.delta = event.delta * self._scroll_speed
+        # CUSTOMTKINTER BUG WORKAROUND: Ignore scroll errors.
+        # While custom `bind_all` and `destroy` implement bugfix, let's leave it here for safety.
+        try:
+            super()._mouse_wheel_all(event)
+        except Exception:
+            pass
+
+    def scroll_y_pixels(self, pixels: int):
+        canvas = self._parent_canvas
+
+        first, _ = canvas.yview()
+        scrollregion = canvas.cget("scrollregion")
+
+        if not scrollregion:
+            return
+
+        _, y1, _, y2 = map(float, scrollregion.split())
+        scroll_height = y2 - y1
+
+        if scroll_height <= 0:
+            return
+
+        canvas_height = canvas.winfo_height()
+        max_scroll = max(0, scroll_height - canvas_height)
+
+        if max_scroll <= 0:
+            return
+
+        new_position = first + pixels / max_scroll
+        new_position = max(0.0, min(1.0, new_position))
+
+        canvas.yview_moveto(new_position)
 
     def update(self):
         CTkScrollableFrame.update(self)
@@ -161,6 +255,5 @@ class UIScrollableFrame(CTkScrollableFrame, UIElementBase):
         return f'{resource_path}/{str(self.__class__.__qualname__)}'
 
     def _show(self):
-        self.bind_all("<MouseWheel>", self._mouse_wheel_all, add="+")
         super()._show()
 
