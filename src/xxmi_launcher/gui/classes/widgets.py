@@ -1578,6 +1578,7 @@ class UICheckbox(CTkCheckBox, UIWidget):
         self._fg_color_disabled = ThemeManager.theme["CTkCheckBox"].get("fg_color_disabled", None)
         self._checkmark_color_disabled = ThemeManager.theme["CTkCheckBox"].get("checkmark_color_disabled", None)
         self._border_color_disabled = ThemeManager.theme["CTkCheckBox"].get("border_color_disabled", None)
+        self._text_color_checked = ThemeManager.theme["CTkCheckBox"].get("text_color_checked", None)
 
         self.is_hovered = False
 
@@ -1638,20 +1639,30 @@ class UICheckbox(CTkCheckBox, UIWidget):
                                         outline=self._apply_appearance_mode(self._bg_color),
                                         fill=self._apply_appearance_mode(self._bg_color))
 
-            if self._state == tkinter.DISABLED:
-                border_color = self._border_color_disabled
-            else:
-                border_color = self._border_color
-            self._canvas.itemconfig("border_parts",
-                                    outline=self._apply_appearance_mode(border_color),
-                                    fill=self._apply_appearance_mode(border_color))
-
-            if self._state == tkinter.DISABLED:
-                self._text_label.configure(fg=(self._apply_appearance_mode(self._text_color_disabled)))
-            else:
-                self._text_label.configure(fg=self._apply_appearance_mode(self._text_color))
-
             self._text_label.configure(bg=self._apply_appearance_mode(self._bg_color))
+
+            self._update_visual_state()
+
+    def _update_visual_state(self):
+        if self._state == tkinter.DISABLED:
+            text_color = self._text_color_disabled
+        elif self.is_hovered and self._text_color_hovered:
+            text_color = self._text_color_hovered
+        elif self._check_state and self._text_color_checked:
+            text_color = self._text_color_checked
+        else:
+            text_color = self._text_color
+
+        if self._state == tkinter.DISABLED:
+            border_color = self._border_color_disabled
+        else:
+            border_color = self._border_color
+
+        text_color = self._apply_appearance_mode(text_color)
+        border_color = self._apply_appearance_mode(border_color)
+
+        self._text_label.configure(fg=text_color)
+        self._canvas.itemconfig("border_parts", outline=border_color, fill=border_color)
 
     def set(self, value):
         if value == self._onvalue:
@@ -1667,6 +1678,9 @@ class UICheckbox(CTkCheckBox, UIWidget):
         if 'text_color_hovered' in kwargs:
             self._text_color_hovered = self._check_color_type(kwargs.pop('text_color_hovered'))
             require_redraw = True
+        if 'text_color_checked' in kwargs:
+            self._text_color_checked = self._check_color_type(kwargs.pop('text_color_checked'))
+            require_redraw = True
 
         font = kwargs.get('font', None)
         if font is not None:
@@ -1680,10 +1694,7 @@ class UICheckbox(CTkCheckBox, UIWidget):
         if self._state == tkinter.DISABLED:
             return
         super()._on_enter(event)
-        self._text_label.configure(fg=self._apply_appearance_mode(self._text_color_hovered))
-        self._canvas.itemconfig("border_parts",
-                                outline=self._apply_appearance_mode(self._border_color),
-                                fill=self._apply_appearance_mode(self._border_color))
+        self._update_visual_state()
 
     def _on_leave(self, event=None):
         self.is_hovered = False
@@ -1691,10 +1702,7 @@ class UICheckbox(CTkCheckBox, UIWidget):
         if self._state == tkinter.DISABLED:
             return
         super()._on_leave(event)
-        self._text_label.configure(fg=self._apply_appearance_mode(self._text_color))
-        self._canvas.itemconfig("border_parts",
-                                outline=self._apply_appearance_mode(self._border_color),
-                                fill=self._apply_appearance_mode(self._border_color))
+        self._update_visual_state()
 
     def toggle(self, event=0):
         if not self.is_hovered:
@@ -1709,7 +1717,7 @@ class UICheckbox(CTkCheckBox, UIWidget):
 
     def _set_cursor(self):
         if self._cursor_manipulation_enabled:
-            if not self.is_hovered:
+            if not self.is_hovered or self._state == tkinter.DISABLED:
                 if sys.platform == "darwin":
                     self._canvas.configure(cursor="arrow")
                     if self._text_label is not None:
