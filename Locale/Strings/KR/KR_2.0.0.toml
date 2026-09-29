@@ -166,10 +166,6 @@ loc = """
 src = "Shortcut to XXMI Launcher"
 loc = "XXMI 런처 바로가기"
 
-[error_migoto_game_start_failed]
-src = "Failed to start {process_name}!"
-loc = "{process_name}을(를) 시작하지 못했습니다!"
-
 [status_ensuring_game_closed]
 src = "Ensuring the game is closed..."
 loc = "게임이 종료되어 있는지 확인하는 중..."
@@ -370,63 +366,9 @@ loc = "게임 설치 폴더가 지정되지 않았습니다!"
 src = "Specified game installation folder is not found!"
 loc = "지정된 게임 설치 폴더를 찾을 수 없습니다!"
 
-[message_text_game_detection_failed]
-src = """
-Automatic detection of the game installation failed!
-
-Please configure it manually with Game Folder option of General Settings.
-"""
-loc = """
-게임 설치 자동 감지에 실패했습니다!
-
-일반 설정의 게임 폴더 옵션을 사용하여 수동으로 구성하세요.
-"""
-
 [message_button_open_settings]
 src = "Open Settings"
 loc = "설정 열기"
-
-[message_text_game_detected_single]
-src = """
-Detected game installation:
-
-{game_folder}
-
-Please check if it is desired Game Folder or change it in General Settings.
-"""
-loc = """
-게임 설치 감지됨:
-
-{game_folder}
-
-원하는 게임 폴더가 맞는지 확인하거나 일반 설정에서 변경하세요.
-"""
-
-[message_text_game_detected_multiple]
-src = """
-Detected game installations:
-
-Select desired Game Folder from the list below or set it in General Settings:
-
-"""
-loc = """
-여러 게임 설치 감지됨:
-
-아래 목록에서 원하는 게임 폴더를 선택하거나 일반 설정에서 설정하세요:
-
-"""
-
-[message_text_game_folder_not_configured]
-src = """
-Game installation folder is not configured!
-
-Please set it with Game Folder option of General Settings.
-"""
-loc = """
-게임 설치 폴더가 구성되지 않았습니다!
-
-일반 설정의 게임 폴더 옵션에서 설정하세요.
-"""
 
 [status_autodetecting_game]
 src = "Autodetecting game installation folder..."
@@ -473,10 +415,6 @@ loc = """
 [status_updating_ini]
 src = "Updating d3dx.ini..."
 loc = "d3dx.ini 업데이트 중..."
-
-[error_ini_missing_setting]
-src = "Config is missing {setting_name} setting!"
-loc = "구성에 {setting_name} 설정이 누락되었습니다!"
 
 [error_ini_missing_value]
 src = "Config is missing value for section `{section}` option `{option}` key `{key}`"
@@ -679,24 +617,6 @@ loc = "{file_name} 업데이트 중..."
 [error_local_storage_init_failed]
 src = "Failed to initialize LocalStorage: {error_text}"
 loc = "LocalStorage를 초기화하지 못했습니다: {error_text}"
-
-[error_zzmi_game_config_failed]
-src = """
-Failed to configure in-game settings for ZZMI!
-Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:
-* Graphics > `Character Quality` must be `High`.
-* Graphics > `High-Precision Character Animation` must be `Disabled`.
-
-{error_text}
-"""
-loc = """
-ZZMI의 인게임 설정을 구성하지 못했습니다!
-런처의 일반 설정에서 `게임 설정 구성`을 비활성화하고 인게임 설정을 확인하세요:
-* 그래픽 > `캐릭터 품질(Character Quality)`을 `높음(High)`으로 설정해야 합니다.
-* 그래픽 > `고정밀 캐릭터 애니메이션(High-Precision Character Animation)`을 `비활성화(Disabled)`로 설정해야 합니다.
-
-{error_text}
-"""
 
 [error_zzmi_unknown_settings_format]
 src = "Unknown system settings entry format: {setting}!"
@@ -918,22 +838,6 @@ loc = "파일과 연결된 응용 프로그램이 없습니다."
 src = "File association is incomplete"
 loc = "파일 연결이 불완전합니다."
 
-[dll_injector_unknown_shell_error_code]
-src = "Unknown ShellExecute error code {error_code}"
-loc = "알 수 없는 ShellExecute 오류 코드 {error_code}입니다."
-
-[error_dll_injector_process_start_failed]
-src = "Failed to start {process_name}: {error_text}!"
-loc = "{process_name}을(를) 시작하지 못했습니다: {error_text}!"
-
-[error_dll_injector_unknown_start_method]
-src = "Unknown process start method `{start_method}`!"
-loc = "알 수 없는 프로세스 시작 방식 `{start_method}`입니다!"
-
-[error_dll_injector_injection_failed]
-src = "Failed to inject {dll_paths}!"
-loc = "{dll_paths}을(를) 주입하지 못했습니다!"
-
 [error_dll_injector_unhook_failed]
 src = "Invalid injector usage: {dll_path} was not unhooked!"
 loc = "잘못된 인젝터 사용: {dll_path}이(가) 언훅(unhook)되지 않았습니다!"
@@ -1152,10 +1056,6 @@ loc = "{process}에 {library} 후킹 중..."
 src = "Verifying {library} load into {process}..."
 loc = "{process}로의 {library} 로드 확인 중..."
 
-[bottom_bar_injecting]
-src = "Injecting {library} to {process}..."
-loc = "{process}에 {library} 주입 중..."
-
 [bottom_bar_launching_game]
 src = "Launching game..."
 loc = "게임 시작 중..."
@@ -1244,14 +1144,6 @@ src = """
 loc = """
 # {package_name}을(를) v{new_package_version}으로 업데이트:
 {latest_release_notes}
-"""
-
-[package_release_notes_not_installed]
-src = """
-Press **Install** button to setup the package.
-"""
-loc = """
-**설치** 버튼을 눌러 패키지를 설정하세요.
 """
 
 [package_description_launcher]
@@ -1450,20 +1342,6 @@ loc = "GUI 새로고침 중..."
 src = "Overwrite d3dx.ini"
 loc = "d3dx.ini 덮어쓰기"
 
-[advanced_settings_overwrite_ini_checkbox_tooltip]
-src = """
-Enabled: {importer} updates will overwrite existing d3dx.ini to ensure its up-to-date state.
-Disabled: {importer} updates will keep existing d3dx.ini untouched.
-"""
-loc = """
-활성화: 최신 상태를 유지하기 위해 {importer} 업데이트가 기존 d3dx.ini를 덮어씁니다.
-비활성화: {importer} 업데이트 시 기존 d3dx.ini를 건드리지 않습니다.
-"""
-
-[advanced_settings_security_label]
-src = "Security:"
-loc = "보안:"
-
 [advanced_settings_unsafe_mode_checkbox]
 src = "Unsafe Mode"
 loc = "비보안 모드"
@@ -1480,20 +1358,6 @@ loc = """
 참고: 타사 d3d11.dll이 중첩된 디렉토리에서의 실행을 지원하지 않으면 로드에 실패합니다.
 """
 
-[advanced_settings_run_pre_launch_checkbox]
-src = "Run Pre-Launch:"
-loc = "실행 전(Pre-Launch) 실행:"
-
-[advanced_settings_option_checkbox_tooltip]
-src = """
-Enabled: Option will have stated effect.
-Disabled: Option will have no effect.
-"""
-loc = """
-활성화: 옵션에 명시된 효과가 적용됩니다.
-비활성화: 옵션이 효과가 없습니다.
-"""
-
 [advanced_settings_run_pre_launch_tooltip]
 src = """
 Windows console command to be executed before game exe launch.
@@ -1504,10 +1368,6 @@ loc = """
 참고: 게임 시작 전에 해야 할 일이 있다면 여기서 수행하세요.
 """
 
-[advanced_settings_wait_checkbox]
-src = "Wait"
-loc = "대기"
-
 [advanced_settings_run_pre_launch_wait_checkbox_tooltip]
 src = """
 Enabled: Wait for (blocking) command to finish its execution before launching the game exe.
@@ -1515,10 +1375,6 @@ Enabled: Wait for (blocking) command to finish its execution before launching th
 loc = """
 활성화: 게임 exe를 시작하기 전에 (차단) 명령이 실행을 마칠 때까지 기다립니다.
 """
-
-[advanced_settings_custom_launch_checkbox]
-src = "Custom Launch:"
-loc = "사용자 지정 실행(Custom Launch):"
 
 [advanced_settings_custom_launch_entry_tooltip]
 src = """
@@ -1538,24 +1394,6 @@ loc = """
 `start /d \"C:\\Games\\XXMI Launcher\\Resources\\Packages\\GI-FPS-Unlocker\" unlockfps_nc.exe`
 """
 
-[advanced_settings_custom_launch_inject_mode_option_menu_tooltip]
-src = """
-Defines the way of 3dmigoto injection into the game process started via Custom Launch.
-* Inject: Use WriteProcessMemory, more reliable but requires direct memory access.
-* Hook: Use SetWindowsHookEx, less reliable, but potentially less prominent for anti-cheats.
-* Bypass: Skip 3dmigoto injection and process only Inject Libraries field.
-"""
-loc = """
-사용자 지정 실행을 통해 시작된 게임 프로세스에 3dmigoto를 주입하는 방식을 정의합니다.
-* Inject (주입): WriteProcessMemory를 사용합니다. 더 안정적이지만 직접적인 메모리 액세스가 필요합니다.
-* Hook (후크): SetWindowsHookEx를 사용합니다. 안정성은 떨어지지만 안티치트에 덜 눈에 띌 가능성이 있습니다.
-* Bypass (우회): 3dmigoto 주입을 건너뛰고 라이브러리 주입(Inject Libraries) 필드만 처리합니다.
-"""
-
-[advanced_settings_run_post_load_checkbox]
-src = "Run Post-Load:"
-loc = "로드 후(Post-Load) 실행:"
-
 [advanced_settings_run_post_load_checkbox_tooltip]
 src = """
 Windows console command to be executed after hooking d3d11.dll to launched game exe.
@@ -1574,10 +1412,6 @@ loc = """
 활성화: 게임 실행이 완료된 것으로 간주하기 전에 (차단) 명령이 실행을 마칠 때까지 기다립니다.
 """
 
-[advanced_settings_inject_libraries_checkbox]
-src = "Inject Libraries:"
-loc = "라이브러리 주입(Inject Libraries):"
-
 [advanced_settings_inject_libraries_tooltip]
 src = """
 List of additional DLL paths to inject into the game process. 1 path per line.
@@ -1592,22 +1426,6 @@ WriteProcessMemory 방식을 통해 주입됩니다.
 `C:\\Games\\ReShade\\ReShade64.dll`
 """
 
-[launcher_settings_language_label]
-src = "Language:"
-loc = "언어:"
-
-[general_settings_engine_settings_label]
-src = "Engine Settings:"
-loc = "엔진 설정:"
-
-[general_settings_game_folder_label]
-src = "Game Folder:"
-loc = "게임 폴더:"
-
-[general_settings_game_folder_error_label]
-src = "Failed to detect Game Folder!"
-loc = "게임 폴더를 감지하지 못했습니다!"
-
 [settings_browse_path_button]
 src = "Browse..."
 loc = "찾아보기..."
@@ -1615,10 +1433,6 @@ loc = "찾아보기..."
 [general_settings_detect_game_folder_button_tooltip]
 src = "Try to automatically detect existing installation folders."
 loc = "기존 설치 폴더를 자동으로 감지하려고 시도합니다."
-
-[general_settings_launch_options_label]
-src = "Launch Options:"
-loc = "실행 옵션:"
 
 [general_settings_launch_options_entry_tooltip_wwmi]
 src = """
@@ -1662,26 +1476,6 @@ loc = """
 참고: 게임 엔진은 개발자가 맞춤화하여 일부 인수가 작동하지 않을 수 있습니다.
 """
 
-[general_settings_start_method_label]
-src = "Start Method:"
-loc = "시작 방법:"
-
-[general_settings_start_method_option_menu_tooltip]
-src = """
-**Native**: Create the game process directly. Usually it's the most reliable way.
-**Shell**: Start the game process via system console. Worth to try if you have some issues with Native.
-**Manual**: Skip launching the game on **Start** button press. Wait for user to launch it manually ({timeout}s timeout).
-"""
-loc = """
-**Native (기본)**: 게임 프로세스를 직접 생성합니다. 보통 가장 안정적인 방법입니다.
-**Shell (셸)**: 시스템 콘솔을 통해 게임 프로세스를 시작합니다. Native에 문제가 있는 경우 시도해 볼 만합니다.
-**Manual (수동)**: **시작** 버튼을 눌렀을 때 게임 실행을 건너뜁니다. 사용자가 수동으로 실행할 때까지 기다립니다({timeout}초 시간 초과).
-"""
-
-[general_settings_xxmi_delay_label]
-src = "XXMI Delay:"
-loc = "XXMI 지연:"
-
 [general_settings_xxmi_delay_entry_tooltip_base]
 src = """
 Delay in milliseconds for how long injected XXMI DLL (3dmigoto) must wait before initialization.
@@ -1719,18 +1513,6 @@ If game crashes with no mods, try to increase it. Start with steps of 50 and inc
 loc = """
 모드가 없는데도 게임이 충돌하면 값을 늘려보세요. 50 단위로 시작하여 점진적으로 증가시키세요.
 """
-
-[general_settings_process_priority_label]
-src = "Process Priority:"
-loc = "프로세스 우선순위:"
-
-[general_settings_auto_config_label]
-src = "Auto Config:"
-loc = "자동 구성:"
-
-[general_settings_configure_game_checkbox]
-src = "Configure Game Settings"
-loc = "게임 설정 구성"
 
 [general_settings_configure_game_tooltip_gimi]
 src = """
@@ -1814,25 +1596,13 @@ loc = """
 **비활성화**: 효과를 `켜기`로 설정합니다. `부상 효과 제거기(Injured Effect Remover)` 도구를 사용하는 경우 선택하세요.
 """
 
-[general_settings_open_file_button]
-src = "🔍 Open {file_name}"
-loc = "🔍 {file_name} 열기"
-
 [error_general_settings_file_not_found]
 src = "File does not exist: **{file_name}**!"
 loc = "**{file_name}** 파일이 존재하지 않습니다!"
 
-[general_settings_tweaks_label]
-src = "Tweaks:"
-loc = "트윅:"
-
 [general_settings_unlock_fps_checkbox_force]
 src = "Force 120 FPS"
 loc = "120 FPS 강제 적용"
-
-[general_settings_unlock_fps_checkbox]
-src = "Unlock FPS:"
-loc = "FPS 제한 해제:"
 
 [general_settings_unlock_fps_checkbox_tooltip_wwmi]
 src = """
@@ -1900,26 +1670,6 @@ loc = """
 src = "Game window mode when started with FPS Unlocker."
 loc = "FPS Unlocker로 시작할 때의 게임 창 모드입니다."
 
-[general_settings_apply_tweaks_checkbox]
-src = "Apply Performance Tweaks"
-loc = "성능 트윅 적용"
-
-[general_settings_apply_tweaks_checkbox_tooltip]
-src = """
-**Enabled**: Add list of performance tweaks to `[SystemSettings]` section of `Engine.ini` on game start.
-**Disabled**: Do not add tweaks to `Engine.ini`. Already added ones will have to be removed manually.
-
-List of tweaks:
-{tweaks}
-"""
-loc = """
-**활성화**: 게임 시작 시 `Engine.ini`의 `[SystemSettings]` 섹션에 성능 트윅 목록을 추가합니다.
-**비활성화**: `Engine.ini`에 트윅을 추가하지 않습니다. 이미 추가된 항목은 수동으로 제거해야 합니다.
-
-트윅 목록:
-{tweaks}
-"""
-
 [general_settings_enable_hdr_checkbox]
 src = "Enable HDR"
 loc = "HDR 활성화"
@@ -1936,149 +1686,17 @@ loc = """
 **비활성화**: HDR을 끕니다. 추가 작업이 필요하지 않으며, 게임 실행 시 HDR 레지스트리 레코드를 자동 제거합니다.
 """
 
-[importer_settings_shader_hunting_label]
-src = "Shader Hunting:"
-loc = "셰이더 헌팅:"
-
 [importer_settings_enable_hunting_checkbox]
 src = "Enable Hunting"
 loc = "헌팅 활성화"
-
-[importer_settings_enable_hunting_checkbox_tooltip]
-src = """
-Enabled: Allows to toggle Hunting Mode via Numpad [0] hotkey.
-* [d3dx.ini]: hunting = 2
-Disabled: Hunting Mode is hard disabled.
-* [d3dx.ini]: hunting = 0
-"""
-loc = """
-활성화: 숫자 패드 [0] 단축키를 통해 헌팅 모드를 토글할 수 있습니다.
-* [d3dx.ini]: hunting = 2
-비활성화: 헌팅 모드가 강제로 비활성화됩니다.
-* [d3dx.ini]: hunting = 0
-"""
 
 [importer_settings_dump_shaders_checkbox]
 src = "Dump Shaders"
 loc = "셰이더 덤프"
 
-[importer_settings_dump_shaders_checkbox_tooltip]
-src = """
-Enabled: Hunting Mode [Copy Hash] key also saves selected shader as file in ShaderFixes.
-* [d3dx.ini]: marking_actions = clipboard hlsl asm regex
-Disabled: Hunting Mode [Copy Hash] only copies hash of selected shader to clipboard.
-* [d3dx.ini]: marking_actions = clipboard
-"""
-loc = """
-활성화: 헌팅 모드 [해시 복사] 키가 선택한 셰이더를 ShaderFixes에 파일로 저장합니다.
-* [d3dx.ini]: marking_actions = clipboard hlsl asm regex
-비활성화: 헌팅 모드 [해시 복사]는 선택한 셰이더의 해시만 클립보드에 복사합니다.
-* [d3dx.ini]: marking_actions = clipboard
-"""
-
-[importer_settings_error_handling_label]
-src = "Error Handling:"
-loc = "오류 처리:"
-
 [importer_settings_mute_warnings_checkbox]
 src = "Mute Warnings"
 loc = "경고 음소거"
-
-[importer_settings_mute_warnings_checkbox_tooltip]
-src = """
-Enabled: No error warnings or beeps whatsoever. Ignorance is bliss.
-* [d3dx.ini]: show_warnings = 0
-Disabled: Ini parser error warnings and beeps on F10 will haunt poor souls.
-* [d3dx.ini]: show_warnings = 1
-"""
-loc = """
-활성화: 오류 경고나 알림음을 음소거합니다.
-* [d3dx.ini]: show_warnings = 0
-비활성화: 뿝-
-* [d3dx.ini]: show_warnings = 1
-"""
-
-[importer_settings_calls_logging_checkbox]
-src = "Calls Logging"
-loc = "호출 로깅"
-
-[importer_settings_calls_logging_checkbox_tooltip]
-src = """
-Enabled: Log API usage.
-* [d3dx.ini]: calls = 1
-Disabled: Do not log calls. Maximum performance.
-* [d3dx.ini]: calls = 0
-"""
-loc = """
-활성화: API 사용을 기록합니다.
-* [d3dx.ini]: calls = 1
-비활성화: 호출을 기록하지 않습니다. 최대 성능.
-* [d3dx.ini]: calls = 0
-"""
-
-[importer_settings_debug_logging_checkbox]
-src = "Debug Logging"
-loc = "디버그 로깅"
-
-[importer_settings_debug_logging_checkbox_tooltip]
-src = """
-Enabled: Super verbose debug logging.
-* [d3dx.ini]: debug = 1
-Disabled: No debug logging. Maximum performance.
-* [d3dx.ini]: debug = 0
-"""
-loc = """
-활성화: 매우 상세한 디버그 로깅.
-* [d3dx.ini]: debug = 1
-비활성화: 디버그 로깅 없음. 최대 성능.
-* [d3dx.ini]: debug = 0
-"""
-
-[importer_settings_importer_folder_label]
-src = "Importer Folder:"
-loc = "임포터 폴더:"
-
-[importer_settings_importer_folder_label_dynamic]
-src = "{importer} Folder:"
-loc = "{importer} 폴더:"
-
-[importer_settings_importer_folder_entry_tooltip]
-src = """
-Path to folder containing `Mods` folder, `d3dx.ini` and other {importer} resources.
-**Absolute**: Set any arbitrary folder, i.e. `C:/Games/{importer}/`.
-**Relative**: Set any folder **inside** the Launcher folder, i.e. `{importer}/` (default).
-"""
-loc = """
-`Mods` 폴더, `d3dx.ini` 및 기타 {importer} 리소스가 포함된 폴더 경로입니다.
-**절대 경로(Absolute)**: 임의의 폴더를 설정합니다(예: `C:/Games/{importer}/`).
-**상대 경로(Relative)**: 런처 폴더 **내부**의 임의 폴더를 설정합니다(예: `{importer}/` - 기본값).
-"""
-
-[importer_settings_ini_protection_label]
-src = "Ini Protection:"
-loc = "Ini 보호:"
-
-[importer_settings_enforce_rendering_checkbox]
-src = "Enforce Rendering Settings"
-loc = "렌더링 설정 강제 적용"
-
-[importer_settings_enforce_rendering_checkbox_tooltip]
-src = """
-Enabled: Ensure {importer}-compatible [Rendering] section settings.
-* [d3dx.ini]: texture_hash = {texture_hash}
-* [d3dx.ini]: track_texture_updates = {track_texture_updates}
-Disabled: Settings above will not be forced into d3dx.ini.
-"""
-loc = """
-활성화: {importer} 호환 [Rendering] 섹션 설정을 보장합니다.
-* [d3dx.ini]: texture_hash = {texture_hash}
-* [d3dx.ini]: track_texture_updates = {track_texture_updates}
-비활성화: 위의 설정이 d3dx.ini에 강제로 적용되지 않습니다.
-"""
-
-[launcher_settings_start_behavior_label]
-src = "Start Behavior:"
-loc = "시작 동작:"
 
 [launcher_settings_auto_close_checkbox]
 src = "Close Launcher After Game Start"
@@ -2094,26 +1712,6 @@ loc = """
 비활성화: 런처가 계속 실행됩니다.
 """
 
-[launcher_settings_timeout_label]
-src = "Timeout:"
-loc = "타임 아웃:"
-
-[launcher_settings_timeout_entry_tooltip]
-src = """
-Controls how long launcher should wait for the game to show its window after launch.
-Game process will be considered as crashed once timeout is met.
-Default value is **30**.
-"""
-loc = """
-시작 후 게임이 창을 표시할 때까지 런처가 대기하는 시간을 제어합니다.
-타임 아웃에 도달하면 게임 프로세스가 충돌한 것으로 간주됩니다.
-기본값은 **30**입니다.
-"""
-
-[launcher_settings_update_policy_label]
-src = "Update Policy:"
-loc = "업데이트 정책:"
-
 [launcher_settings_auto_update_checkbox]
 src = "Auto Update"
 loc = "자동 업데이트"
@@ -2127,26 +1725,6 @@ loc = """
 활성화: 런처 및 {importer} 업데이트가 자동으로 다운로드 및 설치됩니다.
 비활성화: 수동으로 업데이트를 다운로드하고 설치하려면 [시작] 버튼 옆에 있는 [▲] 버튼을 사용하세요.
 """
-
-[launcher_settings_update_channel_label]
-src = "Channel:"
-loc = "채널:"
-
-[launcher_settings_update_channel_option_menu_tooltip]
-src = """
-**Auto**: Detect update installation method automatically.
-**MSI**: Use native `.msi` installers to install updates.
-**ZIP**: Use portable `.zip` archives to install updates.
-"""
-loc = """
-**Auto (자동)**: 업데이트 설치 방법을 자동으로 감지합니다.
-**MSI**: 네이티브 `.msi` 설치 관리자를 사용하여 업데이트를 설치합니다.
-**ZIP**: 휴대용 `.zip` 아카이브를 사용하여 업데이트를 설치합니다.
-"""
-
-[launcher_settings_theme_label]
-src = "UI Theme:"
-loc = "UI 테마:"
 
 [launcher_settings_theme_option_menu_tooltip]
 src = """
@@ -2179,14 +1757,6 @@ loc = """
 활성화: 런처가 `custom-tkinter-theme.json`의 변경 사항을 추적하고 즉석에서 적용합니다.
 비활성화: 테마 변경 사항을 추적하지 않습니다.
 """
-
-[launcher_settings_connection_label]
-src = "Connection:"
-loc = "연결:"
-
-[launcher_settings_github_token_label]
-src = "GitHub Token:"
-loc = "GitHub 토큰:"
 
 [launcher_settings_github_token_entry_tooltip]
 src = """
@@ -2230,10 +1800,6 @@ loc = """
 **비활성화**: 중간자 공격에 취약한 안전하지 않은 연결을 허용합니다.
 """
 
-[launcher_settings_proxy_enable_checkbox]
-src = "Use Proxy:"
-loc = "프록시 사용:"
-
 [launcher_settings_proxy_enable_checkbox_tooltip]
 src = """
 Controls how launcher connects to GitHub to download packages.
@@ -2244,20 +1810,6 @@ loc = """
 패키지를 다운로드하기 위해 런처가 GitHub에 연결하는 방식을 제어합니다.
 **활성화**: 지정된 프록시 서버를 사용하여 인터넷에 접속합니다.
 **비활성화**: 기본 시스템 인터넷 연결 설정을 사용합니다.
-"""
-
-[launcher_settings_proxy_type_label]
-src = "Type:"
-loc = "유형:"
-
-[launcher_settings_proxy_type_option_menu_tooltip]
-src = """
-**HTTPS**: Good old proxy protocol. Offers best security.
-**SOCKS5**: Newer and less secure, but excels at bypassing firewalls.
-"""
-loc = """
-**HTTPS**: 전통적인 프록시 프로토콜. 최고의 보안을 제공합니다.
-**SOCKS5**: 더 새롭고 덜 안전하지만 방화벽 우회에 탁월합니다.
 """
 
 [launcher_settings_proxy_dns_checkbox]
@@ -2274,17 +1826,9 @@ loc = """
 **비활성화**: DNS 요청이 ISP를 통해 라우팅됩니다.
 """
 
-[launcher_settings_proxy_host_label]
-src = "Host:"
-loc = "호스트:"
-
 [launcher_settings_proxy_host_entry_tooltip]
 src = "Proxy IP address (i.e. `123.12.1.231`) or domain name (i.e. `proxyprovider.com`)."
 loc = "프록시 IP 주소(예: `123.12.1.231`) 또는 도메인 이름(예: `proxyprovider.com`)."
-
-[launcher_settings_proxy_port_label]
-src = "Port:"
-loc = "포트:"
 
 [launcher_settings_proxy_port_entry_tooltip]
 src = "Proxy port (i.e. `1080`)."
@@ -2304,17 +1848,9 @@ loc = """
 **비활성화**: 프록시 서버에 접속할 때 자격 증명을 사용하지 않습니다.
 """
 
-[launcher_settings_proxy_user_label]
-src = "User:"
-loc = "사용자:"
-
 [launcher_settings_proxy_user_entry_tooltip]
 src = "User name provided by your proxy service."
 loc = "프록시 서비스에서 제공한 사용자 이름입니다."
-
-[launcher_settings_proxy_password_label]
-src = "Password:"
-loc = "비밀번호:"
 
 [launcher_settings_proxy_password_entry_tooltip]
 src = "Password provided by your proxy service."
@@ -2327,10 +1863,6 @@ loc = "일반"
 [settings_tab_launcher]
 src = "Launcher"
 loc = "런처"
-
-[settings_tab_importer]
-src = "MI"
-loc = "MI"
 
 [settings_tab_advanced]
 src = "Advanced"

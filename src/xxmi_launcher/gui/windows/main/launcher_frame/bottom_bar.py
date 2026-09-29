@@ -111,7 +111,7 @@ class LeftStatusText(UIText):
             lambda event: L('bottom_bar_verifying_hook', 'Verifying {library} load into {process}...').format(library=event.library_name, process=event.process_name))
         self.subscribe_set(
             Events.Application.Inject,
-            lambda event: L('bottom_bar_injecting', 'Injecting {library} to {process}...').format(library=event.library_name, process=event.process_name))
+            lambda event: L('bottom_bar_injecting', 'Waiting for {library} injection to {process}...').format(library=event.library_name, process=event.process_name))
         self.subscribe_set(
             Events.Application.Bypass,
             lambda event: L('bottom_bar_bypass', 'Starting {process} in bypass mode...').format(process=event.process_name))

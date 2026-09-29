@@ -1,0 +1,721 @@
+[general_settings_launch_direct]
+src = "Direct"
+loc = "直接"
+
+[general_settings_launch_steam]
+src = "Steam"
+loc = "Steam"
+
+[general_settings_launch_epic]
+src = "Epic Games"
+loc = "Epic Games"
+
+[general_settings_launch_custom]
+src = "Custom"
+loc = "自定义"
+
+[general_settings_launch_manual]
+src = "Manual"
+loc = "手动"
+
+[general_settings_inject_mode_direct]
+src = "Direct"
+loc = "注入"
+
+[general_settings_inject_mode_hook]
+src = "Hook"
+loc = "钩子"
+
+[general_settings_inject_mode_skip]
+src = "Skip"
+loc = "绕过"
+
+[launcher_settings_update_channel_auto]
+src = "Auto"
+loc = "自动"
+
+[launcher_settings_update_channel_msi]
+src = "MSI"
+loc = "MSI"
+
+[launcher_settings_update_channel_zip]
+src = "ZIP"
+loc = "ZIP"
+
+[launcher_settings_proxy_type_https]
+src = "HTTPS"
+loc = "HTTPS"
+
+[launcher_settings_proxy_type_socks5]
+src = "SOCKS5"
+loc = "SOCKS5"
+
+[importer_settings_input_disable_mode_mods]
+src = "Mods"
+loc = "Mod"
+
+[importer_settings_input_disable_mode_all]
+src = "All"
+loc = "全部"
+
+[importer_settings_log_level_disabled]
+src = "Disabled"
+loc = "禁用"
+
+[importer_settings_log_level_warning]
+src = "Warning"
+loc = "警告"
+
+[importer_settings_log_level_info]
+src = "Info"
+loc = "信息"
+
+[importer_settings_log_level_debug]
+src = "Debug"
+loc = "调试"
+
+[steam_client_not_found_error]
+src = """
+Cannot find an installed {game_platform} client
+"""
+loc = """
+找不到已安装的 {game_platform} 客户端
+"""
+
+[platform_game_not_found_error]
+src = """
+Cannot find {game} installed in the {game_platform} library
+"""
+loc = """
+在 {game_platform} 库中找不到已安装的 {game}
+"""
+
+[status_resolving_launch_context]
+src = "Resolving {game} launch context..."
+loc = "正在解析 {game} 启动上下文..."
+
+[status_configuring]
+src = "Configuring {entity}..."
+loc = "正在配置 {entity}..."
+
+[status_configuring_launch_options]
+src = "Configuring {game} Launch Options on {platform}..."
+loc = "正在配置 {game} 在 {platform} 上的启动选项..."
+
+[status_starting]
+src = "Starting {entity}..."
+loc = "正在启动 {entity}..."
+
+[message_title_game_detection_failed]
+src = "Game Installation Not Found"
+loc = "未找到游戏安装"
+
+[message_text_game_detection_failed]
+src = """
+Could not find the game installation on your device.
+
+Please set the **{general_settings_game_folder_label}** manually in **General Settings**.
+"""
+loc = """
+无法在您的设备上找到游戏安装。
+
+请在 **常规设置** 中手动设置 **{general_settings_game_folder_label}**。
+"""
+
+[message_title_game_detected_single]
+src = "Game Installation Found"
+loc = "找到游戏安装"
+
+[message_text_game_detected_single]
+src = """
+Please confirm that this is the correct **{general_settings_game_folder_label}**:
+
+`{game_folder}`
+
+Alternatively, set it manually in **General Settings**.
+"""
+loc = """
+请确认这是正确的 **{general_settings_game_folder_label}**：
+
+`{game_folder}`
+
+或者在 **常规设置** 中手动设置。
+"""
+
+[message_title_game_detected_multiple]
+src = "Multiple Game Installations Found"
+loc = "找到多个游戏安装"
+
+[message_text_game_detected_multiple]
+src = """
+Please select the correct **{general_settings_game_folder_label}** below, or set it in **General Settings**.
+
+"""
+loc = """
+请在下方选择正确的 **{general_settings_game_folder_label}**，或在 **常规设置** 中设置。
+
+"""
+
+[message_title_game_folder_not_configured]
+src = "Game Installation Folder Not Configured"
+loc = "未配置游戏安装文件夹"
+
+[message_text_game_folder_not_configured]
+src = """
+Please set **{general_settings_game_folder_label}** option of **General Settings**.
+"""
+loc = """
+请在 **常规设置** 中设置 **{general_settings_game_folder_label}** 选项。
+"""
+
+[error_zzmi_game_config_failed]
+src = """
+Failed to configure in-game settings for ZZMI!
+Please disable **Configure Game Settings** in launcher's **General Settings** and check in-game settings:
+* **Graphics › Character Quality** must be **High**.
+* **Graphics › High-Precision Character Animation** must be **Disabled**.
+
+{error_text}
+"""
+loc = """
+配置 ZZMI 游戏内设置失败！
+请在启动器的通用设置中禁用 **配置游戏设置**，并检查游戏内设置：
+* **画面 › 角色品质** 必须为 **高**。
+* **画面 › 高精度角色动画** 必须为 **关闭**。
+
+{error_text}
+"""
+
+[error_files_integrity_verification_failed]
+src = """
+Files integrity verification failed!
+
+Hash mismatch for asset file:
+`{bad_file}`
+
+Please try to run **{launcher_install_button}** again or use **{tool_bar_repair_button}**.
+"""
+loc = """
+文件完整性验证失败！
+
+资源文件哈希不匹配：
+`{bad_file}`
+
+请尝试再次运行 **{launcher_install_button}**，或使用 **{tool_bar_repair_button}**。
+"""
+
+[bottom_bar_injecting]
+src = "Waiting for {library} injection to {process}..."
+loc = "正在将 {library} 注入到 {process}..."
+
+[package_state_not_deployed]
+src = """
+# {package_name} is not deployed.
+Press **{launcher_start_button}** to deploy the installed package automatically.
+"""
+loc = """
+# {package_name} 尚未部署。
+按下 **{launcher_start_button}** 可自动部署已安装的软件包。
+"""
+
+[package_state_not_installed]
+src = """
+# {package_name} is not installed.
+Press **{launcher_install_button}** to install the package.
+"""
+loc = """
+# {package_name} 尚未安装。
+按下 **{launcher_install_button}** 以安装软件包。
+"""
+
+[package_state_unknown_source]
+src = """
+# {package_name} is not recognized.
+If you installed it manually, continue with care.
+Otherwise, consider running **Repair {active_importer}**.
+"""
+loc = """
+# 无法识别 {package_name}。
+如果您是手动安装的，请谨慎继续。
+否则，可以考虑运行 **修复 {active_importer}**。
+"""
+
+[package_release_notes_unavailable]
+src = """
+# Package release notes are unavailable.
+"""
+loc = """
+# 软件包发行说明不可用。
+"""
+
+[advanced_settings_pre_launch_section_label]
+src = "Run Before Game Launch"
+loc = "游戏启动前运行"
+
+[advanced_settings_pre_launch_command_label]
+src = "Pre-Launch Command"
+loc = "启动前命令"
+
+[advanced_settings_wait_checkbox]
+src = "Wait for Command Completion"
+loc = "等待命令完成"
+
+[advanced_settings_post_launch_section_label]
+src = "Run After XXMI DLL Injection"
+loc = "XXMI DLL 注入后运行"
+
+[advanced_settings_post_load_command_label]
+src = "Post-Load Command"
+loc = "加载后命令"
+
+[advanced_settings_custom_libraries_section_label]
+src = "Custom Libraries"
+loc = "自定义库"
+
+[advanced_settings_inject_libraries_checkbox]
+src = "Inject Libraries"
+loc = "注入库"
+
+[launcher_settings_language_settings_label]
+src = "Launcher Language"
+loc = "启动器语言"
+
+[launcher_settings_language_option_label]
+src = "Select Language"
+loc = "选择语言"
+
+[launcher_settings_launch_settings_label]
+src = "Launch Settings"
+loc = "启动设置"
+
+[general_settings_game_launch_label]
+src = "Game Launch"
+loc = "游戏启动"
+
+[general_settings_game_launch_tooltip]
+src = """
+Choose what the **{launcher_start_button}** button does.
+
+* **{general_settings_launch_direct}:** Launch the game directly from the detected or configured game folder.
+* **{general_settings_launch_steam}:** Launch the game through Steam to enable Steam Overlay and playtime tracking.
+* **{general_settings_launch_epic}:** Launch the game through Epic Games to enable Epic Games overlay and tracking.
+* **{general_settings_launch_custom}:** Run a custom Windows command to launch the game.
+* **{general_settings_launch_manual}:** Wait for you to launch the game manually.
+"""
+loc = """
+选择 **{launcher_start_button}** 按钮的操作。
+
+* **{general_settings_launch_direct}:** 直接从检测到的或已配置的游戏文件夹启动游戏。
+* **{general_settings_launch_steam}:** 通过 Steam 启动游戏，以启用 Steam Overlay 和游戏时间统计。
+* **{general_settings_launch_epic}:** 通过 Epic Games 启动游戏，以启用 Epic Games Overlay 和游戏时间统计。
+* **{general_settings_launch_custom}:** 运行自定义 Windows 命令来启动游戏。
+* **{general_settings_launch_manual}:** 等待您手动启动游戏。
+"""
+
+[general_settings_game_folder_label]
+src = "Game Folder"
+loc = "游戏文件夹"
+
+[general_settings_detect_game_folder_button]
+src = "🔍 Detect Installations"
+loc = "🔍 检测安装"
+
+[general_settings_launch_command_label]
+src = "Launch Command"
+loc = "启动命令"
+
+[general_settings_launch_options_checkbox]
+src = "Launch Options"
+loc = "启动选项"
+
+[general_settings_start_method_label]
+src = "Game Executable Run Method"
+loc = "启动方式"
+
+[general_settings_start_method_option_menu_tooltip]
+src = """
+* **{general_settings_start_method_native}**: Create the game process directly.
+* **{general_settings_start_method_shell}**: Start the game process via system console.
+"""
+loc = """
+* **{general_settings_start_method_native}**：直接创建游戏进程。
+* **{general_settings_start_method_shell}**：通过系统控制台启动游戏进程。
+"""
+
+[general_settings_process_priority_label]
+src = "Process Priority"
+loc = "进程优先级"
+
+[general_settings_process_priority_option_menu_tooltip]
+src = "Set process priority for the game exe."
+loc = "设置游戏 exe 的进程优先级。"
+
+[game_process_wait_timeout_label]
+src = "Game Process Launch Wait Timeout"
+loc = "游戏进程启动等待超时"
+
+[game_process_wait_timeout_tooltip]
+src = """
+Controls how long launcher should wait for the game to show its window after launch.
+Game process will be considered as crashed once timeout is met.
+Default value is **30**.
+"""
+loc = """
+控制启动游戏后，启动器等待游戏窗口出现的时间。
+达到超时时间后，游戏进程将被视为已崩溃。
+默认值为 **30**。
+"""
+
+[general_settings_configure_platform_launch_options_checkbox]
+src = "Configure Launch Options on {platform}"
+loc = "在 {platform} 上配置启动选项"
+
+[general_settings_configure_platform_launch_options_checkbox_tooltip]
+src = """
+Auto-set **Launch Options** of **{game}** in **{platform}** library to:
+```
+{launch_options}
+```
+{platform} client will be **restarted** if **Launch Options** are different.
+"""
+loc = """
+自动将 **{game}** 在 **{platform}** 库中的 **启动选项** 设置为：
+```
+{launch_options}
+```
+如果 **启动选项** 不同，将**重启** {platform} 客户端。
+"""
+
+[general_settings_skip_platform_game_launcher_checkbox]
+src = "Skip {launcher} Launcher"
+loc = "跳过 {launcher} 启动器"
+
+[general_settings_skip_platform_game_launcher_checkbox_tooltip]
+src = """
+Make **{platform}** to launch **{game}** process directly, avoiding **{launcher}**.
+
+Requires **{general_settings_configure_platform_launch_options_checkbox}** to be enabled.
+"""
+loc = """
+使 **{platform}** 直接启动 **{game}** 进程，跳过 **{launcher}**。
+
+需要启用 **{general_settings_configure_platform_launch_options_checkbox}**。
+"""
+
+[general_settings_game_process_exe_label]
+src = "Custom Game Process Executable Name"
+loc = "自定义游戏进程可执行文件名称"
+
+[general_settings_game_process_exe_reset_button]
+src = "↻ Reset"
+loc = "↻ 重置"
+
+[general_settings_game_process_exe_reset_button_tooltip]
+src = "Reset to **{game_exe_name}**"
+loc = "重置为 **{game_exe_name}**"
+
+[launcher_settings_game_settings_label]
+src = "Game Settings"
+loc = "游戏设置"
+
+[general_settings_configure_game_checkbox]
+src = "Configure Game Settings For {importer}"
+loc = "为 {importer} 配置游戏设置"
+
+[general_settings_unlock_fps_checkbox]
+src = "Unlock FPS"
+loc = "解锁 FPS"
+
+[general_settings_unlock_fps_value_label]
+src = "FPS Limit"
+loc = "FPS 限制"
+
+[general_settings_window_mode_option_menu_label]
+src = "Window Mode"
+loc = "窗口模式"
+
+[general_settings_mesh_lod_base_fov_label]
+src = "Mesh LOD Base FOV"
+loc = "模型 LOD 基础 FOV"
+
+[general_settings_open_file_label]
+src = "Manual Game Config Edit"
+loc = "手动编辑游戏配置"
+
+[general_settings_open_file_button]
+src = "📄 Open {file_name}"
+loc = "📄 打开 {file_name}"
+
+[importer_settings_startup_section_label]
+src = "Startup"
+loc = "启动"
+
+[importer_settings_importer_folder_label_dynamic]
+src = "{importer} Folder"
+loc = "{importer} 文件夹"
+
+[importer_settings_importer_folder_entry_tooltip]
+src = """
+Path to folder containing **Mods** folder, **d3dx.ini** and other **{importer}** resources.
+
+* **Absolute**: Set any arbitrary folder, e.g. `C:/Games/{importer}/`.
+* **Relative**: Set any folder **inside** the Launcher folder, i.e. `{importer}/` (default).
+"""
+loc = """
+包含 **Mods** 文件夹、**d3dx.ini** 以及其他 **{importer}** 资源的文件夹路径。
+
+* **绝对路径**：设置任意文件夹，例如 `C:/Games/{importer}/`。
+* **相对路径**：设置启动器文件夹**内部**的任意文件夹，即 `{importer}/`（默认）。
+"""
+
+[importer_settings_inject_mode_label]
+src = "XXMI DLL Injection Mode"
+loc = "XXMI DLL 注入模式"
+
+[advanced_settings_custom_launch_inject_mode_option_menu_tooltip]
+src = """
+Defines the way of **XXMI DLL** injection into the game process.
+
+* **{general_settings_inject_mode_direct}:** Use `WriteProcessMemory`, more reliable but requires direct memory access.
+* **{general_settings_inject_mode_hook}:** Use `SetWindowsHookEx`, less reliable, but potentially less prominent for anti-cheats.
+* **{general_settings_inject_mode_skip}:** Skip **XXMI DLL** injection.
+"""
+loc = """
+定义 **XXMI DLL** 注入游戏进程的方式。
+
+* **{general_settings_inject_mode_direct}:** 使用 `WriteProcessMemory`，可靠性更高，但需要直接访问内存。
+* **{general_settings_inject_mode_hook}:** 使用 `SetWindowsHookEx`，可靠性较低，但对反作弊系统可能不那么显眼。
+* **{general_settings_inject_mode_skip}:** 跳过 **XXMI DLL** 注入。
+"""
+
+[general_settings_xxmi_delay_label]
+src = "XXMI DLL Initialization Delay"
+loc = "XXMI DLL 初始化延迟"
+
+[importer_settings_ini_protection_label]
+src = "Config Protection"
+loc = "配置保护"
+
+[importer_settings_enforce_rendering_checkbox_tooltip]
+src = """
+* **Enabled:** Ensure **{importer}**-compatible `d3dx.ini` settings.
+* **Disabled:** Required settings will not be applied to `d3dx.ini`.
+"""
+loc = """
+* **启用：** 确保使用与 **{importer}** 兼容的 `d3dx.ini` 设置。
+* **禁用：** 不会将必要的设置应用到 `d3dx.ini`。
+"""
+
+[importer_settings_usability_section_label]
+src = "Usability"
+loc = "易用性"
+
+[importer_settings_mute_warnings_checkbox_tooltip]
+src = """
+Enable display of mod error warnings and beeping sound.
+
+* **Enabled:** No error warnings or beeps whatsoever. Ignorance is bliss.
+* **Disabled:** Mod error warnings and beeps on **F10** will haunt poor souls.
+"""
+loc = """
+启用 Mod 错误警告和蜂鸣声的显示。
+
+* **启用：** 完全不会显示错误警告或发出蜂鸣声。无知即幸福。
+* **禁用：** Mod 错误警告和 **F10** 蜂鸣声将持续困扰可怜的用户。
+"""
+
+[importer_settings_clear_unknown_settings_checkbox]
+src = "Clear Unknown Mod Settings"
+loc = "清除未知 Mod 设置"
+
+[importer_settings_clear_unknown_settings_tooltip]
+src = """
+Controls clean-up of mod settings when the mods that defined them are no longer present.
+
+* **Enabled:** Clear unknown settings after **second** reload since mods removal.
+* **Disabled:** Do not clear unknown settings, keep them in **d3dx_user.ini** forever.
+"""
+loc = """
+控制当定义这些设置的 Mod 不再存在时，是否清理其 Mod 设置。
+
+* **启用：** 在移除 Mod 后进行**第二次**重新加载时清除未知设置。
+* **禁用：** 不清除未知设置，将其永久保留在 **d3dx_user.ini** 中。
+"""
+
+[launcher_settings_input_section_label]
+src = "Input"
+loc = "输入"
+
+[importer_settings_input_checkbox]
+src = "Enable By Default"
+loc = "默认启用"
+
+[importer_settings_input_checkbox_tooltip]
+src = """
+Initial input state when game starts.
+
+* **Enabled:** All input is enabled.
+* **Disabled:** Input is disabled according to **{importer_settings_input_disable_mode_label}**.
+"""
+loc = """
+游戏启动时的初始输入状态。
+
+* **启用：** 启用所有输入。
+* **禁用：** 根据 **{importer_settings_input_disable_mode_label}** 禁用输入。
+"""
+
+[importer_settings_input_disable_mode_label]
+src = "Input Disabling Mode"
+loc = "输入禁用模式"
+
+[importer_settings_input_disable_mode_option_menu_tooltip]
+src = """
+Determines which input is disabled when **{launcher_settings_input_section_label}** is **Disabled**.
+
+* **{importer_settings_input_disable_mode_mods}**: Disable input defined by mods.
+* **{importer_settings_input_disable_mode_all}**: Disable all input except the **Toggle Input** hotkey (**CTRL+ALT+SHIFT+END**).
+"""
+loc = """
+确定当 **{launcher_settings_input_section_label}** 为 **禁用** 时要禁用哪些输入。
+
+* **{importer_settings_input_disable_mode_mods}**：禁用由 Mod 定义的输入。
+* **{importer_settings_input_disable_mode_all}**：禁用所有输入，但 **切换输入** 快捷键（**CTRL+ALT+SHIFT+END**）除外。
+"""
+
+[launcher_settings_hunting_section_label]
+src = "Shader Hunting"
+loc = "着色器调试"
+
+[importer_settings_enable_hunting_checkbox_tooltip]
+src = """
+* **Enabled:** Allows to toggle **Hunting Mode** via Numpad [0] hotkey.
+* **Disabled:** **Hunting Mode** is hard disabled.
+"""
+loc = """
+* **启用：** 允许通过小键盘 [0] 热键切换 **调试模式**。
+* **禁用：** **调试模式** 被完全禁用。
+"""
+
+[importer_settings_dump_shaders_checkbox_tooltip]
+src = """
+* **Enabled:** Hunting Mode [Copy Hash] key also saves selected shader as file in **ShaderFixes**.
+* **Disabled:** Hunting Mode [Copy Hash] only copies hash of selected shader to clipboard.
+"""
+loc = """
+* **启用：** 调试模式 [复制哈希] 键还会将选中的着色器保存为 **ShaderFixes** 中的文件。
+* **禁用：** 调试模式 [复制哈希] 仅将选中着色器的哈希复制到剪贴板。
+"""
+
+[launcher_settings_logging_section_label]
+src = "Logging"
+loc = "日志记录"
+
+[launcher_settings_log_verbosity_label]
+src = "Log File Output Verbosity"
+loc = "日志文件输出详细程度"
+
+[importer_settings_log_level_option_menu_tooltip]
+src = """
+Controls how verbose **d3d11_log.txt** file is.
+
+* **{importer_settings_log_level_disabled}**: Log nothing.
+* **{importer_settings_log_level_warning}**: Log warnings and overlay messages.
+* **{importer_settings_log_level_info}**: Also log API usage calls.
+* **{importer_settings_log_level_debug}**: Also log super verbose massive debug output.
+"""
+loc = """
+控制 **d3d11_log.txt** 文件的日志详细程度。
+
+* **{importer_settings_log_level_disabled}**：不记录任何日志。
+* **{importer_settings_log_level_warning}**：记录警告和 Overlay 消息。
+* **{importer_settings_log_level_info}**：同时记录 API 调用。
+* **{importer_settings_log_level_debug}**：同时记录超详细的大量调试输出。
+"""
+
+[launcher_settings_launcher_section_label]
+src = "Launcher"
+loc = "启动器"
+
+[launcher_settings_theme_label]
+src = "UI Theme"
+loc = "UI 主题"
+
+[launcher_settings_updates_section_label]
+src = "Updates"
+loc = "更新"
+
+[launcher_settings_update_channel_label]
+src = "Update Channel"
+loc = "更新渠道"
+
+[launcher_settings_update_channel_option_menu_tooltip]
+src = """
+* **{launcher_settings_update_channel_auto}**: Detect update installation method automatically.
+* **{launcher_settings_update_channel_msi}**: Use native `.msi` installers to install updates.
+* **{launcher_settings_update_channel_zip}**: Use portable `.zip` archives to install updates.
+"""
+loc = """
+* **{launcher_settings_update_channel_auto}**：自动检测更新安装方式。
+* **{launcher_settings_update_channel_msi}**：使用原生 `.msi` 安装程序安装更新。
+* **{launcher_settings_update_channel_zip}**：使用便携式 `.zip` 压缩包安装更新。
+"""
+
+[advanced_settings_overwrite_ini_checkbox_tooltip]
+src = """
+* **Enabled:** {importer} updates will overwrite existing `d3dx.ini` to ensure its up-to-date state.
+* **Disabled:** {importer} updates will keep existing `d3dx.ini` untouched.
+"""
+loc = """
+* **启用：** {importer} 更新将覆盖现有的 `d3dx.ini`，以确保其处于最新状态。
+* **禁用：** {importer} 更新将保留现有的 `d3dx.ini`，不进行修改。
+"""
+
+[launcher_settings_connection_section_label]
+src = "Connection"
+loc = "连接"
+
+[launcher_settings_github_token_label]
+src = "GitHub Token"
+loc = "GitHub Token"
+
+[launcher_settings_proxy_section_label]
+src = "Proxy"
+loc = "代理"
+
+[launcher_settings_proxy_enable_checkbox]
+src = "Use Proxy"
+loc = "使用代理"
+
+[launcher_settings_proxy_type_label]
+src = "Type"
+loc = "类型"
+
+[launcher_settings_proxy_type_option_menu_tooltip]
+src = """
+* **{launcher_settings_proxy_type_https}**: Good old proxy protocol. Offers best security.
+* **{launcher_settings_proxy_type_socks5}**: Newer and less secure, but excels at bypassing firewalls.
+"""
+loc = """
+* **{launcher_settings_proxy_type_https}**：经典的代理协议，提供最佳安全性。
+* **{launcher_settings_proxy_type_socks5}**：较新且安全性较低，但在绕过防火墙方面表现出色。
+"""
+
+[launcher_settings_proxy_host_label]
+src = "Host"
+loc = "主机"
+
+[launcher_settings_proxy_port_label]
+src = "Port"
+loc = "端口"
+
+[launcher_settings_proxy_user_label]
+src = "User"
+loc = "用户"
+
+[launcher_settings_proxy_password_label]
+src = "Password"
+loc = "密码"
+
+[settings_tab_loading_label]
+src = "Loading..."
+loc = "加载中..."

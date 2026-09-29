@@ -2,20 +2,6 @@
 src = "Arknights: Endfield Model Importer"
 loc = "Arknights: Endfield Model Importer"
 
-[general_settings_force_ultra_high_lod_bias_label]
-src = "Max LOD Bias"
-loc = "Макс. LOD Bias"
-
-[general_settings_force_ultra_high_lod_bias_tooltip]
-src = """
-**Enabled**: Set **LOD Bias** to **Ultra High** to force full resolution LOD textures.
-**Disabled**: Keep **LOD Bias** setting untouched. Select this if **Use All Mips** is enabled below.
-"""
-loc = """
-**Включено**: Устанавливает **LOD Bias** на **Ultra High** для отображения текстур в полном разрешении на LOD'ах.
-**Отключено**: Не влияет на **LOD Bias**. Выберите эту опцию, если включена **Разблокировать MIP-текстуры** ниже.
-"""
-
 [locale_list_conjunction_or]
 src = "or"
 loc = "или"
@@ -40,42 +26,6 @@ loc = """
 * Обычно называется: {game_folder_names:bold:or_list}.
 * Содержит файлы: {game_exe_names:bold:or_list}.
 * Содержит папки: {game_folder_children:bold:and_list}.
-"""
-
-[importer_settings_calls_logging_checkbox]
-src = "Calls Logging"
-loc = "Журнал Вызовов"
-
-[importer_settings_calls_logging_checkbox_tooltip]
-src = """
-Enabled: Log API usage.
-* [d3dx.ini]: calls = 1
-Disabled: Do not log calls. Maximum performance.
-* [d3dx.ini]: calls = 0
-"""
-loc = """
-Включено: Вести журнал API вызовов XXMI DLL (3dmigoto).
-* [d3dx.ini]: calls = 1
-Отключено: Не вести журнал вызовов. Максимальная производительность.
-* [d3dx.ini]: calls = 0
-"""
-
-[importer_settings_debug_logging_checkbox]
-src = "Debug Logging"
-loc = "Журнал Отладки"
-
-[importer_settings_debug_logging_checkbox_tooltip]
-src = """
-Enabled: Super verbose debug logging.
-* [d3dx.ini]: debug = 1
-Disabled: No debug logging. Maximum performance.
-* [d3dx.ini]: debug = 0
-"""
-loc = """
-Включено: Вести журнал отладочной информацию.
-* [d3dx.ini]: debug = 1
-Отключено: Не вести отладочный журнал. Максимальная производительность.
-* [d3dx.ini]: debug = 0
 """
 
 [error_game_exe_not_found]

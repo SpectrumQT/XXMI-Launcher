@@ -18,14 +18,6 @@ loc = """
 {latest_release_notes}
 """
 
-[package_release_notes_not_installed]
-src = """
-Press **Install** button to setup the package.
-"""
-loc = """
-点击 **安装** 按钮来设置该包。
-"""
-
 [package_release_notes]
 src = """
 {package_release_notes}
@@ -81,10 +73,6 @@ loc = """
 [launcher_shortcut_description]
 src = "Shortcut to XXMI Launcher"
 loc = "XXMI启动器快捷方式"
-
-[error_migoto_game_start_failed]
-src = "Failed to start {process_name}!"
-loc = "启动{process_name}失败！"
 
 [message_button_cancel]
 src = "Cancel"
@@ -194,10 +182,6 @@ loc = """
 src = "Updating d3dx.ini..."
 loc = "正在更新 d3dx.ini..."
 
-[error_ini_missing_setting]
-src = "Config is missing {setting_name} setting!"
-loc = "配置文件缺少 {setting_name} 设置！"
-
 [error_ini_missing_value]
 src = "Config is missing value for section `{section}` option `{option}` key `{key}`"
 loc = "配置文件缺少节 `{section}` 选项 `{option}` 键 `{key}` 的值"
@@ -262,60 +246,6 @@ loc = "忽略"
 src = "Abort"
 loc = "中止"
 
-[message_text_game_detection_failed]
-src = """
-Automatic detection of the game installation failed!
-
-Please configure it manually with Game Folder option of General Settings.
-"""
-loc = """
-游戏安装自动检测失败！
-
-请在常规设置中通过游戏文件夹选项手动配置。
-"""
-
-[message_text_game_detected_single]
-src = """
-Detected game installation:
-
-{game_folder}
-
-Please check if it is desired Game Folder or change it in General Settings.
-"""
-loc = """
-检测到游戏安装：
-
-{game_folder}
-
-请检查这是否是所需的游戏文件夹，或在常规设置中更改它。
-"""
-
-[message_text_game_detected_multiple]
-src = """
-Detected game installations:
-
-Select desired Game Folder from the list below or set it in General Settings:
-
-"""
-loc = """
-检测到多个游戏安装：
-
-从下面列表中选择所需的游戏文件夹，或在常规设置中设置：
-
-"""
-
-[message_text_game_folder_not_configured]
-src = """
-Game installation folder is not configured!
-
-Please set it with Game Folder option of General Settings.
-"""
-loc = """
-游戏安装文件夹未配置！
-
-请在常规设置中通过游戏文件夹选项设置。
-"""
-
 [status_autodetecting_game]
 src = "Autodetecting game installation folder..."
 loc = "正在自动检测游戏安装文件夹..."
@@ -379,24 +309,6 @@ loc = "{importer}版本格式错误！"
 [error_model_importer_version_not_found]
 src = "Failed to locate {importer} version!"
 loc = "无法找到{importer}版本！"
-
-[error_zzmi_game_config_failed]
-src = """
-Failed to configure in-game settings for ZZMI!
-Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:
-* Graphics > `Character Quality` must be `High`.
-* Graphics > `High-Precision Character Animation` must be `Disabled`.
-
-{error_text}
-"""
-loc = """
-配置ZZMI游戏内设置失败！
-请在启动器通用设置中禁用`配置游戏设置`并检查游戏内设置：
-* 画面 > `角色品质` 必须为`高`。
-* 画面 > `高精度角色动画` 必须为`关闭`。
-
-{error_text}
-"""
 
 [error_zzmi_unknown_settings_format]
 src = "Unknown system settings entry format: {setting}!"
@@ -733,22 +645,6 @@ loc = ""
 [dll_injector_shell_error_incomplete_app_association]
 src = "File association is incomplete"
 loc = ""
-
-[dll_injector_unknown_shell_error_code]
-src = "Unknown ShellExecute error code {error_code}"
-loc = "未知的ShellExecute错误代码 {error_code}"
-
-[error_dll_injector_process_start_failed]
-src = "Failed to start {process_name}: {error_text}!"
-loc = "启动 {process_name} 失败：{error_text}！"
-
-[error_dll_injector_unknown_start_method]
-src = "Unknown process start method `{start_method}`!"
-loc = "未知的进程启动方法 `{start_method}`！"
-
-[error_dll_injector_injection_failed]
-src = "Failed to inject {dll_paths}!"
-loc = "注入 {dll_paths} 失败！"
 
 [error_dll_injector_unhook_failed]
 src = "Invalid injector usage: {dll_path} was not unhooked!"
@@ -1316,10 +1212,6 @@ loc = "正在将{library}挂钩到{process}..."
 src = "Verifying {library} load into {process}..."
 loc = "正在验证{library}加载到{process}..."
 
-[bottom_bar_injecting]
-src = "Injecting {library} to {process}..."
-loc = "正在将{library}注入到{process}..."
-
 [bottom_bar_launching_game]
 src = "Launching game..."
 loc = "正在启动游戏..."
@@ -1414,10 +1306,6 @@ loc = """
 点击`修补主题`以用新版本替换`custom-tkinter-theme.json`。
 """
 
-[launcher_settings_start_behavior_label]
-src = "Start Behavior:"
-loc = "启动行为："
-
 [launcher_settings_auto_close_checkbox]
 src = "Close Launcher After Game Start"
 loc = "游戏启动后关闭启动器"
@@ -1432,26 +1320,6 @@ loc = """
 禁用：启动器将保持运行。
 """
 
-[launcher_settings_timeout_label]
-src = "Timeout:"
-loc = "超时："
-
-[launcher_settings_timeout_entry_tooltip]
-src = """
-Controls how long launcher should wait for the game to show its window after launch.
-Game process will be considered as crashed once timeout is met.
-Default value is **30**.
-"""
-loc = """
-控制启动器在游戏启动后等待游戏窗口显示的时间。
-超时后游戏进程将被视为崩溃。
-默认值为**30**。
-"""
-
-[launcher_settings_update_policy_label]
-src = "Update Policy:"
-loc = "更新策略："
-
 [launcher_settings_auto_update_checkbox]
 src = "Auto Update"
 loc = "自动更新"
@@ -1465,26 +1333,6 @@ loc = """
 启用：启动器和{importer}更新将自动下载和安装。
 禁用：使用[启动]按钮旁边的特殊[▲]按钮手动下载和安装更新。
 """
-
-[launcher_settings_update_channel_label]
-src = "Channel:"
-loc = "通道："
-
-[launcher_settings_update_channel_option_menu_tooltip]
-src = """
-**Auto**: Detect update installation method automatically.
-**MSI**: Use native `.msi` installers to install updates.
-**ZIP**: Use portable `.zip` archives to install updates.
-"""
-loc = """
-**自动**：自动检测更新安装方法。
-**MSI**：使用原生`.msi`安装程序安装更新。
-**ZIP**：使用便携式`.zip`存档安装更新。
-"""
-
-[launcher_settings_theme_label]
-src = "UI Theme:"
-loc = "UI主题："
 
 [launcher_settings_theme_option_menu_tooltip]
 src = """
@@ -1517,14 +1365,6 @@ loc = """
 启用：启动器将跟踪`custom-tkinter-theme.json`中的更改并实时应用。
 禁用：不会跟踪主题更改。
 """
-
-[launcher_settings_connection_label]
-src = "Connection:"
-loc = "连接："
-
-[launcher_settings_github_token_label]
-src = "GitHub Token:"
-loc = "GitHub令牌："
 
 [launcher_settings_github_token_entry_tooltip]
 src = """
@@ -1568,10 +1408,6 @@ loc = """
 **禁用**：允许易受中间人攻击的不安全连接。
 """
 
-[launcher_settings_proxy_enable_checkbox]
-src = "Use Proxy:"
-loc = "使用代理："
-
 [launcher_settings_proxy_enable_checkbox_tooltip]
 src = """
 Controls how launcher connects to GitHub to download packages.
@@ -1582,20 +1418,6 @@ loc = """
 控制启动器如何连接到GitHub下载包。
 **启用**：使用指定的代理服务器访问互联网。
 **禁用**：使用默认系统互联网连接设置。
-"""
-
-[launcher_settings_proxy_type_label]
-src = "Type:"
-loc = "类型："
-
-[launcher_settings_proxy_type_option_menu_tooltip]
-src = """
-**HTTPS**: Good old proxy protocol. Offers best security.
-**SOCKS5**: Newer and less secure, but excels at bypassing firewalls.
-"""
-loc = """
-**HTTPS**：经典的代理协议。提供最佳安全性。
-**SOCKS5**：较新且安全性较低，但在绕过防火墙方面表现出色。
 """
 
 [launcher_settings_proxy_dns_checkbox]
@@ -1612,17 +1434,9 @@ loc = """
 **禁用**：DNS请求将通过你的ISP路由。
 """
 
-[launcher_settings_proxy_host_label]
-src = "Host:"
-loc = "主机："
-
 [launcher_settings_proxy_host_entry_tooltip]
 src = "Proxy IP address (i.e. `123.12.1.231`) or domain name (i.e. `proxyprovider.com`)."
 loc = "代理IP地址（例如`123.12.1.231`）或域名（例如`proxyprovider.com`）。"
-
-[launcher_settings_proxy_port_label]
-src = "Port:"
-loc = "端口："
 
 [launcher_settings_proxy_port_entry_tooltip]
 src = "Proxy port (i.e. `1080`)."
@@ -1642,33 +1456,13 @@ loc = """
 **禁用**：访问代理服务器时不使用任何凭据。
 """
 
-[launcher_settings_proxy_user_label]
-src = "User:"
-loc = "用户："
-
 [launcher_settings_proxy_user_entry_tooltip]
 src = "User name provided by your proxy service."
 loc = "代理服务提供的用户名。"
 
-[launcher_settings_proxy_password_label]
-src = "Password:"
-loc = "密码："
-
 [launcher_settings_proxy_password_entry_tooltip]
 src = "Password provided by your proxy service."
 loc = "代理服务提供的密码。"
-
-[launcher_settings_language_label]
-src = "Language:"
-loc = "语言："
-
-[general_settings_game_folder_label]
-src = "Game Folder:"
-loc = "游戏文件夹："
-
-[general_settings_game_folder_error_label]
-src = "Failed to detect Game Folder!"
-loc = "检测游戏文件夹失败！"
 
 [settings_browse_path_button]
 src = "Browse..."
@@ -1692,14 +1486,6 @@ loc = """
 注意：游戏引擎由开发者定制，某些参数可能无效。
 """
 
-[general_settings_launch_options_label]
-src = "Launch Options:"
-loc = "启动选项："
-
-[general_settings_start_method_label]
-src = "Start Method:"
-loc = "启动方式："
-
 [general_settings_start_method_native]
 src = "Native"
 loc = "Native"
@@ -1707,26 +1493,6 @@ loc = "Native"
 [general_settings_start_method_shell]
 src = "Shell"
 loc = "Shell"
-
-[general_settings_start_method_manual]
-src = "Manual"
-loc = "Manual"
-
-[general_settings_start_method_option_menu_tooltip]
-src = """
-**Native**: Create the game process directly. Usually it's the most reliable way.
-**Shell**: Start the game process via system console. Worth to try if you have some issues with Native.
-**Manual**: Skip launching the game on **Start** button press. Wait for user to launch it manually ({timeout}s timeout).
-"""
-loc = """
-**原生**：直接创建游戏进程。通常是最可靠的方式。
-**Shell**：通过系统控制台启动游戏进程。如果原生方式有问题可以尝试此选项。
-**手动**：按下**启动**按钮时不启动游戏。等待用户手动启动游戏（{timeout}秒超时）。
-"""
-
-[general_settings_xxmi_delay_label]
-src = "XXMI Delay:"
-loc = "XXMI 延迟："
 
 [general_settings_xxmi_delay_entry_tooltip_base]
 src = """
@@ -1737,10 +1503,6 @@ loc = """
 注入的 XXMI DLL (3dmigoto) 在初始化前需要等待的毫秒数。
 {tooltip_footer}
 """
-
-[general_settings_process_priority_label]
-src = "Process Priority:"
-loc = "进程优先级："
 
 [general_settings_process_priority_low]
 src = "Low"
@@ -1765,22 +1527,6 @@ loc = "High"
 [general_settings_process_priority_realtime]
 src = "Realtime"
 loc = "Realtime"
-
-[general_settings_process_priority_option_menu_tooltip]
-src = """
-Set process priority for the game exe.
-"""
-loc = """
-设置游戏可执行文件的进程优先级。
-"""
-
-[general_settings_auto_config_label]
-src = "Auto Config:"
-loc = "自动配置："
-
-[general_settings_configure_game_checkbox]
-src = "Configure Game Settings"
-loc = "配置游戏设置"
 
 [general_settings_configure_game_tooltip_gimi]
 src = """
@@ -1844,17 +1590,9 @@ loc = """
 <font color=\"red\">⚠ 设置错误时模组将无法工作！⚠</font>
 """
 
-[general_settings_open_file_button]
-src = "🔍 Open {file_name}"
-loc = "🔍 打开 {file_name}"
-
 [general_settings_open_file_button_tooltip]
 src = "Open **{file_name}** in default text editor file for manual tweaking."
 loc = "在默认文本编辑器中打开 **{file_name}** 进行手动调整。"
-
-[general_settings_tweaks_label]
-src = "Tweaks:"
-loc = "调整项："
 
 [general_settings_unlock_fps_checkbox_force]
 src = "Force 120 FPS"
@@ -1942,26 +1680,6 @@ loc = "Exclusive Fullscreen"
 src = "Game window mode when started with FPS Unlocker."
 loc = "使用FPS解锁器启动时的游戏窗口模式。"
 
-[general_settings_apply_tweaks_checkbox]
-src = "Apply Performance Tweaks"
-loc = "应用性能调整"
-
-[general_settings_apply_tweaks_checkbox_tooltip]
-src = """
-**Enabled**: Add list of performance tweaks to `[SystemSettings]` section of `Engine.ini` on game start.
-**Disabled**: Do not add tweaks to `Engine.ini`. Already added ones will have to be removed manually.
-
-List of tweaks:
-{tweaks}
-"""
-loc = """
-**启用**：游戏启动时向`Engine.ini`的`[SystemSettings]`部分添加性能调整列表。
-**禁用**：不向`Engine.ini`添加调整。已添加的需要手动移除。
-
-调整列表：
-{tweaks}
-"""
-
 [general_settings_enable_hdr_checkbox]
 src = "Enable HDR"
 loc = "启用 HDR"
@@ -1998,20 +1716,6 @@ loc = "Reloading GUI..."
 src = "Overwrite d3dx.ini"
 loc = "覆盖d3dx.ini"
 
-[advanced_settings_overwrite_ini_checkbox_tooltip]
-src = """
-Enabled: {importer} updates will overwrite existing d3dx.ini to ensure its up-to-date state.
-Disabled: {importer} updates will keep existing d3dx.ini untouched.
-"""
-loc = """
-启用：{importer}更新将覆盖现有的d3dx.ini以确保其为最新状态。
-禁用：{importer}更新将保持现有d3dx.ini不变。
-"""
-
-[advanced_settings_security_label]
-src = "Security:"
-loc = "安全："
-
 [advanced_settings_unsafe_mode_checkbox]
 src = "Unsafe Mode"
 loc = "不安全模式"
@@ -2028,20 +1732,6 @@ loc = """
 注意：如果第三方d3d11.dll不支持从嵌套目录运行，将无法加载。
 """
 
-[advanced_settings_option_checkbox_tooltip]
-src = """
-Enabled: Option will have stated effect.
-Disabled: Option will have no effect.
-"""
-loc = """
-启用：选项将生效。
-禁用：选项不生效。
-"""
-
-[advanced_settings_run_pre_launch_checkbox]
-src = "Run Pre-Launch:"
-loc = "运行预启动："
-
 [advanced_settings_run_pre_launch_tooltip]
 src = """
 Windows console command to be executed before game exe launch.
@@ -2051,14 +1741,6 @@ loc = """
 游戏可执行文件启动前执行的Windows控制台命令。
 注意：如果需要在游戏启动前执行某些操作，请在此处进行。
 """
-
-[advanced_settings_wait_checkbox]
-src = "Wait"
-loc = "等待"
-
-[advanced_settings_custom_launch_checkbox]
-src = "Custom Launch:"
-loc = "自定义启动："
 
 [advanced_settings_custom_launch_entry_tooltip]
 src = """
@@ -2078,24 +1760,6 @@ loc = """
 `start /d \"C:\\Games\\XXMI Launcher\\Resources\\Packages\\GI-FPS-Unlocker\" unlockfps_nc.exe`
 """
 
-[advanced_settings_custom_launch_inject_mode_option_menu_tooltip]
-src = """
-Defines the way of 3dmigoto injection into the game process started via Custom Launch.
-* Inject: Use WriteProcessMemory, more reliable but requires direct memory access.
-* Hook: Use SetWindowsHookEx, less reliable, but potentially less prominent for anti-cheats.
-* Bypass: Skip 3dmigoto injection and process only Inject Libraries field.
-"""
-loc = """
-定义通过自定义启动方式启动的游戏进程中3dmigoto注入的方式。
-* 注入：使用WriteProcessMemory，更可靠但需要直接内存访问。
-* 钩子：使用SetWindowsHookEx，可靠性较低，但对反作弊系统的影响可能较小。
-* 绕过：跳过3dmigoto注入，仅处理注入库字段。
-"""
-
-[advanced_settings_run_post_load_checkbox]
-src = "Run Post-Load:"
-loc = "运行加载后："
-
 [advanced_settings_run_post_load_checkbox_tooltip]
 src = """
 Windows console command to be executed after hooking d3d11.dll to launched game exe.
@@ -2105,10 +1769,6 @@ loc = """
 将d3d11.dll钩子注入到启动的游戏可执行文件后执行的Windows控制台命令。
 注意：如果需要在3dmigoto注入后执行某些操作，请在此处进行。
 """
-
-[advanced_settings_inject_libraries_checkbox]
-src = "Inject Libraries:"
-loc = "注入库："
 
 [advanced_settings_inject_libraries_tooltip]
 src = """
@@ -2124,145 +1784,17 @@ loc = """
 `C:\\Games\\ReShade\\ReShade64.dll`
 """
 
-[importer_settings_shader_hunting_label]
-src = "Shader Hunting:"
-loc = "着色器调试："
-
 [importer_settings_enable_hunting_checkbox]
 src = "Enable Hunting"
 loc = "启用调试"
-
-[importer_settings_enable_hunting_checkbox_tooltip]
-src = """
-Enabled: Allows to toggle Hunting Mode via Numpad [0] hotkey.
-* [d3dx.ini]: hunting = 2
-Disabled: Hunting Mode is hard disabled.
-* [d3dx.ini]: hunting = 0
-"""
-loc = """
-启用：允许通过小键盘[0]热键切换调试模式。
-* [d3dx.ini]: hunting = 2
-禁用：调试模式被完全禁用。
-* [d3dx.ini]: hunting = 0
-"""
 
 [importer_settings_dump_shaders_checkbox]
 src = "Dump Shaders"
 loc = "导出着色器"
 
-[importer_settings_dump_shaders_checkbox_tooltip]
-src = """
-Enabled: Hunting Mode [Copy Hash] key also saves selected shader as file in ShaderFixes.
-* [d3dx.ini]: marking_actions = clipboard hlsl asm regex
-Disabled: Hunting Mode [Copy Hash] only copies hash of selected shader to clipboard.
-* [d3dx.ini]: marking_actions = clipboard
-"""
-loc = """
-启用：调试模式[复制哈希]键还会将选中的着色器保存为ShaderFixes中的文件。
-* [d3dx.ini]: marking_actions = clipboard hlsl asm regex
-禁用：调试模式[复制哈希]仅将选中着色器的哈希复制到剪贴板。
-* [d3dx.ini]: marking_actions = clipboard
-"""
-
-[importer_settings_error_handling_label]
-src = "Error Handling:"
-loc = "错误处理："
-
 [importer_settings_mute_warnings_checkbox]
 src = "Mute Warnings"
 loc = "静音警告"
-
-[importer_settings_mute_warnings_checkbox_tooltip]
-src = """
-Enabled: No error warnings or beeps whatsoever. Ignorance is bliss.
-* [d3dx.ini]: show_warnings = 0
-Disabled: Ini parser error warnings and beeps on F10 will haunt poor souls.
-* [d3dx.ini]: show_warnings = 1
-"""
-loc = """
-启用：不显示任何错误警告或提示音。无知是福。
-* [d3dx.ini]: show_warnings = 0
-禁用：Ini解析器错误警告和F10提示音将困扰用户。
-* [d3dx.ini]: show_warnings = 1
-"""
-
-[importer_settings_calls_logging_checkbox]
-src = "Calls Logging"
-loc = "调用日志"
-
-[importer_settings_calls_logging_checkbox_tooltip]
-src = """
-Enabled: Log API usage.
-* [d3dx.ini]: calls = 1
-Disabled: Do not log calls. Maximum performance.
-* [d3dx.ini]: calls = 0
-"""
-loc = """
-启用：记录API使用情况。
-* [d3dx.ini]: calls = 1
-禁用：不记录调用。最大性能。
-* [d3dx.ini]: calls = 0
-"""
-
-[importer_settings_debug_logging_checkbox]
-src = "Debug Logging"
-loc = "调试日志"
-
-[importer_settings_debug_logging_checkbox_tooltip]
-src = """
-Enabled: Super verbose debug logging.
-* [d3dx.ini]: debug = 1
-Disabled: No debug logging. Maximum performance.
-* [d3dx.ini]: debug = 0
-"""
-loc = """
-启用：超详细调试日志记录。
-* [d3dx.ini]: debug = 1
-禁用：无调试日志记录。最大性能。
-* [d3dx.ini]: debug = 0
-"""
-
-[importer_settings_importer_folder_label]
-src = "Importer Folder:"
-loc = "导入器文件夹："
-
-[importer_settings_importer_folder_label_dynamic]
-src = "{importer} Folder:"
-loc = "{importer}文件夹："
-
-[importer_settings_importer_folder_entry_tooltip]
-src = """
-Path to folder containing `Mods` folder, `d3dx.ini` and other {importer} resources.
-**Absolute**: Set any arbitrary folder, i.e. `C:/Games/{importer}/`.
-**Relative**: Set any folder **inside** the Launcher folder, i.e. `{importer}/` (default).
-"""
-loc = """
-包含`Mods`文件夹、`d3dx.ini`和其他{importer}资源的文件夹路径。
-**绝对路径**：设置任意文件夹，例如`C:/Games/{importer}/`。
-**相对路径**：设置启动器文件夹**内**的任意文件夹，例如`{importer}/`（默认）。
-"""
-
-[importer_settings_ini_protection_label]
-src = "Ini Protection:"
-loc = "Ini保护："
-
-[importer_settings_enforce_rendering_checkbox]
-src = "Enforce Rendering Settings"
-loc = "强制渲染设置"
-
-[importer_settings_enforce_rendering_checkbox_tooltip]
-src = """
-Enabled: Ensure {importer}-compatible [Rendering] section settings.
-* [d3dx.ini]: texture_hash = {texture_hash}
-* [d3dx.ini]: track_texture_updates = {track_texture_updates}
-Disabled: Settings above will not be forced into d3dx.ini.
-"""
-loc = """
-启用：确保{importer}兼容的[渲染]部分设置。
-* [d3dx.ini]: texture_hash = {texture_hash}
-* [d3dx.ini]: track_texture_updates = {track_texture_updates}
-禁用：以上设置不会被强制写入d3dx.ini。
-"""
 
 [settings_title]
 src = "Settings"
@@ -2276,17 +1808,9 @@ loc = "通用"
 src = "Launcher"
 loc = "启动器"
 
-[settings_tab_importer]
-src = "MI"
-loc = "模型导入器"
-
 [settings_tab_advanced]
 src = "Advanced"
 loc = "高级"
-
-[general_settings_engine_settings_label]
-src = "Engine Settings:"
-loc = "引擎设置："
 
 [error_himi_registry_key_not_found]
 src = """
@@ -2355,7 +1879,3 @@ loc = """
 **启用**：使用指定的命令行参数启动游戏可执行文件。
 **禁用**：忽略指定的命令行参数，正常启动游戏可执行文件。
 """
-
-[general_settings_unlock_fps_checkbox]
-src = "Unlock FPS:"
-loc = "解锁帧率："

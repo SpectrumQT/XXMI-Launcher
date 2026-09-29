@@ -2,20 +2,6 @@
 src = "Arknights: Endfield Model Importer"
 loc = "Arknights: Endfield Model Importer"
 
-[general_settings_force_ultra_high_lod_bias_label]
-src = "Max LOD Bias"
-loc = "LOD バイアス最大化"
-
-[general_settings_force_ultra_high_lod_bias_tooltip]
-src = """
-**Enabled**: Set **LOD Bias** to **Ultra High** to force full resolution LOD textures.
-**Disabled**: Keep **LOD Bias** setting untouched. Select this if **Use All Mips** is enabled below.
-"""
-loc = """
-**有効**: **LODバイアス** を **Ultra High** に設定します。これによりフル解像度のLODテクスチャが強制的に使用されます。
-**無効**: **LODバイアス** の設定を変更しません。以下の **全ミップを使用** が有効になっている場合は、こちらを選択してください。
-"""
-
 [locale_list_conjunction_or]
 src = "or"
 loc = "か"

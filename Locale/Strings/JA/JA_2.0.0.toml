@@ -166,10 +166,6 @@ loc = """
 src = "Shortcut to XXMI Launcher"
 loc = "XXMI Launcher へのショートカット"
 
-[error_migoto_game_start_failed]
-src = "Failed to start {process_name}!"
-loc = "{process_name} の起動に失敗しました!"
-
 [status_ensuring_game_closed]
 src = "Ensuring the game is closed..."
 loc = "ゲームが終了済みか確認しています ..."
@@ -370,63 +366,9 @@ loc = "ゲームのインストールフォルダが指定されていません!
 src = "Specified game installation folder is not found!"
 loc = "指定されたゲームインストールフォルダは見つかりませんでした!"
 
-[message_text_game_detection_failed]
-src = """
-Automatic detection of the game installation failed!
-
-Please configure it manually with Game Folder option of General Settings.
-"""
-loc = """
-ゲームインストールの自動検出に失敗しました!
-
-一般設定内のゲームフォルダオプションから手動で設定してください。
-"""
-
 [message_button_open_settings]
 src = "Open Settings"
 loc = "設定を開く"
-
-[message_text_game_detected_single]
-src = """
-Detected game installation:
-
-{game_folder}
-
-Please check if it is desired Game Folder or change it in General Settings.
-"""
-loc = """
-検出されたゲームのインストールフォルダ:
-
-{game_folder}
-
-正しいフォルダかどうか確認するか、手動で一般設定で変更してください。
-"""
-
-[message_text_game_detected_multiple]
-src = """
-Detected game installations:
-
-Select desired Game Folder from the list below or set it in General Settings:
-
-"""
-loc = """
-検出されたゲームのインストールフォルダ:
-
-以下のリストから目的のゲームフォルダを選択するか、一般設定で変更してください:
-
-"""
-
-[message_text_game_folder_not_configured]
-src = """
-Game installation folder is not configured!
-
-Please set it with Game Folder option of General Settings.
-"""
-loc = """
-ゲームのインストールフォルダが指定されていません!
-
-一般設定内のゲームフォルダオプションから設定してください。
-"""
 
 [status_autodetecting_game]
 src = "Autodetecting game installation folder..."
@@ -473,10 +415,6 @@ loc = """
 [status_updating_ini]
 src = "Updating d3dx.ini..."
 loc = "d3dx.ini を更新しています ..."
-
-[error_ini_missing_setting]
-src = "Config is missing {setting_name} setting!"
-loc = "設定ファイル内に {setting_name} がありません!"
 
 [error_ini_missing_value]
 src = "Config is missing value for section `{section}` option `{option}` key `{key}`"
@@ -679,24 +617,6 @@ loc = "{file_name} を更新しています ..."
 [error_local_storage_init_failed]
 src = "Failed to initialize LocalStorage: {error_text}"
 loc = "LocalStorageの設定に失敗しました: {error_text}"
-
-[error_zzmi_game_config_failed]
-src = """
-Failed to configure in-game settings for ZZMI!
-Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:
-* Graphics > `Character Quality` must be `High`.
-* Graphics > `High-Precision Character Animation` must be `Disabled`.
-
-{error_text}
-"""
-loc = """
-ZZMIのゲーム内設定の構成に失敗しました!
-ランチャーの一般設定で `ゲーム設定の自動構成` を無効にし、ゲーム内設定を確認してください:
-* 画面 > `キャラグラフィック` を `高` にする必要があります。
-* 画面 > `キャラクター動的解像度` を `OFF` にする必要があります。
-
-{error_text}
-"""
 
 [error_zzmi_unknown_settings_format]
 src = "Unknown system settings entry format: {setting}!"
@@ -918,22 +838,6 @@ loc = "このファイルに関連付けられているアプリケーション�
 src = "File association is incomplete"
 loc = "ファイルの関連付けが不完全です"
 
-[dll_injector_unknown_shell_error_code]
-src = "Unknown ShellExecute error code {error_code}"
-loc = "不明な ShellExecute エラーコード {error_code}"
-
-[error_dll_injector_process_start_failed]
-src = "Failed to start {process_name}: {error_text}!"
-loc = "{process_name} の起動に失敗しました: {error_text}"
-
-[error_dll_injector_unknown_start_method]
-src = "Unknown process start method `{start_method}`!"
-loc = "不明なプロセス起動メソッド `{start_method}`"
-
-[error_dll_injector_injection_failed]
-src = "Failed to inject {dll_paths}!"
-loc = "{dll_paths} のインジェクトに失敗しました!"
-
 [error_dll_injector_unhook_failed]
 src = "Invalid injector usage: {dll_path} was not unhooked!"
 loc = "無効なインジェクターの使用: {dll_path} のフックが解除されていません!"
@@ -1152,10 +1056,6 @@ loc = "{library} を {process} にフックしています ..."
 src = "Verifying {library} load into {process}..."
 loc = "{library} が {process} に読み込まれたか検証しています ..."
 
-[bottom_bar_injecting]
-src = "Injecting {library} to {process}..."
-loc = "{library} を {process} にインジェクトしています ..."
-
 [bottom_bar_launching_game]
 src = "Launching game..."
 loc = "ゲームを起動しています ..."
@@ -1244,14 +1144,6 @@ src = """
 loc = """
 # {package_name} を v{new_package_version} に更新して以下を適用:
 {latest_release_notes}
-"""
-
-[package_release_notes_not_installed]
-src = """
-Press **Install** button to setup the package.
-"""
-loc = """
-**インストール** ボタンを押してパッケージをセットアップしてください。
 """
 
 [package_description_launcher]
@@ -1450,20 +1342,6 @@ loc = "GUIを再読み込みしています ..."
 src = "Overwrite d3dx.ini"
 loc = "d3dx.ini を上書きする"
 
-[advanced_settings_overwrite_ini_checkbox_tooltip]
-src = """
-Enabled: {importer} updates will overwrite existing d3dx.ini to ensure its up-to-date state.
-Disabled: {importer} updates will keep existing d3dx.ini untouched.
-"""
-loc = """
-有効: {importer} のアップデート時に既存の d3dx.ini を上書きし、最新の状態を保ちます。
-無効: {importer} のアップデート時に既存の d3dx.ini をそのまま保持します。
-"""
-
-[advanced_settings_security_label]
-src = "Security:"
-loc = "セキュリティ:"
-
 [advanced_settings_unsafe_mode_checkbox]
 src = "Unsafe Mode"
 loc = "危険モード"
@@ -1480,20 +1358,6 @@ loc = """
 注意: サードパーティ製の d3d11.dll がネストされたディレクトリからの実行をサポートしていない場合、読み込みに失敗します。
 """
 
-[advanced_settings_run_pre_launch_checkbox]
-src = "Run Pre-Launch:"
-loc = "起動前コマンド:"
-
-[advanced_settings_option_checkbox_tooltip]
-src = """
-Enabled: Option will have stated effect.
-Disabled: Option will have no effect.
-"""
-loc = """
-有効: オプションは記載された効果を持ちます。
-無効: オプションは効果を持ちません。
-"""
-
 [advanced_settings_run_pre_launch_tooltip]
 src = """
 Windows console command to be executed before game exe launch.
@@ -1504,10 +1368,6 @@ loc = """
 注意: ゲーム開始前に何か行う必要がある場合は、ここで設定します。
 """
 
-[advanced_settings_wait_checkbox]
-src = "Wait"
-loc = "待機"
-
 [advanced_settings_run_pre_launch_wait_checkbox_tooltip]
 src = """
 Enabled: Wait for (blocking) command to finish its execution before launching the game exe.
@@ -1515,10 +1375,6 @@ Enabled: Wait for (blocking) command to finish its execution before launching th
 loc = """
 有効: ゲーム実行ファイルを起動する前に、コマンドの実行が完了するのを待機します。
 """
-
-[advanced_settings_custom_launch_checkbox]
-src = "Custom Launch:"
-loc = "カスタム起動コマンド:"
 
 [advanced_settings_custom_launch_entry_tooltip]
 src = """
@@ -1538,24 +1394,6 @@ loc = """
 `start /d \"C:\\Games\\XXMI Launcher\\Resources\\Packages\\GI-FPS-Unlocker\" unlockfps_nc.exe`
 """
 
-[advanced_settings_custom_launch_inject_mode_option_menu_tooltip]
-src = """
-Defines the way of 3dmigoto injection into the game process started via Custom Launch.
-* Inject: Use WriteProcessMemory, more reliable but requires direct memory access.
-* Hook: Use SetWindowsHookEx, less reliable, but potentially less prominent for anti-cheats.
-* Bypass: Skip 3dmigoto injection and process only Inject Libraries field.
-"""
-loc = """
-カスタム起動コマンド経由で開始されたゲームプロセスへの 3dmigoto のインジェクト方式を定義します。
-* Inject: WriteProcessMemory を使用します。信頼性は高いですが、直接のメモリアクセスが必要です。
-* Hook: SetWindowsHookEx を使用します。信頼性は低いですが、アンチチートで目立ちにくい可能性があります。
-* Bypass: 3dmigoto のインジェクトをスキップし、インジェクトするライブラリ フィールドのみを処理します。
-"""
-
-[advanced_settings_run_post_load_checkbox]
-src = "Run Post-Load:"
-loc = "起動後コマンド:"
-
 [advanced_settings_run_post_load_checkbox_tooltip]
 src = """
 Windows console command to be executed after hooking d3d11.dll to launched game exe.
@@ -1574,10 +1412,6 @@ loc = """
 有効: ゲームの起動が完了したものとして扱う前に、コマンドの実行が完了するのを待機します。
 """
 
-[advanced_settings_inject_libraries_checkbox]
-src = "Inject Libraries:"
-loc = "インジェクトするライブラリ:"
-
 [advanced_settings_inject_libraries_tooltip]
 src = """
 List of additional DLL paths to inject into the game process. 1 path per line.
@@ -1592,22 +1426,6 @@ loc = """
 `C:\\Games\\ReShade\\ReShade64.dll`
 """
 
-[launcher_settings_language_label]
-src = "Language:"
-loc = "言語:"
-
-[general_settings_engine_settings_label]
-src = "Engine Settings:"
-loc = "エンジン設定:"
-
-[general_settings_game_folder_label]
-src = "Game Folder:"
-loc = "ゲームフォルダ:"
-
-[general_settings_game_folder_error_label]
-src = "Failed to detect Game Folder!"
-loc = "ゲームフォルダの検出に失敗しました!"
-
 [settings_browse_path_button]
 src = "Browse..."
 loc = "参照 ..."
@@ -1615,10 +1433,6 @@ loc = "参照 ..."
 [general_settings_detect_game_folder_button_tooltip]
 src = "Try to automatically detect existing installation folders."
 loc = "既存のインストールフォルダの自動検出を試みます。"
-
-[general_settings_launch_options_label]
-src = "Launch Options:"
-loc = "起動オプション:"
 
 [general_settings_launch_options_entry_tooltip_wwmi]
 src = """
@@ -1662,26 +1476,6 @@ loc = """
 注意: ゲームエンジンは開発者によってカスタマイズされており、一部の引数が機能しない場合があります。
 """
 
-[general_settings_start_method_label]
-src = "Start Method:"
-loc = "起動メソッド:"
-
-[general_settings_start_method_option_menu_tooltip]
-src = """
-**Native**: Create the game process directly. Usually it's the most reliable way.
-**Shell**: Start the game process via system console. Worth to try if you have some issues with Native.
-**Manual**: Skip launching the game on **Start** button press. Wait for user to launch it manually ({timeout}s timeout).
-"""
-loc = """
-**Native**: ゲームプロセスを直接作成します。通常はこれが最も信頼性の高い方法です。
-**Shell**: システムコンソール経由でゲームプロセスを起動します。Native で問題が発生する場合に試す価値があります。
-**Manual**: **起動** ボタンを押したときのゲームの起動をスキップします。ユーザーが手動で起動するのを待機します (タイムアウト {timeout} 秒)。
-"""
-
-[general_settings_xxmi_delay_label]
-src = "XXMI Delay:"
-loc = "XXMI 遅延:"
-
 [general_settings_xxmi_delay_entry_tooltip_base]
 src = """
 Delay in milliseconds for how long injected XXMI DLL (3dmigoto) must wait before initialization.
@@ -1719,18 +1513,6 @@ If game crashes with no mods, try to increase it. Start with steps of 50 and inc
 loc = """
 MODなしでもゲームがクラッシュする場合は、遅延を増やしてみてください。50刻みから始め、徐々に増やしてください。
 """
-
-[general_settings_process_priority_label]
-src = "Process Priority:"
-loc = "プロセス優先度:"
-
-[general_settings_auto_config_label]
-src = "Auto Config:"
-loc = "自動構成:"
-
-[general_settings_configure_game_checkbox]
-src = "Configure Game Settings"
-loc = "ゲーム設定の自動変更"
 
 [general_settings_configure_game_tooltip_gimi]
 src = """
@@ -1814,25 +1596,13 @@ loc = """
 **無効**: エフェクトを `オン` にします。`Injured Effect Remover` ツールを使用する場合はこれを選択してください。
 """
 
-[general_settings_open_file_button]
-src = "🔍 Open {file_name}"
-loc = "🔍 {file_name} を開く"
-
 [error_general_settings_file_not_found]
 src = "File does not exist: **{file_name}**!"
 loc = "ファイルが存在しません: **{file_name}**!"
 
-[general_settings_tweaks_label]
-src = "Tweaks:"
-loc = "調整:"
-
 [general_settings_unlock_fps_checkbox_force]
 src = "Force 120 FPS"
 loc = "120 FPS を強制"
-
-[general_settings_unlock_fps_checkbox]
-src = "Unlock FPS:"
-loc = "FPSアンロック:"
 
 [general_settings_unlock_fps_checkbox_tooltip_wwmi]
 src = """
@@ -1900,26 +1670,6 @@ loc = """
 src = "Game window mode when started with FPS Unlocker."
 loc = "FPS アンロッカーで起動したときのゲームのウィンドウモード"
 
-[general_settings_apply_tweaks_checkbox]
-src = "Apply Performance Tweaks"
-loc = "パフォーマンス最適化を適用"
-
-[general_settings_apply_tweaks_checkbox_tooltip]
-src = """
-**Enabled**: Add list of performance tweaks to `[SystemSettings]` section of `Engine.ini` on game start.
-**Disabled**: Do not add tweaks to `Engine.ini`. Already added ones will have to be removed manually.
-
-List of tweaks:
-{tweaks}
-"""
-loc = """
-**有効**: ゲーム開始時に `Engine.ini` の `[SystemSettings]` セクションにパフォーマンス最適化の項目を追加します。
-**無効**: `Engine.ini` に最適化の項目を追加しません。すでに追加されているものは手動で削除する必要があります。
-
-調整のリスト:
-{tweaks}
-"""
-
 [general_settings_enable_hdr_checkbox]
 src = "Enable HDR"
 loc = "HDRを有効化"
@@ -1936,149 +1686,17 @@ loc = """
 **無効**: HDRをオフにします。特別なアクションは必要なく、ゲームは起動時にHDRのレジストリレコードを自動で削除します。
 """
 
-[importer_settings_shader_hunting_label]
-src = "Shader Hunting:"
-loc = "シェーダーハンティング:"
-
 [importer_settings_enable_hunting_checkbox]
 src = "Enable Hunting"
 loc = "ハンティングモードを有効化"
-
-[importer_settings_enable_hunting_checkbox_tooltip]
-src = """
-Enabled: Allows to toggle Hunting Mode via Numpad [0] hotkey.
-* [d3dx.ini]: hunting = 2
-Disabled: Hunting Mode is hard disabled.
-* [d3dx.ini]: hunting = 0
-"""
-loc = """
-有効: テンキーの [0] ホットキーでハンティングモードを切り替えられるようになります。
-* [d3dx.ini]: hunting = 2
-無効: ハンティングモードは完全に無効化されます。
-* [d3dx.ini]: hunting = 0
-"""
 
 [importer_settings_dump_shaders_checkbox]
 src = "Dump Shaders"
 loc = "シェーダーをダンプ"
 
-[importer_settings_dump_shaders_checkbox_tooltip]
-src = """
-Enabled: Hunting Mode [Copy Hash] key also saves selected shader as file in ShaderFixes.
-* [d3dx.ini]: marking_actions = clipboard hlsl asm regex
-Disabled: Hunting Mode [Copy Hash] only copies hash of selected shader to clipboard.
-* [d3dx.ini]: marking_actions = clipboard
-"""
-loc = """
-有効: ハンティングモードの [Copy Hash] キーで、選択したシェーダーをShaderFixesにファイルとして保存します。
-* [d3dx.ini]: marking_actions = clipboard hlsl asm regex
-無効: ハンティングモードの [Copy Hash] では、選択したシェーダーのハッシュをクリップボードにコピーするだけです。
-* [d3dx.ini]: marking_actions = clipboard
-"""
-
-[importer_settings_error_handling_label]
-src = "Error Handling:"
-loc = "エラー処理:"
-
 [importer_settings_mute_warnings_checkbox]
 src = "Mute Warnings"
 loc = "警告を消す"
-
-[importer_settings_mute_warnings_checkbox_tooltip]
-src = """
-Enabled: No error warnings or beeps whatsoever. Ignorance is bliss.
-* [d3dx.ini]: show_warnings = 0
-Disabled: Ini parser error warnings and beeps on F10 will haunt poor souls.
-* [d3dx.ini]: show_warnings = 1
-"""
-loc = """
-有効: エラー警告やビープ音は一切鳴りません。まさに知らぬが仏です。
-* [d3dx.ini]: show_warnings = 0
-無効: F10キーを押したときのIniパーサーエラーの警告やビープ音が鳴り響きます。
-* [d3dx.ini]: show_warnings = 1
-"""
-
-[importer_settings_calls_logging_checkbox]
-src = "Calls Logging"
-loc = "APIコールのログを記録"
-
-[importer_settings_calls_logging_checkbox_tooltip]
-src = """
-Enabled: Log API usage.
-* [d3dx.ini]: calls = 1
-Disabled: Do not log calls. Maximum performance.
-* [d3dx.ini]: calls = 0
-"""
-loc = """
-有効: APIの使用状況をログに記録します。
-* [d3dx.ini]: calls = 1
-無効: APIコールをログに記録しません。パフォーマンスが最大化されます。
-* [d3dx.ini]: calls = 0
-"""
-
-[importer_settings_debug_logging_checkbox]
-src = "Debug Logging"
-loc = "デバッグログ"
-
-[importer_settings_debug_logging_checkbox_tooltip]
-src = """
-Enabled: Super verbose debug logging.
-* [d3dx.ini]: debug = 1
-Disabled: No debug logging. Maximum performance.
-* [d3dx.ini]: debug = 0
-"""
-loc = """
-有効: 非常に詳細なデバッグ用のログを記録します。
-* [d3dx.ini]: debug = 1
-無効: デバッグ用のログを記録しません。パフォーマンスが最大化されます。
-* [d3dx.ini]: debug = 0
-"""
-
-[importer_settings_importer_folder_label]
-src = "Importer Folder:"
-loc = "Importer フォルダ:"
-
-[importer_settings_importer_folder_label_dynamic]
-src = "{importer} Folder:"
-loc = "{importer} フォルダ:"
-
-[importer_settings_importer_folder_entry_tooltip]
-src = """
-Path to folder containing `Mods` folder, `d3dx.ini` and other {importer} resources.
-**Absolute**: Set any arbitrary folder, i.e. `C:/Games/{importer}/`.
-**Relative**: Set any folder **inside** the Launcher folder, i.e. `{importer}/` (default).
-"""
-loc = """
-`Mods` フォルダ、`d3dx.ini`、その他の {importer} リソースを含むフォルダへのパス。
-**絶対パス**: 任意のフォルダを設定します。例: `C:/Games/{importer}/`。
-**相対パス**: ランチャーフォルダの **内側** にある任意のフォルダを設定します。例: `{importer}/` (デフォルト)。
-"""
-
-[importer_settings_ini_protection_label]
-src = "Ini Protection:"
-loc = "Ini 保護:"
-
-[importer_settings_enforce_rendering_checkbox]
-src = "Enforce Rendering Settings"
-loc = "レンダリング設定を強制"
-
-[importer_settings_enforce_rendering_checkbox_tooltip]
-src = """
-Enabled: Ensure {importer}-compatible [Rendering] section settings.
-* [d3dx.ini]: texture_hash = {texture_hash}
-* [d3dx.ini]: track_texture_updates = {track_texture_updates}
-Disabled: Settings above will not be forced into d3dx.ini.
-"""
-loc = """
-有効: {importer} と互換性のある [Rendering] セクションの設定を保証します。
-* [d3dx.ini]: texture_hash = {texture_hash}
-* [d3dx.ini]: track_texture_updates = {track_texture_updates}
-無効: 上記の設定は d3dx.ini に強制されません。
-"""
-
-[launcher_settings_start_behavior_label]
-src = "Start Behavior:"
-loc = "起動時の挙動:"
 
 [launcher_settings_auto_close_checkbox]
 src = "Close Launcher After Game Start"
@@ -2094,26 +1712,6 @@ loc = """
 無効: ランチャーを実行したままにします。
 """
 
-[launcher_settings_timeout_label]
-src = "Timeout:"
-loc = "タイムアウト:"
-
-[launcher_settings_timeout_entry_tooltip]
-src = """
-Controls how long launcher should wait for the game to show its window after launch.
-Game process will be considered as crashed once timeout is met.
-Default value is **30**.
-"""
-loc = """
-起動後、ランチャーがゲームのウィンドウ表示を待機する時間を制御します。
-タイムアウトに達すると、ゲームプロセスはクラッシュしたとみなされます。
-デフォルト値は **30** です。
-"""
-
-[launcher_settings_update_policy_label]
-src = "Update Policy:"
-loc = "更新ポリシー:"
-
 [launcher_settings_auto_update_checkbox]
 src = "Auto Update"
 loc = "自動アップデート"
@@ -2127,26 +1725,6 @@ loc = """
 有効: ランチャーと {importer} のアップデートは自動的にダウンロードおよびインストールされます。
 無効: [起動] ボタンの横にある専用の [▲] ボタンを使用して、手動でアップデートをダウンロードおよびインストールします。
 """
-
-[launcher_settings_update_channel_label]
-src = "Channel:"
-loc = "チャネル:"
-
-[launcher_settings_update_channel_option_menu_tooltip]
-src = """
-**Auto**: Detect update installation method automatically.
-**MSI**: Use native `.msi` installers to install updates.
-**ZIP**: Use portable `.zip` archives to install updates.
-"""
-loc = """
-**Auto**: アップデートのインストール方法を自動的に検出します。
-**MSI**: ネイティブの `.msi` インストーラーを使用してアップデートをインストールします。
-**ZIP**: ポータブルな `.zip` アーカイブを使用してアップデートをインストールします。
-"""
-
-[launcher_settings_theme_label]
-src = "UI Theme:"
-loc = "UI テーマ:"
 
 [launcher_settings_theme_option_menu_tooltip]
 src = """
@@ -2179,14 +1757,6 @@ loc = """
 有効: ランチャーは `custom-tkinter-theme.json` の変更を追跡し、即時に適用します。
 無効: テーマの変更は追跡されません。
 """
-
-[launcher_settings_connection_label]
-src = "Connection:"
-loc = "接続:"
-
-[launcher_settings_github_token_label]
-src = "GitHub Token:"
-loc = "GitHub トークン:"
 
 [launcher_settings_github_token_entry_tooltip]
 src = """
@@ -2230,10 +1800,6 @@ loc = """
 **無効**: 中間者攻撃の脆弱性がある安全でない接続を許可します。
 """
 
-[launcher_settings_proxy_enable_checkbox]
-src = "Use Proxy:"
-loc = "プロキシを使用:"
-
 [launcher_settings_proxy_enable_checkbox_tooltip]
 src = """
 Controls how launcher connects to GitHub to download packages.
@@ -2244,20 +1810,6 @@ loc = """
 ランチャーがパッケージをダウンロードするためにGitHubに接続する方法を制御します。
 **有効**: 指定されたプロキシサーバーを使用してインターネットにアクセスします。
 **無効**: デフォルトのシステムのインターネット接続設定を使用します。
-"""
-
-[launcher_settings_proxy_type_label]
-src = "Type:"
-loc = "タイプ:"
-
-[launcher_settings_proxy_type_option_menu_tooltip]
-src = """
-**HTTPS**: Good old proxy protocol. Offers best security.
-**SOCKS5**: Newer and less secure, but excels at bypassing firewalls.
-"""
-loc = """
-**HTTPS**: 古き良きプロキシプロトコル。最高のセキュリティを提供します。
-**SOCKS5**: より新しくセキュリティは劣りますが、ファイアウォールのバイパスに優れています。
 """
 
 [launcher_settings_proxy_dns_checkbox]
@@ -2274,17 +1826,9 @@ loc = """
 **無効**: DNSリクエストはISP経由でルーティングされます。
 """
 
-[launcher_settings_proxy_host_label]
-src = "Host:"
-loc = "ホスト:"
-
 [launcher_settings_proxy_host_entry_tooltip]
 src = "Proxy IP address (i.e. `123.12.1.231`) or domain name (i.e. `proxyprovider.com`)."
 loc = "プロキシの IPアドレス (例: `123.12.1.231`) または ドメイン名 (例: `proxyprovider.com`)"
-
-[launcher_settings_proxy_port_label]
-src = "Port:"
-loc = "ポート:"
 
 [launcher_settings_proxy_port_entry_tooltip]
 src = "Proxy port (i.e. `1080`)."
@@ -2304,17 +1848,9 @@ loc = """
 **無効**: プロキシサーバーにアクセスする際に認証情報を使用しません。
 """
 
-[launcher_settings_proxy_user_label]
-src = "User:"
-loc = "ユーザー:"
-
 [launcher_settings_proxy_user_entry_tooltip]
 src = "User name provided by your proxy service."
 loc = "プロキシサービスによって提供されたユーザー名。"
-
-[launcher_settings_proxy_password_label]
-src = "Password:"
-loc = "パスワード:"
 
 [launcher_settings_proxy_password_entry_tooltip]
 src = "Password provided by your proxy service."
@@ -2327,10 +1863,6 @@ loc = "一般"
 [settings_tab_launcher]
 src = "Launcher"
 loc = "ランチャー"
-
-[settings_tab_importer]
-src = "MI"
-loc = "MI"
 
 [settings_tab_advanced]
 src = "Advanced"

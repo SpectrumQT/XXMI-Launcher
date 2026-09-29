@@ -1,0 +1,721 @@
+[general_settings_launch_direct]
+src = "Direct"
+loc = "Direct"
+
+[general_settings_launch_steam]
+src = "Steam"
+loc = "Steam"
+
+[general_settings_launch_epic]
+src = "Epic Games"
+loc = "Epic Games"
+
+[general_settings_launch_custom]
+src = "Custom"
+loc = "Custom"
+
+[general_settings_launch_manual]
+src = "Manual"
+loc = "Manual"
+
+[general_settings_inject_mode_direct]
+src = "Direct"
+loc = "Direct"
+
+[general_settings_inject_mode_hook]
+src = "Hook"
+loc = "Hook"
+
+[general_settings_inject_mode_skip]
+src = "Skip"
+loc = "Skip"
+
+[launcher_settings_update_channel_auto]
+src = "Auto"
+loc = "Auto"
+
+[launcher_settings_update_channel_msi]
+src = "MSI"
+loc = "MSI"
+
+[launcher_settings_update_channel_zip]
+src = "ZIP"
+loc = "ZIP"
+
+[launcher_settings_proxy_type_https]
+src = "HTTPS"
+loc = "HTTPS"
+
+[launcher_settings_proxy_type_socks5]
+src = "SOCKS5"
+loc = "SOCKS5"
+
+[importer_settings_input_disable_mode_mods]
+src = "Mods"
+loc = "Mods"
+
+[importer_settings_input_disable_mode_all]
+src = "All"
+loc = "All"
+
+[importer_settings_log_level_disabled]
+src = "Disabled"
+loc = "Disabled"
+
+[importer_settings_log_level_warning]
+src = "Warning"
+loc = "Warning"
+
+[importer_settings_log_level_info]
+src = "Info"
+loc = "Info"
+
+[importer_settings_log_level_debug]
+src = "Debug"
+loc = "Debug"
+
+[steam_client_not_found_error]
+src = """
+Cannot find an installed {game_platform} client
+"""
+loc = """
+Cannot find an installed {game_platform} client
+"""
+
+[platform_game_not_found_error]
+src = """
+Cannot find {game} installed in the {game_platform} library
+"""
+loc = """
+Cannot find {game} installed in the {game_platform} library
+"""
+
+[status_resolving_launch_context]
+src = "Resolving {game} launch context..."
+loc = "Resolving {game} launch context..."
+
+[status_configuring]
+src = "Configuring {entity}..."
+loc = "Configuring {entity}..."
+
+[status_configuring_launch_options]
+src = "Configuring {game} Launch Options on {platform}..."
+loc = "Configuring {game} Launch Options on {platform}..."
+
+[status_starting]
+src = "Starting {entity}..."
+loc = "Starting {entity}..."
+
+[message_title_game_detection_failed]
+src = "Game Installation Not Found"
+loc = "Game Installation Not Found"
+
+[message_text_game_detection_failed]
+src = """
+Could not find the game installation on your device.
+
+Please set the **{general_settings_game_folder_label}** manually in **General Settings**.
+"""
+loc = """
+Could not find the game installation on your device.
+
+Please set the **{general_settings_game_folder_label}** manually in **General Settings**.
+"""
+
+[message_title_game_detected_single]
+src = "Game Installation Found"
+loc = "Game Installation Found"
+
+[message_text_game_detected_single]
+src = """
+Please confirm that this is the correct **{general_settings_game_folder_label}**:
+
+`{game_folder}`
+
+Alternatively, set it manually in **General Settings**.
+"""
+loc = """
+Please confirm that this is the correct **{general_settings_game_folder_label}**:
+
+`{game_folder}`
+
+Alternatively, set it manually in **General Settings**.
+"""
+
+[message_title_game_detected_multiple]
+src = "Multiple Game Installations Found"
+loc = "Multiple Game Installations Found"
+
+[message_text_game_detected_multiple]
+src = """
+Please select the correct **{general_settings_game_folder_label}** below, or set it in **General Settings**.
+
+"""
+loc = """
+Please select the correct **{general_settings_game_folder_label}** below, or set it in **General Settings**.
+
+"""
+
+[message_title_game_folder_not_configured]
+src = "Game Installation Folder Not Configured"
+loc = "Game Installation Folder Not Configured"
+
+[message_text_game_folder_not_configured]
+src = """
+Please set **{general_settings_game_folder_label}** option of **General Settings**.
+"""
+loc = """
+Please set **{general_settings_game_folder_label}** option of **General Settings**.
+"""
+
+[error_zzmi_game_config_failed]
+src = """
+Failed to configure in-game settings for ZZMI!
+Please disable **Configure Game Settings** in launcher's **General Settings** and check in-game settings:
+* **Graphics › Character Quality** must be **High**.
+* **Graphics › High-Precision Character Animation** must be **Disabled**.
+
+{error_text}
+"""
+loc = """
+Failed to configure in-game settings for ZZMI!
+Please disable **Configure Game Settings** in launcher's **General Settings** and check in-game settings:
+* **Graphics › Character Quality** must be **High**.
+* **Graphics › High-Precision Character Animation** must be **Disabled**.
+
+{error_text}
+"""
+
+[error_files_integrity_verification_failed]
+src = """
+Files integrity verification failed!
+
+Hash mismatch for asset file:
+`{bad_file}`
+
+Please try to run **{launcher_install_button}** again or use **{tool_bar_repair_button}**.
+"""
+loc = """
+Files integrity verification failed!
+
+Hash mismatch for asset file:
+`{bad_file}`
+
+Please try to run **{launcher_install_button}** again or use **{tool_bar_repair_button}**.
+"""
+
+[bottom_bar_injecting]
+src = "Waiting for {library} injection to {process}..."
+loc = "Waiting for {library} injection to {process}..."
+
+[package_state_not_deployed]
+src = """
+# {package_name} is not deployed.
+Press **{launcher_start_button}** to deploy the installed package automatically.
+"""
+loc = """
+# {package_name} is not deployed.
+Press **{launcher_start_button}** to deploy the installed package automatically.
+"""
+
+[package_state_not_installed]
+src = """
+# {package_name} is not installed.
+Press **{launcher_install_button}** to install the package.
+"""
+loc = """
+# {package_name} is not installed.
+Press **{launcher_install_button}** to install the package.
+"""
+
+[package_state_unknown_source]
+src = """
+# {package_name} is not recognized.
+If you installed it manually, continue with care.
+Otherwise, consider running **Repair {active_importer}**.
+"""
+loc = """
+# {package_name} is not recognized.
+If you installed it manually, continue with care.
+Otherwise, consider running **Repair {active_importer}**.
+"""
+
+[package_release_notes_unavailable]
+src = """
+# Package release notes are unavailable.
+"""
+loc = """
+# Package release notes are unavailable.
+"""
+
+[advanced_settings_pre_launch_section_label]
+src = "Run Before Game Launch"
+loc = "Run Before Game Launch"
+
+[advanced_settings_pre_launch_command_label]
+src = "Pre-Launch Command"
+loc = "Pre-Launch Command"
+
+[advanced_settings_wait_checkbox]
+src = "Wait for Command Completion"
+loc = "Wait for Command Completion"
+
+[advanced_settings_post_launch_section_label]
+src = "Run After XXMI DLL Injection"
+loc = "Run After XXMI DLL Injection"
+
+[advanced_settings_post_load_command_label]
+src = "Post-Load Command"
+loc = "Post-Load Command"
+
+[advanced_settings_custom_libraries_section_label]
+src = "Custom Libraries"
+loc = "Custom Libraries"
+
+[advanced_settings_inject_libraries_checkbox]
+src = "Inject Libraries"
+loc = "Inject Libraries"
+
+[launcher_settings_language_settings_label]
+src = "Launcher Language"
+loc = "Launcher Language"
+
+[launcher_settings_language_option_label]
+src = "Select Language"
+loc = "Select Language"
+
+[launcher_settings_launch_settings_label]
+src = "Launch Settings"
+loc = "Launch Settings"
+
+[general_settings_game_launch_label]
+src = "Game Launch"
+loc = "Game Launch"
+
+[general_settings_game_launch_tooltip]
+src = """
+Choose what the **{launcher_start_button}** button does.
+
+* **{general_settings_launch_direct}:** Launch the game directly from the detected or configured game folder.
+* **{general_settings_launch_steam}:** Launch the game through Steam to enable Steam Overlay and playtime tracking.
+* **{general_settings_launch_epic}:** Launch the game through Epic Games to enable Epic Games overlay and tracking.
+* **{general_settings_launch_custom}:** Run a custom Windows command to launch the game.
+* **{general_settings_launch_manual}:** Wait for you to launch the game manually.
+"""
+loc = """
+Choose what the **{launcher_start_button}** button does.
+
+* **{general_settings_launch_direct}:** Launch the game directly from the detected or configured game folder.
+* **{general_settings_launch_steam}:** Launch the game through Steam to enable Steam Overlay and playtime tracking.
+* **{general_settings_launch_epic}:** Launch the game through Epic Games to enable Epic Games overlay and tracking.
+* **{general_settings_launch_custom}:** Run a custom Windows command to launch the game.
+* **{general_settings_launch_manual}:** Wait for you to launch the game manually.
+"""
+
+[general_settings_game_folder_label]
+src = "Game Folder"
+loc = "Game Folder"
+
+[general_settings_detect_game_folder_button]
+src = "🔍 Detect Installations"
+loc = "🔍 Detect Installations"
+
+[general_settings_launch_command_label]
+src = "Launch Command"
+loc = "Launch Command"
+
+[general_settings_launch_options_checkbox]
+src = "Launch Options"
+loc = "Launch Options"
+
+[general_settings_start_method_label]
+src = "Game Executable Run Method"
+loc = "Game Executable Run Method"
+
+[general_settings_start_method_option_menu_tooltip]
+src = """
+* **{general_settings_start_method_native}**: Create the game process directly.
+* **{general_settings_start_method_shell}**: Start the game process via system console.
+"""
+loc = """
+* **{general_settings_start_method_native}**: Create the game process directly.
+* **{general_settings_start_method_shell}**: Start the game process via system console.
+"""
+
+[general_settings_process_priority_label]
+src = "Process Priority"
+loc = "Process Priority"
+
+[general_settings_process_priority_option_menu_tooltip]
+src = "Set process priority for the game exe."
+loc = "Set process priority for the game exe."
+
+[game_process_wait_timeout_label]
+src = "Game Process Launch Wait Timeout"
+loc = "Game Process Launch Wait Timeout"
+
+[game_process_wait_timeout_tooltip]
+src = """
+Controls how long launcher should wait for the game to show its window after launch.
+Game process will be considered as crashed once timeout is met.
+Default value is **30**.
+"""
+loc = """
+Controls how long launcher should wait for the game to show its window after launch.
+Game process will be considered as crashed once timeout is met.
+Default value is **30**.
+"""
+
+[general_settings_configure_platform_launch_options_checkbox]
+src = "Configure Launch Options on {platform}"
+loc = "Configure Launch Options on {platform}"
+
+[general_settings_configure_platform_launch_options_checkbox_tooltip]
+src = """
+Auto-set **Launch Options** of **{game}** in **{platform}** library to:
+```
+{launch_options}
+```
+{platform} client will be **restarted** if **Launch Options** are different.
+"""
+loc = """
+Auto-set **Launch Options** of **{game}** in **{platform}** library to:
+```
+{launch_options}
+```
+{platform} client will be **restarted** if **Launch Options** are different.
+"""
+
+[general_settings_skip_platform_game_launcher_checkbox]
+src = "Skip {launcher} Launcher"
+loc = "Skip {launcher} Launcher"
+
+[general_settings_skip_platform_game_launcher_checkbox_tooltip]
+src = """
+Make **{platform}** to launch **{game}** process directly, avoiding **{launcher}**.
+
+Requires **{general_settings_configure_platform_launch_options_checkbox}** to be enabled.
+"""
+loc = """
+Make **{platform}** to launch **{game}** process directly, avoiding **{launcher}**.
+
+Requires **{general_settings_configure_platform_launch_options_checkbox}** to be enabled.
+"""
+
+[general_settings_game_process_exe_label]
+src = "Custom Game Process Executable Name"
+loc = "Custom Game Process Executable Name"
+
+[general_settings_game_process_exe_reset_button]
+src = "↻ Reset"
+loc = "↻ Reset"
+
+[general_settings_game_process_exe_reset_button_tooltip]
+src = "Reset to **{game_exe_name}**"
+loc = "Reset to **{game_exe_name}**"
+
+[launcher_settings_game_settings_label]
+src = "Game Settings"
+loc = "Game Settings"
+
+[general_settings_configure_game_checkbox]
+src = "Configure Game Settings For {importer}"
+loc = "Configure Game Settings For {importer}"
+
+[general_settings_unlock_fps_checkbox]
+src = "Unlock FPS"
+loc = "Unlock FPS"
+
+[general_settings_unlock_fps_value_label]
+src = "FPS Limit"
+loc = "FPS Limit"
+
+[general_settings_window_mode_option_menu_label]
+src = "Window Mode"
+loc = "Window Mode"
+
+[general_settings_mesh_lod_base_fov_label]
+src = "Mesh LOD Base FOV"
+loc = "Mesh LOD Base FOV"
+
+[general_settings_open_file_label]
+src = "Manual Game Config Edit"
+loc = "Manual Game Config Edit"
+
+[general_settings_open_file_button]
+src = "📄 Open {file_name}"
+loc = "📄 Open {file_name}"
+
+[importer_settings_startup_section_label]
+src = "Startup"
+loc = "Startup"
+
+[importer_settings_importer_folder_label_dynamic]
+src = "{importer} Folder"
+loc = "{importer} Folder"
+
+[importer_settings_importer_folder_entry_tooltip]
+src = """
+Path to folder containing **Mods** folder, **d3dx.ini** and other **{importer}** resources.
+
+* **Absolute**: Set any arbitrary folder, e.g. `C:/Games/{importer}/`.
+* **Relative**: Set any folder **inside** the Launcher folder, i.e. `{importer}/` (default).
+"""
+loc = """
+Path to folder containing **Mods** folder, **d3dx.ini** and other **{importer}** resources.
+
+* **Absolute**: Set any arbitrary folder, e.g. `C:/Games/{importer}/`.
+* **Relative**: Set any folder **inside** the Launcher folder, i.e. `{importer}/` (default).
+"""
+
+[importer_settings_inject_mode_label]
+src = "XXMI DLL Injection Mode"
+loc = "XXMI DLL Injection Mode"
+
+[advanced_settings_custom_launch_inject_mode_option_menu_tooltip]
+src = """
+Defines the way of **XXMI DLL** injection into the game process.
+
+* **{general_settings_inject_mode_direct}:** Use `WriteProcessMemory`, more reliable but requires direct memory access.
+* **{general_settings_inject_mode_hook}:** Use `SetWindowsHookEx`, less reliable, but potentially less prominent for anti-cheats.
+* **{general_settings_inject_mode_skip}:** Skip **XXMI DLL** injection.
+"""
+loc = """
+Defines the way of **XXMI DLL** injection into the game process.
+
+* **{general_settings_inject_mode_direct}:** Use `WriteProcessMemory`, more reliable but requires direct memory access.
+* **{general_settings_inject_mode_hook}:** Use `SetWindowsHookEx`, less reliable, but potentially less prominent for anti-cheats.
+* **{general_settings_inject_mode_skip}:** Skip **XXMI DLL** injection.
+"""
+
+[general_settings_xxmi_delay_label]
+src = "XXMI DLL Initialization Delay"
+loc = "XXMI DLL Initialization Delay"
+
+[importer_settings_ini_protection_label]
+src = "Config Protection"
+loc = "Config Protection"
+
+[importer_settings_enforce_rendering_checkbox_tooltip]
+src = """
+* **Enabled:** Ensure **{importer}**-compatible `d3dx.ini` settings.
+* **Disabled:** Required settings will not be applied to `d3dx.ini`.
+"""
+loc = """
+* **Enabled:** Ensure **{importer}**-compatible `d3dx.ini` settings.
+* **Disabled:** Required settings will not be applied to `d3dx.ini`.
+"""
+
+[importer_settings_usability_section_label]
+src = "Usability"
+loc = "Usability"
+
+[importer_settings_mute_warnings_checkbox_tooltip]
+src = """
+Enable display of mod error warnings and beeping sound.
+
+* **Enabled:** No error warnings or beeps whatsoever. Ignorance is bliss.
+* **Disabled:** Mod error warnings and beeps on **F10** will haunt poor souls.
+"""
+loc = """
+Enable display of mod error warnings and beeping sound.
+
+* **Enabled:** No error warnings or beeps whatsoever. Ignorance is bliss.
+* **Disabled:** Mod error warnings and beeps on **F10** will haunt poor souls.
+"""
+
+[importer_settings_clear_unknown_settings_checkbox]
+src = "Clear Unknown Mod Settings"
+loc = "Clear Unknown Mod Settings"
+
+[importer_settings_clear_unknown_settings_tooltip]
+src = """
+Controls clean-up of mod settings when the mods that defined them are no longer present.
+
+* **Enabled:** Clear unknown settings after **second** reload since mods removal.
+* **Disabled:** Do not clear unknown settings, keep them in **d3dx_user.ini** forever.
+"""
+loc = """
+Controls clean-up of mod settings when the mods that defined them are no longer present.
+
+* **Enabled:** Clear unknown settings after **second** reload since mods removal.
+* **Disabled:** Do not clear unknown settings, keep them in **d3dx_user.ini** forever.
+"""
+
+[launcher_settings_input_section_label]
+src = "Input"
+loc = "Input"
+
+[importer_settings_input_checkbox]
+src = "Enable By Default"
+loc = "Enable By Default"
+
+[importer_settings_input_checkbox_tooltip]
+src = """
+Initial input state when game starts.
+
+* **Enabled:** All input is enabled.
+* **Disabled:** Input is disabled according to **{importer_settings_input_disable_mode_label}**.
+"""
+loc = """
+Initial input state when game starts.
+
+* **Enabled:** All input is enabled.
+* **Disabled:** Input is disabled according to **{importer_settings_input_disable_mode_label}**.
+"""
+
+[importer_settings_input_disable_mode_label]
+src = "Input Disabling Mode"
+loc = "Input Disabling Mode"
+
+[importer_settings_input_disable_mode_option_menu_tooltip]
+src = """
+Determines which input is disabled when **{launcher_settings_input_section_label}** is **Disabled**.
+
+* **{importer_settings_input_disable_mode_mods}**: Disable input defined by mods.
+* **{importer_settings_input_disable_mode_all}**: Disable all input except the **Toggle Input** hotkey (**CTRL+ALT+SHIFT+END**).
+"""
+loc = """
+Determines which input is disabled when **{launcher_settings_input_section_label}** is **Disabled**.
+
+* **{importer_settings_input_disable_mode_mods}**: Disable input defined by mods.
+* **{importer_settings_input_disable_mode_all}**: Disable all input except the **Toggle Input** hotkey (**CTRL+ALT+SHIFT+END**).
+"""
+
+[launcher_settings_hunting_section_label]
+src = "Shader Hunting"
+loc = "Shader Hunting"
+
+[importer_settings_enable_hunting_checkbox_tooltip]
+src = """
+* **Enabled:** Allows to toggle **Hunting Mode** via Numpad [0] hotkey.
+* **Disabled:** **Hunting Mode** is hard disabled.
+"""
+loc = """
+* **Enabled:** Allows to toggle **Hunting Mode** via Numpad [0] hotkey.
+* **Disabled:** **Hunting Mode** is hard disabled.
+"""
+
+[importer_settings_dump_shaders_checkbox_tooltip]
+src = """
+* **Enabled:** Hunting Mode [Copy Hash] key also saves selected shader as file in **ShaderFixes**.
+* **Disabled:** Hunting Mode [Copy Hash] only copies hash of selected shader to clipboard.
+"""
+loc = """
+* **Enabled:** Hunting Mode [Copy Hash] key also saves selected shader as file in **ShaderFixes**.
+* **Disabled:** Hunting Mode [Copy Hash] only copies hash of selected shader to clipboard.
+"""
+
+[launcher_settings_logging_section_label]
+src = "Logging"
+loc = "Logging"
+
+[launcher_settings_log_verbosity_label]
+src = "Log File Output Verbosity"
+loc = "Log File Output Verbosity"
+
+[importer_settings_log_level_option_menu_tooltip]
+src = """
+Controls how verbose **d3d11_log.txt** file is.
+
+* **{importer_settings_log_level_disabled}**: Log nothing.
+* **{importer_settings_log_level_warning}**: Log warnings and overlay messages.
+* **{importer_settings_log_level_info}**: Also log API usage calls.
+* **{importer_settings_log_level_debug}**: Also log super verbose massive debug output.
+"""
+loc = """
+Controls how verbose **d3d11_log.txt** file is.
+
+* **{importer_settings_log_level_disabled}**: Log nothing.
+* **{importer_settings_log_level_warning}**: Log warnings and overlay messages.
+* **{importer_settings_log_level_info}**: Also log API usage calls.
+* **{importer_settings_log_level_debug}**: Also log super verbose massive debug output.
+"""
+
+[launcher_settings_launcher_section_label]
+src = "Launcher"
+loc = "Launcher"
+
+[launcher_settings_theme_label]
+src = "UI Theme"
+loc = "UI Theme"
+
+[launcher_settings_updates_section_label]
+src = "Updates"
+loc = "Updates"
+
+[launcher_settings_update_channel_label]
+src = "Update Channel"
+loc = "Update Channel"
+
+[launcher_settings_update_channel_option_menu_tooltip]
+src = """
+* **{launcher_settings_update_channel_auto}**: Detect update installation method automatically.
+* **{launcher_settings_update_channel_msi}**: Use native `.msi` installers to install updates.
+* **{launcher_settings_update_channel_zip}**: Use portable `.zip` archives to install updates.
+"""
+loc = """
+* **{launcher_settings_update_channel_auto}**: Detect update installation method automatically.
+* **{launcher_settings_update_channel_msi}**: Use native `.msi` installers to install updates.
+* **{launcher_settings_update_channel_zip}**: Use portable `.zip` archives to install updates.
+"""
+
+[advanced_settings_overwrite_ini_checkbox_tooltip]
+src = """
+* **Enabled:** {importer} updates will overwrite existing `d3dx.ini` to ensure its up-to-date state.
+* **Disabled:** {importer} updates will keep existing `d3dx.ini` untouched.
+"""
+loc = """
+* **Enabled:** {importer} updates will overwrite existing `d3dx.ini` to ensure its up-to-date state.
+* **Disabled:** {importer} updates will keep existing `d3dx.ini` untouched.
+"""
+
+[launcher_settings_connection_section_label]
+src = "Connection"
+loc = "Connection"
+
+[launcher_settings_github_token_label]
+src = "GitHub Token"
+loc = "GitHub Token"
+
+[launcher_settings_proxy_section_label]
+src = "Proxy"
+loc = "Proxy"
+
+[launcher_settings_proxy_enable_checkbox]
+src = "Use Proxy"
+loc = "Use Proxy"
+
+[launcher_settings_proxy_type_label]
+src = "Type"
+loc = "Type"
+
+[launcher_settings_proxy_type_option_menu_tooltip]
+src = """
+* **{launcher_settings_proxy_type_https}**: Good old proxy protocol. Offers best security.
+* **{launcher_settings_proxy_type_socks5}**: Newer and less secure, but excels at bypassing firewalls.
+"""
+loc = """
+* **{launcher_settings_proxy_type_https}**: Good old proxy protocol. Offers best security.
+* **{launcher_settings_proxy_type_socks5}**: Newer and less secure, but excels at bypassing firewalls.
+"""
+
+[launcher_settings_proxy_host_label]
+src = "Host"
+loc = "Host"
+
+[launcher_settings_proxy_port_label]
+src = "Port"
+loc = "Port"
+
+[launcher_settings_proxy_user_label]
+src = "User"
+loc = "User"
+
+[launcher_settings_proxy_password_label]
+src = "Password"
+loc = "Password"
+
+[settings_tab_loading_label]
+src = "Loading..."
+loc = "Loading..."

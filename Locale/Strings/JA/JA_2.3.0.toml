@@ -1,0 +1,721 @@
+[general_settings_launch_direct]
+src = "Direct"
+loc = "直接起動"
+
+[general_settings_launch_steam]
+src = "Steam"
+loc = "Steam"
+
+[general_settings_launch_epic]
+src = "Epic Games"
+loc = "Epic Games"
+
+[general_settings_launch_custom]
+src = "Custom"
+loc = "カスタム"
+
+[general_settings_launch_manual]
+src = "Manual"
+loc = "手動"
+
+[general_settings_inject_mode_direct]
+src = "Direct"
+loc = "Direct"
+
+[general_settings_inject_mode_hook]
+src = "Hook"
+loc = "Hook"
+
+[general_settings_inject_mode_skip]
+src = "Skip"
+loc = "Skip"
+
+[launcher_settings_update_channel_auto]
+src = "Auto"
+loc = "自動"
+
+[launcher_settings_update_channel_msi]
+src = "MSI"
+loc = "MSI"
+
+[launcher_settings_update_channel_zip]
+src = "ZIP"
+loc = "ZIP"
+
+[launcher_settings_proxy_type_https]
+src = "HTTPS"
+loc = "HTTPS"
+
+[launcher_settings_proxy_type_socks5]
+src = "SOCKS5"
+loc = "SOCKS5"
+
+[importer_settings_input_disable_mode_mods]
+src = "Mods"
+loc = "Mods"
+
+[importer_settings_input_disable_mode_all]
+src = "All"
+loc = "すべて"
+
+[importer_settings_log_level_disabled]
+src = "Disabled"
+loc = "無効"
+
+[importer_settings_log_level_warning]
+src = "Warning"
+loc = "警告"
+
+[importer_settings_log_level_info]
+src = "Info"
+loc = "情報"
+
+[importer_settings_log_level_debug]
+src = "Debug"
+loc = "デバッグ"
+
+[steam_client_not_found_error]
+src = """
+Cannot find an installed {game_platform} client
+"""
+loc = """
+インストールされている {game_platform} クライアントが見つかりません
+"""
+
+[platform_game_not_found_error]
+src = """
+Cannot find {game} installed in the {game_platform} library
+"""
+loc = """
+{game_platform} ライブラリに {game} がインストールされていません
+"""
+
+[status_resolving_launch_context]
+src = "Resolving {game} launch context..."
+loc = "{game} の起動コンテキストを確認しています..."
+
+[status_configuring]
+src = "Configuring {entity}..."
+loc = "{entity} を構成しています..."
+
+[status_configuring_launch_options]
+src = "Configuring {game} Launch Options on {platform}..."
+loc = "{platform} の {game} 起動オプションを構成しています..."
+
+[status_starting]
+src = "Starting {entity}..."
+loc = "{entity} を起動しています..."
+
+[message_title_game_detection_failed]
+src = "Game Installation Not Found"
+loc = "ゲームのインストールが見つかりません"
+
+[message_text_game_detection_failed]
+src = """
+Could not find the game installation on your device.
+
+Please set the **{general_settings_game_folder_label}** manually in **General Settings**.
+"""
+loc = """
+ゲームのインストール先が見つかりませんでした。
+
+**一般設定** の **{general_settings_game_folder_label}** から手動で設定してください。
+"""
+
+[message_title_game_detected_single]
+src = "Game Installation Found"
+loc = "ゲームのインストール先が見つかりました"
+
+[message_text_game_detected_single]
+src = """
+Please confirm that this is the correct **{general_settings_game_folder_label}**:
+
+`{game_folder}`
+
+Alternatively, set it manually in **General Settings**.
+"""
+loc = """
+以下が正しい **{general_settings_game_folder_label}** か確認してください:
+
+`{game_folder}`
+
+または、**一般設定** から手動で設定してください。
+"""
+
+[message_title_game_detected_multiple]
+src = "Multiple Game Installations Found"
+loc = "複数のゲームインストールが見つかりました"
+
+[message_text_game_detected_multiple]
+src = """
+Please select the correct **{general_settings_game_folder_label}** below, or set it in **General Settings**.
+
+"""
+loc = """
+以下から正しい **{general_settings_game_folder_label}** を選択するか、**一般設定** から設定してください。
+
+"""
+
+[message_title_game_folder_not_configured]
+src = "Game Installation Folder Not Configured"
+loc = "ゲームのインストールフォルダが設定されていません"
+
+[message_text_game_folder_not_configured]
+src = """
+Please set **{general_settings_game_folder_label}** option of **General Settings**.
+"""
+loc = """
+**一般設定** の **{general_settings_game_folder_label}** オプションを設定してください。
+"""
+
+[error_zzmi_game_config_failed]
+src = """
+Failed to configure in-game settings for ZZMI!
+Please disable **Configure Game Settings** in launcher's **General Settings** and check in-game settings:
+* **Graphics › Character Quality** must be **High**.
+* **Graphics › High-Precision Character Animation** must be **Disabled**.
+
+{error_text}
+"""
+loc = """
+ZZMIのゲーム内設定の構成に失敗しました!
+ランチャーの **一般設定** で **ゲーム設定の自動変更** を無効にし、ゲーム内設定を確認してください:
+* **画面 › キャラグラフィック** を **高** にする必要があります。
+* **画面 › キャラクター動的解像度** を **無効** にする必要があります。
+
+{error_text}
+"""
+
+[error_files_integrity_verification_failed]
+src = """
+Files integrity verification failed!
+
+Hash mismatch for asset file:
+`{bad_file}`
+
+Please try to run **{launcher_install_button}** again or use **{tool_bar_repair_button}**.
+"""
+loc = """
+ファイルの整合性検証に失敗しました!
+
+アセットファイルのハッシュが一致しません:
+`{bad_file}`
+
+**{launcher_install_button}** をもう一度実行するか、**{tool_bar_repair_button}** を使用してください。
+"""
+
+[bottom_bar_injecting]
+src = "Waiting for {library} injection to {process}..."
+loc = "{library} を {process} にインジェクトするのを待機しています..."
+
+[package_state_not_deployed]
+src = """
+# {package_name} is not deployed.
+Press **{launcher_start_button}** to deploy the installed package automatically.
+"""
+loc = """
+# {package_name} はデプロイされていません。
+**{launcher_start_button}** を押すと、インストール済みのパッケージが自動的にデプロイされます。
+"""
+
+[package_state_not_installed]
+src = """
+# {package_name} is not installed.
+Press **{launcher_install_button}** to install the package.
+"""
+loc = """
+# {package_name} はインストールされていません。
+**{launcher_install_button}** を押してパッケージをインストールしてください。
+"""
+
+[package_state_unknown_source]
+src = """
+# {package_name} is not recognized.
+If you installed it manually, continue with care.
+Otherwise, consider running **Repair {active_importer}**.
+"""
+loc = """
+# {package_name} は認識されません。
+手動でインストールした場合は、注意して続行してください。
+それ以外の場合は、**{active_importer} を修復** を実行してください。
+"""
+
+[package_release_notes_unavailable]
+src = """
+# Package release notes are unavailable.
+"""
+loc = """
+# パッケージのリリースノートは利用できません。
+"""
+
+[advanced_settings_pre_launch_section_label]
+src = "Run Before Game Launch"
+loc = "ゲーム起動前に実行"
+
+[advanced_settings_pre_launch_command_label]
+src = "Pre-Launch Command"
+loc = "起動前コマンド"
+
+[advanced_settings_wait_checkbox]
+src = "Wait for Command Completion"
+loc = "コマンドの完了を待機"
+
+[advanced_settings_post_launch_section_label]
+src = "Run After XXMI DLL Injection"
+loc = "XXMI DLL インジェクト後に実行"
+
+[advanced_settings_post_load_command_label]
+src = "Post-Load Command"
+loc = "起動後コマンド"
+
+[advanced_settings_custom_libraries_section_label]
+src = "Custom Libraries"
+loc = "カスタムライブラリ"
+
+[advanced_settings_inject_libraries_checkbox]
+src = "Inject Libraries"
+loc = "ライブラリをインジェクト"
+
+[launcher_settings_language_settings_label]
+src = "Launcher Language"
+loc = "ランチャー言語"
+
+[launcher_settings_language_option_label]
+src = "Select Language"
+loc = "言語を選択"
+
+[launcher_settings_launch_settings_label]
+src = "Launch Settings"
+loc = "起動設定"
+
+[general_settings_game_launch_label]
+src = "Game Launch"
+loc = "ゲーム起動"
+
+[general_settings_game_launch_tooltip]
+src = """
+Choose what the **{launcher_start_button}** button does.
+
+* **{general_settings_launch_direct}:** Launch the game directly from the detected or configured game folder.
+* **{general_settings_launch_steam}:** Launch the game through Steam to enable Steam Overlay and playtime tracking.
+* **{general_settings_launch_epic}:** Launch the game through Epic Games to enable Epic Games overlay and tracking.
+* **{general_settings_launch_custom}:** Run a custom Windows command to launch the game.
+* **{general_settings_launch_manual}:** Wait for you to launch the game manually.
+"""
+loc = """
+**{launcher_start_button}** ボタンの動作を選択します。
+
+* **{general_settings_launch_direct}:** 検出または設定されたゲームフォルダからゲームを直接起動します。
+* **{general_settings_launch_steam}:** Steam Overlay とプレイ時間の記録を有効にするため、Steam 経由でゲームを起動します。
+* **{general_settings_launch_epic}:** Epic Games のオーバーレイと記録機能を有効にするため、Epic Games 経由でゲームを起動します。
+* **{general_settings_launch_custom}:** カスタム Windows コマンドを実行してゲームを起動します。
+* **{general_settings_launch_manual}:** ユーザーが手動でゲームを起動するまで待機します。
+"""
+
+[general_settings_game_folder_label]
+src = "Game Folder"
+loc = "ゲームフォルダ"
+
+[general_settings_detect_game_folder_button]
+src = "🔍 Detect Installations"
+loc = "🔍 インストール先を検出"
+
+[general_settings_launch_command_label]
+src = "Launch Command"
+loc = "起動コマンド"
+
+[general_settings_launch_options_checkbox]
+src = "Launch Options"
+loc = "起動オプション"
+
+[general_settings_start_method_label]
+src = "Game Executable Run Method"
+loc = "ゲーム実行ファイルの起動方法"
+
+[general_settings_start_method_option_menu_tooltip]
+src = """
+* **{general_settings_start_method_native}**: Create the game process directly.
+* **{general_settings_start_method_shell}**: Start the game process via system console.
+"""
+loc = """
+* **{general_settings_start_method_native}**: ゲームプロセスを直接作成します。
+* **{general_settings_start_method_shell}**: システムコンソール経由でゲームプロセスを起動します。
+"""
+
+[general_settings_process_priority_label]
+src = "Process Priority"
+loc = "プロセス優先度"
+
+[general_settings_process_priority_option_menu_tooltip]
+src = "Set process priority for the game exe."
+loc = "ゲーム実行ファイルのプロセス優先度を設定します。"
+
+[game_process_wait_timeout_label]
+src = "Game Process Launch Wait Timeout"
+loc = "ゲームプロセス起動待機タイムアウト"
+
+[game_process_wait_timeout_tooltip]
+src = """
+Controls how long launcher should wait for the game to show its window after launch.
+Game process will be considered as crashed once timeout is met.
+Default value is **30**.
+"""
+loc = """
+起動後、ゲームのウィンドウが表示されるまでランチャーが待機する時間を設定します。
+タイムアウトに達すると、ゲームプロセスはクラッシュしたとみなされます。
+デフォルト値は **30** です。
+"""
+
+[general_settings_configure_platform_launch_options_checkbox]
+src = "Configure Launch Options on {platform}"
+loc = "{platform} の起動オプションを構成"
+
+[general_settings_configure_platform_launch_options_checkbox_tooltip]
+src = """
+Auto-set **Launch Options** of **{game}** in **{platform}** library to:
+```
+{launch_options}
+```
+{platform} client will be **restarted** if **Launch Options** are different.
+"""
+loc = """
+**{platform}** ライブラリ内の **{game}** の **起動オプション** を以下に自動設定します:
+```
+{launch_options}
+```
+**起動オプション** が異なる場合、{platform} クライアントは **再起動** されます。
+"""
+
+[general_settings_skip_platform_game_launcher_checkbox]
+src = "Skip {launcher} Launcher"
+loc = "{launcher} ランチャーをスキップ"
+
+[general_settings_skip_platform_game_launcher_checkbox_tooltip]
+src = """
+Make **{platform}** to launch **{game}** process directly, avoiding **{launcher}**.
+
+Requires **{general_settings_configure_platform_launch_options_checkbox}** to be enabled.
+"""
+loc = """
+**{launcher}** を経由せず、**{platform}** から **{game}** プロセスを直接起動します。
+
+**{general_settings_configure_platform_launch_options_checkbox}** を有効にする必要があります。
+"""
+
+[general_settings_game_process_exe_label]
+src = "Custom Game Process Executable Name"
+loc = "カスタムゲームプロセス実行ファイル名"
+
+[general_settings_game_process_exe_reset_button]
+src = "↻ Reset"
+loc = "↻ リセット"
+
+[general_settings_game_process_exe_reset_button_tooltip]
+src = "Reset to **{game_exe_name}**"
+loc = "**{game_exe_name}** にリセットします"
+
+[launcher_settings_game_settings_label]
+src = "Game Settings"
+loc = "ゲーム設定"
+
+[general_settings_configure_game_checkbox]
+src = "Configure Game Settings For {importer}"
+loc = "{importer} 用にゲーム設定を構成"
+
+[general_settings_unlock_fps_checkbox]
+src = "Unlock FPS"
+loc = "FPSアンロック"
+
+[general_settings_unlock_fps_value_label]
+src = "FPS Limit"
+loc = "FPS制限"
+
+[general_settings_window_mode_option_menu_label]
+src = "Window Mode"
+loc = "ウィンドウモード"
+
+[general_settings_mesh_lod_base_fov_label]
+src = "Mesh LOD Base FOV"
+loc = "メッシュLODの基本FoV"
+
+[general_settings_open_file_label]
+src = "Manual Game Config Edit"
+loc = "ゲーム設定を手動編集"
+
+[general_settings_open_file_button]
+src = "📄 Open {file_name}"
+loc = "📄 {file_name} を開く"
+
+[importer_settings_startup_section_label]
+src = "Startup"
+loc = "起動"
+
+[importer_settings_importer_folder_label_dynamic]
+src = "{importer} Folder"
+loc = "{importer} フォルダ"
+
+[importer_settings_importer_folder_entry_tooltip]
+src = """
+Path to folder containing **Mods** folder, **d3dx.ini** and other **{importer}** resources.
+
+* **Absolute**: Set any arbitrary folder, e.g. `C:/Games/{importer}/`.
+* **Relative**: Set any folder **inside** the Launcher folder, i.e. `{importer}/` (default).
+"""
+loc = """
+**Mods** フォルダ、**d3dx.ini**、その他の **{importer}** リソースを含むフォルダへのパス。
+
+* **絶対パス**: 任意のフォルダを設定します。例: `C:/Games/{importer}/`。
+* **相対パス**: ランチャーフォルダの **内側** にある任意のフォルダを設定します。例: `{importer}/` (デフォルト)。
+"""
+
+[importer_settings_inject_mode_label]
+src = "XXMI DLL Injection Mode"
+loc = "XXMI DLL インジェクト方式"
+
+[advanced_settings_custom_launch_inject_mode_option_menu_tooltip]
+src = """
+Defines the way of **XXMI DLL** injection into the game process.
+
+* **{general_settings_inject_mode_direct}:** Use `WriteProcessMemory`, more reliable but requires direct memory access.
+* **{general_settings_inject_mode_hook}:** Use `SetWindowsHookEx`, less reliable, but potentially less prominent for anti-cheats.
+* **{general_settings_inject_mode_skip}:** Skip **XXMI DLL** injection.
+"""
+loc = """
+ゲームプロセスへの **XXMI DLL** のインジェクト方式を定義します。
+
+* **{general_settings_inject_mode_direct}:** `WriteProcessMemory` を使用します。信頼性は高いですが、直接のメモリアクセスが必要です。
+* **{general_settings_inject_mode_hook}:** `SetWindowsHookEx` を使用します。信頼性は低くなりますが、アンチチートから目立ちにくい可能性があります。
+* **{general_settings_inject_mode_skip}:** **XXMI DLL** のインジェクトをスキップします。
+"""
+
+[general_settings_xxmi_delay_label]
+src = "XXMI DLL Initialization Delay"
+loc = "XXMI DLL 初期化遅延"
+
+[importer_settings_ini_protection_label]
+src = "Config Protection"
+loc = "設定保護"
+
+[importer_settings_enforce_rendering_checkbox_tooltip]
+src = """
+* **Enabled:** Ensure **{importer}**-compatible `d3dx.ini` settings.
+* **Disabled:** Required settings will not be applied to `d3dx.ini`.
+"""
+loc = """
+* **有効:** **{importer}** と互換性のある `d3dx.ini` の設定を保証します。
+* **無効:** 必要な設定は `d3dx.ini` に適用されません。
+"""
+
+[importer_settings_usability_section_label]
+src = "Usability"
+loc = "使いやすさ"
+
+[importer_settings_mute_warnings_checkbox_tooltip]
+src = """
+Enable display of mod error warnings and beeping sound.
+
+* **Enabled:** No error warnings or beeps whatsoever. Ignorance is bliss.
+* **Disabled:** Mod error warnings and beeps on **F10** will haunt poor souls.
+"""
+loc = """
+MODのエラー警告とビープ音の表示を設定します。
+
+* **有効:** エラー警告やビープ音は一切鳴りません。まさに知らぬが仏です。
+* **無効:** **F10** を押したときにMODのエラー警告やビープ音が鳴り響きます。
+"""
+
+[importer_settings_clear_unknown_settings_checkbox]
+src = "Clear Unknown Mod Settings"
+loc = "不明なMOD設定を削除"
+
+[importer_settings_clear_unknown_settings_tooltip]
+src = """
+Controls clean-up of mod settings when the mods that defined them are no longer present.
+
+* **Enabled:** Clear unknown settings after **second** reload since mods removal.
+* **Disabled:** Do not clear unknown settings, keep them in **d3dx_user.ini** forever.
+"""
+loc = """
+定義元のMODが存在しなくなった場合に、MOD設定をクリーンアップする方法を設定します。
+
+* **有効:** MODを削除してから **2回目** のリロード後に不明な設定を削除します。
+* **無効:** 不明な設定を削除せず、**d3dx_user.ini** に残し続けます。
+"""
+
+[launcher_settings_input_section_label]
+src = "Input"
+loc = "入力"
+
+[importer_settings_input_checkbox]
+src = "Enable By Default"
+loc = "デフォルトで有効化"
+
+[importer_settings_input_checkbox_tooltip]
+src = """
+Initial input state when game starts.
+
+* **Enabled:** All input is enabled.
+* **Disabled:** Input is disabled according to **{importer_settings_input_disable_mode_label}**.
+"""
+loc = """
+ゲーム起動時の入力状態を設定します。
+
+* **有効:** すべての入力が有効になります。
+* **無効:** **{importer_settings_input_disable_mode_label}** に従って入力が無効になります。
+"""
+
+[importer_settings_input_disable_mode_label]
+src = "Input Disabling Mode"
+loc = "入力無効化モード"
+
+[importer_settings_input_disable_mode_option_menu_tooltip]
+src = """
+Determines which input is disabled when **{launcher_settings_input_section_label}** is **Disabled**.
+
+* **{importer_settings_input_disable_mode_mods}**: Disable input defined by mods.
+* **{importer_settings_input_disable_mode_all}**: Disable all input except the **Toggle Input** hotkey (**CTRL+ALT+SHIFT+END**).
+"""
+loc = """
+**{launcher_settings_input_section_label}** が **無効** の場合に、どの入力を無効にするかを設定します。
+
+* **{importer_settings_input_disable_mode_mods}**: MODによって定義された入力を無効にします。
+* **{importer_settings_input_disable_mode_all}**: **入力切替** ホットキー (**CTRL+ALT+SHIFT+END**) を除くすべての入力を無効にします。
+"""
+
+[launcher_settings_hunting_section_label]
+src = "Shader Hunting"
+loc = "シェーダーハンティング"
+
+[importer_settings_enable_hunting_checkbox_tooltip]
+src = """
+* **Enabled:** Allows to toggle **Hunting Mode** via Numpad [0] hotkey.
+* **Disabled:** **Hunting Mode** is hard disabled.
+"""
+loc = """
+* **有効:** テンキー [0] ホットキーで **ハンティングモード** を切り替えられるようになります。
+* **無効:** **ハンティングモード** は完全に無効化されます。
+"""
+
+[importer_settings_dump_shaders_checkbox_tooltip]
+src = """
+* **Enabled:** Hunting Mode [Copy Hash] key also saves selected shader as file in **ShaderFixes**.
+* **Disabled:** Hunting Mode [Copy Hash] only copies hash of selected shader to clipboard.
+"""
+loc = """
+* **有効:** ハンティングモードの [Copy Hash] キーで、選択したシェーダーを **ShaderFixes** にファイルとして保存します。
+* **無効:** ハンティングモードの [Copy Hash] では、選択したシェーダーのハッシュをクリップボードにコピーするだけです。
+"""
+
+[launcher_settings_logging_section_label]
+src = "Logging"
+loc = "ログ"
+
+[launcher_settings_log_verbosity_label]
+src = "Log File Output Verbosity"
+loc = "ログファイル出力の詳細度"
+
+[importer_settings_log_level_option_menu_tooltip]
+src = """
+Controls how verbose **d3d11_log.txt** file is.
+
+* **{importer_settings_log_level_disabled}**: Log nothing.
+* **{importer_settings_log_level_warning}**: Log warnings and overlay messages.
+* **{importer_settings_log_level_info}**: Also log API usage calls.
+* **{importer_settings_log_level_debug}**: Also log super verbose massive debug output.
+"""
+loc = """
+**d3d11_log.txt** ファイルのログ出力の詳細度を設定します。
+
+* **{importer_settings_log_level_disabled}**: ログを記録しません。
+* **{importer_settings_log_level_warning}**: 警告とオーバーレイメッセージを記録します。
+* **{importer_settings_log_level_info}**: APIの使用状況も記録します。
+* **{importer_settings_log_level_debug}**: 非常に詳細で大量のデバッグ出力も記録します。
+"""
+
+[launcher_settings_launcher_section_label]
+src = "Launcher"
+loc = "ランチャー"
+
+[launcher_settings_theme_label]
+src = "UI Theme"
+loc = "UIテーマ"
+
+[launcher_settings_updates_section_label]
+src = "Updates"
+loc = "アップデート"
+
+[launcher_settings_update_channel_label]
+src = "Update Channel"
+loc = "アップデートチャネル"
+
+[launcher_settings_update_channel_option_menu_tooltip]
+src = """
+* **{launcher_settings_update_channel_auto}**: Detect update installation method automatically.
+* **{launcher_settings_update_channel_msi}**: Use native `.msi` installers to install updates.
+* **{launcher_settings_update_channel_zip}**: Use portable `.zip` archives to install updates.
+"""
+loc = """
+* **{launcher_settings_update_channel_auto}**: アップデートのインストール方法を自動的に検出します。
+* **{launcher_settings_update_channel_msi}**: ネイティブの `.msi` インストーラーを使用してアップデートをインストールします。
+* **{launcher_settings_update_channel_zip}**: ポータブルな `.zip` アーカイブを使用してアップデートをインストールします。
+"""
+
+[advanced_settings_overwrite_ini_checkbox_tooltip]
+src = """
+* **Enabled:** {importer} updates will overwrite existing `d3dx.ini` to ensure its up-to-date state.
+* **Disabled:** {importer} updates will keep existing `d3dx.ini` untouched.
+"""
+loc = """
+* **有効:** {importer} のアップデート時に既存の `d3dx.ini` を上書きし、最新の状態に保ちます。
+* **無効:** {importer} のアップデート時に既存の `d3dx.ini` をそのまま保持します。
+"""
+
+[launcher_settings_connection_section_label]
+src = "Connection"
+loc = "接続"
+
+[launcher_settings_github_token_label]
+src = "GitHub Token"
+loc = "GitHub トークン"
+
+[launcher_settings_proxy_section_label]
+src = "Proxy"
+loc = "プロキシ"
+
+[launcher_settings_proxy_enable_checkbox]
+src = "Use Proxy"
+loc = "プロキシを使用"
+
+[launcher_settings_proxy_type_label]
+src = "Type"
+loc = "タイプ"
+
+[launcher_settings_proxy_type_option_menu_tooltip]
+src = """
+* **{launcher_settings_proxy_type_https}**: Good old proxy protocol. Offers best security.
+* **{launcher_settings_proxy_type_socks5}**: Newer and less secure, but excels at bypassing firewalls.
+"""
+loc = """
+* **{launcher_settings_proxy_type_https}**: 古き良きプロキシプロトコル。最高のセキュリティを提供します。
+* **{launcher_settings_proxy_type_socks5}**: より新しくセキュリティは劣りますが、ファイアウォールのバイパスに優れています。
+"""
+
+[launcher_settings_proxy_host_label]
+src = "Host"
+loc = "ホスト"
+
+[launcher_settings_proxy_port_label]
+src = "Port"
+loc = "ポート"
+
+[launcher_settings_proxy_user_label]
+src = "User"
+loc = "ユーザー"
+
+[launcher_settings_proxy_password_label]
+src = "Password"
+loc = "パスワード"
+
+[settings_tab_loading_label]
+src = "Loading..."
+loc = "読み込み中..."

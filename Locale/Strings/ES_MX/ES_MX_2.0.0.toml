@@ -166,10 +166,6 @@ loc = """
 src = "Shortcut to XXMI Launcher"
 loc = "Acceso directo a XXMI Launcher"
 
-[error_migoto_game_start_failed]
-src = "Failed to start {process_name}!"
-loc = "¡No se ha podido iniciar {process_name}!"
-
 [status_ensuring_game_closed]
 src = "Ensuring the game is closed..."
 loc = "Asegurando que el juego esté cerrado..."
@@ -370,63 +366,9 @@ loc = "¡No se ha especificado la carpeta de instalación del juego!"
 src = "Specified game installation folder is not found!"
 loc = "¡No se ha encontrado la carpeta de instalación del juego especificada!"
 
-[message_text_game_detection_failed]
-src = """
-Automatic detection of the game installation failed!
-
-Please configure it manually with Game Folder option of General Settings.
-"""
-loc = """
-¡Ha fallado la detección automática de la instalación del juego!
-
-Configúrela manualmente con la opción Carpeta del juego de la configuración general.
-"""
-
 [message_button_open_settings]
 src = "Open Settings"
 loc = "Abrir configuración"
-
-[message_text_game_detected_single]
-src = """
-Detected game installation:
-
-{game_folder}
-
-Please check if it is desired Game Folder or change it in General Settings.
-"""
-loc = """
-Instalación del juego detectada:
-
-{game_folder}
-
-Compruebe si es la carpeta del juego deseada o cámbiela en la configuración general.
-"""
-
-[message_text_game_detected_multiple]
-src = """
-Detected game installations:
-
-Select desired Game Folder from the list below or set it in General Settings:
-
-"""
-loc = """
-Instalaciones del juego detectadas:
-
-Seleccione la carpeta del juego deseada de la lista siguiente o configúrela en la configuración general:
-
-"""
-
-[message_text_game_folder_not_configured]
-src = """
-Game installation folder is not configured!
-
-Please set it with Game Folder option of General Settings.
-"""
-loc = """
-¡La carpeta de instalación del juego no está configurada!
-
-Configúrela con la opción Carpeta del juego de la configuración general.
-"""
 
 [status_autodetecting_game]
 src = "Autodetecting game installation folder..."
@@ -473,10 +415,6 @@ Error en la instalación de {importer}:
 [status_updating_ini]
 src = "Updating d3dx.ini..."
 loc = "Actualizando d3dx.ini..."
-
-[error_ini_missing_setting]
-src = "Config is missing {setting_name} setting!"
-loc = "¡Falta la configuración {setting_name} en la configuración!"
 
 [error_ini_missing_value]
 src = "Config is missing value for section `{section}` option `{option}` key `{key}`"
@@ -679,24 +617,6 @@ loc = "Actualizando {file_name}..."
 [error_local_storage_init_failed]
 src = "Failed to initialize LocalStorage: {error_text}"
 loc = "Error al inicializar LocalStorage: {error_text}"
-
-[error_zzmi_game_config_failed]
-src = """
-Failed to configure in-game settings for ZZMI!
-Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:
-* Graphics > `Character Quality` must be `High`.
-* Graphics > `High-Precision Character Animation` must be `Disabled`.
-
-{error_text}
-"""
-loc = """
-¡Error al configurar los ajustes del juego para ZZMI!
-Desactive \"Configurar ajustes del juego\" en los ajustes generales del lanzador y compruebe los ajustes del juego:
-* Gráficos > \"Calidad de los personajes\" debe estar en \"Alta\".
-* Gráficos > \"Animación de personajes de alta precisión\" debe estar \"Desactivada\".
-
-{error_text}
-"""
 
 [error_zzmi_unknown_settings_format]
 src = "Unknown system settings entry format: {setting}!"
@@ -917,22 +837,6 @@ loc = "No hay ninguna aplicación asociada al archivo"
 [dll_injector_shell_error_incomplete_app_association]
 src = "File association is incomplete"
 loc = "La asociación de archivos está incompleta"
-
-[dll_injector_unknown_shell_error_code]
-src = "Unknown ShellExecute error code {error_code}"
-loc = "Código de error ShellExecute desconocido {error_code}"
-
-[error_dll_injector_process_start_failed]
-src = "Failed to start {process_name}: {error_text}!"
-loc = "Error al iniciar {process_name}: {error_text}!"
-
-[error_dll_injector_unknown_start_method]
-src = "Unknown process start method `{start_method}`!"
-loc = "Método de inicio de proceso desconocido `{start_method}`!"
-
-[error_dll_injector_injection_failed]
-src = "Failed to inject {dll_paths}!"
-loc = "¡Error al inyectar {dll_paths}!"
 
 [error_dll_injector_unhook_failed]
 src = "Invalid injector usage: {dll_path} was not unhooked!"
@@ -1164,10 +1068,6 @@ loc = "Conectando {library} a {process}... "
 src = "Verifying {library} load into {process}..."
 loc = "Verificando carga de {library} en {process}..."
 
-[bottom_bar_injecting]
-src = "Injecting {library} to {process}..."
-loc = "Inyectando {library} en {process}..."
-
 [bottom_bar_launching_game]
 src = "Launching game..."
 loc = "Iniciando juego..."
@@ -1256,14 +1156,6 @@ src = """
 loc = """
 # Actualiza {package_name} a la versión v{new_package_version} para:
 {latest_release_notes}
-"""
-
-[package_release_notes_not_installed]
-src = """
-Press **Install** button to setup the package.
-"""
-loc = """
-Pulsa el botón **Instalar** para configurar el paquete.
 """
 
 [package_description_launcher]
@@ -1462,20 +1354,6 @@ loc = "Recargando GUI..."
 src = "Overwrite d3dx.ini"
 loc = "Sobrescribir d3dx.ini"
 
-[advanced_settings_overwrite_ini_checkbox_tooltip]
-src = """
-Enabled: {importer} updates will overwrite existing d3dx.ini to ensure its up-to-date state.
-Disabled: {importer} updates will keep existing d3dx.ini untouched.
-"""
-loc = """
-Habilitado: las actualizaciones de {importer} sobrescribirán el archivo d3dx.ini existente para garantizar que esté actualizado.
-Desactivado: las actualizaciones de {importer} mantendrán el archivo d3dx.ini existente sin cambios.
-"""
-
-[advanced_settings_security_label]
-src = "Security:"
-loc = "Seguridad:"
-
 [advanced_settings_unsafe_mode_checkbox]
 src = "Unsafe Mode"
 loc = "Modo no seguro"
@@ -1492,20 +1370,6 @@ Deshabilitado: no permite dlls 3dmigoto de terceros.
 Nota: si el archivo d3d11.dll de terceros no admite la ejecución desde directorios anidados, no se cargará.
 """
 
-[advanced_settings_run_pre_launch_checkbox]
-src = "Run Pre-Launch:"
-loc = "Ejecutar antes del inicio:"
-
-[advanced_settings_option_checkbox_tooltip]
-src = """
-Enabled: Option will have stated effect.
-Disabled: Option will have no effect.
-"""
-loc = """
-Habilitado: la opción tendrá el efecto indicado.
-Desactivada: la opción no tendrá ningún efecto.
-"""
-
 [advanced_settings_run_pre_launch_tooltip]
 src = """
 Windows console command to be executed before game exe launch.
@@ -1516,10 +1380,6 @@ Comando de la consola de Windows que se ejecutará antes del inicio del ejecutab
 Nota: Si hay que hacer algo antes de iniciar el juego, hágalo aquí.
 """
 
-[advanced_settings_wait_checkbox]
-src = "Wait"
-loc = "Esperar"
-
 [advanced_settings_run_pre_launch_wait_checkbox_tooltip]
 src = """
 Enabled: Wait for (blocking) command to finish its execution before launching the game exe.
@@ -1527,10 +1387,6 @@ Enabled: Wait for (blocking) command to finish its execution before launching th
 loc = """
 Habilitado: Espera a que el comando (bloqueante) termine su ejecución antes de iniciar el ejecutable del juego.
 """
-
-[advanced_settings_custom_launch_checkbox]
-src = "Custom Launch:"
-loc = "Inicio personalizado:"
 
 [advanced_settings_custom_launch_entry_tooltip]
 src = """
@@ -1550,24 +1406,6 @@ Ejemplo (equivalente al comando utilizado internamente por el lanzador para inic
 `start /d \"C:\\Games\\XXMI Launcher\\Resources\\Packages\\GI-FPS-Unlocker\" unlockfps_nc.exe`
 """
 
-[advanced_settings_custom_launch_inject_mode_option_menu_tooltip]
-src = """
-Defines the way of 3dmigoto injection into the game process started via Custom Launch.
-* Inject: Use WriteProcessMemory, more reliable but requires direct memory access.
-* Hook: Use SetWindowsHookEx, less reliable, but potentially less prominent for anti-cheats.
-* Bypass: Skip 3dmigoto injection and process only Inject Libraries field.
-"""
-loc = """
-Define la forma de inyección de 3dmigoto en el proceso del juego iniciado a través de Inicio personalizado.
-* Inyectar: utiliza WriteProcessMemory, más fiable pero requiere acceso directo a la memoria.
-* Enganchar: utiliza SetWindowsHookEx, menos fiable, pero potencialmente menos visible para los anticheats.
-* Omitir: omite la inyección de 3dmigoto y procesa solo el campo Inyectar bibliotecas.
-"""
-
-[advanced_settings_run_post_load_checkbox]
-src = "Run Post-Load:"
-loc = "Ejecutar después de la carga:"
-
 [advanced_settings_run_post_load_checkbox_tooltip]
 src = """
 Windows console command to be executed after hooking d3d11.dll to launched game exe.
@@ -1586,10 +1424,6 @@ loc = """
 Habilitado: Espera a que el comando (bloqueante) termine su ejecución antes de considerar completado el inicio del juego.
 """
 
-[advanced_settings_inject_libraries_checkbox]
-src = "Inject Libraries:"
-loc = "Inyectar bibliotecas:"
-
 [advanced_settings_inject_libraries_tooltip]
 src = """
 List of additional DLL paths to inject into the game process. 1 path per line.
@@ -1604,22 +1438,6 @@ Ejemplo (inyectar dll ReShade):
 `C:\\Games\\ReShade\\ReShade64.dll`
 """
 
-[launcher_settings_language_label]
-src = "Language:"
-loc = "Idioma:"
-
-[general_settings_engine_settings_label]
-src = "Engine Settings:"
-loc = "Config del motor:"
-
-[general_settings_game_folder_label]
-src = "Game Folder:"
-loc = "Carpeta del juego:"
-
-[general_settings_game_folder_error_label]
-src = "Failed to detect Game Folder!"
-loc = "¡No se ha podido detectar la carpeta del juego!"
-
 [settings_browse_path_button]
 src = "Browse..."
 loc = "Examinar..."
@@ -1627,10 +1445,6 @@ loc = "Examinar..."
 [general_settings_detect_game_folder_button_tooltip]
 src = "Try to automatically detect existing installation folders."
 loc = "Intentar detectar automáticamente las carpetas de instalación existentes."
-
-[general_settings_launch_options_label]
-src = "Launch Options:"
-loc = "Opciones de inicio:"
 
 [general_settings_launch_options_entry_tooltip_wwmi]
 src = """
@@ -1674,26 +1488,6 @@ Abre la página web de documentación de los argumentos de la línea de comandos
 Nota: El motor del juego está personalizado por los desarrolladores y es posible que algunos argumentos no funcionen.
 """
 
-[general_settings_start_method_label]
-src = "Start Method:"
-loc = "Método de inicio:"
-
-[general_settings_start_method_option_menu_tooltip]
-src = """
-**Native**: Create the game process directly. Usually it's the most reliable way.
-**Shell**: Start the game process via system console. Worth to try if you have some issues with Native.
-**Manual**: Skip launching the game on **Start** button press. Wait for user to launch it manually ({timeout}s timeout).
-"""
-loc = """
-**Nativo**: Crea el proceso del juego directamente. Suele ser la forma más fiable.
-**Shell**: Inicia el proceso del juego a través de la consola del sistema. Vale la pena probarlo si tienes algún problema con Nativo.
-**Manual**: Omite el inicio del juego al pulsar el botón **Inicio**. Espera a que el usuario lo inicie manualmente (tiempo de espera {timeout}s).
-"""
-
-[general_settings_xxmi_delay_label]
-src = "XXMI Delay:"
-loc = "Retardo XXMI:"
-
 [general_settings_xxmi_delay_entry_tooltip_base]
 src = """
 Delay in milliseconds for how long injected XXMI DLL (3dmigoto) must wait before initialization.
@@ -1731,18 +1525,6 @@ If game crashes with no mods, try to increase it. Start with steps of 50 and inc
 loc = """
 Si el juego se bloquea sin mods, intenta aumentarlo. Empieza con pasos de 50 y ve aumentándolos a medida que avanzas.
 """
-
-[general_settings_process_priority_label]
-src = "Process Priority:"
-loc = "Prioridad:"
-
-[general_settings_auto_config_label]
-src = "Auto Config:"
-loc = "Config del juego:"
-
-[general_settings_configure_game_checkbox]
-src = "Configure Game Settings"
-loc = "Configurar los ajustes del juego"
 
 [general_settings_configure_game_tooltip_gimi]
 src = """
@@ -1826,25 +1608,13 @@ La mayoría de los mods no admiten este efecto, por lo que las texturas suelen r
 **Deshabilitado**: Activa el efecto. Selecciona esta opción si utilizas la herramienta \"Injured Effect Remover\".
 """
 
-[general_settings_open_file_button]
-src = "🔍 Open {file_name}"
-loc = "🔍 Abrir {file_name}"
-
 [error_general_settings_file_not_found]
 src = "File does not exist: **{file_name}**!"
 loc = "El archivo no existe: **{file_name}**!"
 
-[general_settings_tweaks_label]
-src = "Tweaks:"
-loc = "Ajustes:"
-
 [general_settings_unlock_fps_checkbox_force]
 src = "Force 120 FPS"
 loc = "Forzar 120 FPS"
-
-[general_settings_unlock_fps_checkbox]
-src = "Unlock FPS:"
-loc = "Desbloquear FPS:"
 
 [general_settings_unlock_fps_checkbox_tooltip_wwmi]
 src = """
@@ -1912,26 +1682,6 @@ Esta opción permite establecer un límite de FPS personalizado.
 src = "Game window mode when started with FPS Unlocker."
 loc = "Modo de ventana del juego cuando se inicia con FPS Unlocker."
 
-[general_settings_apply_tweaks_checkbox]
-src = "Apply Performance Tweaks"
-loc = "Aplicar ajustes de rendimiento"
-
-[general_settings_apply_tweaks_checkbox_tooltip]
-src = """
-**Enabled**: Add list of performance tweaks to `[SystemSettings]` section of `Engine.ini` on game start.
-**Disabled**: Do not add tweaks to `Engine.ini`. Already added ones will have to be removed manually.
-
-List of tweaks:
-{tweaks}
-"""
-loc = """
-**Habilitado**: Añade una lista de ajustes de rendimiento a la sección `[SystemSettings]` de `Engine.ini` al iniciar el juego.
-**Desactivado**: No añadir ajustes a `Engine.ini`. Los que ya se hayan añadido deberán eliminarse manualmente.
-
-Lista de ajustes:
-{tweaks}
-"""
-
 [general_settings_enable_hdr_checkbox]
 src = "Enable HDR"
 loc = "Habilitar HDR"
@@ -1948,149 +1698,17 @@ loc = """
 **Deshabilitado**: desactiva HDR. No se requiere ninguna acción adicional, el juego elimina automáticamente el registro HDR al iniciarse.
 """
 
-[importer_settings_shader_hunting_label]
-src = "Shader Hunting:"
-loc = "Búsqueda de sombreadores:"
-
 [importer_settings_enable_hunting_checkbox]
 src = "Enable Hunting"
 loc = "Habilitar búsqueda"
-
-[importer_settings_enable_hunting_checkbox_tooltip]
-src = """
-Enabled: Allows to toggle Hunting Mode via Numpad [0] hotkey.
-* [d3dx.ini]: hunting = 2
-Disabled: Hunting Mode is hard disabled.
-* [d3dx.ini]: hunting = 0
-"""
-loc = """
-Habilitado: permite activar o desactivar el modo de búsqueda mediante la tecla de acceso rápido [0] del teclado numérico.
-* [d3dx.ini]: hunting = 2
-Desactivado: el modo de búsqueda está desactivado.
-* [d3dx.ini]: hunting = 0
-"""
 
 [importer_settings_dump_shaders_checkbox]
 src = "Dump Shaders"
 loc = "Volcar sombreadores"
 
-[importer_settings_dump_shaders_checkbox_tooltip]
-src = """
-Enabled: Hunting Mode [Copy Hash] key also saves selected shader as file in ShaderFixes.
-* [d3dx.ini]: marking_actions = clipboard hlsl asm regex
-Disabled: Hunting Mode [Copy Hash] only copies hash of selected shader to clipboard.
-* [d3dx.ini]: marking_actions = clipboard
-"""
-loc = """
-Habilitado: La tecla del modo de búsqueda [Copiar hash] también guarda el sombreador seleccionado como archivo en ShaderFixes.
-* [d3dx.ini]: marking_actions = clipboard hlsl asm regex
-Deshabilitado: El modo de búsqueda [Copiar hash] solo copia el hash del sombreador seleccionado al portapapeles.
-* [d3dx.ini]: marking_actions = clipboard
-"""
-
-[importer_settings_error_handling_label]
-src = "Error Handling:"
-loc = "Gestión de errores:"
-
 [importer_settings_mute_warnings_checkbox]
 src = "Mute Warnings"
 loc = "Silenciar advertencias"
-
-[importer_settings_mute_warnings_checkbox_tooltip]
-src = """
-Enabled: No error warnings or beeps whatsoever. Ignorance is bliss.
-* [d3dx.ini]: show_warnings = 0
-Disabled: Ini parser error warnings and beeps on F10 will haunt poor souls.
-* [d3dx.ini]: show_warnings = 1
-"""
-loc = """
-Habilitado: No se muestran advertencias de error ni se emiten pitidos. La ignorancia es felicidad.
-* [d3dx.ini]: show_warnings = 0
-Desactivado: las advertencias de error del analizador Ini y los pitidos en F10 atormentarán a las pobres almas.
-* [d3dx.ini]: show_warnings = 1
-"""
-
-[importer_settings_calls_logging_checkbox]
-src = "Calls Logging"
-loc = "Registro de llamadas"
-
-[importer_settings_calls_logging_checkbox_tooltip]
-src = """
-Enabled: Log API usage.
-* [d3dx.ini]: calls = 1
-Disabled: Do not log calls. Maximum performance.
-* [d3dx.ini]: calls = 0
-"""
-loc = """
-Habilitado: registra el uso de la API.
-* [d3dx.ini]: calls = 1
-Deshabilitado: no registra las llamadas. Rendimiento máximo.
-* [d3dx.ini]: calls = 0
-"""
-
-[importer_settings_debug_logging_checkbox]
-src = "Debug Logging"
-loc = "Registro de depuración"
-
-[importer_settings_debug_logging_checkbox_tooltip]
-src = """
-Enabled: Super verbose debug logging.
-* [d3dx.ini]: debug = 1
-Disabled: No debug logging. Maximum performance.
-* [d3dx.ini]: debug = 0
-"""
-loc = """
-Habilitado: Registro de depuración muy detallado.
-* [d3dx.ini]: debug = 1
-Deshabilitado: Sin registro de depuración. Rendimiento máximo.
-* [d3dx.ini]: debug = 0
-"""
-
-[importer_settings_importer_folder_label]
-src = "Importer Folder:"
-loc = "Carpeta del importador:"
-
-[importer_settings_importer_folder_label_dynamic]
-src = "{importer} Folder:"
-loc = "Carpeta {importer}:"
-
-[importer_settings_importer_folder_entry_tooltip]
-src = """
-Path to folder containing `Mods` folder, `d3dx.ini` and other {importer} resources.
-**Absolute**: Set any arbitrary folder, i.e. `C:/Games/{importer}/`.
-**Relative**: Set any folder **inside** the Launcher folder, i.e. `{importer}/` (default).
-"""
-loc = """
-Ruta a la carpeta que contiene la carpeta \"Mods\", \"d3dx.ini\" y otros recursos {importer}.
-**Absoluta**: establece cualquier carpeta arbitraria, por ejemplo, \"C:/Games/{importer}/\".
-**Relativo**: Establece cualquier carpeta **dentro** de la carpeta del lanzador, por ejemplo, `{importer}/` (predeterminado).
-"""
-
-[importer_settings_ini_protection_label]
-src = "Ini Protection:"
-loc = "Protección Ini:"
-
-[importer_settings_enforce_rendering_checkbox]
-src = "Enforce Rendering Settings"
-loc = "Aplicar configuración de renderizado"
-
-[importer_settings_enforce_rendering_checkbox_tooltip]
-src = """
-Enabled: Ensure {importer}-compatible [Rendering] section settings.
-* [d3dx.ini]: texture_hash = {texture_hash}
-* [d3dx.ini]: track_texture_updates = {track_texture_updates}
-Disabled: Settings above will not be forced into d3dx.ini.
-"""
-loc = """
-Habilitado: Asegura la compatibilidad de {importer} con la configuración de la sección [Renderizado].
-* [d3dx.ini]: texture_hash = {texture_hash}
-* [d3dx.ini]: track_texture_updates = {track_texture_updates}
-Desactivado: la configuración anterior no se aplicará en d3dx.ini.
-"""
-
-[launcher_settings_start_behavior_label]
-src = "Start Behavior:"
-loc = "Cierre automático:"
 
 [launcher_settings_auto_close_checkbox]
 src = "Close Launcher After Game Start"
@@ -2106,26 +1724,6 @@ Habilitado: El lanzador se cerrará una vez que el juego haya comenzado y se hay
 Deshabilitado: El lanzador seguirá ejecutándose.
 """
 
-[launcher_settings_timeout_label]
-src = "Timeout:"
-loc = "Tiempo de espera:"
-
-[launcher_settings_timeout_entry_tooltip]
-src = """
-Controls how long launcher should wait for the game to show its window after launch.
-Game process will be considered as crashed once timeout is met.
-Default value is **30**.
-"""
-loc = """
-Controla cuánto tiempo debe esperar el lanzador a que el juego muestre su ventana después del inicio.
-El proceso del juego se considerará bloqueado una vez que se alcance el tiempo de espera.
-El valor predeterminado es **30**.
-"""
-
-[launcher_settings_update_policy_label]
-src = "Update Policy:"
-loc = "Actualizaciones:"
-
 [launcher_settings_auto_update_checkbox]
 src = "Auto Update"
 loc = "Actualización automática"
@@ -2139,26 +1737,6 @@ loc = """
 Habilitado: las actualizaciones del lanzador y del {importer} se descargarán e instalarán automáticamente.
 Deshabilitado: utilice el botón especial [▲] situado junto al botón [Iniciar] para descargar e instalar las actualizaciones manualmente.
 """
-
-[launcher_settings_update_channel_label]
-src = "Channel:"
-loc = "Canal:"
-
-[launcher_settings_update_channel_option_menu_tooltip]
-src = """
-**Auto**: Detect update installation method automatically.
-**MSI**: Use native `.msi` installers to install updates.
-**ZIP**: Use portable `.zip` archives to install updates.
-"""
-loc = """
-**Automático**: detecta automáticamente el método de instalación de actualizaciones.
-**MSI**: utiliza instaladores nativos `.msi` para instalar actualizaciones.
-**ZIP**: utiliza archivos portátiles `.zip` para instalar actualizaciones.
-"""
-
-[launcher_settings_theme_label]
-src = "UI Theme:"
-loc = "Tema de la UI:"
 
 [launcher_settings_theme_option_menu_tooltip]
 src = """
@@ -2191,14 +1769,6 @@ loc = """
 Habilitado: El lanzador rastreará los cambios en `custom-tkinter-theme.json` y los aplicará sobre la marcha.
 Deshabilitado: No se rastrearán los cambios en el tema.
 """
-
-[launcher_settings_connection_label]
-src = "Connection:"
-loc = "Conexión:"
-
-[launcher_settings_github_token_label]
-src = "GitHub Token:"
-loc = "Token de GitHub:"
 
 [launcher_settings_github_token_entry_tooltip]
 src = """
@@ -2242,10 +1812,6 @@ loc = """
 **Desactivado**: permite conexiones inseguras vulnerables a ataques de intermediarios.
 """
 
-[launcher_settings_proxy_enable_checkbox]
-src = "Use Proxy:"
-loc = "Usar proxy:"
-
 [launcher_settings_proxy_enable_checkbox_tooltip]
 src = """
 Controls how launcher connects to GitHub to download packages.
@@ -2256,20 +1822,6 @@ loc = """
 Controla cómo el lanzador se conecta a GitHub para descargar paquetes.
 **Habilitado**: utiliza el servidor proxy especificado para acceder a Internet.
 **Deshabilitado**: utiliza la configuración predeterminada de conexión a Internet del sistema.
-"""
-
-[launcher_settings_proxy_type_label]
-src = "Type:"
-loc = "Tipo:"
-
-[launcher_settings_proxy_type_option_menu_tooltip]
-src = """
-**HTTPS**: Good old proxy protocol. Offers best security.
-**SOCKS5**: Newer and less secure, but excels at bypassing firewalls.
-"""
-loc = """
-**HTTPS**: El buen protocolo proxy de siempre. Ofrece la mejor seguridad.
-**SOCKS5**: Más nuevo y menos seguro, pero excelente para eludir cortafuegos.
 """
 
 [launcher_settings_proxy_dns_checkbox]
@@ -2286,17 +1838,9 @@ loc = """
 **Deshabilitado**: las solicitudes DNS se enrutarán a través de tu ISP.
 """
 
-[launcher_settings_proxy_host_label]
-src = "Host:"
-loc = "Host:"
-
 [launcher_settings_proxy_host_entry_tooltip]
 src = "Proxy IP address (i.e. `123.12.1.231`) or domain name (i.e. `proxyprovider.com`)."
 loc = "Dirección IP del proxy (por ejemplo, `123.12.1.231`) o nombre de dominio (por ejemplo, `proxyprovider.com`)."
-
-[launcher_settings_proxy_port_label]
-src = "Port:"
-loc = "Puerto:"
 
 [launcher_settings_proxy_port_entry_tooltip]
 src = "Proxy port (i.e. `1080`)."
@@ -2316,17 +1860,9 @@ loc = """
 **Deshabilitado**: No utiliza ninguna credencial al acceder a un servidor proxy.
 """
 
-[launcher_settings_proxy_user_label]
-src = "User:"
-loc = "Usuario:"
-
 [launcher_settings_proxy_user_entry_tooltip]
 src = "User name provided by your proxy service."
 loc = "Nombre de usuario proporcionado por su servicio proxy."
-
-[launcher_settings_proxy_password_label]
-src = "Password:"
-loc = "Contraseña:"
 
 [launcher_settings_proxy_password_entry_tooltip]
 src = "Password provided by your proxy service."
@@ -2339,10 +1875,6 @@ loc = "General"
 [settings_tab_launcher]
 src = "Launcher"
 loc = "Iniciador"
-
-[settings_tab_importer]
-src = "MI"
-loc = "MI"
 
 [settings_tab_advanced]
 src = "Advanced"

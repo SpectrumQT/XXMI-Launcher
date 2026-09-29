@@ -264,10 +264,6 @@ loc = "Native"
 src = "Shell"
 loc = "Shell"
 
-[general_settings_start_method_manual]
-src = "Manual"
-loc = "Manual"
-
 [general_settings_process_priority_low]
 src = "Low"
 loc = "Low"
@@ -291,14 +287,6 @@ loc = "High"
 [general_settings_process_priority_realtime]
 src = "Realtime"
 loc = "Realtime"
-
-[general_settings_process_priority_option_menu_tooltip]
-src = """
-Set process priority for the game exe.
-"""
-loc = """
-Establece la prioridad del proceso para el ejecutable del juego.
-"""
 
 [general_settings_open_file_button_tooltip]
 src = "Open **{file_name}** in default text editor file for manual tweaking."

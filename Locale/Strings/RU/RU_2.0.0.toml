@@ -170,10 +170,6 @@ loc = """
 src = "Shortcut to XXMI Launcher"
 loc = "Ярлык для запуска XXMI"
 
-[error_migoto_game_start_failed]
-src = "Failed to start {process_name}!"
-loc = "Не удалось запустить {process_name}!"
-
 [status_ensuring_game_closed]
 src = "Ensuring the game is closed..."
 loc = "Проверка, что игра закрыта..."
@@ -382,63 +378,9 @@ loc = "Папка установки игры не указана!"
 src = "Specified game installation folder is not found!"
 loc = "Указанная папка установки игры не найдена!"
 
-[message_text_game_detection_failed]
-src = """
-Automatic detection of the game installation failed!
-
-Please configure it manually with Game Folder option of General Settings.
-"""
-loc = """
-Не удалось найти папку установки игры автоматически!
-
-Пожалуйста, укажите путь вручную в опции 'Папка игры' в Общих настройках.
-"""
-
 [message_button_open_settings]
 src = "Open Settings"
 loc = "Открыть настройки"
-
-[message_text_game_detected_single]
-src = """
-Detected game installation:
-
-{game_folder}
-
-Please check if it is desired Game Folder or change it in General Settings.
-"""
-loc = """
-Обнаружена папка с установленной игрой:
-
-{game_folder}
-
-Подтвердите верность найденной папки игры или измените её в Общих настройках.
-"""
-
-[message_text_game_detected_multiple]
-src = """
-Detected game installations:
-
-Select desired Game Folder from the list below or set it in General Settings:
-
-"""
-loc = """
-Обнаружено несколько папок с установленной игрой:
-
-Выберите нужную папку из списка ниже или укажите вручную в Общих настройках:
-
-"""
-
-[message_text_game_folder_not_configured]
-src = """
-Game installation folder is not configured!
-
-Please set it with Game Folder option of General Settings.
-"""
-loc = """
-Папка установки игры не настроена!
-
-Пожалуйста, укажите путь к игре в опции 'Папка игры' в Общих настройках.
-"""
 
 [status_autodetecting_game]
 src = "Autodetecting game installation folder..."
@@ -485,10 +427,6 @@ loc = """
 [status_updating_ini]
 src = "Updating d3dx.ini..."
 loc = "Обновление d3dx.ini..."
-
-[error_ini_missing_setting]
-src = "Config is missing {setting_name} setting!"
-loc = "В ini-файле отсутствует параметр {setting_name}!"
 
 [error_ini_missing_value]
 src = "Config is missing value for section `{section}` option `{option}` key `{key}`"
@@ -707,24 +645,6 @@ loc = "Обновление {file_name}..."
 [error_local_storage_init_failed]
 src = "Failed to initialize LocalStorage: {error_text}"
 loc = "Не удалось инициализировать LocalStorage: {error_text}"
-
-[error_zzmi_game_config_failed]
-src = """
-Failed to configure in-game settings for ZZMI!
-Please disable `Configure Game Settings` in launcher's General Settings and check in-game settings:
-* Graphics > `Character Quality` must be `High`.
-* Graphics > `High-Precision Character Animation` must be `Disabled`.
-
-{error_text}
-"""
-loc = """
-Не удалось изменить игровые настройки для ZZMI!
-Пожалуйста, отключите `Настроить игру` в Общих настройках лаунчера и измените их в самой игре:
-* Графика > `Качество графики персонажей` должно быть `Выс.`.
-* Графика > `Деформация` должна быть `Выкл.`.
-
-{error_text}
-"""
 
 [error_zzmi_unknown_settings_format]
 src = "Unknown system settings entry format: {setting}!"
@@ -945,22 +865,6 @@ loc = "Нет приложения, связанного с этим файло�
 [dll_injector_shell_error_incomplete_app_association]
 src = "File association is incomplete"
 loc = "Связь с приложением неполная"
-
-[dll_injector_unknown_shell_error_code]
-src = "Unknown ShellExecute error code {error_code}"
-loc = "Неизвестный код ошибки ShellExecute: {error_code}"
-
-[error_dll_injector_process_start_failed]
-src = "Failed to start {process_name}: {error_text}!"
-loc = "Не удалось запустить {process_name}: {error_text}!"
-
-[error_dll_injector_unknown_start_method]
-src = "Unknown process start method `{start_method}`!"
-loc = "Неизвестный метод запуска процесса `{start_method}`!"
-
-[error_dll_injector_injection_failed]
-src = "Failed to inject {dll_paths}!"
-loc = "Не удалось внедрить {dll_paths}!"
 
 [error_dll_injector_unhook_failed]
 src = "Invalid injector usage: {dll_path} was not unhooked!"
@@ -1204,10 +1108,6 @@ loc = "Установка хука для {library} к {process}..."
 src = "Verifying {library} load into {process}..."
 loc = "Проверка загрузки {library} в {process}..."
 
-[bottom_bar_injecting]
-src = "Injecting {library} to {process}..."
-loc = "Внедрение {library} в {process}..."
-
 [bottom_bar_launching_game]
 src = "Launching game..."
 loc = "Запуск игры..."
@@ -1296,14 +1196,6 @@ src = """
 loc = """
 # Обновите {package_name} до v{new_package_version}, чтобы получить:
 {latest_release_notes}
-"""
-
-[package_release_notes_not_installed]
-src = """
-Press **Install** button to setup the package.
-"""
-loc = """
-Нажмите кнопку **Установить**, чтобы установить пакет.
 """
 
 [package_description_launcher]
@@ -1502,20 +1394,6 @@ loc = "Перезагрузка интерфейса..."
 src = "Overwrite d3dx.ini"
 loc = "Перезаписывать d3dx.ini"
 
-[advanced_settings_overwrite_ini_checkbox_tooltip]
-src = """
-Enabled: {importer} updates will overwrite existing d3dx.ini to ensure its up-to-date state.
-Disabled: {importer} updates will keep existing d3dx.ini untouched.
-"""
-loc = """
-Включено: обновления {importer} будут перезаписывать существующий d3dx.ini для гарантии его актуальности.
-Отключено: обновления {importer} не будут затрагивать существующий d3dx.ini.
-"""
-
-[advanced_settings_security_label]
-src = "Security:"
-loc = "Безопасность:"
-
 [advanced_settings_unsafe_mode_checkbox]
 src = "Unsafe Mode"
 loc = "Небезопасный режим"
@@ -1532,20 +1410,6 @@ loc = """
 Примечание: сторонняя d3d11.dll должна поддерживать запуск из вложенных папок.
 """
 
-[advanced_settings_run_pre_launch_checkbox]
-src = "Run Pre-Launch:"
-loc = "До запуска:"
-
-[advanced_settings_option_checkbox_tooltip]
-src = """
-Enabled: Option will have stated effect.
-Disabled: Option will have no effect.
-"""
-loc = """
-Включено: опция будет активна.
-Отключено: опция не будет иметь эффекта.
-"""
-
 [advanced_settings_run_pre_launch_tooltip]
 src = """
 Windows console command to be executed before game exe launch.
@@ -1556,10 +1420,6 @@ loc = """
 Примечание: подходит для случаев, когда нужно что-то сделать перед стартом игры.
 """
 
-[advanced_settings_wait_checkbox]
-src = "Wait"
-loc = "Ждать"
-
 [advanced_settings_run_pre_launch_wait_checkbox_tooltip]
 src = """
 Enabled: Wait for (blocking) command to finish its execution before launching the game exe.
@@ -1567,10 +1427,6 @@ Enabled: Wait for (blocking) command to finish its execution before launching th
 loc = """
 Включено: ждать завершения (блокирующего) процесса комманды перед запуском игры.
 """
-
-[advanced_settings_custom_launch_checkbox]
-src = "Custom Launch:"
-loc = "Свой запуск:"
 
 [advanced_settings_custom_launch_entry_tooltip]
 src = """
@@ -1590,24 +1446,6 @@ loc = """
 `start /d \"C:\\Games\\XXMI Launcher\\Resources\\Packages\\GI-FPS-Unlocker\" unlockfps_nc.exe`
 """
 
-[advanced_settings_custom_launch_inject_mode_option_menu_tooltip]
-src = """
-Defines the way of 3dmigoto injection into the game process started via Custom Launch.
-* Inject: Use WriteProcessMemory, more reliable but requires direct memory access.
-* Hook: Use SetWindowsHookEx, less reliable, but potentially less prominent for anti-cheats.
-* Bypass: Skip 3dmigoto injection and process only Inject Libraries field.
-"""
-loc = """
-Определяет способ внедрения 3dmigoto в процесс игры, запущенный через Свой запуск.
-* Inject: Использует WriteProcessMemory, более надёжный, требует доступ к памяти.
-* Hook: Использует SetWindowsHookEx, менее надёжный, но потенциально безопаснее для античитов.
-* Bypass: Пропустить внедрение 3dmigoto и использовать только список Inject Libraries.
-"""
-
-[advanced_settings_run_post_load_checkbox]
-src = "Run Post-Load:"
-loc = "После запуска:"
-
 [advanced_settings_run_post_load_checkbox_tooltip]
 src = """
 Windows console command to be executed after hooking d3d11.dll to launched game exe.
@@ -1626,10 +1464,6 @@ loc = """
 Включено: ждать завершения (блокирующей) команды перед завершением запуска игры.
 """
 
-[advanced_settings_inject_libraries_checkbox]
-src = "Inject Libraries:"
-loc = "Внедрить DLL:"
-
 [advanced_settings_inject_libraries_tooltip]
 src = """
 List of additional DLL paths to inject into the game process. 1 path per line.
@@ -1644,22 +1478,6 @@ loc = """
 `C:\\Games\\ReShade\\ReShade64.dll`
 """
 
-[launcher_settings_language_label]
-src = "Language:"
-loc = "Язык:"
-
-[general_settings_engine_settings_label]
-src = "Engine Settings:"
-loc = "Конфигурация:"
-
-[general_settings_game_folder_label]
-src = "Game Folder:"
-loc = "Папка игры:"
-
-[general_settings_game_folder_error_label]
-src = "Failed to detect Game Folder!"
-loc = "Не удалось найти папку игры!"
-
 [settings_browse_path_button]
 src = "Browse..."
 loc = "Обзор..."
@@ -1667,10 +1485,6 @@ loc = "Обзор..."
 [general_settings_detect_game_folder_button_tooltip]
 src = "Try to automatically detect existing installation folders."
 loc = "Попробовать автоматически найти существующие папки установки игры."
-
-[general_settings_launch_options_label]
-src = "Launch Options:"
-loc = "Аргументы:"
 
 [general_settings_launch_options_entry_tooltip_wwmi]
 src = """
@@ -1714,10 +1528,6 @@ loc = """
 Примечание: движок кастомизирован разработчиками, и некоторые аргументы могут не работать.
 """
 
-[general_settings_start_method_label]
-src = "Start Method:"
-loc = "Метод запуска:"
-
 [general_settings_start_method_native]
 src = "Native"
 loc = "Прямой"
@@ -1725,26 +1535,6 @@ loc = "Прямой"
 [general_settings_start_method_shell]
 src = "Shell"
 loc = "Консоль"
-
-[general_settings_start_method_manual]
-src = "Manual"
-loc = "Вручную"
-
-[general_settings_start_method_option_menu_tooltip]
-src = """
-**Native**: Create the game process directly. Usually it's the most reliable way.
-**Shell**: Start the game process via system console. Worth to try if you have some issues with Native.
-**Manual**: Skip launching the game on **Start** button press. Wait for user to launch it manually ({timeout}s timeout).
-"""
-loc = """
-**Прямой**: создать процесс игры напрямую. Обычно самый надёжный способ.
-**Консоль**: запуск процесса игры через системную консоль. Полезно при проблемах с Прямым.
-**Вручную**: не запускать игру при нажатии **Пуск**. Ожидать ручного запуска пользователем (таймаут {timeout}s).
-"""
-
-[general_settings_xxmi_delay_label]
-src = "XXMI Delay:"
-loc = "Задержка XXMI:"
 
 [general_settings_xxmi_delay_entry_tooltip_base]
 src = """
@@ -1784,10 +1574,6 @@ loc = """
 Если игра вылетает без модов — попробуйте увеличить задержку. Начните с шага в 50 мс и увеличивайте постепенно.
 """
 
-[general_settings_process_priority_label]
-src = "Process Priority:"
-loc = "Приоритет:"
-
 [general_settings_process_priority_low]
 src = "Low"
 loc = "Низкий"
@@ -1811,22 +1597,6 @@ loc = "Высокий"
 [general_settings_process_priority_realtime]
 src = "Realtime"
 loc = "Максимальный"
-
-[general_settings_process_priority_option_menu_tooltip]
-src = """
-Set process priority for the game exe.
-"""
-loc = """
-Устанавливает приоритет процесса игры.
-"""
-
-[general_settings_auto_config_label]
-src = "Auto Config:"
-loc = "Автонастройка:"
-
-[general_settings_configure_game_checkbox]
-src = "Configure Game Settings"
-loc = "Настроить игру"
 
 [general_settings_configure_game_tooltip_gimi]
 src = """
@@ -1910,10 +1680,6 @@ loc = """
 **Отключено**: Включить эффект. Используйте только совместно с **Injured Effect Remover**.
 """
 
-[general_settings_open_file_button]
-src = "🔍 Open {file_name}"
-loc = "🔍 Открыть {file_name}"
-
 [general_settings_open_file_button_tooltip]
 src = "Open **{file_name}** in default text editor file for manual tweaking."
 loc = "Открыть **{file_name}** в текстовом редакторе по умолчанию."
@@ -1922,17 +1688,9 @@ loc = "Открыть **{file_name}** в текстовом редакторе �
 src = "File does not exist: **{file_name}**!"
 loc = "Файл не существует: **{file_name}**!"
 
-[general_settings_tweaks_label]
-src = "Tweaks:"
-loc = "Твики:"
-
 [general_settings_unlock_fps_checkbox_force]
 src = "Force 120 FPS"
 loc = "Режим 120 FPS"
-
-[general_settings_unlock_fps_checkbox]
-src = "Unlock FPS:"
-loc = "Задать FPS:"
 
 [general_settings_unlock_fps_checkbox_tooltip_wwmi]
 src = """
@@ -2016,26 +1774,6 @@ loc = "Эксклюзивный"
 src = "Game window mode when started with FPS Unlocker."
 loc = "Режим окна игры при запуске с FPS Unlocker."
 
-[general_settings_apply_tweaks_checkbox]
-src = "Apply Performance Tweaks"
-loc = "Оптимизировать движок"
-
-[general_settings_apply_tweaks_checkbox_tooltip]
-src = """
-**Enabled**: Add list of performance tweaks to `[SystemSettings]` section of `Engine.ini` on game start.
-**Disabled**: Do not add tweaks to `Engine.ini`. Already added ones will have to be removed manually.
-
-List of tweaks:
-{tweaks}
-"""
-loc = """
-**Включено**: Добавляет ряд оптимизаций в секцию `[SystemSettings]` файла `Engine.ini` при запуске игры.
-**Отключено**: Не изменяет `Engine.ini`. Уже добавленные параметры нужно удалять вручную.
-
-Список твиков:
-{tweaks}
-"""
-
 [general_settings_enable_hdr_checkbox]
 src = "Enable HDR"
 loc = "Включить HDR"
@@ -2052,113 +1790,17 @@ loc = """
 **Отключено**: HDR не активируется. Игра удалит запись автоматически.
 """
 
-[importer_settings_shader_hunting_label]
-src = "Shader Hunting:"
-loc = "Поиск шейдеров:"
-
 [importer_settings_enable_hunting_checkbox]
 src = "Enable Hunting"
 loc = "Включить поиск"
-
-[importer_settings_enable_hunting_checkbox_tooltip]
-src = """
-Enabled: Allows to toggle Hunting Mode via Numpad [0] hotkey.
-* [d3dx.ini]: hunting = 2
-Disabled: Hunting Mode is hard disabled.
-* [d3dx.ini]: hunting = 0
-"""
-loc = """
-Включено: позволяет переключать режим Поиска шейдеров с помощью клавиши NumPad [0].
-* [d3dx.ini]: hunting = 2
-Отключено: режим Поиска шейдеров полностью отключён.
-* [d3dx.ini]: hunting = 0
-"""
 
 [importer_settings_dump_shaders_checkbox]
 src = "Dump Shaders"
 loc = "Сохранять шейдеры"
 
-[importer_settings_dump_shaders_checkbox_tooltip]
-src = """
-Enabled: Hunting Mode [Copy Hash] key also saves selected shader as file in ShaderFixes.
-* [d3dx.ini]: marking_actions = clipboard hlsl asm regex
-Disabled: Hunting Mode [Copy Hash] only copies hash of selected shader to clipboard.
-* [d3dx.ini]: marking_actions = clipboard
-"""
-loc = """
-Включено: Клавиша [Копировать хеш] в режиме Поиска шейдеров также сохраняет выбранный шейдер в папку ShaderFixes.
-* [d3dx.ini]: marking_actions = clipboard hlsl asm regex
-Отключено: Клавиша [Копировать хеш] копирует только хеш выбранного шейдера.
-* [d3dx.ini]: marking_actions = clipboard
-"""
-
-[importer_settings_error_handling_label]
-src = "Error Handling:"
-loc = "Обработка ошибок:"
-
 [importer_settings_mute_warnings_checkbox]
 src = "Mute Warnings"
 loc = "Скрыть ошибки"
-
-[importer_settings_mute_warnings_checkbox_tooltip]
-src = """
-Enabled: No error warnings or beeps whatsoever. Ignorance is bliss.
-* [d3dx.ini]: show_warnings = 0
-Disabled: Ini parser error warnings and beeps on F10 will haunt poor souls.
-* [d3dx.ini]: show_warnings = 1
-"""
-loc = """
-Включено: Полное отключение предупреждений и звуковых сигналов. Блаженное неведение.
-* [d3dx.ini]: show_warnings = 0
-Отключено: Вас преследовать будут предупреждения ini-парсера и сигналы при нажатии F10.
-* [d3dx.ini]: show_warnings = 1
-"""
-
-[importer_settings_importer_folder_label]
-src = "Importer Folder:"
-loc = "Папка импортера:"
-
-[importer_settings_importer_folder_label_dynamic]
-src = "{importer} Folder:"
-loc = "Папка {importer}:"
-
-[importer_settings_importer_folder_entry_tooltip]
-src = """
-Path to folder containing `Mods` folder, `d3dx.ini` and other {importer} resources.
-**Absolute**: Set any arbitrary folder, i.e. `C:/Games/{importer}/`.
-**Relative**: Set any folder **inside** the Launcher folder, i.e. `{importer}/` (default).
-"""
-loc = """
-Путь к папке, содержащей `Mods`, `d3dx.ini` и другие ресурсы {importer}.
-**Абсолютный**: любой путь, например `C:/Games/{importer}/`.
-**Относительный**: путь внутри папки лаунчера, например `{importer}/` (по умолчанию).
-"""
-
-[importer_settings_ini_protection_label]
-src = "Ini Protection:"
-loc = "Защита d3dx.ini:"
-
-[importer_settings_enforce_rendering_checkbox]
-src = "Enforce Rendering Settings"
-loc = "Защитить настройки рендера"
-
-[importer_settings_enforce_rendering_checkbox_tooltip]
-src = """
-Enabled: Ensure {importer}-compatible [Rendering] section settings.
-* [d3dx.ini]: texture_hash = {texture_hash}
-* [d3dx.ini]: track_texture_updates = {track_texture_updates}
-Disabled: Settings above will not be forced into d3dx.ini.
-"""
-loc = """
-Включено: Принудительно установить настройки секции [Rendering], совместимые с {importer}.
-* [d3dx.ini]: texture_hash = {texture_hash}
-* [d3dx.ini]: track_texture_updates = {track_texture_updates}
-Отключено: Эти параметры не будут принудительно применяться к d3dx.ini.
-"""
-
-[launcher_settings_start_behavior_label]
-src = "Start Behavior:"
-loc = "Поведение:"
 
 [launcher_settings_auto_close_checkbox]
 src = "Close Launcher After Game Start"
@@ -2174,26 +1816,6 @@ loc = """
 Отключено: лаунчер останется открытым.
 """
 
-[launcher_settings_timeout_label]
-src = "Timeout:"
-loc = "Таймаут:"
-
-[launcher_settings_timeout_entry_tooltip]
-src = """
-Controls how long launcher should wait for the game to show its window after launch.
-Game process will be considered as crashed once timeout is met.
-Default value is **30**.
-"""
-loc = """
-Определяет, сколько времени лаунчер будет ждать появления окна игры после запуска.
-По истечении таймаута процесс будет считаться аварийно завершённым.
-Значение по умолчанию — **30**.
-"""
-
-[launcher_settings_update_policy_label]
-src = "Update Policy:"
-loc = "Обновления:"
-
 [launcher_settings_auto_update_checkbox]
 src = "Auto Update"
 loc = "Автообновление"
@@ -2207,26 +1829,6 @@ loc = """
 Включено: обновления лаунчера и {importer} будут загружены и установлены автоматически.
 Отключено: используйте специальную кнопку [▲] рядом с [Пуск] для ручного обновления.
 """
-
-[launcher_settings_update_channel_label]
-src = "Channel:"
-loc = "Канал:"
-
-[launcher_settings_update_channel_option_menu_tooltip]
-src = """
-**Auto**: Detect update installation method automatically.
-**MSI**: Use native `.msi` installers to install updates.
-**ZIP**: Use portable `.zip` archives to install updates.
-"""
-loc = """
-**Auto**: Автоматически определить метод установки обновлений.
-**MSI**: Использовать установщики `.msi`.
-**ZIP**: Использовать портативные архивы `.zip`.
-"""
-
-[launcher_settings_theme_label]
-src = "UI Theme:"
-loc = "Тема:"
 
 [launcher_settings_theme_option_menu_tooltip]
 src = """
@@ -2259,14 +1861,6 @@ loc = """
 Включено: лаунчер будет отслеживать изменения в `custom-tkinter-theme.json` и применять их сразу.
 Отключено: изменения темы не будут отслеживаться.
 """
-
-[launcher_settings_connection_label]
-src = "Connection:"
-loc = "Соединение:"
-
-[launcher_settings_github_token_label]
-src = "GitHub Token:"
-loc = "Токен GitHub:"
 
 [launcher_settings_github_token_entry_tooltip]
 src = """
@@ -2310,10 +1904,6 @@ loc = """
 **Отключено**: разрешить небезопасное соединение (уязвимо к MITM-атакам).
 """
 
-[launcher_settings_proxy_enable_checkbox]
-src = "Use Proxy:"
-loc = "Прокси:"
-
 [launcher_settings_proxy_enable_checkbox_tooltip]
 src = """
 Controls how launcher connects to GitHub to download packages.
@@ -2324,20 +1914,6 @@ loc = """
 Определяет, как лаунчер подключается к GitHub для загрузки пакетов.
 **Включено**: использовать указанный прокси-сервер.
 **Отключено**: использовать системные настройки соединения.
-"""
-
-[launcher_settings_proxy_type_label]
-src = "Type:"
-loc = "Тип:"
-
-[launcher_settings_proxy_type_option_menu_tooltip]
-src = """
-**HTTPS**: Good old proxy protocol. Offers best security.
-**SOCKS5**: Newer and less secure, but excels at bypassing firewalls.
-"""
-loc = """
-**HTTPS**: Классический безопасный прокси-протокол.
-**SOCKS5**: Более гибкий, лучше подходит для обхода фаерволов, но менее безопасен.
 """
 
 [launcher_settings_proxy_dns_checkbox]
@@ -2354,17 +1930,9 @@ loc = """
 **Отключено**: DNS-запросы будут идти через вашего провайдера.
 """
 
-[launcher_settings_proxy_host_label]
-src = "Host:"
-loc = "Хост:"
-
 [launcher_settings_proxy_host_entry_tooltip]
 src = "Proxy IP address (i.e. `123.12.1.231`) or domain name (i.e. `proxyprovider.com`)."
 loc = "IP-адрес прокси (например, `123.12.1.231`) или доменное имя (например, `proxyprovider.com`)."
-
-[launcher_settings_proxy_port_label]
-src = "Port:"
-loc = "Порт:"
 
 [launcher_settings_proxy_port_entry_tooltip]
 src = "Proxy port (i.e. `1080`)."
@@ -2384,17 +1952,9 @@ loc = """
 **Отключено**: не использовать учётные данные.
 """
 
-[launcher_settings_proxy_user_label]
-src = "User:"
-loc = "Пользователь:"
-
 [launcher_settings_proxy_user_entry_tooltip]
 src = "User name provided by your proxy service."
 loc = "Имя пользователя, предоставленное вашим прокси-сервисом."
-
-[launcher_settings_proxy_password_label]
-src = "Password:"
-loc = "Пароль:"
 
 [launcher_settings_proxy_password_entry_tooltip]
 src = "Password provided by your proxy service."
@@ -2407,10 +1967,6 @@ loc = "Общие"
 [settings_tab_launcher]
 src = "Launcher"
 loc = "Лаунчер"
-
-[settings_tab_importer]
-src = "MI"
-loc = "Импортёр"
 
 [settings_tab_advanced]
 src = "Advanced"

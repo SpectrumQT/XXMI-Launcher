@@ -2,20 +2,6 @@
 src = "Arknights: Endfield Model Importer"
 loc = "명일방주: 엔드필드 모델 임포터"
 
-[general_settings_force_ultra_high_lod_bias_label]
-src = "Max LOD Bias"
-loc = "최대 LOD Bias"
-
-[general_settings_force_ultra_high_lod_bias_tooltip]
-src = """
-**Enabled**: Set **LOD Bias** to **Ultra High** to force full resolution LOD textures.
-**Disabled**: Keep **LOD Bias** setting untouched. Select this if **Use All Mips** is enabled below.
-"""
-loc = """
-**활성화**: **LOD Bias**를 **Ultra High**로 설정하여 강제로 전체 해상도 LOD 텍스처를 사용합니다.
-**비활성화**: **LOD Bias** 설정을 변경하지 않고 유지합니다. 아래의 **Use All Mips**가 활성화된 경우 이 옵션을 선택하세요.
-"""
-
 [locale_list_conjunction_or]
 src = "or"
 loc = "또는"
