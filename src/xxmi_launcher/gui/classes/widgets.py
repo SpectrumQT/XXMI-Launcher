@@ -160,25 +160,27 @@ class UIText(UICanvasWidget, CTkBaseClass):
 
 
 class UIImage(UICanvasWidget, CTkBaseClass):
-    def __init__(self,
-                 master: Union[UIWindow, 'UIFrame'],
-                 canvas=None,
-                 image_path: Optional[Union[Path, Image]] = None,
-                 x: int = 0,
-                 y: int = 0,
-                 width: int = 64,
-                 height: int = 64,
-                 anchor: str = 'center',
-                 opacity: float = 1,
-                 brightness: float = 1,
-                 fg_color: Optional[Union[str, Tuple[str, str]]] = None,
-                 border_radius: int = 0,
-                 border_width: int = 0,
-                 border_color: Optional[Union[str, Tuple[str, str]]] = None,
-                 bg_opacity = 0,
-                 padx = None,
-                 pady = None,
-                 **kwargs):
+    def __init__(
+        self,
+        master: Union[UIWindow, 'UIFrame'],
+        canvas=None,
+        image_path: Optional[Union[Path, Image]] = None,
+        x: int = 0,
+        y: int = 0,
+        width: int = 64,
+        height: int = 64,
+        anchor: str = 'center',
+        opacity: float = 1,
+        brightness: float = 1,
+        fg_color: Optional[Union[str, Tuple[str, str]]] = None,
+        border_radius: int = 0,
+        border_width: int = 0,
+        border_color: Optional[Union[str, Tuple[str, str]]] = None,
+        bg_opacity = 0,
+        padx = None,
+        pady = None,
+        **kwargs
+    ):
         self.master = master
         self.canvas = canvas or master.canvas
         CTkBaseClass.__init__(self, master=master)
@@ -216,6 +218,9 @@ class UIImage(UICanvasWidget, CTkBaseClass):
         self.bg_opacity = None
         self.padx = None
         self.pady = None
+        self.secondary_fill_color = None
+        self.split = None
+        self.split_direction = None
 
         self.configure(image_path=image_path, x=x, y=y, width=width, height=height, anchor=anchor,
                        opacity=opacity, brightness=brightness, fg_color=fg_color, border_radius=border_radius,
@@ -224,13 +229,26 @@ class UIImage(UICanvasWidget, CTkBaseClass):
         self._apply_theme()
 
     def configure(self, **kwargs):
-        if self._update_attrs(['fg_color', 'border_radius', 'border_width', 'border_color', 'bg_opacity', 'padx', 'pady'], kwargs) or any(x in kwargs for x in ['width', 'height', 'image_path']):
+        if self._update_attrs(['fg_color', 'border_radius', 'border_width', 'border_color', 'bg_opacity', 'padx', 'pady', 'secondary_fill_color', 'split', 'split_direction'], kwargs) or any(x in kwargs for x in ['width', 'height', 'image_path']):
             if self.fg_color or self.border_radius:
                 image_path = kwargs.get('image_path', self.image_path)
                 width = kwargs.get('width', self._width)
                 height = kwargs.get('height', self._height)
-
-                new_image = self.create_rectangle(width, height, self.fg_color, self.border_radius, self.border_width, self.border_color, self.bg_opacity, self.padx, self.pady)
+                new_image = self.create_rectangle(
+                    width=width,
+                    height=height,
+                    fill_color=self.fg_color,
+                    radius=self.border_radius,
+                    border_width=self.border_width,
+                    border_color=self.border_color,
+                    bg_opacity=self.bg_opacity,
+                    padx=self.padx,
+                    pady=self.pady,
+                    # scale=4,
+                    secondary_fill_color=self.secondary_fill_color,
+                    split=self.split,
+                    split_direction=self.split_direction,
+                )
                 width, height = new_image.width, new_image.height
                 if image_path is not None:
                     image_path = self.compose_image_centered(image_path, new_image)
@@ -409,28 +427,65 @@ class UIImage(UICanvasWidget, CTkBaseClass):
             return int(x)
         return sum(x)
 
-    def create_rectangle(self, width, height, fill_color, radius, border_width, border_color, bg_opacity=0, padx=None, pady=None, scale=4):
+    def create_rectangle(
+        self,
+        width,
+        height,
+        fill_color,
+        radius,
+        border_width,
+        border_color,
+        bg_opacity=0,
+        padx=None,
+        pady=None,
+        scale=4,
+        secondary_fill_color=None,
+        split=0.5,
+        split_direction="vertical",
+    ):
         bg_image = None
         if padx or pady:
             padded_width = width + self.get_pad_sum(padx) * 2
             padded_height = height + self.get_pad_sum(pady) * 2
             bg_opacity = max(0.0, min(1.0, bg_opacity))
-            bg_opacity_int = int(bg_opacity * 255)
-            bg_image = Image.new("RGBA", (padded_width, padded_height), (0, 0, 0, bg_opacity_int))
+            bg_image = Image.new("RGBA", (padded_width, padded_height),(0, 0, 0, int(bg_opacity * 255)))
 
-        image = Image.new('RGBA', (width*scale, height*scale), (0, 0, 0, 0))
+        image = Image.new("RGBA", (width * scale, height * scale), (0, 0, 0, 0))
         border_width *= scale
+
         draw = ImageDraw.Draw(image)
-        draw.rounded_rectangle(
-            [
-                (border_width // 2, border_width // 2),
-                (width*scale - border_width // 2 - 1, height*scale - border_width // 2 - 1)
-            ],
-            radius=radius*scale,
-            outline=border_color,
-            width=border_width,
-            fill=fill_color  # None makes the inside transparent
-        )
+        box = [
+            (border_width // 2, border_width // 2),
+            (width * scale - border_width // 2 - 1,
+             height * scale - border_width // 2 - 1)
+        ]
+
+        if secondary_fill_color is None:
+            fill_color_2 = fill_color
+        else:
+            fill_color_2 = secondary_fill_color
+
+        draw.rounded_rectangle(box, radius=radius * scale, fill=fill_color_2)
+
+        if split and secondary_fill_color is not None:
+            split = max(0.0, min(1.0, split))
+            if split_direction == "vertical":
+                split_pos = int(width * scale * split)
+                draw.rectangle((0, 0, split_pos, height * scale), fill=fill_color)
+            elif split_direction == "horizontal":
+                split_pos = int(height * scale * split)
+                draw.rectangle((0, 0, width * scale, split_pos), fill=fill_color)
+            else:
+                raise ValueError("split_direction must be 'vertical' or 'horizontal'")
+
+            # Restore rounded corners after the rectangular split.
+            mask = Image.new("L", image.size, 0)
+            ImageDraw.Draw(mask).rounded_rectangle(box, radius=radius * scale, fill=255)
+            image.putalpha(mask)
+
+        if border_width:
+            draw = ImageDraw.Draw(image)
+            draw.rounded_rectangle(box, radius=radius * scale, outline=border_color, width=border_width)
 
         if scale != 1:
             image = image.resize((width, height), Image.LANCZOS)

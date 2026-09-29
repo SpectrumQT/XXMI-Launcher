@@ -33,10 +33,25 @@ class UIFrame(UIElementBase, CTkFrame):
         # self.canvas.grid(row=0, column=0, columnspan=cols, rowspan=rows, sticky='news')
         pass
 
-    def set_background_image(self, image_path: Optional[Union[Path, Image]] = None, width: int = 0, height: int = 0,
-                             brightness: float = 1, opacity: float = 1, anchor: str = 'nw',
-                             x: int = 0, y: int = 0, fg_color = None, border_radius = 0, border_width = 0, border_color = None,
-                             dim_opacity: float = 0):
+    def set_background_image(
+        self,
+        image_path: Optional[Union[Path, Image]] = None,
+        width: int = 0,
+        height: int = 0,
+        brightness: float = 1,
+        opacity: float = 1,
+        anchor: str = 'nw',
+        x: int = 0,
+        y: int = 0,
+        fg_color = None,
+        border_radius = 0,
+        border_width = 0,
+        border_color = None,
+        dim_opacity: float = 0,
+        secondary_fill_color=None,
+        split=0.5,
+        split_direction="vertical",
+    ):
 
         if image_path is not None or fg_color or border_radius:
             width, height = width or self.master.winfo_width(), height or self.master.winfo_height()
@@ -51,13 +66,14 @@ class UIFrame(UIElementBase, CTkFrame):
                     master=self, image_path=image_path, x=x, y=y, anchor=anchor,
                     width=width, height=height, brightness=brightness, opacity=opacity,
                     fg_color=fg_color, border_radius=border_radius, border_width=border_width, border_color=border_color,
-                    padx=padx, pady=pady, bg_opacity=dim_opacity))
+                    padx=padx, pady=pady, bg_opacity=dim_opacity,
+                    secondary_fill_color=secondary_fill_color, split=split, split_direction=split_direction
+                ))
             else:
                 self.background_image.configure(image_path=image_path, width=width, height=height)
         elif self.background_image is not None:
             self.background_image.destroy()
             self.background_image = None
-        # self.canvas.update()
 
     def _hide(self):
         if self.background_image is not None:
