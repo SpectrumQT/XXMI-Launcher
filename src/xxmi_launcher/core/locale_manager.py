@@ -417,6 +417,8 @@ class LocaleManager:
 
     def read_active_locale(self) -> Optional[LocaleData]:
         config_path = self.package_path / 'active_locale.cfg'
+        if not config_path.is_file():
+            return None
         try:
             with open(config_path, 'r') as f:
                 locale_name = f.read().strip()
