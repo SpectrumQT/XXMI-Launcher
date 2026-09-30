@@ -1,0 +1,77 @@
+[general_settings_wuwa_resource_tier_uhd]
+src = "UHD"
+loc = "UHD"
+
+[general_settings_wuwa_resource_tier_hd]
+src = "HD"
+loc = "HD"
+
+[general_settings_wuwa_resource_tier_sd]
+src = "SD"
+loc = "SD"
+
+[message_title_d3d11_warning]
+src = "DirectX 11 Reminder"
+loc = "DirectX 11 提示"
+
+[message_text_d3d11_warning]
+src = """
+**{importer}** requires **DirectX 11** to function.
+
+Once the **official launcher** opens, please make sure to **enable the DirectX 11 mode checkbox** in the **bottom-right corner** of the launcher window.
+"""
+loc = """
+**{importer}** 需要 **DirectX 11** 才能正常运行。
+
+打开**官方启动器**后，请确保在启动器窗口的**右下角**勾选**DirectX 11 模式**。
+"""
+
+[message_title_resource_tier_selection]
+src = "Select Resource Quality"
+loc = "选择资源质量"
+
+[message_text_resource_tier_selection]
+src = """
+**{game}** requires **[Resource Quality]({page_link})** to be selected to avoid game crash on loading.
+
+For **Steam** and **Epic Games** installations select **{default_tier}**.
+
+For **official launcher** installation select **any actually downloaded** tier (default is usually **{default_tier}**):
+
+{radio_widget}
+
+You can also change it later with **{general_settings_wuwa_resource_tier_label}** in **General Settings**.
+"""
+loc = """
+为了避免游戏在加载时崩溃，**{game}** 需要选择**[资源质量]({page_link})**。
+
+对于 **Steam** 和 **Epic Games** 安装版本，请选择 **{default_tier}**。
+
+对于**官方启动器**安装版本，请选择任意一个**实际已下载**的资源质量等级（默认通常为 **{default_tier}**）：
+
+{radio_widget}
+
+之后也可以在**常规设置**中的 **{general_settings_wuwa_resource_tier_label}** 进行更改。
+"""
+
+[general_settings_wuwa_resource_tier_label]
+src = "Client Resource Quality"
+loc = "客户端资源质量"
+
+[general_settings_wuwa_resource_tier_tooltip]
+src = """
+Controls **[assets quality tier]({page_link})** used by **{game}**.
+
+* For **Steam** and **Epic Games** installations select **{default_tier}**.
+* For **official launcher** installation select **any actually downloaded** tier.
+
+Selection of wrong tier will cause the game to crash on loading.
+"""
+loc = """
+控制 **{game}** 使用的**[资源质量等级]({page_link})**。
+
+* 对于 **Steam** 和 **Epic Games** 安装版本，请选择 **{default_tier}**。
+* 对于**官方启动器**安装版本，请选择任意一个**实际已下载**的资源质量等级。
+
+选择错误的资源质量等级会导致游戏在加载时崩溃。
+"""

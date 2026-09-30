@@ -1,0 +1,77 @@
+[general_settings_wuwa_resource_tier_uhd]
+src = "UHD"
+loc = "UHD"
+
+[general_settings_wuwa_resource_tier_hd]
+src = "HD"
+loc = "HD"
+
+[general_settings_wuwa_resource_tier_sd]
+src = "SD"
+loc = "SD"
+
+[message_title_d3d11_warning]
+src = "DirectX 11 Reminder"
+loc = "Przypomnienie o DirectX 11"
+
+[message_text_d3d11_warning]
+src = """
+**{importer}** requires **DirectX 11** to function.
+
+Once the **official launcher** opens, please make sure to **enable the DirectX 11 mode checkbox** in the **bottom-right corner** of the launcher window.
+"""
+loc = """
+**{importer}** wymaga **DirectX 11** do działania.
+
+Po otwarciu **oficjalnego launchera** upewnij się, że **pole wyboru trybu DirectX 11** w **prawym dolnym rogu** okna launchera jest zaznaczone.
+"""
+
+[message_title_resource_tier_selection]
+src = "Select Resource Quality"
+loc = "Wybór jakości zasobów"
+
+[message_text_resource_tier_selection]
+src = """
+**{game}** requires **[Resource Quality]({page_link})** to be selected to avoid game crash on loading.
+
+For **Steam** and **Epic Games** installations select **{default_tier}**.
+
+For **official launcher** installation select **any actually downloaded** tier (default is usually **{default_tier}**):
+
+{radio_widget}
+
+You can also change it later with **{general_settings_wuwa_resource_tier_label}** in **General Settings**.
+"""
+loc = """
+W grze **{game}** należy wybrać **[Jakość zasobów]({page_link})**, aby uniknąć awarii gry podczas wczytywania.
+
+W przypadku instalacji przez **Steam** i **Epic Games** wybierz **{default_tier}**.
+
+W przypadku instalacji przez **oficjalny launcher** wybierz dowolny **faktycznie pobrany** poziom (domyślnie jest to zazwyczaj **{default_tier}**):
+
+{radio_widget}
+
+Możesz również zmienić to później za pomocą opcji **{general_settings_wuwa_resource_tier_label}** w **Ustawieniach ogólnych**.
+"""
+
+[general_settings_wuwa_resource_tier_label]
+src = "Client Resource Quality"
+loc = "Jakość zasobów klienta"
+
+[general_settings_wuwa_resource_tier_tooltip]
+src = """
+Controls **[assets quality tier]({page_link})** used by **{game}**.
+
+* For **Steam** and **Epic Games** installations select **{default_tier}**.
+* For **official launcher** installation select **any actually downloaded** tier.
+
+Selection of wrong tier will cause the game to crash on loading.
+"""
+loc = """
+Steruje **[poziomem jakości zasobów]({page_link})** używanym przez **{game}**.
+
+* W przypadku instalacji przez **Steam** i **Epic Games** wybierz **{default_tier}**.
+* W przypadku instalacji przez **oficjalny launcher** wybierz dowolny **faktycznie pobrany** poziom.
+
+Wybranie niewłaściwego poziomu spowoduje awarię gry podczas wczytywania.
+"""

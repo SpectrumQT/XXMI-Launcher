@@ -1,0 +1,77 @@
+[general_settings_wuwa_resource_tier_uhd]
+src = "UHD"
+loc = "UHD"
+
+[general_settings_wuwa_resource_tier_hd]
+src = "HD"
+loc = "HD"
+
+[general_settings_wuwa_resource_tier_sd]
+src = "SD"
+loc = "SD"
+
+[message_title_d3d11_warning]
+src = "DirectX 11 Reminder"
+loc = "DirectX 11 に関する注意"
+
+[message_text_d3d11_warning]
+src = """
+**{importer}** requires **DirectX 11** to function.
+
+Once the **official launcher** opens, please make sure to **enable the DirectX 11 mode checkbox** in the **bottom-right corner** of the launcher window.
+"""
+loc = """
+**{importer}** を動作させるには **DirectX 11** が必要です。
+
+**公式ランチャー**が起動したら、ランチャーウィンドウの**右下**にある **DirectX 11 モードのチェックボックス**を**有効**にしてください。
+"""
+
+[message_title_resource_tier_selection]
+src = "Select Resource Quality"
+loc = "リソース品質の選択"
+
+[message_text_resource_tier_selection]
+src = """
+**{game}** requires **[Resource Quality]({page_link})** to be selected to avoid game crash on loading.
+
+For **Steam** and **Epic Games** installations select **{default_tier}**.
+
+For **official launcher** installation select **any actually downloaded** tier (default is usually **{default_tier}**):
+
+{radio_widget}
+
+You can also change it later with **{general_settings_wuwa_resource_tier_label}** in **General Settings**.
+"""
+loc = """
+ロード時のゲームクラッシュを防ぐため、**{game}** では **[リソース品質]({page_link})** を選択する必要があります。
+
+**Steam** および **Epic Games** 版では **{default_tier}** を選択してください。
+
+**公式ランチャー**版では、**実際にダウンロード済みの品質**のいずれかを選択してください（通常、デフォルトは **{default_tier}** です）。
+
+{radio_widget}
+
+後から **一般設定** の **{general_settings_wuwa_resource_tier_label}** から変更することもできます。
+"""
+
+[general_settings_wuwa_resource_tier_label]
+src = "Client Resource Quality"
+loc = "クライアントリソース品質"
+
+[general_settings_wuwa_resource_tier_tooltip]
+src = """
+Controls **[assets quality tier]({page_link})** used by **{game}**.
+
+* For **Steam** and **Epic Games** installations select **{default_tier}**.
+* For **official launcher** installation select **any actually downloaded** tier.
+
+Selection of wrong tier will cause the game to crash on loading.
+"""
+loc = """
+**{game}** で使用する **[アセット品質ティア]({page_link})** を設定します。
+
+* **Steam** および **Epic Games** 版では **{default_tier}** を選択してください。
+* **公式ランチャー**版では、**実際にダウンロード済みの品質**のいずれかを選択してください。
+
+誤った品質ティアを選択すると、ゲームのロード時にクラッシュが発生します。
+"""
