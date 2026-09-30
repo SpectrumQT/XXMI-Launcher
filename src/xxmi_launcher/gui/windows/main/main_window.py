@@ -289,6 +289,10 @@ class MainWindow(UIMainWindow):
 
         if modal:
             self.wait_window(messagebox)
+            self.update_idletasks()
+            
+            if minimal_gui:
+                self.hide()
 
         if self.message_frame is not None:
             self.message_frame = None
