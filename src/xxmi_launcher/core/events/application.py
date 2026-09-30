@@ -132,6 +132,7 @@ class ApplicationEvents:
         cancel_command: Optional[Callable] = None
         radio_options: Optional[List[str]] = None
         checkbox_options: Optional[List[str]] = None
+        selected_id: int = 0
 
     @dataclass
     class ShowError(ShowMessage):

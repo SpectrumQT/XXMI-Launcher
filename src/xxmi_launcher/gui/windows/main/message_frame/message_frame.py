@@ -38,6 +38,7 @@ class MessageFrame(UIFrame):
             cancel_command=None,
             radio_options: Optional[List[str]] = None,
             checkbox_options: list[tuple[bool, str]] | None = None,
+            selected_id: int = 0,
     ):
         super().__init__(master=master, canvas=canvas)
 
@@ -56,7 +57,7 @@ class MessageFrame(UIFrame):
 
         min_button_width = 100
 
-        self.content_frame = ContentFrame(self, message, radio_options, checkbox_options, min_width, max_width, min_height, max_height)
+        self.content_frame = ContentFrame(self, message, radio_options, checkbox_options, min_width, max_width, min_height, max_height, selected_id)
 
         self.update()
 
@@ -286,7 +287,8 @@ class ContentFrame(UIScrollableFrame):
         min_width: int = 480,
         max_width: int = 600,
         min_height: int = 180,
-        max_height: int = 260
+        max_height: int = 260,
+        selected_id: int = 0
     ):
 
         super().__init__(master, width=max_width, height=max_height, hide_scrollbar=True, scroll_speed=4.0)
@@ -320,8 +322,8 @@ class ContentFrame(UIScrollableFrame):
 
         radio_widget = None
         if radio_options is not None:
-            master.radio_var = IntVar(master=master, value=0)
-            radio_widget = RadioWidget(self.message_widget, radio_options, master.radio_var)
+            master.radio_var = IntVar(master=master, value=selected_id)
+            radio_widget = RadioWidget(self.message_widget, radio_options, master.radio_var, selected_id)
             style += radio_widget.get_style()
             if '{radio_widget}' in html:
                 html = html.replace('{radio_widget}', radio_widget.get_html())
@@ -462,10 +464,10 @@ class ContentFrame(UIScrollableFrame):
 
 
 class RadioWidget:
-    def __init__(self, frame: HtmlFrame, options: List[str], radio_var: IntVar):
+    def __init__(self, frame: HtmlFrame, options: List[str], radio_var: IntVar, selected_id: int = 0):
         self.frame: HtmlFrame = frame
         self.options: List[str] = options
-        self.selected_option = 0
+        self.selected_option = selected_id
         self.hovered_option = 0
         self.radio_var = radio_var
 
@@ -489,7 +491,7 @@ class RadioWidget:
                 "<br>\n".join([
                     dedent(f'''
                     <div>
-                    <input type="radio" name="radio_widget_buttons" id="radio_button_{str(i)}" value="{str(i)}"{" checked" if i == 0 else ""}>
+                    <input type="radio" name="radio_widget_buttons" id="radio_button_{str(i)}" value="{str(i)}"{" checked" if i == self.selected_option else ""}>
                     <label id="radio_label_{str(i)}" for="radio_button_{str(i)}"> {option}</label>
                     </div>
                     ''') for i, option in enumerate(self.options)
