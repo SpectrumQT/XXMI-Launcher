@@ -12,7 +12,7 @@ import gui.vars as Vars
 from core.game_launcher import Launcher
 
 from core.locale_manager import L, Locale
-from core.config.enums import GameLaunch, StartMethod, WindowMode, ProcessPriority
+from core.config.enums import GameLaunch, StartMethod, WindowMode, ProcessPriority, WuWaResourceTier
 
 from gui.windows.settings.settings_content_frame import SettingsContentFrame, SettingsSection, SettingsOption, OptionWidget, Condition
 
@@ -256,6 +256,32 @@ class GeneralSettingsFrame(SettingsContentFrame):
                 SettingsSection(
                     label_text=L("launcher_settings_game_settings_label", "Game Settings"),
                     options=(
+
+                        SettingsOption(
+                            label_text=L("general_settings_wuwa_resource_tier_label", "Client Resource Quality"),
+                            widget=OptionWidget.DROPDOWN,
+                            value_variable="Vars.Active.Importer.resource_tier",
+                            dropdown_values=WuWaResourceTier,
+                            load_if=Condition(
+                                predicate=lambda: Vars.Launcher.active_importer.get() == "WWMI",
+                            ),
+                            visible_if=Condition(
+                                variables=("Vars.Active.Importer.game_launch",),
+                                predicate=lambda: Vars.Active.Importer.game_launch.get() == GameLaunch.DIRECT,
+                            ),
+                            tooltip=L("general_settings_wuwa_resource_tier_tooltip", """
+                                Controls **[assets quality tier]({page_link})** used by **{game}**.
+                                
+                                * For **Steam** and **Epic Games** installations select **{default_tier}**.
+                                * For **official launcher** installation select **any actually downloaded** tier.
+                                 
+                                Selection of wrong tier will cause the game to crash on loading.
+                            """).format(
+                                game=Config.Importers.WWMI.Importer.game.value,
+                                page_link=r"https://wutheringwaves.kurogames.com/en/main/news/detail/5513",
+                                default_tier=WuWaResourceTier.HD.value,
+                            ),
+                        ),
 
                         SettingsOption(
                             label_text=L("general_settings_configure_game_checkbox",

@@ -83,3 +83,9 @@ class LogLevel(ConfigEnum):
     WARNING = L("importer_settings_log_level_warning", "Warning")
     INFO = L("importer_settings_log_level_info", "Info")
     DEBUG = L("importer_settings_log_level_debug", "Debug")
+
+
+class WuWaResourceTier(ConfigEnum):
+    UHD = L("general_settings_wuwa_resource_tier_uhd", "UHD")
+    HD = L("general_settings_wuwa_resource_tier_hd", "HD")
+    SD = L("general_settings_wuwa_resource_tier_sd", "SD")

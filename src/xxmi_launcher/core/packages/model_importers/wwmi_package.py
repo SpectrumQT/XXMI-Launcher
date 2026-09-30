@@ -15,7 +15,7 @@ from core.locale_manager import L
 from core.package_manager import PackageMetadata
 
 from core.utils.ini_handler import IniHandler, IniHandlerSettings
-from core.config.enums import InjectMode, GameLaunch
+from core.config.enums import InjectMode, GameLaunch, WuWaResourceTier
 from core.packages.model_importers.model_importer import ModelImporterPackage, ModelImporterConfig, Version
 from core.packages.migoto_package import MigotoManagerConfig
 from core.platforms.game import Game
@@ -68,6 +68,8 @@ class WWMIConfig(ModelImporterConfig):
     disable_wounded_fx: bool = False
     disable_wounded_fx_warned: bool = False
     mesh_lod_distance_lod_base_fov: int = 165
+    resource_tier: WuWaResourceTier = WuWaResourceTier.HD
+    resource_tier_warned: bool = False
 
 
 @dataclass
@@ -193,6 +195,10 @@ class WWMIPackage(ModelImporterPackage):
         if Config.Importers.WWMI.Importer.game_launch != GameLaunch.DIRECT:
             return
 
+        if not Config.Importers.WWMI.Importer.use_launch_options or "krqlv" not in Config.Importers.WWMI.Importer.launch_options:
+            self.notify_resource_tier()
+            launch_context.target.cmd_args += f" -krqlv={Config.Importers.WWMI.Importer.resource_tier.name.lower()}"
+
         if not Config.Importers.WWMI.Importer.use_launch_options:
             # Start WW via wrapper exe (solves crashes for NVidia Optimus and some Steam version users).
             launch_context.target.exe_path = game_path / "Wuthering Waves.exe"
@@ -200,6 +206,43 @@ class WWMIPackage(ModelImporterPackage):
         else:
             # Start WW directly to support launch options customization
             pass
+
+    @staticmethod
+    def notify_resource_tier():
+        if Config.Importers.WWMI.Importer.resource_tier_warned:
+            return
+
+        resource_tiers = {item: item.value for item in WuWaResourceTier}
+
+        (user_confirmed_resource_tier, resource_tier_id) = Events.Call(Events.Application.ShowWarning(
+            title=L('message_title_resource_tier_selection', "Select Resource Quality"),
+            message=L('message_text_resource_tier_selection', """
+                **{game}** requires **[Resource Quality]({page_link})** to be selected to avoid game crash on loading.
+                
+                For **Steam** and **Epic Games** installations select **{default_tier}**.
+                
+                For **official launcher** installation select **any actually downloaded** tier (default is usually **{default_tier}**):
+            
+                {radio_widget}
+                
+                You can also change it later with **{general_settings_wuwa_resource_tier_label}** in **General Settings**.
+            """).format(
+                game=Config.Importers.WWMI.Importer.game.value,
+                page_link=r"https://wutheringwaves.kurogames.com/en/main/news/detail/5513",
+                default_tier=WuWaResourceTier.HD.value,
+            ),
+            confirm_text=L('message_button_confirm', 'Confirm'),
+            cancel_text=L('message_button_open_settings', 'Open Settings'),
+            radio_options=list(resource_tiers.values()),
+            selected_id=1,
+            modal=True,
+        ))
+
+        if user_confirmed_resource_tier is not None:
+            Config.Importers.WWMI.Importer.resource_tier_warned = True
+
+            if user_confirmed_resource_tier is True:
+                Config.Importers.WWMI.Importer.resource_tier = list(resource_tiers.keys())[resource_tier_id]
 
     def configure_game_settings(self, game_path: Path | None, game_exe_path: Path | None):
         # Auto-config below requires reliably detectable installation location.
