@@ -80,6 +80,7 @@ class ModelImporterConfig:
     configure_platform_launch_options: bool = True
     skip_platform_game_launcher: bool = True
     d3d11_mode_cmd_args: str = ""
+    d3d11_mode_cmd_args_warned: bool = False
 
     # Removed
     custom_launch_inject_mode: InjectModeLegacy = InjectModeLegacy.OPTION_REMOVED

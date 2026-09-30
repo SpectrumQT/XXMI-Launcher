@@ -291,6 +291,9 @@ class GameLauncher:
             ))
         )
 
+        if Config.Active.Importer.game_launch == GameLaunch.EPIC_GAMES:
+            self.notify_d3d11_mode_required()
+
         inject_dll_paths = []
         if Config.Active.Importer.extra_libraries_enabled:
             inject_dll_paths.extend(Config.Active.Importer.extra_dll_paths)
@@ -323,6 +326,26 @@ class GameLauncher:
 
         # Wait a pi more for window to maximize.
         time.sleep(3.141592653589793)
+
+    @staticmethod
+    def notify_d3d11_mode_required():
+        if Config.Active.Importer.d3d11_mode_cmd_args_warned:
+            return
+
+        Events.Fire(Events.Application.ShowWarning(
+            title=L('message_title_d3d11_warning', "DirectX 11 Reminder"),
+            message=L('message_text_d3d11_warning', """
+                **{importer}** requires **DirectX 11** to function.
+
+                Once the **official launcher** opens, please make sure to **enable the DirectX 11 mode checkbox** in the **bottom-right corner** of the launcher window.
+            """).format(
+                importer=Config.Launcher.active_importer,
+            ),
+            confirm_text=L('message_button_ok', 'OK'),
+            modal=True,
+        ))
+
+        Config.Active.Importer.d3d11_mode_cmd_args_warned = True
 
     @staticmethod
     def wait_for_window(launch_context: LaunchContext):
