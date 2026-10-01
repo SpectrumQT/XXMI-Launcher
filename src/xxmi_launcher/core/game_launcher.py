@@ -290,8 +290,7 @@ class GameLauncher:
             ))
         )
 
-        if Config.Active.Importer.game_launch == GameLaunch.EPIC_GAMES:
-            self.notify_d3d11_mode_required()
+        self.notify_d3d11_mode_required()
 
         inject_dll_paths = []
         if Config.Active.Importer.extra_libraries_enabled:
@@ -329,6 +328,12 @@ class GameLauncher:
     @staticmethod
     def notify_d3d11_mode_required():
         if Config.Active.Importer.d3d11_mode_cmd_args_warned:
+            return
+
+        if Config.Active.Importer.game_launch != GameLaunch.EPIC_GAMES:
+            return
+
+        if Config.Active.Importer.game not in {Game.WUTHERING_WAVES, Game.ARKNIGHTS_ENDFIELD}:
             return
 
         Events.Fire(Events.Application.ShowWarning(
