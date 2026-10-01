@@ -613,6 +613,11 @@ class SettingsOptionFrame(UIFrame):
 
         return obj
 
+    def show(self, show=True):
+        if self.is_visible != show:
+            return
+        super().show(show)
+
 
 class SettingsSectionFrame(UIFrame):
     def __init__(
@@ -652,8 +657,6 @@ class SettingsSectionFrame(UIFrame):
         self.grid_rowconfigure(0, minsize=6)
         self.grid_rowconfigure(len(options) * 2 + 1, minsize=6)
 
-        self._update_separators()
-
     def _update_separators(self):
         found_visible = False
 
@@ -676,3 +679,7 @@ class SettingsSectionFrame(UIFrame):
             self._show()
         else:
             self._hide()
+
+    def show(self, show=True):
+        super().show(show)
+        self._update_separators()
