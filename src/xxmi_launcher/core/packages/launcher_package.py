@@ -101,9 +101,9 @@ class LauncherPackage(Package):
 
         launch_context = LaunchContext(
             start_method=StartMethod.NATIVE,
+            process_name="EnhancedUI.exe",
             target=CommandLaunch(
                 cmd=cmd,
-                process_name="EnhancedUI.exe",
             ),
         )
 

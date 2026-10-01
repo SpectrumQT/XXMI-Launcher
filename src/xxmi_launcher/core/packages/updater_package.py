@@ -48,6 +48,7 @@ class UpdaterPackage(Package):
 
         launch_context = LaunchContext(
             start_method=StartMethod.NATIVE,
+            process_name=self.exe_path.name,
             target=ExecutableLaunch(
                 exe_path=self.exe_path,
                 cmd_args=f'--mode Updater --channel ZIP --dist_dir "{Paths.App.Root}" --src_dir "{event.downloaded_asset_path}"',

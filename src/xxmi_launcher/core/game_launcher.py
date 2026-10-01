@@ -221,17 +221,16 @@ class GameLauncher:
                 )
             case GameLaunch.CUSTOM:
                 target = CommandLaunch(
-                    process_name=game_exe_name,
                     cmd=Config.Active.Importer.custom_launch,
                 )
             case GameLaunch.MANUAL:
                 target = CommandLaunch(
-                    process_name=game_exe_name,
                     cmd="",
                 )
 
         launch_context = LaunchContext(
             start_method=Config.Active.Importer.start_method,
+            process_name=game_exe_path.name if game_exe_path else game_exe_name,
             target=target,
             work_dir=game_exe_path.parent if game_exe_path else None,
             process_flags=process_flags,
@@ -302,7 +301,7 @@ class GameLauncher:
 
             injector_context = InjectorContext(
                 injector_path=self.xxmi_injector.package_path / '3dmloader.dll',
-                process_name=launch_context.target_process_name,
+                process_name=launch_context.process_name,
                 use_hook=Config.Active.Importer.xxmi_dll_inject_mode == InjectMode.HOOK,
                 xxmi_dll_path=Config.Active.Importer.importer_path / 'd3d11.dll',
                 inject_dll_paths=list(Config.Active.Importer.extra_dll_paths) if Config.Active.Importer.extra_libraries_enabled else [],
@@ -349,7 +348,7 @@ class GameLauncher:
 
     @staticmethod
     def wait_for_window(launch_context: LaunchContext):
-        Events.Fire(Events.Application.WaitForProcess(process_name=launch_context.target_process_name))
+        Events.Fire(Events.Application.WaitForProcess(process_name=launch_context.process_name))
 
         manager = ProcessManager(launch_context)
 
@@ -366,7 +365,7 @@ class GameLauncher:
 
                 If game crashed, try to follow the [Crash Isolation Checklist]({checklist_link}).
             """).format(
-                process_name=launch_context.target_process_name,
+                process_name=launch_context.process_name,
                 importer=Config.Launcher.active_importer,
                 start_timeout=Config.Active.Importer.process_timeout,
                 checklist_link='https://github.com/SpectrumQT/XXMI-Launcher/blob/main/.github/ISSUE_TEMPLATE/game-crash-report.md#-crash-isolation-checklist'
@@ -386,11 +385,11 @@ class GameLauncher:
                 platform_manager.launch(Config.Active.Importer.game, launch_context.target.cmd_args)
 
             case GameLaunch.MANUAL:
-                log.debug(f'Waiting for user to start the game process {launch_context.target_process_name}...')
+                log.debug(f'Waiting for user to start the game process {launch_context.process_name}...')
 
             case _:
                 # Start game exe.
-                Events.Fire(Events.Application.StartGameExe(process_name=launch_context.target_process_name))
+                Events.Fire(Events.Application.StartGameExe(process_name=launch_context.process_name))
                 manager = ProcessManager(launch_context)
                 manager.start()
 

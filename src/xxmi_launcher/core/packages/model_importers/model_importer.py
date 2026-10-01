@@ -585,7 +585,7 @@ class ModelImporterPackage(Package):
         xxmi_cmd_handler.execute_command_section(ModelImporterCommandFileSection.PreLaunch)
 
         # Write configured settings to main 3dmigoto ini file
-        self.update_d3dx_ini(game_exe_name=launch_context.target_process_name)
+        self.update_d3dx_ini(game_exe_name=launch_context.process_name)
 
     def reg_search_game_folders(self, game_exe_files: list[str]):
         paths = []

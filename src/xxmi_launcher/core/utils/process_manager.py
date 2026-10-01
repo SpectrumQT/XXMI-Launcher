@@ -39,22 +39,16 @@ class ExecutableLaunch:
 
 @dataclass
 class CommandLaunch:
-    process_name: str
     cmd: str
 
 
 @dataclass
 class LaunchContext:
     start_method: StartMethod
+    process_name: str
     target: ExecutableLaunch | CommandLaunch
     work_dir: Path | None = None
     process_flags: int | None = None
-
-    @property
-    def target_process_name(self) -> str:
-        if isinstance(self.target, ExecutableLaunch):
-            return self.target.exe_path.name
-        return self.target.process_name
 
 
 class ProcessManager:
@@ -81,6 +75,7 @@ class ProcessManager:
         else:
             self.launch_context = LaunchContext(
                 start_method=StartMethod.NATIVE,
+                process_name=Path(executable_or_context).name,
                 target=ExecutableLaunch(
                     exe_path=Path(executable_or_context),
                     cmd_args="",
@@ -498,7 +493,7 @@ class ProcessManager:
         # so locate it by executable name.
         for process in psutil.process_iter(["name"]):
             try:
-                if process.info["name"] == self.launch_context.target_process_name:
+                if process.info["name"] == self.launch_context.process_name:
                     return process
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 # Processes can disappear between process_iter() and accessing
