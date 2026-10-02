@@ -430,24 +430,32 @@ class CloseButton(ControlButton):
 
 class UnsafeModeText(UIText):
     def __init__(self, master):
-        super().__init__(x=640,
-                         y=25,
-                         text=L('top_bar_unsafe_mode_text', 'Unsafe Mode'),
-                         font=('Asap', 20),
-                         fill='#ff2929',
-                         activefill='#ff4040',
-                         anchor='n',
-                         master=master)
-        self.subscribe_show(
-            Events.GUI.LauncherFrame.StageUpdate,
-            lambda event: event.stage == Stage.Ready)
-        self.subscribe(
-            Events.Application.ConfigUpdate,
-            self.handle_config_update)
+        super().__init__(
+            x=640,
+            y=25,
+            text=L('top_bar_unsafe_mode_text', 'Unsafe Mode'),
+            font=('Asap', 20),
+            fill='#ff2929',
+            activefill='#ff4040',
+            anchor='n',
+            master=master
+        )
+
+        self.subscribe(Events.Application.ConfigUpdate, self.handle_config_update)
+
         self.set_tooltip(L('top_bar_unsafe_mode_text_tooltip', """
             Usage of 3-rd party 3dmigoto DLLs is allowed.
             Make sure to use ones only from a trusted source!
-        """))
+        """)
+         + "\n\n"
+         + (
+             '<font color="#666666">'
+             f"{L("settings_title", "Settings")} › "
+             f"{L("settings_tab_advanced", "Advanced")} › "
+             f"{L("advanced_settings_custom_libraries_section_label", "Custom Libraries")} › "
+             f"{L("advanced_settings_unsafe_mode_checkbox", "Unsafe Mode")}"
+             "</font>"
+         ))
 
     def handle_config_update(self, event=None):
         self.enabled = Config.Launcher.active_importer != 'XXMI' and Config.Active.Migoto.unsafe_mode
