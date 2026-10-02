@@ -86,7 +86,7 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
                         SettingsOption(
                             label_text=L("importer_settings_ini_protection_label", "Config Protection"),
                             widget=OptionWidget.CHECKBOX,
-                            value_variable="Vars.Active.Migoto.clear_unknown_settings",
+                            value_variable="Vars.Active.Migoto.enforce_rendering",
                             tooltip=L("importer_settings_enforce_rendering_checkbox_tooltip", """
                                 * **Enabled:** Ensure **{importer}**-compatible `d3dx.ini` settings.
                                 * **Disabled:** Required settings will not be applied to `d3dx.ini`.
