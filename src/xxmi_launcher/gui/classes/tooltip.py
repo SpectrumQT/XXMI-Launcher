@@ -87,6 +87,10 @@ class UIToolTip:
 
         self.bindings = self._init_bindings()
 
+    def hide(self):
+        self.status = ToolTipStatus.OUTSIDE
+        self.engine._hide()
+
     def _on_enter(self, event: tk.Event) -> None:
         """
         Processes motion within the widget including entering and moving.

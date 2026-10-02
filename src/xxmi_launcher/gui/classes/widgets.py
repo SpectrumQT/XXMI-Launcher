@@ -707,6 +707,8 @@ class UIImageButton(UICanvasWidget, CTkBaseClass):
     def _handle_button_press(self, event):
         if self.disabled:
             return
+        if self.tooltip:
+            self.tooltip.hide()
         self.set_selected(True)
 
     def _handle_button_release(self, event):
