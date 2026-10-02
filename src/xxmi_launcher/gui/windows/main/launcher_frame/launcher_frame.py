@@ -7,6 +7,8 @@ import gui.vars as Vars
 
 from core.locale_manager import L
 
+from core.config.enums import LogLevel
+
 from gui.enums import Stage
 from gui.classes.containers import UIFrame
 from gui.classes.widgets import UIText, UIImageButton
@@ -48,6 +50,7 @@ class LauncherFrame(UIFrame):
         tools_button = self.put(ToolsButton(self))
         self.put(StartButton(self, tools_button))
         self.put(InstallButton(self, tools_button))
+        self.put(LogLevelText(self))
         self.put(ToolBarFrame(self, self.canvas))
 
         # Package versions
@@ -586,3 +589,44 @@ class ImporterVersionText(PackageVersionText):
     def get_tooltip(self, package_name=''):
         self.package_name = Config.Launcher.active_importer
         return super().get_tooltip()
+
+
+class LogLevelText(UIText):
+    def __init__(self, master):
+        super().__init__(
+            x=1040,
+            y=675,
+            text="",
+            font=('Asap', 20),
+            fill='#ff2929',
+            activefill='#ff4040',
+            anchor='n',
+            master=master
+        )
+
+        self.subscribe_show(Events.GUI.LauncherFrame.StageUpdate, lambda event: event.stage == Stage.Ready)
+
+        self.subscribe(Events.Application.ConfigUpdate, self.handle_config_update)
+
+        self.set_tooltip(lambda: L("importer_settings_log_level_option_menu_tooltip", """
+            Controls how verbose **d3d11_log.txt** file is.
+            
+            * **{importer_settings_log_level_disabled}**: Log nothing.
+            * **{importer_settings_log_level_warning}**: Log warnings and overlay messages.
+            * **{importer_settings_log_level_info}**: Also log API usage calls.
+            * **{importer_settings_log_level_debug}**: Also log super verbose massive debug output.
+        """)
+         + "\n\n"
+         + (
+             '<font color="#666666">'
+             f"{L('settings_title', 'Settings')} › "
+             f"{Config.Launcher.active_importer} › "
+             f"{L('launcher_settings_logging_section_label', 'Logging')} › "
+             f"{L('launcher_settings_log_verbosity_label', 'Log File Output Verbosity')}"
+             "</font>"
+         ))
+
+    def handle_config_update(self, event=None):
+        self.enabled = Config.Launcher.active_importer != 'XXMI' and Config.Active.Migoto.log_level != LogLevel.DISABLED
+        self.set(f"{L("launcher_settings_logging_section_label", "Logging")}: {Config.Active.Migoto.log_level.value.relocalize()}")
+        self.show()
