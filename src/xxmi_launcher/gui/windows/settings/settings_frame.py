@@ -79,14 +79,15 @@ class SettingsFrame(UIFrame):
 
     def _reset_frame(self):
         self.place_forget()
+        if self.close_button is not None:
+            self.close_button.hide()
         if self.settings_frame is not None:
             self.settings_frame.grid_forget()
+            self.update_idletasks()
             self.settings_frame.destroy()
         self.elements = {}
 
         self.settings_frame = None
-        if self.close_button is not None:
-            self.close_button.hide()
 
     def _hide(self):
         super()._hide()
