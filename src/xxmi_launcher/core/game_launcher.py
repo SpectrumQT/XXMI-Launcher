@@ -404,18 +404,27 @@ class GameLauncher:
 
         manager = ProcessManager(Path(process_name))
 
-        if manager.stop(timeout=5):
+        while manager.is_running():
+            # Terminate the game automatically.
+            if not manager.stop(timeout=5):
+                # Ask user to close the game manually.
+                user_response = Events.Call(Events.Application.ShowWarning(
+                    modal=True,
+                    message=L('message_text_game_stop_failed', """
+                        Failed to stop {process_name}!
+    
+                        Please close the game manually and press [OK] to continue.
+                    """).format(process_name=process_name),
+                    confirm_text=L('message_button_ok', 'OK'),
+                    cancel_text=L('message_button_abort', 'Abort'),
+                ))
+
+                # Return to main launcher window on `Abort`.
+                if user_response is False:
+                    raise UserWarning
+
             # Wait a pi more for files to unlock.
             time.sleep(3.141592653589793)
-        else:
-            Events.Fire(Events.Application.ShowError(
-                modal=True,
-                message=L('message_text_game_stop_failed', """
-                    Failed to stop {process_name}!
-                    
-                    Please close the game manually and press [OK] to continue.
-                """).format(process_name=process_name),
-            ))
 
     @staticmethod
     def _validate_installation_path(game_path: Path) -> None:
