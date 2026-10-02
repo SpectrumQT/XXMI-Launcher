@@ -106,6 +106,9 @@ class SettingsTabsFrame(UIFrame):
         self.tab_buttons_frame.put(button).grid(row=len(self.tabs), column=0, padx=(15, 5), pady=(5, 0), sticky='nw')
 
     def select_tab(self, tab_guid: str):
+        self.buttons[tab_guid].set_selected(True)
+        self.update_idletasks()
+
         if tab_guid in self._preload_queue:
             self._preload_queue.remove(tab_guid)
 
@@ -332,9 +335,6 @@ class SettingsTabButton(UIButton):
         self.tab_guid = tab_desc.guid
 
     def select_tab(self):
-        self.set_selected(True)
-        self.update_idletasks()
-
         self.master.master.select_tab(self.tab_guid)
 
 
