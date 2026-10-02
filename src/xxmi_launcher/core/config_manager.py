@@ -78,10 +78,15 @@ class ConfigManager:
     def save(self) -> None:
         try:
             config_json = self.config_to_json(self.config)
+        except (TypeError, ValueError) as exc:
+            log.exception("Failed to serialize configuration")
+            raise RuntimeError("Failed to serialize configuration") from exc
+
+        try:
             Paths.App.write_file(self.config_path, config_json)
-        except Exception:
-            log.exception("Failed to write configuration")
-            raise
+        except OSError as exc:
+            log.exception("Failed to write configuration to %s", self.config_path)
+            raise RuntimeError(f"Failed to write configuration to {self.config_path}") from exc
 
     def validate_config(self):
         wrong_signatures = self.security.validate_config()

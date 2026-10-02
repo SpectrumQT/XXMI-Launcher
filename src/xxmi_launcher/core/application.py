@@ -7,7 +7,7 @@ import time
 import traceback
 
 from pathlib import Path
-from threading import Thread, current_thread, main_thread
+from threading import Thread, current_thread, main_thread, Lock, Event
 from queue import Queue, Empty
 
 import core.error_manager as Errors
@@ -43,10 +43,13 @@ class Application:
         self.is_locked = False
         # Thread pool for threaded tasks
         self.threads = []
+        self.thread_lock = Lock()
         # Queue for thread errors handling
         self.error_queue = Queue()
-        # App state flag for watchdog thread
-        self.is_alive = True
+        # App shutdown state flag
+        self.shutting_down = False
+        # App shutdown event for watchdog thread
+        self.shutdown_event = Event()
 
         # Parse console args
         parser = argparse.ArgumentParser(add_help=False)
@@ -576,88 +579,124 @@ class Application:
             self.error_queue.put_nowait((e, traceback.format_exc()))
 
     def run_as_thread(self, callback, *args, **kwargs):
-        # Force blocking callback execution with value return via `no_thread=True`is found in kwargs
-        # Doing so allows to wait for callback completion or get its return value
-        if 'no_thread' in kwargs:
-            no_thread = kwargs['no_thread']
-            del kwargs['no_thread']
-        else:
-            no_thread = False
-        # Execute callback function directly or deploy it as thread
+        # Force blocking callback execution with value return via `no_thread=True`is found in kwargs.
+        # Doing so allows to wait for callback completion or get its return value.
+        no_thread = kwargs.pop("no_thread", False)
+
+        # Execute callback function directly.
         if no_thread:
             return callback(*args, **kwargs)
-        else:
-            thread = Thread(target=self.wrap_errors, args=(callback, *args), kwargs=kwargs)
+
+        with self.thread_lock:
+            if self.shutting_down:
+                logging.warning("Ignoring thread request during application shutdown: %s", callback)
+                return None
+
+            thread = Thread(
+                target=self.wrap_errors,
+                args=(callback, *args),
+                kwargs=kwargs
+            )
+
             self.threads.append(thread)
             thread.start()
 
+        return None
+
     def check_threads(self):
-        try:
-            if self.gui.state() != 'normal':
-                return
-        except Exception as e:
-            logging.error(e)
+        if self.shutting_down:
             return
 
         # Remove finished threads from the list.
-        self.threads = [thread for thread in self.threads if thread.is_alive()]
+        with self.thread_lock:
+            self.threads = [thread for thread in self.threads if thread.is_alive()]
 
-        # Raise exceptions sent to error queue by threads.
-        try:
-            self.report_thread_error()
-        except Empty:
-            pass
-
-        self.gui.after(50, self.check_threads)
-
-    def report_thread_error(self):
-        (error, trace) = self.error_queue.get_nowait()
-        logging.error(trace)
-        self.gui.show_messagebox(Events.Application.ShowError(
-            modal=True,
-            title=Errors.get_title(error) or L('message_title_error', 'Error'),
-            message=str(error),
-        ))
-        if self.gui.is_shown():
-            self.gui.after(100, Events.Fire, Events.Application.Ready())
-
-    def watchdog(self, timeout: int = 15):
-        timeout = time.time() + timeout
-        while True:
-            time.sleep(0.1)
-            if not self.is_alive:
-                return
-            if time.time() > timeout:
-                break
-        logging.error('[WATCHDOG]: Shutting down stuck process...')
-        os._exit(os.EX_OK)
-
-    def exit(self):
-        try:
-            assert current_thread() is main_thread()
-        except Exception as e:
-            self.error_queue.put_nowait((e, traceback.format_exc()))
-        # Start watchdog to forcefully shutdown process in 5 seconds
-        watchdog_thread = Thread(target=self.watchdog, kwargs={'timeout': 5})
-        watchdog_thread.start()
-        # Join active threads
-        logging.debug(f'Joining threads...')
-        for thread in self.threads:
-            thread.join()
-        # Join watchdog thread
-        logging.debug(f'Joining watchdog thread...')
-        self.is_alive = False
-        watchdog_thread.join()
-        # Write config to ini file
-        logging.debug(f'Saving config...')
-        Config.Manager.save()
-        # Report any errors left in queue
+        # Handle all pending worker exceptions.
         while True:
             try:
                 self.report_thread_error()
             except Empty:
                 break
-        logging.debug(f'App Exit')
+            except Exception:
+                # Don't allow an error while displaying an error to kill the Tkinter polling loop.
+                logging.exception("Failed to report thread error")
+                break
+
+        # Schedule the next check.
+        try:
+            self.gui.after(50, self.check_threads)
+        except RuntimeError:
+            # GUI/mainloop has already shut down.
+            pass
+
+    def report_thread_error(self):
+        (error, trace) = self.error_queue.get_nowait()
+
+        logging.error(trace)
+
+        self.gui.show_messagebox(Events.Application.ShowError(
+            modal=True,
+            title=Errors.get_title(error) or L("message_title_error", "Error"),
+            message=str(error),
+        ))
+
+    def log_remaining_thread_errors(self):
+        count = 0
+
+        while True:
+            try:
+                error, trace = self.error_queue.get_nowait()
+            except Empty:
+                break
+
+            count += 1
+            logging.error("Unhandled worker exception during shutdown: %s\n%s", error, trace)
+
+        if count:
+            logging.error("Shutting down with %d unreported worker error(s).", count)
+
+    def watchdog(self, timeout: int = 15):
+        if not self.shutdown_event.wait(timeout):
+            logging.error("[WATCHDOG]: Shutting down stuck process...")
+            os._exit(os.EX_OK)
+
+    def exit(self):
+        if current_thread() is not main_thread():
+            raise RuntimeError("exit() must be called from the main thread")
+
+        # Establish the shutdown barrier.
+        with self.thread_lock:
+            self.shutting_down = True
+            threads = list(self.threads)
+
+        # Start watchdog to forcefully shutdown process in 5 seconds.
+        watchdog_thread = Thread(
+            target=self.watchdog,
+            kwargs={"timeout": 5},
+            daemon=True,
+        )
+        watchdog_thread.start()
+
+        # No new threads should be started from this point.
+        logging.debug("Joining threads...")
+        for thread in threads:
+            thread.join()
+
+        # All workers are now finished, so no more errors can be added to error_queue.
+        self.log_remaining_thread_errors()
+
+        # Disable watchdog.
+        logging.debug("Stopping shutdown watchdog...")
+        self.shutdown_event.set()
+
+        # Write config to ini file
+        logging.debug("Saving config...")
+        try:
+            Config.Manager.save()
+        except Exception:
+            logging.exception("Failed to save config during shutdown")
+
+        logging.debug("App Exit")
         os._exit(os.EX_OK)
 
     def restart(self, delay: int = 0):
