@@ -627,6 +627,9 @@ class LogLevelText(UIText):
          ))
 
     def handle_config_update(self, event=None):
-        self.enabled = Config.Launcher.active_importer != 'XXMI' and Config.Active.Migoto.log_level != LogLevel.DISABLED
-        self.set(f"{L("launcher_settings_logging_section_label", "Logging")}: {Config.Active.Migoto.log_level.value.relocalize()}")
-        self.show()
+        try:
+            self.enabled = Config.Launcher.active_importer != 'XXMI' and Config.Active.Migoto.log_level != LogLevel.DISABLED
+            self.set(f"{L("launcher_settings_logging_section_label", "Logging")}: {Config.Active.Migoto.log_level.value.relocalize()}")
+            self.show()
+        except Exception:
+            pass
