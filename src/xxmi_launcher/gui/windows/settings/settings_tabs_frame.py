@@ -1,4 +1,5 @@
 import logging
+import time
 
 import core.config_manager as Config
 import core.event_manager as Events
@@ -61,7 +62,17 @@ class SettingsTabsFrame(UIFrame):
         self.selected_tab_guid: str | None = None
         self.loading_frame = None
 
-        self.tab_buttons_frame =  self.put(SettingsTabsListFrame(self))
+        self._initial_tab_guid = default_tab
+        self._initial_tab_loaded = False
+        self._preload_start_job = None
+        self._preload_job = None
+        self._preload_queue: list[str] = []
+        self._preloading = False
+        self._preload_pause_until = 0.0
+        self._loading_tabs: set[str] = set()  # Exists, but is not fully rendered yet.
+        self._ready_tabs: set[str] = set()  # Fully rendered and safe to display immediately.
+
+        self.tab_buttons_frame = self.put(SettingsTabsListFrame(self))
         self.tab_buttons_frame.grid(row=0, column=0, padx=(0, 0), pady=(0, 0), sticky='news')
         self.tab_buttons_frame.grid_propagate(0)
 
@@ -80,6 +91,13 @@ class SettingsTabsFrame(UIFrame):
 
         self.show()
 
+    def _on_scroll_activity(self):
+        # Keep background preloading paused while the user is scrolling.
+        #
+        # Every wheel event extends this timeout, so touchpad scrolling
+        # naturally keeps the preloader paused until scrolling stops.
+        self._preload_pause_until = time.monotonic() + 0.25
+
     def _register_tab(self, tab_desc: SettingsTabDesc):
         self.tabs[tab_desc.guid] = tab_desc
 
@@ -88,36 +106,27 @@ class SettingsTabsFrame(UIFrame):
         self.tab_buttons_frame.put(button).grid(row=len(self.tabs), column=0, padx=(15, 5), pady=(5, 0), sticky='nw')
 
     def select_tab(self, tab_guid: str):
-
-        self.buttons[tab_guid].set_selected(True)
+        if tab_guid in self._preload_queue:
+            self._preload_queue.remove(tab_guid)
 
         if self.selected_tab_guid is not None:
             if tab_guid == self.selected_tab_guid:
                 return
-            else:
-                self.buttons[self.selected_tab_guid].set_selected(False)
-                selected_tab_desc = self.tabs[self.selected_tab_guid]
-                selected_tab_frame = self.tab_content_frame.grab(selected_tab_desc.frame_type)
-                selected_tab_frame.grid_forget()
+
+            previous_guid = self.selected_tab_guid
+            self.buttons[previous_guid].set_selected(False)
+
+            previous_desc = self.tabs[previous_guid]
+            previous_frame = self.tab_content_frame.grab(previous_desc.frame_type)
+
+            if previous_frame is not None:
+                previous_frame.grid_forget()
 
         self.selected_tab_guid = tab_guid
 
-        # Show loading placeholder
-        tab_desc = self.tabs[tab_guid]
-        tab_frame = self.tab_content_frame.grab(tab_desc.frame_type)
-        not_loaded = tab_frame is None
-        if not_loaded:
-            self.loading_frame = UIFrame(
-                self.tab_content_frame,
-                width=700,
-                height=506,
-                fg_color=self._fg_color,
-            )
-            self.loading_frame.grid_propagate(False)
-            self.loading_frame.grid(row=1, column=0, padx=(10, 10), pady=(0, 10), sticky='news', rowspan=len(self.tabs))
-            self.loading_frame.put(
-                SettingsTabContentLoadingLabel(master=self.loading_frame)
-            ).place(relx=0.5, rely=0.46, anchor="center")
+        # A tab that is not fully ready needs the loading overlay.
+        if tab_guid not in self._ready_tabs:
+            self._show_loading_frame()
 
         self.after_idle(self.select_tab_async, tab_guid)
 
@@ -125,40 +134,153 @@ class SettingsTabsFrame(UIFrame):
         tab_desc = self.tabs[tab_guid]
         tab_frame = self.tab_content_frame.grab(tab_desc.frame_type)
 
+        # Tab hasn't been created yet.
         if tab_frame is None:
-            # Keep loading_frame visible.
-            tab_frame = self.tab_content_frame.put(
-                tab_desc.frame_type(self.tab_content_frame)
-            )
-
-            tab_frame.configure(fg_color=self._fg_color)
+            tab_frame = self.tab_content_frame.put(tab_desc.frame_type(self.tab_content_frame))
 
             # Give the new frame an explicit size while it is hidden.
-            tab_frame.configure(width=664, height=506)
+            tab_frame.configure(fg_color=self._fg_color, width=664, height=506)
 
             # Don't grid it yet.
             # Set up everything that affects layout before rendering.
             tab_frame._scrollbar.grid(row=1, column=1, sticky="nsew", pady=5)
 
             # Render completely while the frame is NOT mapped.
-            tab_frame.render_sections()
+            self._loading_tabs.add(tab_guid)
 
-            # Finish all currently pending geometry calculations.
+            tab_frame.render_sections_async(
+                done_callback=lambda guid=tab_guid: self._tab_load_finished(guid)
+            )
+
+            return
+
+        # Tab exists but is still being constructed in the background.
+        if tab_guid in self._loading_tabs:
+            return
+
+        # Tab has completed background rendering.
+        if tab_guid in self._ready_tabs:
+            self._reveal_ready_tab(tab_guid)
+
+    def _tab_load_finished(self, tab_guid: str):
+        self._loading_tabs.discard(tab_guid)
+        self._ready_tabs.add(tab_guid)
+
+        tab_frame = self.tab_content_frame.grab(self.tabs[tab_guid].frame_type)
+
+        if tab_frame is not None:
             tab_frame.update_idletasks()
 
-            # Only now reveal the finished frame.
-            tab_frame.grid(row=1, column=0, padx=(10, 10), pady=(0, 10), sticky="news", rowspan=len(self.tabs))
+        if self.selected_tab_guid == tab_guid:
+            self.after_idle(self._reveal_ready_tab, tab_guid)
 
-            # Make sure the final geometry is settled before exposing it.
-            tab_frame.update_idletasks()
+        if not self._initial_tab_loaded and tab_guid == self._initial_tab_guid:
+            self._initial_tab_loaded = True
+            if not self._preloading:
+                self._preload_start_job = self.after(150, self._start_preloading)
+        elif self.selected_tab_guid != tab_guid:
+            self._schedule_preload()
 
-            if self.loading_frame is not None:
-                self.loading_frame.grid_remove()
-                self.loading_frame.destroy()
-                self.loading_frame = None
+    def _show_loading_frame(self):
+        if self.loading_frame is not None:
+            return
 
-        else:
-            tab_frame.grid(row=1, column=0, padx=(10, 10), pady=(0, 10), sticky="news", rowspan=len(self.tabs))
+        self.loading_frame = UIFrame(
+            self.tab_content_frame,
+            width=700,
+            height=506,
+            fg_color=self._fg_color,
+        )
+
+        self.loading_frame.grid_propagate(False)
+
+        self.loading_frame.grid(row=1, column=0, padx=(10, 10), pady=(0, 10), sticky='news', rowspan=len(self.tabs))
+
+        self.loading_frame.put(
+            SettingsTabContentLoadingLabel(master=self.loading_frame)
+        ).place(relx=0.5, rely=0.46, anchor="center")
+
+        self.loading_frame.update_idletasks()
+
+    def _hide_loading_frame(self):
+        if self.loading_frame is None:
+            return
+
+        self.loading_frame.grid_remove()
+        self.loading_frame.destroy()
+        self.loading_frame = None
+
+    def _start_preloading(self):
+        self._preload_start_job = None
+
+        if self._preloading:
+            return
+
+        self._preloading = True
+        self._preload_queue = [
+            guid
+            for guid in reversed(self.tabs)
+            if guid != self.selected_tab_guid and guid not in self._ready_tabs
+        ]
+
+        self._schedule_preload()
+
+    def _schedule_preload(self, delay=1):
+        if not self._preloading or self._preload_job is not None:
+            return
+
+        self._preload_job = self.after(delay, self._preload_next)
+
+    def _preload_next(self):
+        self._preload_job = None
+
+        if not self._preloading:
+            return
+
+        if not self._preload_queue:
+            self._preloading = False
+            return
+
+        if time.monotonic() < self._preload_pause_until:
+            self._schedule_preload()
+            return
+
+        tab_guid = self._preload_queue.pop(0)
+        tab_desc = self.tabs[tab_guid]
+        tab_frame = self.tab_content_frame.grab(tab_desc.frame_type)
+
+        if tab_frame is not None:
+            self._schedule_preload()
+            return
+
+        tab_frame = self.tab_content_frame.put(tab_desc.frame_type(self.tab_content_frame))
+        tab_frame.configure(fg_color=self._fg_color, width=664, height=506)
+        tab_frame._scrollbar.grid(row=1, column=1, sticky="nsew", pady=5)
+
+        # This frame is not ready until render_sections_async() calls its completion callback.
+        self._loading_tabs.add(tab_guid)
+
+        tab_frame.render_sections_async(
+            done_callback=lambda guid=tab_guid: self._tab_load_finished(guid)
+        )
+
+    def _reveal_ready_tab(self, tab_guid: str):
+        if self.selected_tab_guid != tab_guid or tab_guid not in self._ready_tabs:
+            return
+
+        tab_frame = self.tab_content_frame.grab(self.tabs[tab_guid].frame_type)
+
+        if tab_frame is None:
+            return
+
+        # Remove the loading frame first, then reveal the already
+        # completely constructed tab in the same callback.
+        self._hide_loading_frame()
+
+        tab_frame.grid(row=1, column=0, padx=(10, 10), pady=(0, 10), sticky="news", rowspan=len(self.tabs))
+
+        # Keep this tab permanently marked as ready.
+        self._schedule_preload()
 
     def handle_importer_folder_update(self, var, val, old_val):
         if old_val is None or val == old_val:
@@ -210,6 +332,9 @@ class SettingsTabButton(UIButton):
         self.tab_guid = tab_desc.guid
 
     def select_tab(self):
+        self.set_selected(True)
+        self.update_idletasks()
+
         self.master.master.select_tab(self.tab_guid)
 
 

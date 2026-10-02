@@ -12,13 +12,9 @@ from customtkinter import ThemeManager, Variable
 from tkinterweb import HtmlLabel
 from mdx_gfm import GithubFlavoredMarkdownExtension
 
-import core.event_manager as Events
-import core.config_manager as Config
-import core.path_manager as Paths
 import gui.vars as Vars
 
 from core.locale_manager import L, Locale, LocaleString
-from core.application import Application
 
 from gui.classes.containers import UIFrame, UIScrollableFrame
 from gui.classes.widgets import UILabel, UIButton, UIEntry, UICheckbox,  UIOptionMenu, UITextbox
@@ -86,43 +82,59 @@ class SettingsSectionLabel(UILabel):
 
 
 class SettingsContentFrame(UIScrollableFrame):
+    PRELOAD_DELAY_MS = 50
+
     def __init__(self, master, sections: tuple[SettingsSection, ...]):
         super().__init__(
             master,
             height=510,
             corner_radius=0,
             border_width=0,
-            # hide_scrollbar=True,
             fix_grid=True,
             scroll_speed=4.0,
         )
 
         self._scrollbar.grid_forget()
-
         self.hide()
 
         self._scrollbar_hidden_color = master._fg_color
         self.grid_columnconfigure(0, weight=100)
 
         self._sections = sections
+        self._async_section_index = 0
+        self._async_done_callback = None
 
-    def render_sections(self):
-        # self._render_section()
-        for row, section in enumerate(self._sections):
-            self._create_section(section, row)
-        self._sections = None
-
-    def _render_section(self, row = 0):
-        if row >= len(self._sections):
+    def render_sections_async(self, done_callback=None):
+        if self._sections is None:
+            if done_callback:
+                self.after(1, done_callback)
             return
-        self._create_section(self._sections[row], row)
-        self._render_section(row + 1)
-        # self.after_idle(self._render_section, row + 1)
 
-    def _create_section(self, section: SettingsSection, row: int):
-        loadable_options = [option for option in section.options if not option.load_if or option.load_if.predicate()]
+        self._async_section_index = 0
+        self._async_done_callback = done_callback
+        self.after(self.PRELOAD_DELAY_MS, self._render_section_async)
+
+    def _render_section_async(self):
+        if self._sections is None:
+            self._finish_async_render()
+            return
+
+        if self._async_section_index >= len(self._sections):
+            self._finish_async_render()
+            return
+
+        row = self._async_section_index
+        section = self._sections[row]
+        self._async_section_index += 1
+
+        loadable_options = [
+            option
+            for option in section.options
+            if not option.load_if or option.load_if.predicate()
+        ]
 
         if not loadable_options:
+            self.after(self.PRELOAD_DELAY_MS, self._render_section_async)
             return
 
         label = SettingsSectionLabel(self, text=section.label_text)
@@ -130,6 +142,22 @@ class SettingsContentFrame(UIScrollableFrame):
 
         frame = SettingsSectionFrame(self, loadable_options, label)
         self.put(frame).grid(row=row * 2 + 1, column=0, padx=(20, 20), pady=(0, 15), sticky='we')
+
+        frame.render_options_async(
+            done_callback=self._section_render_finished
+        )
+
+    def _section_render_finished(self):
+        self.after(self.PRELOAD_DELAY_MS, self._render_section_async)
+
+    def _finish_async_render(self):
+        self._sections = None
+
+        callback = self._async_done_callback
+        self._async_done_callback = None
+
+        if callback:
+            self.after(1, callback)
 
 
 class Separator(UIFrame):
@@ -620,42 +648,71 @@ class SettingsOptionFrame(UIFrame):
 
 
 class SettingsSectionFrame(UIFrame):
+    PRELOAD_DELAY_MS = 1
+
     def __init__(
         self,
         master,
         options: list[SettingsOption],
         label: SettingsSectionLabel,
     ):
-        super().__init__(
-            master=master,
-        )
+        super().__init__(master=master)
 
         self._label = label
-
         self.grid_columnconfigure(0, weight=100)
 
         self._option_frames = []
+        self._settings_options = options
+        self._option_index = 0
+        self._async_done_callback = None
 
-        for index, option in enumerate(options):
-            row = index * 2 + 2
+    def render_options_async(self, done_callback=None):
+        self._option_index = 0
+        self._async_done_callback = done_callback
+        self.after(self.PRELOAD_DELAY_MS, self._render_option_async)
 
-            separator = None
-            if index != 0:
-                separator = Separator(self)
-                self.put(separator).grid(row=row - 1, column=0, padx=(10, 10), pady=(6, 6), sticky='we')
+    def _render_option_async(self):
+        if self._settings_options is None:
+            return
 
-            try:
-                frame = SettingsOptionFrame(self, option, separator)
-            except Exception as e:
-                raise ValueError(f'Failed to create option widget "{option.label_text}"!\n\n{e}')
+        if self._option_index >= len(self._settings_options):
+            self._finish_layout()
+            self._settings_options = None
 
-            self.put(frame).grid(row=row, column=0, padx=10, sticky='we')
+            callback = self._async_done_callback
+            self._async_done_callback = None
 
-            self._option_frames.append(frame)
+            if callback:
+                self.after(self.PRELOAD_DELAY_MS, callback)
 
-        # First and last row vertical padding.
+            return
+
+        index = self._option_index
+        self._create_option(index, self._settings_options[index])
+        self._option_index += 1
+
+        self.after(self.PRELOAD_DELAY_MS, self._render_option_async)
+
+    def _create_option(self, index: int, option: SettingsOption):
+        row = index * 2 + 2
+
+        separator = None
+        if index != 0:
+            separator = Separator(self)
+            self.put(separator).grid(row=row - 1, column=0, padx=(10, 10), pady=(6, 6), sticky='we')
+
+        try:
+            frame = SettingsOptionFrame(self, option, separator)
+        except Exception as e:
+            raise ValueError(f'Failed to create option widget "{option.label_text}"!\n\n{e}')
+
+        self.put(frame).grid(row=row, column=0, padx=10, sticky='we')
+        self._option_frames.append(frame)
+
+    def _finish_layout(self):
         self.grid_rowconfigure(0, minsize=6)
-        self.grid_rowconfigure(len(options) * 2 + 1, minsize=6)
+        self.grid_rowconfigure(len(self._settings_options) * 2 + 1, minsize=6)
+        self._update_separators()
 
     def _update_separators(self):
         found_visible = False
@@ -666,8 +723,6 @@ class SettingsSectionFrame(UIFrame):
                     frame._separator.show(False)
                 continue
 
-            # Separator is shown only when this isn't
-            # the first visible option.
             if frame._separator:
                 frame._separator.show(found_visible)
 

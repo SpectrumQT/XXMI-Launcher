@@ -195,7 +195,23 @@ class UIScrollableFrame(CTkScrollableFrame, UIElementBase):
 
         super().destroy()
 
+    def _notify_scroll_activity(self):
+        widget = self
+
+        while widget is not None:
+            callback = getattr(widget, '_on_scroll_activity', None)
+
+            if callback is not None:
+                callback()
+                return
+
+            try:
+                widget = widget.master
+            except Exception:
+                return
+
     def _mouse_wheel_all(self, event):
+        self._notify_scroll_activity()
         event.delta = event.delta * self._scroll_speed
         # CUSTOMTKINTER BUG WORKAROUND: Ignore scroll errors.
         # While custom `bind_all` and `destroy` implement bugfix, let's leave it here for safety.

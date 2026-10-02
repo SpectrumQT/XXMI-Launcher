@@ -1,10 +1,4 @@
-import subprocess
-import webbrowser
-import re
-
-from dataclasses import dataclass
 from customtkinter import filedialog
-from urllib.parse import urlparse
 
 import core.event_manager as Events
 import core.config_manager as Config
