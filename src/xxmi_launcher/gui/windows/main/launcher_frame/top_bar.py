@@ -458,5 +458,8 @@ class UnsafeModeText(UIText):
          ))
 
     def handle_config_update(self, event=None):
-        self.enabled = Config.Launcher.active_importer != 'XXMI' and Config.Active.Migoto.unsafe_mode
-        self.show()
+        try:
+            self.enabled = Config.Launcher.active_importer != 'XXMI' and Config.Active.Migoto.unsafe_mode
+            self.show()
+        except Exception:
+            pass
