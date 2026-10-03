@@ -343,7 +343,7 @@ class GIMIPackage(ModelImporterPackage):
             ProcessPriorityClass.NORMAL_PRIORITY_CLASS: 3,
             ProcessPriorityClass.ABOVE_NORMAL_PRIORITY_CLASS: 2,
             ProcessPriorityClass.HIGH_PRIORITY_CLASS: 1,
-            # ProcessPriorityClass.REALTIME_PRIORITY_CLASS: 0,
+            ProcessPriorityClass.REALTIME_PRIORITY_CLASS: 0,
         }
         process_priority_class = ProcessPriorityClass(Config.Active.Importer.process_priority)
 

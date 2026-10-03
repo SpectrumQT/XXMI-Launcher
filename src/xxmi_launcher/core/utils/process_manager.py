@@ -25,7 +25,7 @@ class ProcessPriorityClass(Enum):
     NORMAL_PRIORITY_CLASS = ProcessPriority.NORMAL
     ABOVE_NORMAL_PRIORITY_CLASS = ProcessPriority.ABOVE_NORMAL
     HIGH_PRIORITY_CLASS = ProcessPriority.HIGH
-    # REALTIME_PRIORITY_CLASS =
+    REALTIME_PRIORITY_CLASS = ProcessPriority.REALTIME
 
     def get_process_flag(self):
         return getattr(subprocess, self.name)
