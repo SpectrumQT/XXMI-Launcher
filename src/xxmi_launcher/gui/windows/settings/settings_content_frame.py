@@ -336,16 +336,70 @@ class InfoFrame(UIFrame):
         self._info_label = None
         self._toggle_state = False
 
-        # self._render_info_text()
+        self._reveal_cover = None
+        self._reveal_after_id = None
+        self._toggle_generation = 0
 
     def toggle(self):
-        if not self._info_label:
+        self._toggle_generation += 1
+        generation = self._toggle_generation
+
+        if self._reveal_after_id is not None:
+            self.after_cancel(self._reveal_after_id)
+            self._reveal_after_id = None
+
+        # Close.
+        if self._toggle_state:
+            self._toggle_state = False
+            self.show(False)
+            return
+
+        # Create the HTML widget while the InfoFrame is hidden.
+        if self._info_label is None:
             self._render_info_text()
-        self._toggle_state = not self._toggle_state
-        self.show(self._toggle_state)
-        if callable(self._info_text) and not self._toggle_state:
-            self._info_label.destroy()
-            self._info_label = None
+
+        # Create the managed cover before showing the frame.
+        self._create_reveal_cover()
+
+        self._toggle_state = True
+        self.show(True)
+
+        # Make sure geometry is settled while the cover is still visible.
+        self.update_idletasks()
+
+        self._reveal_after_id = self.after_idle(lambda: self._reveal(generation))
+
+    def _create_reveal_cover(self):
+        if self._reveal_cover is None:
+            self._reveal_cover = self.put(
+                UIFrame(
+                    master=self,
+                    fg_color=self._fg_color,
+                    width=0,
+                    height=0,
+                )
+            )
+
+            self._reveal_cover.place(x=0, y=0, relwidth=1, relheight=1)
+
+        # Make sure the cover is visible and above the HtmlLabel.
+        self._reveal_cover.show()
+        self._reveal_cover.lift()
+
+    def _reveal(self, generation):
+        self._reveal_after_id = None
+
+        if generation != self._toggle_generation:
+            return
+
+        if not self._toggle_state:
+            return
+
+        self.update_idletasks()
+
+        # Hide the managed UIFrame cover.
+        if self._reveal_cover is not None:
+            self._reveal_cover.hide()
 
     @staticmethod
     def handle_link_click(url):
