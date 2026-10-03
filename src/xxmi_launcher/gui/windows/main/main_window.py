@@ -249,6 +249,7 @@ class MainWindow(UIMainWindow):
     def close(self):
         Events.Fire(Events.Application.Ready())
         log.debug("Stopping GUI...")
+        self.hide()
         self.quit()
         log.debug("GUI stopped")
 
