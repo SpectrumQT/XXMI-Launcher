@@ -443,6 +443,12 @@ class Package:
     def run_pre_launch(self, launch_context: LaunchContext):
         raise NotImplementedError()
 
+    def update_metadata(self):
+        # Update deployed version metadata if it's missing.
+        if self.deployed_version != self.cfg.deployed_version and self.deployed_version == self.cfg.latest_version:
+            self.cfg.deployed_version = self.installed_version
+            self.cfg.deployed_release_notes = self.cfg.latest_release_notes
+
 
 @dataclass
 class PackageManagerConfig:
@@ -491,9 +497,6 @@ class PackageManager:
         package.load()
         # Detect installed version to do a basic integrity check
         package.detect_installed_version()
-        # Mark installed version as deployed on empty deployed version record
-        if not package.cfg.deployed_version:
-            package.cfg.deployed_version = package.installed_version
 
     def unload_package(self, package: Package | str):
         package = self.get_package(package)
@@ -633,6 +636,8 @@ class PackageManager:
         if install:
             package.update(clean=reinstall)
             return True
+
+        package.update_metadata()
 
         return False
 

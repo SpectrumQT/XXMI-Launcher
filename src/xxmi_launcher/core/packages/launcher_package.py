@@ -175,11 +175,6 @@ class LauncherPackage(Package):
         if new_version == "0.0.0":
             return
 
-        # Update deployed version metadata (`Package.update()` method never gets there for launcher package).
-        if self.cfg.deployed_version != new_version:
-            self.cfg.deployed_version = new_version
-            self.cfg.deployed_release_notes = self.cfg.latest_release_notes
-
         # Upgrade existing config to the latest version
         Config.Manager.migrate(new_version)
 
