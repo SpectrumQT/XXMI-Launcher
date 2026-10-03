@@ -253,13 +253,15 @@ class ConfigMigrator:
                 # Upgrade NATIVE enum.
                 case ProcessStartMethodLegacy.NATIVE:
                     importer.Importer.start_method = StartMethod.NATIVE
+                    log.debug(f"[{importer_name}]: Migrated START_METHOD {importer.Importer.process_start_method} -> {importer.Importer.start_method}")
                 # Upgrade SHELL enum.
                 case ProcessStartMethodLegacy.SHELL:
                     importer.Importer.start_method = StartMethod.SHELL
+                    log.debug(f"[{importer_name}]: Migrated START_METHOD {importer.Importer.process_start_method} -> {importer.Importer.start_method}")
                 # Handle MANUAL enum removal.
                 case ProcessStartMethodLegacy.MANUAL:
                     importer.Importer.game_launch = GameLaunch.MANUAL
-            log.debug(f"[{importer_name}]: Migrated START_METHOD {importer.Importer.process_start_method} -> {importer.Importer.start_method}")
+                    log.debug(f"[{importer_name}]: Migrated START_METHOD {importer.Importer.process_start_method} -> {importer.Importer.game_launch}")
 
             # Reset legacy options.
             importer.Importer.custom_launch_enabled = False
