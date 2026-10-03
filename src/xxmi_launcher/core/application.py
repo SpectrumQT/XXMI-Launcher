@@ -363,6 +363,7 @@ class Application:
         self.launcher.set_model_importer(self.package_manager.get_package(importer_id))
         self.package_manager.notify_package_versions()
         Config.Manager.validate_config()
+        Events.Fire(Events.Application.ConfigUpdate())
         # Check for updates
         if update and self.package_manager.get_package(importer_id).installed_version:
             self.run_as_thread(self.package_manager.update_packages, no_install=True, silent=True)
