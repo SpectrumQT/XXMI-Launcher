@@ -172,6 +172,8 @@ class GameLauncher:
     def launch(self):
         # region Game Executable
 
+        self.require_launch(Config.Active.Importer.game_launch)
+
         game_path, game_exe_path = self.get_game_paths()
 
         game_exe_name = self.get_game_exe_name(game_exe_path)
