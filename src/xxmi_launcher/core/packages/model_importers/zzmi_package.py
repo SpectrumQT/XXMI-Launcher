@@ -120,7 +120,34 @@ class ZZMIPackage(ModelImporterPackage):
             return
 
         # EGS ZZZ 3.2 crashes on login screen if work_dir is the same as ZenlessZoneZero.exe location.
-        launch_context.work_dir = None
+        try:
+            if self.is_epic_installation(game_exe_path):
+                launch_context.work_dir = game_exe_path.parent.parent.parent
+        except Exception as e:
+            logging.exception(f"Failed to check `{game_exe_path}` for being EGS installation: {e}")
+
+    @staticmethod
+    def is_epic_installation(game_exe_path: Path) -> bool:
+        epic_launcher_path = game_exe_path.parent.parent.parent / "launcher_epic.exe"
+
+        if epic_launcher_path.is_file():
+            return True
+
+        config_path = game_exe_path.with_name("config.ini")
+
+        Events.Fire(Events.PathManager.VerifyFileAccess(path=config_path, write=True))
+
+        with open(config_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                result = line.split('=')
+
+                if len(result) != 2:
+                    continue
+
+                if "epic" in result[1].lower():
+                    return True
+
+        return False
 
     def configure_game_settings(self, game_path: Path | None, game_exe_path: Path | None):
         # Auto-config below requires reliably detectable installation location.
