@@ -172,8 +172,12 @@ class LauncherSettingsFrame(SettingsContentFrame):
                                 **Disabled**: DNS requests will be routed through your ISP.
                             """),
                             enabled_if=Condition(
-                                variables=("Vars.Launcher.proxy.enable", "Vars.Launcher.proxy.type"),
-                                predicate=lambda: bool(Vars.Launcher.proxy.enable.get()) and Vars.Launcher.proxy.type.get() == ProxyType.SOCKS5,
+                                variables=("Vars.Launcher.proxy.enable",),
+                                predicate=lambda: bool(Vars.Launcher.proxy.enable.get()),
+                            ),
+                            visible_if=Condition(
+                                variables=("Vars.Launcher.proxy.type",),
+                                predicate=lambda: Vars.Launcher.proxy.type.get() == ProxyType.SOCKS5,
                             ),
                         ),
 
