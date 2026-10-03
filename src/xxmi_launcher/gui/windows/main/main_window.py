@@ -57,16 +57,25 @@ class MainWindow(UIMainWindow):
         # Skip loading the same theme
         if self.active_theme == theme:
             return
+
         theme_path = Paths.App.Themes / theme
         theme_json_path = theme_path / 'custom-tkinter-theme.json'
+
         # Ensure customtkinter theme integrity
         if not self.validate_theme(theme_json_path):
-            return
+            theme = 'Default'
+            Config.Launcher.gui_theme = theme
+            theme_path = Paths.App.Themes / theme
+            theme_json_path = theme_path / 'custom-tkinter-theme.json'
+            if self.active_theme == theme:
+                return
+
         # Load customtkinter theme
         try:
             set_default_color_theme(str(theme_json_path))
         except Exception as e:
             log.exception(e)
+
         # Load custom fonts
         fonts_path = theme_path / 'Fonts'
         if fonts_path.is_dir():
@@ -77,25 +86,23 @@ class MainWindow(UIMainWindow):
                     pyglet.font.add_file(str(font_path))
                 except Exception as e:
                     log.exception(e)
+
         # Set icon path
         icon_path = theme_path / 'window-icon.ico'
         if icon_path.is_file():
             self.cfg.icon_path = icon_path
+
         # Set theme as active
         self.active_theme = theme
         Config.Config.active_theme = theme
 
     def validate_theme(self, theme_json_path):
         theme_name = theme_json_path.parent.name
-        if theme_name == 'Default':
-            return True
 
         # Make sure that theme exists
         if not theme_json_path.is_file():
-            Config.Config.active_theme = 'Default'
-            Config.Launcher.gui_theme = 'Default'
-            self.load_theme('Default')
             Events.Fire(Events.Application.ShowWarning(
+                modal=True,
                 message=L('message_text_theme_load_failed_no_folder', """
                     Failed to load {theme} theme:
                     
@@ -105,10 +112,8 @@ class MainWindow(UIMainWindow):
             return False
 
         if not theme_json_path.parent.is_dir():
-            Config.Config.active_theme = 'Default'
-            Config.Launcher.gui_theme = 'Default'
-            self.load_theme('Default')
             Events.Fire(Events.Application.ShowWarning(
+                modal=True,
                 message=L('message_text_theme_load_failed_no_file', """
                     Failed to load {theme} theme:
                     
@@ -117,6 +122,9 @@ class MainWindow(UIMainWindow):
             ))
             return False
 
+        if theme_name == 'Default':
+            return True
+
         try:
             theme_data = json.loads(Paths.App.read_text(theme_json_path))
             theme_api_version = theme_data['Metadata']['theme_api_version']
@@ -124,8 +132,6 @@ class MainWindow(UIMainWindow):
             theme_api_version = '0.0.0'
 
         if theme_api_version <  '1.1.0':
-            default_json_path = Paths.App.Themes / 'Default' / 'custom-tkinter-theme.json'
-            set_default_color_theme(str(default_json_path))
             update_dialogue = Events.Application.ShowWarning(
                 modal=True,
                 title=L('message_title_theme_update_required', 'Theme Update Required'),
@@ -138,16 +144,15 @@ class MainWindow(UIMainWindow):
                     Click `Patch Theme` to replace `custom-tkinter-theme.json` with new one.
                 """).format(theme=theme_name)
             )
+
             user_requested_default_theme = self.show_messagebox(update_dialogue)
-            if user_requested_default_theme:
-                Config.Config.active_theme = 'Default'
-                Config.Launcher.gui_theme = 'Default'
-                self.load_theme('Default')
+
+            if user_requested_default_theme is False:
+                default_json_path = Paths.App.Themes / 'Default' / 'custom-tkinter-theme.json'
+                Paths.App.copy_file(default_json_path, theme_json_path)
+                return True
             else:
-                Events.Fire(Events.PathManager.VerifyFileAccess(path=theme_json_path, write=True))
-                theme_json_path.unlink()
-                shutil.copy2(default_json_path, theme_json_path)
-                self.load_theme(theme_name)
+                return False
 
         return True
 

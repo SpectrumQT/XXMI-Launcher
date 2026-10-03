@@ -263,11 +263,14 @@ class LauncherSettingsFrame(SettingsContentFrame):
         Events.Fire(Events.GUI.ToggleThemeDevMode(enabled=val))
 
     def update_theme(self, new_value: str):
-        Events.Fire(Events.Application.CloseSettings(save=True))
-        Events.Fire(Events.Application.Busy())
-        self.after_idle(lambda: Events.Fire(Events.GUI.ReloadGUI(reload_theme=True)))
-        self.after_idle(lambda: Events.Fire(Events.Application.OpenSettings(tab_name="LAUNCHER_TAB")))
-        self.after_idle(lambda: Events.Fire(Events.Application.Ready()))
+        if self.winfo_toplevel().validate_theme(Paths.App.Themes / new_value / "custom-tkinter-theme.json"):
+            Events.Fire(Events.Application.CloseSettings(save=True))
+            Events.Fire(Events.Application.Busy())
+            self.after_idle(lambda: Events.Fire(Events.GUI.ReloadGUI(reload_theme=True)))
+            self.after_idle(lambda: Events.Fire(Events.Application.OpenSettings(tab_name="LAUNCHER_TAB")))
+            self.after_idle(lambda: Events.Fire(Events.Application.Ready()))
+        else:
+            Vars.Launcher.gui_theme.set("Default")
 
     @staticmethod
     def post_process_proxy_host(var, value):
