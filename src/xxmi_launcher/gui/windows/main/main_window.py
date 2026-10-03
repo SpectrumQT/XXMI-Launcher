@@ -123,7 +123,7 @@ class MainWindow(UIMainWindow):
         except:
             theme_api_version = '0.0.0'
 
-        if theme_api_version <  '1.0.1':
+        if theme_api_version <  '1.1.0':
             default_json_path = Paths.App.Themes / 'Default' / 'custom-tkinter-theme.json'
             set_default_color_theme(str(default_json_path))
             update_dialogue = Events.Application.ShowWarning(
