@@ -169,6 +169,13 @@ class GameLauncher:
 
         return ' '.join(cmd_parts)
 
+    def ensure_game_close(self):
+        game_path, game_exe_path = self.get_game_paths()
+
+        game_exe_name = self.get_game_exe_name(game_exe_path)
+
+        self._ensure_game_close(game_exe_name)
+
     def launch(self):
         # region Game Executable
 

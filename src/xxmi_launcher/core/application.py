@@ -172,8 +172,7 @@ class Application:
         Events.Fire(Events.Application.ConfigUpdate())
         Events.Fire(Events.PackageManager.NotifyPackageVersions(detect_installed=True))
 
-        Events.Subscribe(Events.Application.Update,
-            lambda event: self.run_as_thread(self.package_manager.update_packages, **event.__dict__))
+        Events.Subscribe(Events.Application.Update, self.handle_update)
         Events.Subscribe(Events.Application.CheckForUpdates,
             lambda event: self.run_as_thread(self.check_for_updates))
         Events.Subscribe(Events.Application.LoadImporter,
@@ -195,6 +194,10 @@ class Application:
         logging.debug('Core ready!')
 
         self.gui.open()
+
+    def handle_update(self, event: Events.Application.Update):
+        self.launcher.ensure_game_close()
+        self.run_as_thread(self.package_manager.update_packages, **event.__dict__)
 
     def handle_open_settings(self, event: ApplicationEvents.OpenSettings):
         settings_frame = self.gui.launcher_frame.grab('SettingsFrame')
