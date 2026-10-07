@@ -1,7 +1,5 @@
 import json
 import logging
-import shutil
-
 import pyglet
 
 import core.path_manager as Paths

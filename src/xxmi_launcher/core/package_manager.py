@@ -11,7 +11,6 @@ from dataclasses import dataclass, field, asdict
 from pathlib import Path
 from dacite import from_dict
 from win32api import GetFileVersionInfo, HIWORD, LOWORD
-from textwrap import dedent
 
 import core.error_manager as Errors
 import core.event_manager as Events

@@ -3,7 +3,6 @@ import logging
 import os
 import argparse
 import subprocess
-import time
 import traceback
 
 from pathlib import Path
@@ -24,7 +23,6 @@ from core.package_manager import PackageManager
 from core.packages.launcher_package import LauncherPackage
 from core.packages.migoto_package import MigotoPackage
 from core.packages.genshin_fps_unlock_package import GenshinFpsUnlockerPackage
-from core.packages.model_importers.model_importer import ModelImporterPackage
 from core.packages.model_importers.gimi_package import GIMIPackage
 from core.packages.model_importers.srmi_package import SRMIPackage
 from core.packages.model_importers.wwmi_package import WWMIPackage
