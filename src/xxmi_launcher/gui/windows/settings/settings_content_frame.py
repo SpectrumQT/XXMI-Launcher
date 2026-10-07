@@ -369,16 +369,24 @@ class InfoFrame(UIFrame):
         self.update_idletasks()
 
         self._reveal_after_id = self.after_idle(lambda: self._reveal(generation))
+            
+    def show(self, show=True):
+        # Ancestor UIFrame.show() may try to show every child.
+        # A closed InfoFrame must remain closed.
+        if show and not self._toggle_state:
+            return
+
+        super().show(show)
 
     def _create_reveal_cover(self):
         if self._reveal_cover is None:
-            self._reveal_cover = self.put(
-                UIFrame(
-                    master=self,
-                    fg_color=self._fg_color,
-                    width=0,
-                    height=0,
-                )
+            # Avoid using self.put() here.
+            # Registering it with UIFrame causes it to be shown again when the parent hierarchy is shown.
+            self._reveal_cover = UIFrame(
+                master=self,
+                fg_color=self._fg_color,
+                width=0,
+                height=0
             )
 
             self._reveal_cover.place(x=0, y=0, relwidth=1, relheight=1)
