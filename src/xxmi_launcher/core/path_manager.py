@@ -99,6 +99,25 @@ def assert_file_run(file_path: Path, absolute=True):
         raise NoExeAccessError(L('error_no_exe_access', "Failed run '{path}': no execute access!").format(path=file_path))
 
 
+def assert_file_extension(file_path: Path, extension_filter: str | list[str]):
+    if isinstance(extension_filter, str):
+        extension_filter = [extension_filter]
+
+    extension_filter = [f".{ext}" if not ext.startswith('.') else ext for ext in extension_filter]
+
+    if file_path.suffix not in extension_filter:
+        raise ValueError(L('error_wrong_extension', """
+            Unexpected extension `{actual_extension}` (expected: {expected_extensions:or_list}) for file:
+            ```
+            {path}
+            ```
+        """).format(
+            actual_extension=file_path.suffix,
+            expected_extensions=[f"`{extension}`" for extension in extension_filter],
+            path=file_path,
+        ))
+
+
 def assert_path(directory_path: Path):
     if not directory_path.exists():
         return assert_path(directory_path.parent)
@@ -148,6 +167,8 @@ class Paths:
             self.verify_file_write(event.path)
         if event.exe:
             assert_file_read(event.path)
+        if event.extension_filter:
+            assert_file_extension(event.path, event.extension_filter)
 
     def set_root_path(self, root_path: Path):
         for field in fields(self):

@@ -11,6 +11,7 @@ class PathManagerEvents:
         read: bool = True
         write: bool = False
         exe: bool = False
+        extension_filter: str | list[str] | None = None
 
     @dataclass
     class WriteFile:
