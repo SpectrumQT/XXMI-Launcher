@@ -1,6 +1,7 @@
 import logging
 import os
 import time
+import re
 
 from pathlib import Path
 from dataclasses import fields
@@ -148,7 +149,12 @@ class GameLauncher:
 
         return next(field.default for field in fields(type(Config.Active.Importer)) if field.name == "game_process_exe")
 
-    def build_cmd_args(self, cfg: AppConfig, game_exe_path: Path | None = None, get_value = lambda x: x) -> str:
+    def build_cmd_args(
+        self,
+        cfg: AppConfig,
+        game_exe_path: Path | None = None,
+        get_value = lambda x: x
+    ) -> str:
         cmd_parts = []
 
         if get_value(cfg.Active.Importer.game_launch) == GameLaunch.STEAM:
@@ -169,6 +175,16 @@ class GameLauncher:
 
         return ' '.join(cmd_parts)
 
+    @staticmethod
+    def _get_cmd_arg_name(arg: str) -> str | None:
+        match = re.match(r"^-{1,2}([^\s=]+)(?:=.*)?$", arg.strip())
+        return match.group(1) if match else None
+
+    @staticmethod
+    def _get_cmd_arg_names(cmd: str) -> set[str]:
+        pattern = re.compile(r"(?<!\S)-{1,2}([^\s=]+)(?==|\s|$)")
+        return {match.group(1) for match in pattern.finditer(cmd)}
+
     def ensure_game_close(self):
         game_path, game_exe_path = self.get_game_paths()
 
@@ -176,7 +192,7 @@ class GameLauncher:
 
         self._ensure_game_close(game_exe_name)
 
-    def launch(self):
+    def launch(self, extra_args: list[str]):
         # region Game Executable
 
         self.require_launch(Config.Active.Importer.game_launch)
@@ -246,6 +262,16 @@ class GameLauncher:
         )
 
         self.model_importer.override_launch_context(launch_context, game_path, game_exe_path)
+
+        # Proxy extra args only when the argument name is not already present.
+        if extra_args and isinstance(launch_context.target, ExecutableLaunch):
+            arg_names = self._get_cmd_arg_names(launch_context.target.cmd_args)
+
+            for extra_arg in extra_args:
+                arg_name = self._get_cmd_arg_name(extra_arg)
+                if arg_name and arg_name not in arg_names:
+                    launch_context.target.cmd_args += ' ' + extra_arg
+                    arg_names.add(arg_name)
 
         # endregion
 

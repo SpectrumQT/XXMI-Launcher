@@ -68,7 +68,7 @@ class Application:
                             help='Remove downloaded packages from the Resources folder.')
         try:
             args = [arg for arg in sys.argv[1:] if arg != '&&']  # Filter out shell operator '&&'
-            self.args = parser.parse_args(args)
+            self.args, self.unknown_args = parser.parse_known_args(args)
             logging.debug(f'Arguments: {self.args}')
             if self.args.help:
                 parser.print_help()
@@ -543,7 +543,7 @@ class Application:
                     process.wait()
 
             # Start game and inject 3dmigoto
-            self.launcher.launch()
+            self.launcher.launch(self.unknown_args)
 
             # Execute specified shell command after successful injection
             if Config.Active.Importer.run_post_load_enabled and Config.Active.Importer.run_post_load != '':
