@@ -64,6 +64,8 @@ class Application:
                             help='Create desktop shortcut for launcher .exe.')
         parser.add_argument('-un', '--uninstall', action='store_true',
                             help='Remove downloaded packages from the Resources folder.')
+        parser.add_argument('-su', '--silent_update', action='store_true',
+                            help='Install available updates without confirmation dialogue.')
         try:
             args = [arg for arg in sys.argv[1:] if arg != '&&']  # Filter out shell operator '&&'
             self.args, self.unknown_args = parser.parse_known_args(args)
@@ -369,6 +371,9 @@ class Application:
         if not self.package_manager.update_available():
             return False
 
+        if self.args.silent_update:
+            return True
+
         pending_update_message = []
 
         for package_name, package in self.package_manager.get_version_notification().package_states.items():
@@ -399,7 +404,7 @@ class Application:
         user_requested_update = self.gui.show_messagebox(update_dialogue)
 
         # Mark updates as skipped if user pressed Skip button, but only if it's not None from Close button
-        if not user_requested_update and user_requested_update is not None:
+        if user_requested_update is False:
             self.package_manager.skip_latest_updates()
 
         return bool(user_requested_update)
