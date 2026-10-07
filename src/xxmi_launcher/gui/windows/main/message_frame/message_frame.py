@@ -518,19 +518,27 @@ class RadioWidget:
         self.frame = frame
         self.options = options
         self.selected_option = selected_id
-        self.hovered_option = 0
         self.radio_var = radio_var
 
     def get_style(self):
-        return dedent(f"""
+        return dedent("""
             <style>
-            input[type="radio"] {{
-              cursor: pointer;
-              margin: 0px; 
-              padding-bottom: 5px; 
-              transform: scale(4);
-              accent-color: #007bff;
-            }}
+            .radio-row {
+                cursor: pointer;
+            }
+            .radio {
+                font-size: 22px;
+                cursor: pointer;
+                color: #FFFFFF;
+                vertical-align: middle;
+                line-height: 1;
+                position: relative;
+                vertical-align: -2px;
+            }
+            .radio-label {
+                cursor: pointer;
+                vertical-align: middle;
+            }
             </style>
         """)
 
@@ -538,57 +546,83 @@ class RadioWidget:
         return dedent(f"""
             <form id="radio_widget">
             {
-                "<br>\n".join([
+                "<br>".join([
                     dedent(f'''
-                    <div>
-                    <input type="radio" name="radio_widget_buttons" id="radio_button_{str(i)}" value="{str(i)}"{" checked" if i == self.selected_option else ""}>
-                    <label id="radio_label_{str(i)}" for="radio_button_{str(i)}"> {option}</label>
-                    </div>
-                    ''') for i, option in enumerate(self.options)
+                        <div id="radio_row_{i}" class="radio-row">
+                            <span id="radio_button_{i}" class="radio">
+                                {"●" if i == self.selected_option else "○"}
+                            </span>
+                            <label id="radio_label_{i}" class="radio-label"> {option}</label>
+                        </div>
+                    ''')
+                    for i, option in enumerate(self.options)
                 ])
             }
             </form>
         """)
 
-    def make_radio_label_hover_callback(self, idx):
+    def select(self, idx: int):
+        """Select a radio option and update the HTML + Tkinter variable."""
+
+        if not 0 <= idx < len(self.options):
+            return
+
+        self.selected_option = idx
+        self.radio_var.set(idx)
+
+        for i in range(len(self.options)):
+            button = self.frame.document.getElementById(f"radio_button_{i}")
+            label = self.frame.document.getElementById(f"radio_label_{i}")
+
+            if button is None or label is None:
+                continue
+
+            if i == idx:
+                button.textContent = "●"
+                label.style.color = "#E5E5E5"
+            else:
+                button.textContent = "○"
+                label.style.color = "#888888"
+
+    def make_radio_hover_callback(self, idx):
         def callback(event):
-            self.hovered_option = idx
-            # print(f'hovered {self.hovered_option}')
+            # Nothing required here for now.
+            pass
+
         return callback
 
-    def make_radio_label_callback(self, idx):
+    def make_radio_callback(self, idx):
         def callback(event):
-            button = self.frame.document.getElementById(f"radio_button_{idx}")
-            button.checked = True
-            self.selected_option = idx
-            self.radio_var.set(self.selected_option)
-            # print(f'label {idx}')
-        return callback
+            self.select(idx)
 
-    def make_radio_button_hover_callback(self, idx):
-        def callback(event):
-            self.hovered_option = idx
-            # print(f'hovered {self.hovered_option}')
-        return callback
-
-    def make_radio_button_modified_callback(self, idx):
-        def callback(event):
-            self.selected_option = self.hovered_option
-            self.radio_var.set(self.selected_option)
-            # print(f'selected {self.selected_option}')
         return callback
 
     def setup_callbacks(self):
-        self.selected_option = 0
+        # Do NOT reset selected_option here.
+        # selected_id should remain the initial selection.
 
         for i in range(len(self.options)):
-            radio_label = self.frame.document.getElementById(f"radio_label_{i}")
-            radio_label.bind("<Enter>", self.make_radio_label_hover_callback(i))
-            radio_label.bind("<Button-1>", self.make_radio_label_callback(i))
-
             radio_button = self.frame.document.getElementById(f"radio_button_{i}")
-            radio_button.bind("<Enter>", self.make_radio_button_hover_callback(i))
-            radio_button.bind("<<Modified>>", self.make_radio_button_modified_callback(i))
+            radio_label = self.frame.document.getElementById(f"radio_label_{i}")
+            radio_row = self.frame.document.getElementById(f"radio_row_{i}")
+
+            callback = self.make_radio_callback(i)
+
+            # Clicking any part of the row selects the option.
+            if radio_row is not None:
+                radio_row.bind("<Button-1>", callback)
+                radio_row.bind("<Enter>", self.make_radio_hover_callback(i))
+
+            # Keep these too, because TkinterWeb's event targeting can
+            # depend on which HTML element the mouse is actually over.
+            if radio_button is not None:
+                radio_button.bind("<Button-1>", callback)
+
+            if radio_label is not None:
+                radio_label.bind("<Button-1>", callback)
+
+        # Make sure the initial visual state matches selected_option.
+        self.select(self.selected_option)
 
 
 class CheckboxWidget:
