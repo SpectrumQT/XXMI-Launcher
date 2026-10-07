@@ -248,28 +248,23 @@ class Application:
             raise ValueError(L('error_unknown_model_importer', 'Unknown model importer {importer}!').format(importer=importer_name))
         return importer_name
 
-    def get_importer_from_path(self, path: Path):
-        if path.is_file() or path.suffix == '.exe':
-            game_folder = Path(path).parent
-        else:
-            game_folder = path
+    def get_importer_from_path(self, game_exe_path: Path):
+        Events.Fire(Events.PathManager.VerifyFileAccess(path=game_exe_path, extension_filter="exe"))
 
-        for package_name in ['WWMI', 'ZZMI', 'SRMI', 'GIMI', 'HIMI', 'EFMI']:
-            package = self.package_manager.get_package(package_name)
-            if not isinstance(package, ModelImporterPackage):
-                raise ValueError(f'Package {package.metadata.package_name} is not ModelImporterPackage!')
-            try:
-                game_path = package.validate_game_path(game_folder)
-                game_exe_path = package.validate_game_exe_path(game_path)
-            except Exception:
-                continue
-            return package.metadata.package_name, game_path, game_exe_path
+        for package_name, package_config in Config.Importers.__dict__.items():
+            game_exe_name = game_exe_path.name
+
+            if game_exe_name in package_config.Importer.process_exe_names:
+                return package_name, game_exe_path.parent, game_exe_path
+
+            if game_exe_name in package_config.Importer.game_exe_names:
+                return package_name, game_exe_path.parent, game_exe_path
 
         raise ValueError(L('error_model_importer_auto_select_failed', """
             Failed to auto-select importer for `{path}`!
             
             Try to add `--nogui --xxmi WWMI` args (or GIMI, SRMI, ZZMI, HIMI, EFMI).
-        """).format(path=path))
+        """).format(path=game_exe_path))
 
     def get_active_importer(self) -> str:
         active_importer = None
