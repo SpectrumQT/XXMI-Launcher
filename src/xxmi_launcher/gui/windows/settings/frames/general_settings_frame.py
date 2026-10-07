@@ -1,3 +1,4 @@
+import logging
 import subprocess
 import webbrowser
 
@@ -15,6 +16,8 @@ from core.locale_manager import L, Locale
 from core.config.enums import GameLaunch, StartMethod, WindowMode, ProcessPriority, WuWaResourceTier
 
 from gui.windows.settings.settings_content_frame import SettingsContentFrame, SettingsSection, SettingsOption, OptionWidget, Condition
+
+log = logging.getLogger(__name__)
 
 
 class GeneralSettingsFrame(SettingsContentFrame):
@@ -563,6 +566,7 @@ class GeneralSettingsFrame(SettingsContentFrame):
             game_folder = Vars.Active.Importer.game_folder.get()
             game_path = Events.Call(Events.ModelImporter.ValidateGameFolder(game_folder=game_folder.strip()))
         except Exception as e:
+            log.debug(e)
             return str(e)
 
     @staticmethod
