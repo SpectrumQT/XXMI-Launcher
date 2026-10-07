@@ -57,6 +57,17 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
                         ),
 
                         SettingsOption(
+                            label_text=L("importer_settings_manage_config_label", "Manage XXMI DLL Config"),
+                            widget=OptionWidget.CHECKBOX,
+                            value_variable="Vars.Active.Migoto.manage_xxmi_dll_config",
+                            tooltip=L("importer_settings_manage_config_checkbox_tooltip", """
+                                * **Enabled:** Write settings configured in this tab to `d3dx.ini` on game launch.
+                                * **Disabled:** Do not modify `d3dx.ini` on game launch.
+                            """),
+                        ),
+
+
+                        SettingsOption(
                             label_text=L("general_settings_xxmi_delay_label", "XXMI DLL Initialization Delay"),
                             widget=OptionWidget.INPUT_INT,
                             value_variable="Vars.Active.Importer.xxmi_dll_init_delay",
@@ -80,6 +91,10 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
                                         If game crashes with no mods, try to increase it. Start with steps of 50 and increase them as you go.
                                     """),
                                 ) + '\n\n<font color="#666666">d3dx.ini › [System] › dll_initialization_delay</font>'),
+                            ),
+                            visible_if=Condition(
+                                variables=("Vars.Active.Migoto.manage_xxmi_dll_config",),
+                                predicate=self.manage_xxmi_dll_config,
                             ),
                         ),
 
@@ -114,6 +129,10 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
                                 * **Enabled:** No error warnings or beeps whatsoever. Ignorance is bliss.
                                 * **Disabled:** Mod error warnings and beeps on **F10** will haunt poor souls.
                             """) + '\n\n<font color="#666666">d3dx.ini › [Logging] › show_warnings</font>',
+                            visible_if=Condition(
+                                variables=("Vars.Active.Migoto.manage_xxmi_dll_config",),
+                                predicate=self.manage_xxmi_dll_config,
+                            ),
                         ),
 
                         SettingsOption(
@@ -126,6 +145,10 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
                                 * **Enabled:** Clear unknown settings after **second** reload since mods removal.
                                 * **Disabled:** Do not clear unknown settings, keep them in **d3dx_user.ini** forever.
                             """) + '\n\n<font color="#666666">d3dx.ini › [System] › clear_unknown_settings</font>',
+                            visible_if=Condition(
+                                variables=("Vars.Active.Migoto.manage_xxmi_dll_config",),
+                                predicate=self.manage_xxmi_dll_config,
+                            ),
                         ),
 
                     ),
@@ -145,6 +168,10 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
                                 * **Enabled:** All input is enabled.
                                 * **Disabled:** Input is disabled according to **{importer_settings_input_disable_mode_label}**.
                             """) + '\n\n<font color="#666666">d3dx.ini › [Input] › input</font>',
+                            visible_if=Condition(
+                                variables=("Vars.Active.Migoto.manage_xxmi_dll_config",),
+                                predicate=self.manage_xxmi_dll_config,
+                            ),
                         ),
 
                         SettingsOption(
@@ -158,6 +185,10 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
                                 * **{importer_settings_input_disable_mode_mods}**: Disable input defined by mods.
                                 * **{importer_settings_input_disable_mode_all}**: Disable all input except the **Toggle Input** hotkey (**CTRL+ALT+SHIFT+END**).
                             """) + '\n\n<font color="#666666">d3dx.ini › [Input] › input_disable_mode</font>',
+                            visible_if=Condition(
+                                variables=("Vars.Active.Migoto.manage_xxmi_dll_config",),
+                                predicate=self.manage_xxmi_dll_config,
+                            ),
                         ),
 
                     ),
@@ -175,6 +206,10 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
                                 * **Enabled:** Allows to toggle **Hunting Mode** via Numpad [0] hotkey.
                                 * **Disabled:** **Hunting Mode** is hard disabled.
                             """) + '\n\n<font color="#666666">d3dx.ini › [Hunting] › hunting</font>',
+                            visible_if=Condition(
+                                variables=("Vars.Active.Migoto.manage_xxmi_dll_config",),
+                                predicate=self.manage_xxmi_dll_config,
+                            ),
                         ),
 
                         SettingsOption(
@@ -185,6 +220,10 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
                                 * **Enabled:** Hunting Mode [Copy Hash] key also saves selected shader as file in **ShaderFixes**.
                                 * **Disabled:** Hunting Mode [Copy Hash] only copies hash of selected shader to clipboard.
                             """) + '\n\n<font color="#666666">d3dx.ini › [Hunting] › marking_actions</font>',
+                            visible_if=Condition(
+                                variables=("Vars.Active.Migoto.manage_xxmi_dll_config",),
+                                predicate=self.manage_xxmi_dll_config,
+                            ),
                         ),
 
                     ),
@@ -207,6 +246,10 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
                                 * **{importer_settings_log_level_info}**: Also log API usage calls.
                                 * **{importer_settings_log_level_debug}**: Also log super verbose massive debug output.
                             """) + '\n\n<font color="#666666">d3dx.ini › [Logging] › log_level</font>',
+                            visible_if=Condition(
+                                variables=("Vars.Active.Migoto.manage_xxmi_dll_config",),
+                                predicate=self.manage_xxmi_dll_config,
+                            ),
                         ),
 
                     ),
@@ -214,6 +257,10 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
 
             ),
         )
+
+    @staticmethod
+    def manage_xxmi_dll_config() -> bool:
+        return Vars.Active.Migoto.manage_xxmi_dll_config.get()
 
     @staticmethod
     def change_importer_folder():

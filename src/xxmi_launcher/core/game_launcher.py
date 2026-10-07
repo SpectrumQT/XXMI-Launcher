@@ -302,14 +302,15 @@ class GameLauncher:
             self.model_importer.run_pre_launch(launch_context)
 
             # Write configured settings to main 3dmigoto ini file
-            if self.xxmi_dll_identity and self.xxmi_dll_identity.fork == MigotoFork.XXMI:
-                xxmi_dll_version = self.xxmi_dll_identity.version
-            else:
-                xxmi_dll_version = None
-            self.model_importer.update_d3dx_ini(
-                game_exe_name=launch_context.process_name,
-                xxmi_dll_version=xxmi_dll_version,
-            )
+            if Config.Active.Migoto.manage_xxmi_dll_config:
+                if self.xxmi_dll_identity and self.xxmi_dll_identity.fork == MigotoFork.XXMI:
+                    xxmi_dll_version = self.xxmi_dll_identity.version
+                else:
+                    xxmi_dll_version = None
+                self.model_importer.update_d3dx_ini(
+                    game_exe_name=launch_context.process_name,
+                    xxmi_dll_version=xxmi_dll_version,
+                )
 
             # Optimize ini files in Mods and ShaderFixes folders
             Events.Fire(Events.ModelImporter.OptimizeMods())

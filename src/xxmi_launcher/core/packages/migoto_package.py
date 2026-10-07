@@ -37,6 +37,7 @@ class MigotoIdentity:
 
 @dataclass
 class MigotoManagerConfig:
+    manage_xxmi_dll_config: bool = True
     enforce_rendering: bool = True
     enable_hunting: bool = False
     clear_unknown_settings: bool = True
