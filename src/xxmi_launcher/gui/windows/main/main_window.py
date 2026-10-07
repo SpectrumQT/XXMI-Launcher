@@ -229,6 +229,10 @@ class MainWindow(UIMainWindow):
     def reload_gui(self, event: Events.GUI.ReloadGUI):
         Events.Fire(Events.Application.StatusUpdate(status=L('status_reloading_gui', 'Reloading GUI...')))
 
+        settings_frame = self.launcher_frame.grab('SettingsFrame')
+        if settings_frame:
+            Events.Fire(Events.Application.CloseSettings(save=True))
+
         # Remove existing LauncherFrame widgets tree
         del self.elements[self.launcher_frame._id]
         self.launcher_frame.destroy()
@@ -327,3 +331,9 @@ class MainWindow(UIMainWindow):
         ))
         Events.Fire(Events.Application.Ready())
         logging.exception(val)
+
+    def _set_scaling(self, new_widget_scaling, new_window_scaling):
+        super()._set_scaling(new_widget_scaling, new_window_scaling)
+
+        # Let CTk finish its geometry/scaling transition first.
+        self.after(1, lambda: Events.Fire(Events.GUI.ReloadGUI()))

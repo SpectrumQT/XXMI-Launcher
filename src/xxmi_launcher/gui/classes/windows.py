@@ -206,6 +206,27 @@ class UIMainWindow(UIWindow, CTk):
     def get_resource_path(self, resource_path: str = ''):
         return f'{str(self.__class__.__qualname__)}'
 
+    def block_update_dimensions_event(self):
+        self._block_update_dimensions_event = True
+
+    def unblock_update_dimensions_event(self):
+        self._block_update_dimensions_event = False
+
+    def _update_dimensions_event(self, event=None):
+        tracker = ScalingTracker
+
+        tracked_dpi = tracker.window_dpi_scaling_dict.get(self)
+
+        if tracked_dpi is not None:
+            actual_dpi = tracker.get_window_dpi_scaling(self)
+
+            # Windows has already changed the DPI, but ScalingTracker hasn't processed it yet.
+            # Don't interpret the resulting physical resize as a logical window resize.
+            if actual_dpi != tracked_dpi:
+                return
+
+        super()._update_dimensions_event(event)
+
 
 class UIToplevel(UIWindow, CTkToplevel):
     def __init__(self, master: Union[UIWindow, 'UIToplevel'], lock_master=True, **kwargs):
