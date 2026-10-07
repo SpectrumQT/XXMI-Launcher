@@ -313,9 +313,9 @@ class ModelImporterPackage(Package):
                 title=L('message_title_game_detected_single', "Game Installation Found"),
                 message=L('message_text_game_detected_single', """
                     Please confirm that this is the correct **{general_settings_game_folder_label}**:
-                    
-                    `{game_folder}`
-                    
+                    ```
+                    {game_folder}
+                    ```
                     Alternatively, set it manually in **General Settings**.
                 """).format(game_folder=game_folders_index[0]),
                 confirm_text=L('message_button_confirm', 'Confirm'),
@@ -325,6 +325,10 @@ class ModelImporterPackage(Package):
             if user_confirmed_game_folder is None:
                 user_confirmed_game_folder = True
         else:
+            game_folders_index = [
+                L("detected_installation", "Detected installation") + f"<pre><code>{game_folder}</code></pre>"
+                for game_folder in game_folders_index
+            ]
             (user_confirmed_game_folder, game_folder_id) = Events.Call(Events.Application.ShowWarning(
                 title=L('message_title_game_detected_multiple', "Multiple Game Installations Found"),
                 message=L('message_text_game_detected_multiple', """
