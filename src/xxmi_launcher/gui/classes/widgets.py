@@ -12,6 +12,7 @@ from pathlib import Path
 from tkinter import Menu, INSERT, font
 from customtkinter import CTkBaseClass, CTkButton, CTkImage, CTkLabel, CTkProgressBar, CTkEntry, CTkCheckBox, CTkTextbox, CTkOptionMenu, CTkRadioButton, StringVar
 from customtkinter import END, CURRENT
+from customtkinter.windows.widgets.scaling.scaling_base_class import CTkScalingBaseClass
 from customtkinter import ThemeManager, CTkFont
 from PIL import Image, ImageTk, ImageDraw
 
@@ -1900,6 +1901,20 @@ class UIOptionMenu(CTkOptionMenu, UIWidget):
 
     def _dropdown_callback(self, value: str):
         super()._dropdown_callback(value)
+
+    def destroy(self):
+        dropdown = getattr(self, '_dropdown_menu', None)
+
+        if dropdown is not None:
+            # Remove it from CustomTkinter's scaling callbacks.
+            CTkScalingBaseClass.destroy(dropdown)
+
+            # Destroy the actual Tk Menu.
+            dropdown.destroy()
+
+            self._dropdown_menu = None
+
+        super().destroy()
 
 
 class UITextbox(CTkTextbox, UIWidget):
