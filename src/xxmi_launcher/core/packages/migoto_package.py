@@ -67,7 +67,13 @@ class MigotoPackage(Package):
         Events.Subscribe(Events.MigotoManager.OpenModsFolder, self.handle_open_mods_folder)
 
     def identify_dll(self, dll_path: Path | None = None) -> MigotoIdentity | None:
-        dll_path = dll_path or Path(Config.Active.Importer.importer_path) / "d3d11.dll"
+        if dll_path is None:
+            active = getattr(Config, "Active", None)
+
+            if active is None:
+                return None
+
+            dll_path = active.Importer.importer_path / "d3d11.dll"
 
         if not dll_path.is_file():
             return None
