@@ -121,7 +121,9 @@ class MigotoPackage(Package):
             Events.Fire(Events.PackageManager.InitializeInstallation())
             self.move_contents(self.downloaded_asset_path, self.package_path)
             self.verify_files_integrity(self.package_path)
-            self.deploy_package_files()
+            self.deploy_package_files(force=True)
+            if not Config.Active.Migoto.unsafe_mode:
+                self.validate_deployed_files()
         except Exception as e:
             if Paths.App.is_av_error(e):
                 raise self.wrap_av_error(e)
@@ -184,15 +186,12 @@ class MigotoPackage(Package):
         self.deploy_package_files(force=True)
 
     def should_deploy_package_file(self, file_name: str, file_path: Path, force: bool = False) -> tuple[bool, str]:
-        # Handle forced redeployment
-        if force:
-            return True, 'Forcing re-deploy of {file_path}...'
         # Handle missing DLL
         if not file_path.is_file():
             return True, 'Deploying new {file_path}...'
         # Handle signature mismatch between deployed DLL and one from manifest of installed XXMI package
         deployed_signature = Config.Active.Importer.deployed_migoto_signatures.get(file_name, '')
-        if not deployed_signature or deployed_signature != self.get_signature(file_path):
+        if force or not deployed_signature or deployed_signature != self.get_signature(file_path):
 
             if Config.Active.Migoto.unsafe_mode:
                 # Lets deside what to do based on DLL origin
@@ -204,7 +203,7 @@ class MigotoPackage(Package):
                         # Third-party DLL found, lets leave its management to user
                         return False, 'Skipped auto-deploy for {file_path} (signature mismatch)!'
             else:
-                # We should never reach this point unless the config is desynced (and if it is, lets redeploy)
+                # Just re-deploy
                 return True, 'Re-deploying {file_path}...'
 
         return False, ''
@@ -266,7 +265,9 @@ class MigotoPackage(Package):
         Events.Fire(Events.PackageManager.NotifyPackageVersions(detect_installed=True))
 
     def validate_deployed_files(self):
-        Events.Fire(Events.Application.Busy())
+        log.debug("Validating deployed files...")
+
+        self.load_manifest()
 
         package_libs = ['3dmloader.dll']
         self.validate_files([self.package_path / f for f in package_libs])
