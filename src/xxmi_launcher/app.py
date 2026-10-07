@@ -131,7 +131,7 @@ if __name__ == '__main__':
         # Handle init time error
         logging.exception(init_error)
         import traceback
-        init_stack_trace = traceback.format_exc()
+        init_stack_trace = ''.join(traceback.format_tb(init_error.__traceback__))
 
         try:
             # Try to initialize locale engine
@@ -177,12 +177,12 @@ if __name__ == '__main__':
                     error = L('error_launcher_crashed_on_init', """
                         Launcher has crashed during initialization:
                         
-                        Log file: {log_path}
+                        {error_text}
                         
-                        Error: {error_text}
+                        Log file: {log_path}
                     """).format(
                         log_path=log_path,
-                        error_text=init_stack_trace,
+                        error_text=init_error,
                     )
 
             gui.show_messagebox(
