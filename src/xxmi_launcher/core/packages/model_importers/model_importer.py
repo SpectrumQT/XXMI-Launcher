@@ -326,8 +326,8 @@ class ModelImporterPackage(Package):
                 user_confirmed_game_folder = True
         else:
             game_folders_index = [
-                L("detected_installation", "Detected installation") + f"<pre><code>{game_folder}</code></pre>"
-                for game_folder in game_folders_index
+                L("detected_installation", "Detected installation") + f" {i + 1}" + f"<pre><code>{game_folder}</code></pre>"
+                for i, game_folder in enumerate(game_folders_index)
             ]
             (user_confirmed_game_folder, game_folder_id) = Events.Call(Events.Application.ShowWarning(
                 title=L('message_title_game_detected_multiple', "Multiple Game Installations Found"),
