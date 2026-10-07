@@ -54,11 +54,6 @@ class ApplicationEvents:
         status: str
 
     @dataclass
-    class MoveWindow:
-        offset_x: int
-        offset_y: int
-
-    @dataclass
     class Minimize:
         pass
 

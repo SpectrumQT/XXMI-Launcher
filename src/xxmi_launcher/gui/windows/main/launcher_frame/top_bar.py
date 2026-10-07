@@ -24,10 +24,7 @@ class TopBarFrame(UIFrame):
 
         self.set_background_image(image_path='background-image.png', width=1280, height=80, opacity=0.65)
 
-        self._offset_x = 0
-        self._offset_y = 0
         self.background_image.bind('<Button-1>', self._handle_button_press)
-        self.background_image.bind('<B1-Motion>', self._handle_mouse_move)
 
         for importer_id in Config.Importers.__dict__.keys():
             self.put(ImporterSelectButton(self, importer_id))
@@ -75,11 +72,7 @@ class TopBarFrame(UIFrame):
         return True
 
     def _handle_button_press(self, event):
-        self._offset_x = event.x
-        self._offset_y = event.y
-
-    def _handle_mouse_move(self, event):
-        Events.Fire(Events.Application.MoveWindow(offset_x=self._offset_x, offset_y=self._offset_y))
+        self.winfo_toplevel().begin_window_drag(event)
 
     def handle_toggle_importer(self, event):
         if event is not None:

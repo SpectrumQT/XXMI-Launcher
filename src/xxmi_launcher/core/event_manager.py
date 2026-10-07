@@ -25,9 +25,6 @@ events = {}
 
 def _log_event(event) -> bool:
     match event.__class__:
-        # Skip window movement logging.
-        case Application.MoveWindow:
-            return False
         # Log only start and end of download.
         case PackageManager.UpdateDownloadProgress:
             if event.downloaded_bytes != 0 and event.downloaded_bytes != event.total_bytes:

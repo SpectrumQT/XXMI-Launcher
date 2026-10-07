@@ -73,6 +73,11 @@ class UIWindow(UIElement):
         super().__init__(**kwargs)
         self.exists = True
         self.cfg = cfg
+
+        self._window_dragging = False
+        self._window_drag_offset_x = 0
+        self._window_drag_offset_y = 0
+
         self.top_levels: List[Union['UIWindow', 'UIToplevel']] = [self]
         self.tooltip_engine: UIToolTipEngine
 
@@ -94,10 +99,29 @@ class UIWindow(UIElement):
                     return window
         return self.top_levels[-1]
 
-    def move(self, x_offset: int = 0, y_offset: int = 0):
-        x = self.winfo_pointerx() - x_offset
-        y = self.winfo_pointery() - y_offset
-        self.geometry('+{x}+{y}'.format(x=x, y=y))
+    def begin_window_drag(self, event):
+        self._window_dragging = True
+
+        self._window_drag_offset_x = event.x
+        self._window_drag_offset_y = event.y
+
+    def update_window_drag_position(self):
+        if not self._window_dragging:
+            return
+
+        self._handle_window_drag(None)
+
+    def _handle_window_drag(self, _):
+        if not self._window_dragging:
+            return
+
+        x = self.winfo_pointerx() - self._window_drag_offset_x
+        y = self.winfo_pointery() - self._window_drag_offset_y
+
+        self.geometry(f"+{x}+{y}")
+
+    def _handle_window_drag_release(self, event=None):
+        self._window_dragging = False
 
     def close(self):
         self.unsubscribe()
@@ -122,6 +146,9 @@ class UIMainWindow(UIWindow, CTk):
         # self.bind("<Unmap>", self.on_iconify_main_window)
         # self.bind('<FocusIn>', self.on_focus_main_window)
         # self.bind('<FocusOut>', self.on_unfocus_main_window)
+
+        self.bind_all("<B1-Motion>", self._handle_window_drag, add="+")
+        self.bind_all("<ButtonRelease-1>", self._handle_window_drag_release, add="+")
 
     def apply_config(self):
         self.title(self.cfg.title)

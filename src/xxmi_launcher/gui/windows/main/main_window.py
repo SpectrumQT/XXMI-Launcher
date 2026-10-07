@@ -47,7 +47,6 @@ class MainWindow(UIMainWindow):
         self.launcher_frame = None
         self.message_frame = None
 
-        Events.Subscribe(Events.Application.MoveWindow, lambda event: self.move(event.offset_x, event.offset_y))
         Events.Subscribe(Events.Application.ShowMessage, lambda event: self.show_messagebox(event))
         Events.Subscribe(Events.Application.ShowError, lambda event: self.show_messagebox(event))
         Events.Subscribe(Events.Application.ShowWarning, lambda event: self.show_messagebox(event))
@@ -247,6 +246,10 @@ class MainWindow(UIMainWindow):
         Events.Fire(Events.Application.LoadImporter(importer_id=Config.Launcher.active_importer, reload=True))
         Events.Fire(Events.Application.ConfigUpdate())
         Events.Fire(Events.PackageManager.NotifyPackageVersions(detect_installed=True))
+
+        # Mouse events can't be processed while GUI is reloading.
+        # Catch the window up to the cursor's current position.
+        self.update_window_drag_position()
 
     def handle_close(self, event):
         self.after(event.delay, self.close)

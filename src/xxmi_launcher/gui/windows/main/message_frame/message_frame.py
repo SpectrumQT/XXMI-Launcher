@@ -46,9 +46,6 @@ class MessageFrame(UIFrame):
         self.selected_options = None
         self.response = None
 
-        self._offset_x = 0
-        self._offset_y = 0
-
         min_width = 400
         max_width = 800
 
@@ -153,14 +150,9 @@ class MessageFrame(UIFrame):
         self.place(relx=0.5, rely=0.5, anchor='c')
 
         self.background_image.bind('<Button-1>', self._handle_button_press)
-        self.background_image.bind('<B1-Motion>', self._handle_mouse_move)
 
     def _handle_button_press(self, event):
-        self._offset_x = event.x
-        self._offset_y = event.y
-
-    def _handle_mouse_move(self, event):
-        Events.Fire(Events.Application.MoveWindow(offset_x=self._offset_x, offset_y=self._offset_y))
+        self.winfo_toplevel().begin_window_drag(event)
 
     def set_content(self, model_importer = 'WWMI', num_sessions = 0, mode = 'NORMAL'):
         pass

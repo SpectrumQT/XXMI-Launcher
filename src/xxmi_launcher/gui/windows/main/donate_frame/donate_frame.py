@@ -18,10 +18,7 @@ class DonateFrame(UIFrame):
         self.set_background_image(image_path='background-image.png', width=master.master.cfg.width,
                                   height=master.master.cfg.height, x=0, y=0, anchor='nw', brightness=1.0, opacity=0.95)
 
-        self._offset_x = 0
-        self._offset_y = 0
         self.background_image.bind('<Button-1>', self._handle_button_press)
-        self.background_image.bind('<B1-Motion>', self._handle_mouse_move)
 
         self.avatar = self.put(DevAvatarButton(self))
         self.introduction = self.put(IntroductionText(self))
@@ -37,11 +34,7 @@ class DonateFrame(UIFrame):
         self.hide()
 
     def _handle_button_press(self, event):
-        self._offset_x = event.x
-        self._offset_y = event.y
-
-    def _handle_mouse_move(self, event):
-        Events.Fire(Events.Application.MoveWindow(offset_x=self._offset_x, offset_y=self._offset_y))
+        self.winfo_toplevel().begin_window_drag(event)
 
     def set_content(self, model_importer = 'WWMI', num_sessions = 0, mode = 'NORMAL'):
         """
