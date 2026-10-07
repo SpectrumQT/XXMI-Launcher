@@ -88,6 +88,7 @@ class SettingsFrame(UIFrame):
 
     def _hide(self):
         super()._hide()
+        self.close_button.hide()
 
     def _handle_button_press(self, event):
         self.winfo_toplevel().begin_window_drag(event)
