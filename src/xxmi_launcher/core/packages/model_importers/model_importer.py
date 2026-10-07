@@ -40,6 +40,7 @@ class SettingType(Enum):
 class ModelImporterConfig:
     game_exe_names: list[str] = field(default_factory=lambda: [])
     process_exe_names: list[str] = field(default_factory=lambda: [])
+    process_exe_rel_paths: list[str] = field(default_factory=lambda: [])
     game_folder_names: list[str] = field(default_factory=lambda: [])
     game_folder_children: list[str] = field(default_factory=lambda: [])
     package_name: str = ''
@@ -230,11 +231,29 @@ class ModelImporterPackage(Package):
 
     def validate_game_exe_path(self, game_path: Path) -> Path:
         for game_exe_name in (Config.Active.Importer.process_exe_names or Config.Active.Importer.game_exe_names):
+            # Search game exe directly in game path.
+            game_exe_path = game_path / game_exe_name
+            if game_exe_path.is_file():
+                return game_exe_path
+
+            # Search game exe in known subfolder(s).
+            for process_exe_rel_path in Config.Active.Importer.process_exe_rel_paths:
+                game_exe_path = game_path / process_exe_rel_path / game_exe_name
+                if game_exe_path.is_file():
+                    return game_exe_path
+
+            # Search game exe in any subfolder. It must be unique to prevent ambiguity.
             game_exe_paths = list(game_path.rglob(game_exe_name))
             if len(game_exe_paths) == 1:
                 game_exe_path = game_exe_paths[0]
                 if game_exe_path.is_file():
                     return game_exe_path
+            if len(game_exe_paths) > 1:
+                raise ValueError(L('error_game_exe_duplicates_found', 'Found {copies_count} copies of game executable {exe_name}').format(
+                    copies_count=len(game_exe_paths),
+                    exe_name=game_exe_name,
+                ))
+
         raise ValueError(L('error_game_exe_not_found', 'Game executable {exe_name} not found!').format(exe_name=' / '.join(Config.Active.Importer.game_exe_names)))
 
     def load(self):

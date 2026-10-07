@@ -29,6 +29,7 @@ class WWMIConfig(ModelImporterConfig):
     game: Game = Game.WUTHERING_WAVES
     game_exe_names: list[str] = field(default_factory=lambda: ['Wuthering Waves.exe'])
     process_exe_names: list[str] = field(default_factory=lambda: ['Client-Win64-Shipping.exe'])
+    process_exe_rel_paths: list[str] = field(default_factory=lambda: ['Client/Binaries/Win64'])
     game_folder_names: list[str] = field(default_factory=lambda: ['Wuthering Waves Game'])
     game_folder_children: list[str] = field(default_factory=lambda: ['Client', 'Data'])
     game_process_exe: str = "Client-Win64-Shipping.exe"
@@ -114,13 +115,13 @@ class WWMIPackage(ModelImporterPackage):
         game_path_original = game_path
 
         for path in game_path.rglob('*.exe'):
-            if path.is_file() and path.name == 'Wuthering Waves.exe':
+            if path.name == 'Wuthering Waves.exe' and path.is_file():
                 return Path(path).parent
 
         for i in range(len(game_path.parents)):
             game_path = game_path.parent
             for path in game_path.iterdir():
-                if path.is_file() and path.name == 'Wuthering Waves.exe':
+                if path.name == 'Wuthering Waves.exe' and path.is_file():
                     return Path(path).parent
 
         raise ValueError(L('error_wuthering_waves_exe_not_found', 'Failed to normalize path {path}: Wuthering Waves.exe not found!').format(path=game_path_original))
