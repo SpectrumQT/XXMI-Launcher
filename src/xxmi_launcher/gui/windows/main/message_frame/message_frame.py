@@ -9,8 +9,9 @@ from typing import List, Optional
 from textwrap import dedent
 from mdx_gfm import GithubFlavoredMarkdownExtension
 from customtkinter import IntVar
-from tkinterweb import HtmlFrame
+from tkinterweb import HtmlLabel
 from pathlib import Path
+from math import ceil
 
 import core.config_manager as Config
 import core.event_manager as Events
@@ -27,18 +28,18 @@ markdown_parser = markdown.Markdown(extensions=[GithubFlavoredMarkdownExtension(
 
 class MessageFrame(UIFrame):
     def __init__(
-            self,
-            master,
-            canvas,
-            title='Message',
-            message='< Text >',
-            confirm_text='OK',
-            confirm_command=None,
-            cancel_text='',
-            cancel_command=None,
-            radio_options: Optional[List[str]] = None,
-            checkbox_options: list[tuple[bool, str]] | None = None,
-            selected_id: int = 0,
+        self,
+        master,
+        canvas,
+        title='Message',
+        message='< Text >',
+        confirm_text='OK',
+        confirm_command=None,
+        cancel_text='',
+        cancel_command=None,
+        radio_options: Optional[List[str]] = None,
+        checkbox_options: list[tuple[bool, str]] | None = None,
+        selected_id: int = 0,
     ):
         super().__init__(master=master, canvas=canvas)
 
@@ -47,7 +48,7 @@ class MessageFrame(UIFrame):
         self.response = None
 
         min_width = 400
-        max_width = 800
+        max_width = 860
 
         min_height = 100
         max_height = 310
@@ -64,17 +65,17 @@ class MessageFrame(UIFrame):
 
         self.update()
 
-        content_width = math.ceil(self.content_frame.message_widget.winfo_width() / self._apply_widget_scaling(1.0))
-        content_height = math.ceil(self.content_frame.message_widget.winfo_height() / self._apply_widget_scaling(1.0))
+        content_width = self.content_frame.message_width
+        content_height = self.content_frame.message_height
 
         self.update()
 
         if content_width < min_width:
             target_width = min_width + 20 + 10
             content_width = min_width
-        # elif content_width > max_width:
-        #     target_width = max_width + 20 + int(self._apply_widget_scaling(10))
-        #     content_width = max_width
+        elif content_width > max_width:
+            target_width = max_width + 20 + int(self._apply_widget_scaling(10))
+            content_width = max_width
         else:
             target_width = content_width + 35 + 10
         if target_width % 2 != 0:
@@ -290,21 +291,25 @@ class ContentFrame(UIScrollableFrame):
         max_width: int = 600,
         min_height: int = 180,
         max_height: int = 260,
-        selected_id: int = 0
+        selected_id: int = 0,
     ):
 
-        super().__init__(master, width=max_width, height=max_height, hide_scrollbar=True, scroll_speed=4.0)
+        super().__init__(
+            master,
+            width=max_width, 
+            height=max_height, 
+            hide_scrollbar=True,
+            scroll_speed=4.0, 
+            fix_grid=True,
+        )
 
         self.configure(fg_color='#1f2024')
 
-        self.message_widget = HtmlFrame(
+        self.message_widget = HtmlLabel(
             master=self,
             messages_enabled=False,
             caches_enabled=False,
-            width=int(self._apply_widget_scaling(max_width)),
-            height=int(self._apply_widget_scaling(max_height)),
-            fontscale=1.2 * self._apply_widget_scaling(1.0),
-            shrink=True,
+            fontscale=1.2,
             textwrap=True,
             on_link_click=self.handle_link_click,
             events_enabled=True,
@@ -317,36 +322,71 @@ class ContentFrame(UIScrollableFrame):
         #     # height=int(self.tooltip.height * self.tooltip.scaling),
         # )
 
-        style = self.get_style()
-        # html = self.get_html()
+        # BUG WORKAROUND: Remove single white pixel from top-left corner.
+        # Explicitly placed by tkinterweb bug with `self.motion_frame.place(x=0, y=0)`.
+        self.message_widget._html.motion_frame_bg = self._parent_frame._fg_color
 
-        html = markdown_parser.convert(str(message))
+        # Hack "selectbackground".
+        self.message_widget._html.selected_text_highlight_color = "#565B5E"
+        self.message_widget._html.selection_manager.update_tags()
+
+        # Hack "selectforeground".
+        self.message_widget._html.selected_text_color = "#FFFFFF"
+        self.message_widget._html.selection_manager.update_tags()
+
+        style = self.get_style()
+
+        body = markdown_parser.convert(str(message))
 
         radio_widget = None
         if radio_options is not None:
             master.radio_var = IntVar(master=master, value=selected_id)
             radio_widget = RadioWidget(self.message_widget, radio_options, master.radio_var, selected_id)
             style += radio_widget.get_style()
-            if '{radio_widget}' in html:
-                html = html.replace('{radio_widget}', radio_widget.get_html())
+            if '{radio_widget}' in body:
+                body = body.replace('{radio_widget}', radio_widget.get_html())
             else:
-                html += radio_widget.get_html()
+                body += radio_widget.get_html()
 
         checkbox_widget = None
         if checkbox_options is not None:
             master.selected_options = [x[0] for x in checkbox_options]
             checkbox_widget = CheckboxWidget(self.message_widget, checkbox_options, master.selected_options)
             style += checkbox_widget.get_style()
-            if '{checkbox_widget}' in html:
-                html = html.replace('{checkbox_widget}', checkbox_widget.get_html())
+            if '{checkbox_widget}' in body:
+                body = body.replace('{checkbox_widget}', checkbox_widget.get_html())
             else:
-                html += checkbox_widget.get_html()
+                body += checkbox_widget.get_html()
 
-        html = html.replace("\\", "/")
+        body = body.replace("\\", "/")
+        body = body.replace("</code></pre>", "&nbsp;</code></pre>")
+        body = self.insert_space_in_long_words_multiline(body, 59)
 
-        html = f"<html>\n{style}\n<body>\n{html}\n</body>\n</html>"
+        ui_scale = self._apply_widget_scaling(1.0)
 
-        html = self.insert_space_in_long_words_multiline(html, 64)
+        if ui_scale != 1.0:
+            measurement_widget = HtmlLabel(
+                master=self,
+                messages_enabled=False,
+                caches_enabled=False,
+                fontscale=1.2,
+                textwrap=True,
+                on_link_click=self.handle_link_click,
+                events_enabled=True,
+            )
+            html = f"<html>\n{style}\n<body>\n{body}\n</body>\n</html>"
+            measurement_widget.load_html(html)
+            measurement_widget.pack()
+            self.update_idletasks()
+            self.message_width = ceil(measurement_widget.winfo_width() * 1.05)
+            self.message_height = ceil(measurement_widget.winfo_height() * 1.05)
+            measurement_widget.destroy()
+
+            style = re.sub(
+                r'(-?\d+(?:\.\d+)?)px',
+                lambda m: f'{float(m.group(1)) * ui_scale:g}px',
+                style,
+            )
 
         # loaded = BooleanVar(value=False)
         #
@@ -355,6 +395,7 @@ class ContentFrame(UIScrollableFrame):
         #
         # self.message_widget.bind("<<DoneLoading>>", on_load)
 
+        html = f"<html>\n{style}\n<body>\n{body}\n</body>\n</html>"
         self.message_widget.load_html(html)
 
         if radio_widget is not None:
@@ -369,22 +410,21 @@ class ContentFrame(UIScrollableFrame):
 
         self.update()
 
-        message_width = math.ceil(self.message_widget.winfo_width() / self._apply_widget_scaling(1.0))
-        message_height = math.ceil(self.message_widget.winfo_height() / self._apply_widget_scaling(1.0))
+        if ui_scale == 1.0:
+            self.message_width = ceil(self.message_widget.winfo_width() * 1.1)
+            self.message_height = ceil(self.message_widget.winfo_height() * 1.1)
 
-        if message_width < min_width:
-            self.configure(width=min_width)
-        # elif message_width > max_width:
-        #     self.configure(width=max_width)
-        else:
-            self.configure(width=message_width)
+        if self.message_width < min_width:
+            self.message_width = min_width
+        elif self.message_width > max_width:
+            self.message_width = max_width
+        self.configure(width=self.message_width)
 
-        if message_height < min_height:
-            self.configure(height=min_height)
-        elif message_height > max_height:
-            self.configure(height=max_height)
-        else:
-            self.configure(height=message_height)
+        if self.message_height < min_height:
+            self.message_height = min_height
+        elif self.message_height > max_height:
+            self.message_height = max_height
+        self.configure(height=self.message_height)
 
         self.update()
 
@@ -423,28 +463,30 @@ class ContentFrame(UIScrollableFrame):
 
     #  html { background-color: #1f2024;}
     def get_style(self):
-        return dedent("""
+        return dedent(f"""
             <style>
-                html { background-color: #1f2024;}
-                body { font-size: 18px; color: #ffffff}
-                p { font-family: Asap; margin: 10px 0px;}
-                ul { margin: 10px 0px;}
-                li { margin: 10px 0px;}
-                h1 { font-size: 18px; margin: 10px 0px;}
-                h2 { font-size: 16px; margin: 10px 0px;}
-                a { color: #84adf3; text-decoration: none; }
-                a:hover { text-decoration: underline; }
-                label { cursor: pointer; padding: 0px; }
-                .red { color: #E57373; }
-                .orange { color: #FFB74D; }
-                .yellow { color: #FFD54F; }
-                .green { color: #81C784; }
-                .teal { color: #4DD0E1; }
-                .blue { color: #00AFF4; }
-                .cyan { color: #4FC3F7; }
-                .purple { color: #B39DDB; }
-                .gray { color: #CCCCCC; }
-                .dark_red { color: #C62828; }
+                body {{ font-size: 18px; background-color: {self._parent_frame._fg_color}; color: #E5E5E5; }}
+                p {{ font-family: Segoe UI; margin: 10px 0px;}}
+                ul {{ margin: 10px 0px;}}
+                li {{ margin: 10px 0px;}}
+                h1 {{ font-size: 18px; margin: 10px 0px;}}
+                h2 {{ font-size: 16px; margin: 10px 0px;}}
+                pre {{ margin: 10px 5px; white-space: normal; width: 100%; }}
+                code {{ margin: 0px 3px; padding: 4px 4px; line-height: 1.8; background: #2C2E33; border: 1px solid #565B5E; border-radius: 4px;}}
+                pre code {{ display: block; margin: 0; padding: 6px 6px; line-height: 1.2; }}
+                a {{ color: #84adf3; text-decoration: none; }}
+                a:hover {{ text-decoration: underline; }}
+                label {{ cursor: pointer; padding: 0px; }}
+                .red {{ color: #E57373; }}
+                .orange {{ color: #FFB74D; }}
+                .yellow {{ color: #FFD54F; }}
+                .green {{ color: #81C784; }}
+                .teal {{ color: #4DD0E1; }}
+                .blue {{ color: #00AFF4; }}
+                .cyan {{ color: #4FC3F7; }}
+                .purple {{ color: #B39DDB; }}
+                .gray {{ color: #CCCCCC; }}
+                .dark_red {{ color: #C62828; }}
             </style>
         """)
 
@@ -466,9 +508,15 @@ class ContentFrame(UIScrollableFrame):
 
 
 class RadioWidget:
-    def __init__(self, frame: HtmlFrame, options: List[str], radio_var: IntVar, selected_id: int = 0):
-        self.frame: HtmlFrame = frame
-        self.options: List[str] = options
+    def __init__(
+        self,
+        frame: HtmlLabel,
+        options: list[str],
+        radio_var: IntVar,
+        selected_id: int = 0,
+    ):
+        self.frame = frame
+        self.options = options
         self.selected_option = selected_id
         self.hovered_option = 0
         self.radio_var = radio_var
@@ -544,8 +592,8 @@ class RadioWidget:
 
 
 class CheckboxWidget:
-    def __init__(self, frame: HtmlFrame, options: list[tuple[bool, str]], selected_options: list[bool]):
-        self.frame: HtmlFrame = frame
+    def __init__(self, frame: HtmlLabel, options: list[tuple[bool, str]], selected_options: list[bool]):
+        self.frame: HtmlLabel = frame
         self.options: list[tuple[bool, str]] = options
         self.selected_options = selected_options
         self.hovered_option = 0
