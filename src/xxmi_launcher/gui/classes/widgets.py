@@ -1030,13 +1030,18 @@ class UIButton(UIWidget, CTkButton):
         if require_auto_width:
             self._set_auto_width()
 
-    def _set_auto_width(self):
+    def get_text_width(self) -> int:
+        return round(self._text_label.winfo_reqwidth() / self._apply_widget_scaling(1)) if self._text_label else 0
+
+    def get_auto_width(self) -> int:
         scaling = self._apply_widget_scaling(1)
         offset = self._padx * 2
-        text_width = int(self._text_label.winfo_reqwidth() / scaling) if self._text_label else 0
-        if scaling != 1:
+        if scaling != 1.0:
             offset += self._apply_widget_scaling(2)
-        self.configure(width=text_width + offset)
+        return self.get_text_width() + round(offset)
+
+    def _set_auto_width(self):
+        self.configure(width=self.get_text_width())
 
     def _get_current_text_color(self):
         if self._state == tkinter.DISABLED:
@@ -1304,6 +1309,8 @@ class UIEntry(CTkEntry, UIWidget):
                  border_color_disabled: Optional[Union[str, Tuple[str, str]]] = None,
                  text_color_disabled: Optional[Union[str, Tuple[str, str]]] = None,
                  **kwargs):
+
+        self._entry_right_offset = 0
 
         UIWidget.__init__(self, master, **kwargs)
 
@@ -1588,6 +1595,26 @@ class UIEntry(CTkEntry, UIWidget):
             self.context_menu.entryconfigure('Cut', command=lambda: self.event_generate('<<Cut>>'))
             self.context_menu.entryconfigure('Copy', command=lambda: self.event_generate('<<Copy>>'))
             self.context_menu.entryconfigure('Paste', command=lambda: self.event_generate('<<Paste>>'))
+
+    def set_right_offset(self, right_offset: int):
+        self._entry_right_offset = right_offset
+        self._create_grid()
+
+    def _create_grid(self):
+        self._canvas.grid(column=0, row=0, sticky="nswe")
+
+        if self._corner_radius >= self._minimum_x_padding:
+            pad_x = min(self._apply_widget_scaling(self._corner_radius), round(self._apply_widget_scaling(self._current_height / 2)))
+            self._entry.grid(column=0, row=0, sticky="nswe",
+                             padx=(pad_x, pad_x + round(self._apply_widget_scaling(self._entry_right_offset))),
+                             pady=(self._apply_widget_scaling(self._border_width),
+                                   self._apply_widget_scaling(self._border_width + 1)))
+        else:
+            pad_x = self._apply_widget_scaling(self._minimum_x_padding)
+            self._entry.grid(column=0, row=0, sticky="nswe",
+                             padx=(pad_x, pad_x + round(self._apply_widget_scaling(self._entry_right_offset))),
+                             pady=(self._apply_widget_scaling(self._border_width),
+                                   self._apply_widget_scaling(self._border_width + 1)))
 
 
 class UICheckbox(CTkCheckBox, UIWidget):

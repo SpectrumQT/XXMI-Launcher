@@ -218,7 +218,7 @@
     "font": ["Segoe UI", 16]
   },
   "OptionWidgetValueInputButton": {
-    "fg_color": "transparent",
+    "fg_color": "#2b2c30",
     "hover_color": "#2b2c30",
     "fg_color_disabled": "#222326",
     "border_color_disabled": "#313436",
