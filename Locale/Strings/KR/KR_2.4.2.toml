@@ -1,0 +1,75 @@
+[error_launcher_crashed_on_init]
+src = """
+Launcher has crashed during initialization:
+
+{error_text}
+
+Log file: {log_path}
+"""
+loc = """
+런처가 초기화 중 충돌했습니다:
+
+{error_text}
+
+로그 파일: {log_path}
+"""
+
+[log_file_link]
+src = "Log file: {log_path}"
+loc = "로그 파일: {log_path}"
+
+[error_game_exe_duplicates_found]
+src = "Found {copies_count} copies of game executable {exe_name}"
+loc = "게임 실행 파일 {exe_name}의 복사본 {copies_count}개가 발견되었습니다."
+
+[message_text_game_detected_single]
+src = """
+Please confirm that this is the correct **{general_settings_game_folder_label}**:
+```
+{game_folder}
+```
+Alternatively, set it manually in **General Settings**.
+"""
+loc = """
+다음 **{general_settings_game_folder_label}**이(가) 올바른지 확인해 주세요:
+```
+{game_folder}
+```
+또는 **일반 설정**에서 직접 설정할 수 있습니다.
+"""
+
+[detected_installation]
+src = "Detected installation"
+loc = "설치 감지됨"
+
+[error_wrong_extension]
+src = """
+Unexpected extension `{actual_extension}` (expected: {expected_extensions:or_list}) for file:
+```
+{path}
+```
+"""
+loc = """
+파일에 예상치 못한 확장자 `{actual_extension}`가 있습니다. (예상: {expected_extensions:or_list})
+```
+{path}
+```
+"""
+
+[importer_settings_manage_config_label]
+src = "Manage XXMI DLL Config"
+loc = "XXMI DLL 구성 관리"
+
+[importer_settings_manage_config_checkbox_tooltip]
+src = """
+* **Enabled:** Write settings configured in this tab to `d3dx.ini` on game launch.
+* **Disabled:** Do not modify `d3dx.ini` on game launch.
+"""
+loc = """
+* **활성화됨:** 게임 실행 시 이 탭에서 구성한 설정을 `d3dx.ini`에 기록합니다.
+* **비활성화됨:** 게임 실행 시 `d3dx.ini`을(를) 수정하지 않습니다.
+"""
+
+[importer_settings_ini_protection_label]
+src = "Configure XXMI DLL for {importer}"
+loc = "{importer}용 XXMI DLL 구성"

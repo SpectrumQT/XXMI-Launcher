@@ -1,0 +1,75 @@
+[error_launcher_crashed_on_init]
+src = """
+Launcher has crashed during initialization:
+
+{error_text}
+
+Log file: {log_path}
+"""
+loc = """
+Инициализация лаунчера была прервана из-за ошибки:
+
+{error_text}
+
+Файл журнала: {log_path}
+"""
+
+[log_file_link]
+src = "Log file: {log_path}"
+loc = "Файл журнала: {log_path}"
+
+[error_game_exe_duplicates_found]
+src = "Found {copies_count} copies of game executable {exe_name}"
+loc = "Найдено копий исполняемого файла игры {exe_name}: {copies_count}"
+
+[message_text_game_detected_single]
+src = """
+Please confirm that this is the correct **{general_settings_game_folder_label}**:
+```
+{game_folder}
+```
+Alternatively, set it manually in **General Settings**.
+"""
+loc = """
+Убедитесь, что это правильная **{general_settings_game_folder_label}**:
+```
+{game_folder}
+```
+Также вы можете указать её вручную в **Общих настройках**.
+"""
+
+[detected_installation]
+src = "Detected installation"
+loc = "Обнаружена установка"
+
+[error_wrong_extension]
+src = """
+Unexpected extension `{actual_extension}` (expected: {expected_extensions:or_list}) for file:
+```
+{path}
+```
+"""
+loc = """
+Неверное расширение `{actual_extension}` (ожидалось: {expected_extensions:or_list}`) для файла:
+```
+{path}
+```
+"""
+
+[importer_settings_manage_config_label]
+src = "Manage XXMI DLL Config"
+loc = "Управление конфигурацией XXMI DLL"
+
+[importer_settings_manage_config_checkbox_tooltip]
+src = """
+* **Enabled:** Write settings configured in this tab to `d3dx.ini` on game launch.
+* **Disabled:** Do not modify `d3dx.ini` on game launch.
+"""
+loc = """
+* **Включено:** При запуске игры записывать настройки, заданные на этой вкладке, в `d3dx.ini`.
+* **Отключено:** Не изменять `d3dx.ini` при запуске игры.
+"""
+
+[importer_settings_ini_protection_label]
+src = "Configure XXMI DLL for {importer}"
+loc = "Настройка XXMI DLL для {importer}"

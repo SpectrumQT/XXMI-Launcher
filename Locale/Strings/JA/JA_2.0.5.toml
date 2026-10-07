@@ -2,22 +2,6 @@
 src = "Fatal Error"
 loc = "重大なエラー"
 
-[error_launcher_crashed_on_init]
-src = """
-Launcher has crashed during initialization:
-
-Log file: {log_path}
-
-Error: {error_text}
-"""
-loc = """
-ランチャー起動中にクラッシュしました:
-
-Log file: {log_path}
-
-Error: {error_text}
-"""
-
 [message_title_rogue_ini_notification]
 src = "Stability Warning"
 loc = "安定性に関する警告"

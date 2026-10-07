@@ -126,22 +126,6 @@ loc = """
 src = "Game Installation Found"
 loc = "게임 설치를 찾음"
 
-[message_text_game_detected_single]
-src = """
-Please confirm that this is the correct **{general_settings_game_folder_label}**:
-
-`{game_folder}`
-
-Alternatively, set it manually in **General Settings**.
-"""
-loc = """
-다음이 올바른 **{general_settings_game_folder_label}**인지 확인하세요:
-
-`{game_folder}`
-
-또는 **일반 설정**에서 수동으로 설정하세요.
-"""
-
 [message_title_game_detected_multiple]
 src = "Multiple Game Installations Found"
 loc = "여러 게임 설치를 찾음"
@@ -491,10 +475,6 @@ loc = """
 [general_settings_xxmi_delay_label]
 src = "XXMI DLL Initialization Delay"
 loc = "XXMI DLL 초기화 지연"
-
-[importer_settings_ini_protection_label]
-src = "Config Protection"
-loc = "구성 보호"
 
 [importer_settings_enforce_rendering_checkbox_tooltip]
 src = """

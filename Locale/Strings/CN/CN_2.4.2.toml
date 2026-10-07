@@ -1,0 +1,75 @@
+[error_launcher_crashed_on_init]
+src = """
+Launcher has crashed during initialization:
+
+{error_text}
+
+Log file: {log_path}
+"""
+loc = """
+启动器在初始化期间崩溃：
+
+{error_text}
+
+日志文件：{log_path}
+"""
+
+[log_file_link]
+src = "Log file: {log_path}"
+loc = "日志文件：{log_path}"
+
+[error_game_exe_duplicates_found]
+src = "Found {copies_count} copies of game executable {exe_name}"
+loc = "发现 {copies_count} 个游戏可执行文件 {exe_name} 的副本"
+
+[message_text_game_detected_single]
+src = """
+Please confirm that this is the correct **{general_settings_game_folder_label}**:
+```
+{game_folder}
+```
+Alternatively, set it manually in **General Settings**.
+"""
+loc = """
+请确认这是正确的 **{general_settings_game_folder_label}**：
+```
+{game_folder}
+```
+或者在**常规设置**中手动设置。
+"""
+
+[detected_installation]
+src = "Detected installation"
+loc = "检测到安装"
+
+[error_wrong_extension]
+src = """
+Unexpected extension `{actual_extension}` (expected: {expected_extensions:or_list}) for file:
+```
+{path}
+```
+"""
+loc = """
+文件的扩展名 `{actual_extension}` 不符合预期（预期：{expected_extensions:or_list}）：
+```
+{path}
+```
+"""
+
+[importer_settings_manage_config_label]
+src = "Manage XXMI DLL Config"
+loc = "管理 XXMI DLL 配置"
+
+[importer_settings_manage_config_checkbox_tooltip]
+src = """
+* **Enabled:** Write settings configured in this tab to `d3dx.ini` on game launch.
+* **Disabled:** Do not modify `d3dx.ini` on game launch.
+"""
+loc = """
+* **启用：** 在游戏启动时，将此选项卡中配置的设置写入 `d3dx.ini`。
+* **禁用：** 在游戏启动时不修改 `d3dx.ini`。
+"""
+
+[importer_settings_ini_protection_label]
+src = "Configure XXMI DLL for {importer}"
+loc = "为 {importer} 配置 XXMI DLL"

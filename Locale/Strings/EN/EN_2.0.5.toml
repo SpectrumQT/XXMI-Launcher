@@ -2,22 +2,6 @@
 src = "Fatal Error"
 loc = "Fatal Error"
 
-[error_launcher_crashed_on_init]
-src = """
-Launcher has crashed during initialization:
-
-Log file: {log_path}
-
-Error: {error_text}
-"""
-loc = """
-Launcher has crashed during initialization:
-
-Log file: {log_path}
-
-Error: {error_text}
-"""
-
 [message_title_rogue_ini_notification]
 src = "Stability Warning"
 loc = "Stability Warning"

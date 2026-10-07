@@ -214,9 +214,9 @@ if __name__ == '__main__':
                 error = L('error_launcher_crashed_on_init', """
                     Launcher has crashed during initialization:
                     
-                    Log file: {log_path}
+                    {error_text}
                     
-                    Error: {error_text}
+                    Log file: {log_path}
                 """).format(
                     log_path=log_path,
                     error_text=init_stack_trace,

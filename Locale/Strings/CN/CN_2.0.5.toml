@@ -18,22 +18,6 @@ loc = """
 错误：{error_text}
 """
 
-[error_launcher_crashed_on_init]
-src = """
-Launcher has crashed during initialization:
-
-Log file: {log_path}
-
-Error: {error_text}
-"""
-loc = """
-启动器在初始化过程中发生崩溃：
-
-日志文件：{log_path}
-
-错误：{error_text}
-"""
-
 [message_title_fatal_error]
 src = "Fatal Error"
 loc = "Fatal Error"
