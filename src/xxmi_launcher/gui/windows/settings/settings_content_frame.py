@@ -1,6 +1,7 @@
 import os
 import webbrowser
 import markdown
+import re
 
 from dataclasses import dataclass
 from typing import Callable, Any
@@ -415,7 +416,7 @@ class InfoFrame(UIFrame):
             messages_enabled=False,
             caches_enabled=False,
             textwrap=True,
-            fontscale=1.2 * self._apply_widget_scaling(1.0),
+            fontscale=1.2,
             on_link_click=self.handle_link_click,
             events_enabled=True,
         )
@@ -432,12 +433,14 @@ class InfoFrame(UIFrame):
         self._info_label._html.selected_text_color = "#FFFFFF"
         self._info_label._html.selection_manager.update_tags()
 
+        ui_scale = self._apply_widget_scaling(1.0)
+
         style: str = dedent(f"""
             <style>
                 body {{ font-size: 14px; background-color: {self._fg_color}; color: #E5E5E5; }}
                 p  {{ font-family: Segoe UI; margin: 5px;}}
-                ul {{ margin: 10px -5px;}}
-                li {{ margin: 10px -5px;}}
+                ul {{ margin: 10px { 0 if ui_scale != 1.0 else -8 }px;}}
+                li {{ margin: 10px { 0 if ui_scale != 1.0 else -8 }px;}}
                 h1 {{ font-size: 18px; margin: 10px 5px;}}
                 h2 {{ font-size: 16px; margin: 10px 5px;}}
                 pre {{ margin: 10px 5px; white-space: normal; width: 100%; }}
@@ -448,9 +451,16 @@ class InfoFrame(UIFrame):
             </style>
         """)
 
+        if ui_scale != 1.0:
+            style = re.sub(
+                r'(-?\d+(?:\.\d+)?)px',
+                lambda m: f'{float(m.group(1)) * ui_scale:g}px',
+                style,
+            )
+
         html = MARKDOWN_PARSER.convert(self._info_text() if callable(self._info_text) else self._info_text)
         html = html.replace("</code></pre>", "&nbsp;</code></pre>")
-        self._info_label.load_html(style + f"<html><body>{html}</body></html>")
+        self._info_label.load_html(f"<html>\n{style}\n<body>\n{html}\n</body>\n</html>")
 
         self._info_label.pack(anchor="w", padx=5, fill="both", expand=True)
 
