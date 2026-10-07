@@ -73,6 +73,7 @@ class UIText(UICanvasWidget, CTkBaseClass):
                  y: int = 0,
                  canvas=None,
                  anchor=None,
+                 max_width=0,
                  **kwargs):
         if 'Asap' in font:
             y -= 1
@@ -89,6 +90,7 @@ class UIText(UICanvasWidget, CTkBaseClass):
         self._height = None
         self._font_obj = None
         self._anchor = anchor
+        self._max_width = max_width
 
         if isinstance(font, str):
             font_pattern = re.compile(r'(?P<family>.*)\s(?P<size>\d+)\s*(?P<weight>.*)?')
@@ -128,8 +130,9 @@ class UIText(UICanvasWidget, CTkBaseClass):
         self.canvas.coords(self._text_id, self._x, self._y)
 
     def set(self, text: str):
+        text = self._truncate_text(text)
         self.canvas.itemconfigure(self._text_id, text=text)
-        self._width = int(self._font_obj.measure(text) / self._apply_widget_scaling(1))
+        self._width = self._measure_text(text)
 
     def _show(self):
         self.canvas.itemconfigure(self._text_id, state='normal')
@@ -158,6 +161,21 @@ class UIText(UICanvasWidget, CTkBaseClass):
         except:
             pass
         super().destroy()
+
+    def _measure_text(self, text: str) -> int:
+        return int(self._font_obj.measure(text) / self._apply_widget_scaling(1))
+
+    def _truncate_text(self, text: str, ellipsis: str = "...") -> str:
+        if self._max_width <= 0:
+            return text
+
+        if self._measure_text(text) <= self._max_width:
+            return text
+
+        while text and self._measure_text(text + ellipsis) > self._max_width:
+            text = text[:-1]
+
+        return text + ellipsis if text else ellipsis
 
 
 class UIImage(UICanvasWidget, CTkBaseClass):
