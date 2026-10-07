@@ -20,7 +20,7 @@ import core.config_manager as Config
 
 from core.locale_manager import L
 from core.platforms.game import Game
-from core.config.enums import GameLaunch, StartMethod, ProcessStartMethodLegacy, ProcessPriority, WindowMode, InjectMode, InjectModeLegacy
+from core.config.enums import GameLaunch, StartMethod, ProcessStartMethodLegacy, ProcessPriority, WindowMode, InjectMode, InjectModeLegacy, LogLevel
 from core.package_manager import Package, PackageMetadata
 from core.utils.process_manager import LaunchContext
 
@@ -439,7 +439,7 @@ class ModelImporterPackage(Package):
     def configure_game_settings(self, game_path: Path | None, game_exe_path: Path | None):
         pass
 
-    def update_d3dx_ini(self, game_exe_name: str):
+    def update_d3dx_ini(self, game_exe_name: str, xxmi_dll_version: str | None):
         Events.Fire(Events.Application.StatusUpdate(status=L('status_updating_ini', 'Updating d3dx.ini...')))
 
         ini_path = Config.Active.Importer.importer_path / 'd3dx.ini'
@@ -455,30 +455,39 @@ class ModelImporterPackage(Package):
         # 2. Add `"target": "GenshinImpact.exe",` line before `"loader": "XXMI Launcher.exe"`
         ini.set_option('Loader', 'target', game_exe_name)
 
-        ini.set_option('System', 'dll_initialization_delay', Config.Active.Importer.xxmi_dll_init_delay)
-
-        screen_width, screen_height = ctypes.windll.user32.GetSystemMetrics(0), ctypes.windll.user32.GetSystemMetrics(1)
-        ini.set_option('System', 'screen_width', screen_width)
-        ini.set_option('System', 'screen_height', screen_height)
-
-        self.set_default_ini_values(ini, 'core', SettingType.Constant)
-        if Config.Active.Migoto.enforce_rendering:
-            self.set_default_ini_values(ini, 'enforce_rendering', SettingType.Constant)
-
         self.set_default_ini_values(ini, 'enable_hunting', SettingType.Bool, Config.Active.Migoto.enable_hunting)
         self.set_default_ini_values(ini, 'dump_shaders', SettingType.Bool, Config.Active.Migoto.dump_shaders)
 
-        ini.set_option('System', 'clear_unknown_settings', 1 if Config.Active.Migoto.clear_unknown_settings else 0)
+        if xxmi_dll_version is None:
+            ini.set_option('Logging', 'calls', (
+                1 if Config.Active.Migoto.log_level in [LogLevel.INFO, LogLevel.DEBUG] else 0
+            ))
+            ini.set_option('Logging', 'debug', (
+                1 if Config.Active.Migoto.log_level == LogLevel.DEBUG else 0
+            ))
 
-        ini.set_option('Input', 'input', 1 if Config.Active.Migoto.input else 0)
-        option_values = ini.get_option_values('toggle_input', section_name='Input')
-        if len(option_values) == 0:
-            ini.set_option('Input', 'toggle_input', Config.Active.Migoto.toggle_input)
+        elif xxmi_dll_version >= "1.2.0":
+            ini.set_option('System', 'dll_initialization_delay', Config.Active.Importer.xxmi_dll_init_delay)
 
-        ini.set_option('Input', 'input_disable_mode', Config.Active.Migoto.input_disable_mode.name.lower())
+            screen_width, screen_height = ctypes.windll.user32.GetSystemMetrics(0), ctypes.windll.user32.GetSystemMetrics(1)
+            ini.set_option('System', 'screen_width', screen_width)
+            ini.set_option('System', 'screen_height', screen_height)
 
-        ini.set_option('Logging', 'log_level', Config.Active.Migoto.log_level.name.lower())
-        ini.set_option('Logging', 'show_warnings', 0 if Config.Active.Migoto.mute_warnings else 1)
+            self.set_default_ini_values(ini, 'core', SettingType.Constant)
+            if Config.Active.Migoto.enforce_rendering:
+                self.set_default_ini_values(ini, 'enforce_rendering', SettingType.Constant)
+
+            ini.set_option('System', 'clear_unknown_settings', 1 if Config.Active.Migoto.clear_unknown_settings else 0)
+
+            ini.set_option('Input', 'input', 1 if Config.Active.Migoto.input else 0)
+            option_values = ini.get_option_values('toggle_input', section_name='Input')
+            if len(option_values) == 0:
+                ini.set_option('Input', 'toggle_input', Config.Active.Migoto.toggle_input)
+
+            ini.set_option('Input', 'input_disable_mode', Config.Active.Migoto.input_disable_mode.name.lower())
+
+            ini.set_option('Logging', 'log_level', Config.Active.Migoto.log_level.name.lower())
+            ini.set_option('Logging', 'show_warnings', 0 if Config.Active.Migoto.mute_warnings else 1)
 
         if ini.is_modified():
             log.debug(f'Writing d3dx.ini...')
@@ -602,9 +611,6 @@ class ModelImporterPackage(Package):
         # Execute commands from XXMI command file
         xxmi_cmd_handler = ModelImporterCommandFileHandler(Config.Active.Importer.importer_path / 'Core' / 'auto_update.xcmd')
         xxmi_cmd_handler.execute_command_section(ModelImporterCommandFileSection.PreLaunch)
-
-        # Write configured settings to main 3dmigoto ini file
-        self.update_d3dx_ini(game_exe_name=launch_context.process_name)
 
     def reg_search_game_folders(self, game_exe_files: list[str]):
         paths = []
