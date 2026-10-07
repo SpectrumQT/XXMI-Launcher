@@ -5,6 +5,7 @@ import time
 
 from dataclasses import dataclass
 from pathlib import Path
+from enum import Enum
 
 import core.error_manager as Errors
 import core.path_manager as Paths
@@ -19,6 +20,19 @@ from core.utils.dll_injector import DllInjector
 from core.utils.process_manager import LaunchContext
 
 log = logging.getLogger(__name__)
+
+
+class MigotoFork(Enum):
+    MAIN = 'MAIN'
+    XXMI = 'XXMI'
+    GIMI = 'GIMI'
+    UNKNOWN = 'UNKNOWN'
+
+
+@dataclass
+class MigotoIdentity:
+    fork: MigotoFork
+    version: str
 
 
 @dataclass
@@ -51,6 +65,27 @@ class MigotoPackage(Package):
         ))
 
         Events.Subscribe(Events.MigotoManager.OpenModsFolder, self.handle_open_mods_folder)
+
+    def identify_dll(self, dll_path: Path | None = None) -> MigotoIdentity | None:
+        dll_path = dll_path or Path(Config.Active.Importer.importer_path) / "d3d11.dll"
+
+        if not dll_path.is_file():
+            return None
+
+        file_desc = DllInjector.get_dll_description(dll_path).lower()
+        file_version = self.get_file_version(dll_path, max_parts=3)
+
+        if "xxmi" in file_desc:
+            fork = MigotoFork.XXMI
+        elif "3dmigoto" not in file_desc:
+            fork = MigotoFork.UNKNOWN
+        else:
+            fork = MigotoFork.MAIN
+
+        return MigotoIdentity(
+            fork=fork,
+            version=file_version,
+        )
 
     def get_installed_version(self, dll_path: Path | None = None) -> str:
         dll_path = dll_path or self.package_path / "d3d11.dll"

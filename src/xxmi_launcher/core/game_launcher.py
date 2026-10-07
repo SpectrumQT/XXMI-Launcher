@@ -20,7 +20,7 @@ from core.platforms.game_platform_registry import PlatformRegistry
 from core.platforms.steam.steam_manager import SteamManager
 from core.platforms.epic.epic_manager import EpicManager
 from core.packages.model_importers.model_importer import ModelImporterPackage
-from core.packages.migoto_package import MigotoPackage, MigotoInjector, InjectorContext
+from core.packages.migoto_package import MigotoPackage, MigotoInjector, InjectorContext, MigotoIdentity, MigotoFork
 from core.utils.process_manager import ProcessManager, ProcessPriorityClass, LaunchContext, ExecutableLaunch, CommandLaunch
 
 log = logging.getLogger(__name__)
@@ -38,8 +38,10 @@ class GameLauncher:
         self.xxmi_injector: MigotoPackage | None = None
         self.model_importer: ModelImporterPackage | None = None
         self.platform_registry: PlatformRegistry | None = None
+        self.xxmi_dll_identity: MigotoIdentity | None = None
 
         Events.Subscribe(Events.ModelImporter.Install, self.install_model_importer)
+        Events.Subscribe(Events.PackageManager.VersionNotification, self._handle_version_notification)
 
     def initialize(self, xxmi_injector: MigotoPackage):
         self.xxmi_injector: MigotoPackage = xxmi_injector
@@ -54,6 +56,12 @@ class GameLauncher:
 
     def set_model_importer(self, model_importer: ModelImporterPackage) -> None:
         self.model_importer = model_importer
+
+    def _handle_version_notification(self, event: Events.PackageManager.VersionNotification) -> None:
+        self.detect_xxmi_dll_identity()
+
+    def detect_xxmi_dll_identity(self):
+        self.xxmi_dll_identity = self.xxmi_injector.identify_dll()
 
     def install_model_importer(self, event: Events.ModelImporter.Install):
         # Assert installation path
@@ -287,6 +295,8 @@ class GameLauncher:
 
             # Configure migoto package.
             self.xxmi_injector.run_pre_launch(launch_context)
+
+            self.detect_xxmi_dll_identity()
 
             # Configure model importer package.
             self.model_importer.run_pre_launch(launch_context)

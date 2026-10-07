@@ -2,6 +2,7 @@ import logging
 import time
 import psutil
 import win32api
+import pefile
 
 import ctypes as ct
 import ctypes.wintypes as wt
@@ -24,6 +25,38 @@ class DllInjector:
         self.mutex = None
 
         self.load(Path(injector_lib_path).resolve(), load_hook, load_inject)
+
+    @staticmethod
+    def get_dll_description(path: str) -> str | None:
+        try:
+            pe = pefile.PE(path, fast_load=True)
+
+            try:
+                pe.parse_data_directories(
+                    directories=[pefile.DIRECTORY_ENTRY["IMAGE_DIRECTORY_ENTRY_RESOURCE"]]
+                )
+
+                if not hasattr(pe, "FileInfo"):
+                    return None
+
+                for file_info in pe.FileInfo:
+                    for entry in file_info:
+                        if entry.Key.decode(errors="ignore") != "StringFileInfo":
+                            continue
+
+                        for table in entry.StringTable:
+                            description = table.entries.get(b"FileDescription")
+
+                            if description:
+                                return description.decode(errors="replace")
+
+                return None
+
+            finally:
+                pe.close()
+
+        except (pefile.PEFormatError, OSError):
+            return None
 
     @staticmethod
     def get_short_path(path: Path) -> str:
