@@ -560,8 +560,15 @@ class Application:
             self.gui.after(100, Events.Fire, Events.Application.Ready())
             return
         except Exception as e:
-            raise Errors.with_title(e, L('message_title_model_importer_loading_failed', '{importer} Loading Failed').format(
-                importer=Config.Launcher.active_importer,
+            log_path = f'<a href="file:///{Paths.App.Root / "XXMI Launcher Log.txt"}">XXMI Launcher Log.txt</a>'
+            Events.Fire(Events.Application.ShowError(
+                title=L('message_title_model_importer_loading_failed', '{importer} Loading Failed').format(
+                    importer=Config.Launcher.active_importer,
+                ),
+                message=f"{e}\n\n" + L('log_file_link', 'Log file: {log_path}').format(
+                    log_path=log_path,
+                ),
+                modal=True,
             ))
         finally:
             self.is_locked = False
