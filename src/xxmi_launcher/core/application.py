@@ -200,6 +200,7 @@ class Application:
         self.run_as_thread(self.package_manager.update_packages, **event.__dict__)
 
     def handle_open_settings(self, event: ApplicationEvents.OpenSettings):
+        self.package_manager.notify_package_versions(detect_installed=True)
         settings_frame = self.gui.launcher_frame.grab('SettingsFrame')
         if not settings_frame:
             self.initialize_gui(open_settings=True)

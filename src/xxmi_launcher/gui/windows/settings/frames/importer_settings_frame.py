@@ -10,10 +10,12 @@ import core.event_manager as Events
 import core.config_manager as Config
 import core.path_manager as Paths
 import gui.vars as Vars
+from core.game_launcher import Launcher
 
 from core.locale_manager import L, Locale
 
 from core.config.enums import InjectMode, InputDisableMode, LogLevel
+from core.packages.migoto_package import MigotoFork
 
 from gui.windows.settings.settings_content_frame import SettingsContentFrame, SettingsSection, SettingsOption, OptionWidget, Condition
 
@@ -66,6 +68,28 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
                             """),
                         ),
 
+                        SettingsOption(
+                            label_text=L("importer_settings_ini_protection_label", "Configure XXMI DLL for {importer}").format(
+                                importer=Config.Launcher.active_importer,
+                            ),
+                            widget=OptionWidget.CHECKBOX,
+                            value_variable="Vars.Active.Migoto.enforce_rendering",
+                            tooltip=L("importer_settings_enforce_rendering_checkbox_tooltip", """
+                                * **Enabled:** Ensure **{importer}**-compatible `d3dx.ini` settings.
+                                * **Disabled:** Required settings will not be applied to `d3dx.ini`.
+                            """).format(
+                                importer=Config.Launcher.active_importer,
+                                texture_hash=0 if Config.Launcher.active_importer != "WWMI" else 1,
+                                track_texture_updates=0 if Config.Launcher.active_importer != "WWMI" else 1
+                            ),
+                            load_if=Condition(
+                                predicate=self.is_xxmi_dll,
+                            ),
+                            visible_if=Condition(
+                                variables=("Vars.Active.Migoto.manage_xxmi_dll_config",),
+                                predicate=self.manage_xxmi_dll_config,
+                            ),
+                        ),
 
                         SettingsOption(
                             label_text=L("general_settings_xxmi_delay_label", "XXMI DLL Initialization Delay"),
@@ -92,23 +116,12 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
                                     """),
                                 ) + '\n\n<font color="#666666">d3dx.ini › [System] › dll_initialization_delay</font>'),
                             ),
+                            load_if=Condition(
+                                predicate=self.is_xxmi_dll,
+                            ),
                             visible_if=Condition(
                                 variables=("Vars.Active.Migoto.manage_xxmi_dll_config",),
                                 predicate=self.manage_xxmi_dll_config,
-                            ),
-                        ),
-
-                        SettingsOption(
-                            label_text=L("importer_settings_ini_protection_label", "Config Protection"),
-                            widget=OptionWidget.CHECKBOX,
-                            value_variable="Vars.Active.Migoto.enforce_rendering",
-                            tooltip=L("importer_settings_enforce_rendering_checkbox_tooltip", """
-                                * **Enabled:** Ensure **{importer}**-compatible `d3dx.ini` settings.
-                                * **Disabled:** Required settings will not be applied to `d3dx.ini`.
-                            """).format(
-                                importer=Config.Launcher.active_importer,
-                                texture_hash=0 if Config.Launcher.active_importer != "WWMI" else 1,
-                                track_texture_updates=0 if Config.Launcher.active_importer != "WWMI" else 1
                             ),
                         ),
 
@@ -129,6 +142,9 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
                                 * **Enabled:** No error warnings or beeps whatsoever. Ignorance is bliss.
                                 * **Disabled:** Mod error warnings and beeps on **F10** will haunt poor souls.
                             """) + '\n\n<font color="#666666">d3dx.ini › [Logging] › show_warnings</font>',
+                            load_if=Condition(
+                                predicate=self.is_xxmi_dll,
+                            ),
                             visible_if=Condition(
                                 variables=("Vars.Active.Migoto.manage_xxmi_dll_config",),
                                 predicate=self.manage_xxmi_dll_config,
@@ -145,6 +161,9 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
                                 * **Enabled:** Clear unknown settings after **second** reload since mods removal.
                                 * **Disabled:** Do not clear unknown settings, keep them in **d3dx_user.ini** forever.
                             """) + '\n\n<font color="#666666">d3dx.ini › [System] › clear_unknown_settings</font>',
+                            load_if=Condition(
+                                predicate=self.is_xxmi_dll,
+                            ),
                             visible_if=Condition(
                                 variables=("Vars.Active.Migoto.manage_xxmi_dll_config",),
                                 predicate=self.manage_xxmi_dll_config,
@@ -168,6 +187,9 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
                                 * **Enabled:** All input is enabled.
                                 * **Disabled:** Input is disabled according to **{importer_settings_input_disable_mode_label}**.
                             """) + '\n\n<font color="#666666">d3dx.ini › [Input] › input</font>',
+                            load_if=Condition(
+                                predicate=self.is_xxmi_dll,
+                            ),
                             visible_if=Condition(
                                 variables=("Vars.Active.Migoto.manage_xxmi_dll_config",),
                                 predicate=self.manage_xxmi_dll_config,
@@ -185,6 +207,9 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
                                 * **{importer_settings_input_disable_mode_mods}**: Disable input defined by mods.
                                 * **{importer_settings_input_disable_mode_all}**: Disable all input except the **Toggle Input** hotkey (**CTRL+ALT+SHIFT+END**).
                             """) + '\n\n<font color="#666666">d3dx.ini › [Input] › input_disable_mode</font>',
+                            load_if=Condition(
+                                predicate=self.is_xxmi_dll,
+                            ),
                             visible_if=Condition(
                                 variables=("Vars.Active.Migoto.manage_xxmi_dll_config",),
                                 predicate=self.manage_xxmi_dll_config,
@@ -257,6 +282,10 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
 
             ),
         )
+
+    @staticmethod
+    def is_xxmi_dll() -> bool:
+        return Launcher.xxmi_dll_identity and Launcher.xxmi_dll_identity.fork == MigotoFork.XXMI
 
     @staticmethod
     def manage_xxmi_dll_config() -> bool:
