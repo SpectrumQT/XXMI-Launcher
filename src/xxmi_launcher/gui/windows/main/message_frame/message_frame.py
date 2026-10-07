@@ -54,6 +54,12 @@ class MessageFrame(UIFrame):
 
         min_button_width = 100
 
+        message_title = MessageTitleText(self, title, -1000, -1000, max_width)
+        title_width = message_title.winfo_width()
+        message_title.destroy()
+        min_width = max(min_width, title_width + 70)
+        min_width = min(min_width, max_width)
+
         self.content_frame = ContentFrame(self, message, radio_options, checkbox_options, min_width, max_width, min_height, max_height, selected_id)
 
         self.update()
@@ -100,7 +106,7 @@ class MessageFrame(UIFrame):
 
         title_x = master.master.cfg.width / 2 - target_width / 2 + 25
         title_y = master.master.cfg.height / 2 - target_height / 2 + 20
-        self.message_title = self.put(MessageTitleText(self, title, -1000, -1000))
+        self.message_title = self.put(MessageTitleText(self, title, -1000, -1000, content_width - 70))
 
         x = master.master.cfg.width / 2 + target_width / 2 - 25
         y = master.master.cfg.height / 2 - target_height / 2 + 25
@@ -162,15 +168,19 @@ class MessageFrame(UIFrame):
 
 
 class MessageTitleText(UIText):
-    def __init__(self, master, text: str, x, y):
-        super().__init__(x=x,
-                         y=y,
-                         text=text,
-                         font=('Microsoft YaHei', 26, 'bold'),
-                         fill='white',
-                         activefill='white',
-                         anchor='nw',
-                         master=master)
+    def __init__(self, master, text: str, x, y, max_width):
+        super().__init__(
+            master=master,
+            x=x,
+            y=y,
+            text=text,
+            font=('Microsoft YaHei', 26, 'bold'),
+            fill='white',
+            activefill='white',
+            anchor='nw',
+            max_width=max_width,
+        )
+        self.set_tooltip(text)
 
 
 class ConfirmButton(UIImageButton):
