@@ -47,6 +47,8 @@ class MainWindow(UIMainWindow):
         self.launcher_frame = None
         self.message_frame = None
 
+        self.minimal_gui = True
+
         Events.Subscribe(Events.Application.ShowMessage, lambda event: self.show_messagebox(event))
         Events.Subscribe(Events.Application.ShowError, lambda event: self.show_messagebox(event))
         Events.Subscribe(Events.Application.ShowWarning, lambda event: self.show_messagebox(event))
@@ -190,6 +192,8 @@ class MainWindow(UIMainWindow):
     def initialize(self):
         import gui.vars as Vars
 
+        self.minimal_gui = False
+
         Vars.Settings.initialize(Config.Config, self)
         Vars.Settings.load()
 
@@ -272,14 +276,12 @@ class MainWindow(UIMainWindow):
         if event is not None:
             kwargs = vars(event)
 
-        minimal_gui = False
         modal = kwargs.pop('modal', False)
         show_settings = False
         settings_frame = None
 
         if self.launcher_frame is None:
             # Initialize minimal GUI (launcher crashed before LauncherFrame initialization)
-            minimal_gui = True
             self.load_theme('Default')
             self.apply_config()
             self.center_window()
@@ -297,14 +299,14 @@ class MainWindow(UIMainWindow):
         self.message_frame = self.put(messagebox)
         self.message_frame.show()
 
-        if minimal_gui:
+        if self.minimal_gui:
             self.show()
 
         if modal:
             self.wait_window(messagebox)
             self.update_idletasks()
             
-            if minimal_gui:
+            if self.minimal_gui:
                 self.hide()
 
         if self.message_frame is not None:
