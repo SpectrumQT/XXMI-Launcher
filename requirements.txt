@@ -9,6 +9,7 @@ dacite==1.9.2
 darkdetect==0.8.0
 idna==3.20
 Markdown==3.11
+mslex==1.3.0
 Nuitka==4.2.2
 ordered-set==4.1.0
 packaging==26.3
