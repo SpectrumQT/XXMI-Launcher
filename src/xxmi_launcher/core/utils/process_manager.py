@@ -1,7 +1,6 @@
 import logging
 import subprocess
 import time
-import shlex
 import psutil
 import win32gui
 import win32process
@@ -10,6 +9,7 @@ import ctypes as ct
 from enum import Enum
 from dataclasses import dataclass, replace
 from pathlib import Path
+from mslex import split as split_windows_args
 
 from core.locale_manager import L
 
@@ -364,7 +364,7 @@ class ProcessManager:
         match context.start_method, context.target:
             case StartMethod.NATIVE, ExecutableLaunch() as target:
                 return subprocess.Popen(
-                    [str(target.exe_path), *shlex.split(target.cmd_args)],
+                    [str(target.exe_path), *split_windows_args(target.cmd_args, like_cmd=False)],
                     stdout=subprocess.DEVNULL,
                     stderr=subprocess.DEVNULL,
                     creationflags=flags,

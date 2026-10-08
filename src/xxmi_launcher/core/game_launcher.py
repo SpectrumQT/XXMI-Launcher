@@ -179,7 +179,7 @@ class GameLauncher:
             cmd_parts.append(get_value(cfg.Active.Importer.d3d11_mode_cmd_args))
 
         if get_value(cfg.Active.Importer.use_launch_options):
-            cmd_parts.append(get_value(cfg.Active.Importer.launch_options).replace('\\', '/'))
+            cmd_parts.append(get_value(cfg.Active.Importer.launch_options))
 
         return ' '.join(cmd_parts)
 
