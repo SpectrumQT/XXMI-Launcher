@@ -736,6 +736,29 @@ class ModelImporterPackage(Package):
                         paths += self.find_paths_in_file(file_path, patterns, known_children)
         return paths
 
+    @staticmethod
+    def is_epic_hoyoplay_installation(game_exe_path: Path) -> bool:
+        epic_launcher_path = game_exe_path.parent.parent.parent / "launcher_epic.exe"
+
+        if epic_launcher_path.is_file():
+            return True
+
+        config_path = game_exe_path.with_name("config.ini")
+
+        Events.Fire(Events.PathManager.VerifyFileAccess(path=config_path, write=True))
+
+        with open(config_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                result = line.split('=')
+
+                if len(result) != 2:
+                    continue
+
+                if "epic" in result[1].lower():
+                    return True
+
+        return False
+
     def find_paths_in_file(self, file_path: Path, patterns: re.Pattern | list[re.Pattern], known_children: list[str] = None):
         paths = []
         try:
