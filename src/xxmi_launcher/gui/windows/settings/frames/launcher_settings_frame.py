@@ -43,13 +43,25 @@ class LauncherSettingsFrame(SettingsContentFrame):
                             dropdown_values=self.detect_themes,
                             dropdown_command=self.update_theme,
                             tooltip=L("launcher_settings_theme_option_menu_tooltip", """
-                                Select launcher GUI theme.
-                                Warning! `Default` theme will be overwritten by launcher updates!
-                                To make a custom theme:
-                                1. Create a duplicate of `Default` folder in `Themes` folder.
-                                2. Rename the duplicate in a way you want it to be shown in Settings.
-                                3. Edit or replace any images (valid extensions: webp, jpeg, png, jpg).
-                            """),
+                                Select a launcher GUI theme.
+                                
+                                > The `Default` theme will be **overwritten by launcher updates**! Create a copy if you want to customize it.
+                                
+                                To create a custom theme:
+                                
+                                1. Duplicate the `Default` folder inside the `Themes` folder.
+                                2. Rename the duplicate to the name you want displayed here.
+                                3. Edit or replace the images using any of the supported file extensions:
+
+                                - Static images: {static_extensions:list}.
+                                - Animated images: {animated_extensions:list}.
+                                    * For best animation performance and storage efficiency, use `.avif` format.
+                                    * Animated images are supported only in `LauncherFrame` and its subfolders for now.
+                                    * To avoid GUI lag caused by image scaling, make sure animated backgrounds have the same resolution as the launcher window.
+                            """).format(
+                                static_extensions = ["`.jpg`", "`.jpeg`", "`.png`", "`.webp`"],
+                                animated_extensions = ["`.apng`", "`.avif`", "`.gif`", "`.webp`"],
+                            ),
                         ),
                         SettingsOption(
                             label_text=L("launcher_settings_dev_mode_checkbox", "Dev Mode"),
@@ -125,9 +137,11 @@ class LauncherSettingsFrame(SettingsContentFrame):
                             widget=OptionWidget.CHECKBOX,
                             value_variable="Vars.Launcher.verify_ssl",
                             tooltip=L("launcher_settings_verify_ssl_checkbox_tooltip", """
-                                <font color="red">⚠ Disable only if you trust your proxy or whatever else that breaks SSL. ⚠</font>
-                                **Enabled**: Validate SLL certificates for GitHub downloads to keep you secure.
-                                **Disabled**: Allow insecure connection vulnerable to man-in-middle attacks.
+                                Controls SLL certificate validation for update downloads from GitHub.
+                                > Disable only if you trust your proxy or whatever else that breaks SSL.
+                                
+                                * **Enabled**: Enforce SLL validation to keep you secure.
+                                * **Disabled**: Allow insecure connection that exposes traffic to man-in-middle.
                             """)
                         ),
                     ),
