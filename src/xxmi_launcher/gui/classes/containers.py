@@ -51,6 +51,7 @@ class UIFrame(UIElementBase, CTkFrame):
         secondary_fill_color=None,
         split=0.5,
         split_direction="vertical",
+        anim_start_delay=0,
     ):
 
         if image_path is not None or fg_color or border_radius:
@@ -67,7 +68,8 @@ class UIFrame(UIElementBase, CTkFrame):
                     width=width, height=height, brightness=brightness, opacity=opacity,
                     fg_color=fg_color, border_radius=border_radius, border_width=border_width, border_color=border_color,
                     padx=padx, pady=pady, bg_opacity=dim_opacity,
-                    secondary_fill_color=secondary_fill_color, split=split, split_direction=split_direction
+                    secondary_fill_color=secondary_fill_color, split=split, split_direction=split_direction,
+                    anim_start_delay=anim_start_delay,
                 ))
             else:
                 self.background_image.configure(image_path=image_path, width=width, height=height)

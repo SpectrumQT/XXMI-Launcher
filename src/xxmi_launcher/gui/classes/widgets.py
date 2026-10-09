@@ -8,13 +8,14 @@ import re
 
 from typing import Union, Tuple, List, Dict, Optional, Callable
 from pathlib import Path
+from collections import deque
 
 from tkinter import Menu, INSERT, font
 from customtkinter import CTkBaseClass, CTkButton, CTkImage, CTkLabel, CTkProgressBar, CTkEntry, CTkCheckBox, CTkTextbox, CTkOptionMenu, CTkRadioButton, StringVar
 from customtkinter import END, CURRENT
 from customtkinter.windows.widgets.scaling.scaling_base_class import CTkScalingBaseClass
 from customtkinter import ThemeManager, CTkFont
-from PIL import Image, ImageTk, ImageDraw
+from PIL import Image, ImageTk, ImageDraw, ImageSequence
 
 import core.config_manager as Config
 
@@ -198,6 +199,7 @@ class UIImage(UICanvasWidget, CTkBaseClass):
         bg_opacity = 0,
         padx = None,
         pady = None,
+        anim_start_delay: int = 0,
         **kwargs
     ):
         self.master = master
@@ -219,7 +221,23 @@ class UIImage(UICanvasWidget, CTkBaseClass):
         self.image_tag = None
 
         # self._supported_extensions = ['.mp4', '.mkv', '.avi', '.gif', '.webp', '.jpeg', '.png', '.jpg']
-        self._supported_extensions = ['.webp', '.jpeg', '.png', '.jpg']
+        self._supported_extensions = ['.webp', '.jpeg', '.png', '.jpg', '.gif']
+
+        # Number of already-created frames kept ahead of playback.
+        # 16 = roughly 0.5 sec at 30 FPS.
+        self._anim_buffer_size = 16
+        self._anim_start_delay = anim_start_delay
+        self._anim_buffer = deque()
+        self._anim_buffer_indices = set()
+        self._anim_decode_index = 0
+        self._anim_prefetch_job = None
+        self._anim_index = 0
+        self._anim_next_deadline = 0.0
+        self._anim_job = None
+        self._anim_is_running = False
+        self._anim_is_paused = False
+        self._fps_frame_count = 0
+        self._fps_last_time = time.perf_counter()
 
         # self._video = None
         # self._video_fps = None
@@ -315,17 +333,253 @@ class UIImage(UICanvasWidget, CTkBaseClass):
                 self._image = Image.open(str(path))
 
         if self._update_attrs(['width', 'height', 'opacity', 'brightness'], kwargs):
+
             self.image = self.create_image(self._image, self._width, self._height, self.opacity, self.brightness)
+
             if self.image_tag is None:
                 self._update_attrs(['x', 'y', 'anchor'], kwargs)
                 self.image_tag = self.canvas.create_image(self._x, self._y, anchor=self._anchor, **kwargs)
+
             self.set_image(self.image)
+
+            is_animated = getattr(self._image, "is_animated", False) and getattr(self._image, "n_frames", 1) > 1
+            if is_animated and self._anim_start_delay >= 0:
+                self.after(self._anim_start_delay, self._start_animation)
 
         if self._update_attrs(['x', 'y'], kwargs):
             self.move(self._x, self._y)
 
         if self._update_attrs(['anchor'], kwargs):
             self.canvas.itemconfigure(self.image_tag, anchor=self._anchor)
+
+    def pause_animation(self):
+        """Pause playback while preserving the current position and buffer."""
+        if self._image is None:
+            return
+
+        if getattr(self._image, "n_frames", 1) <= 1:
+            return
+
+        self._anim_is_paused = True
+
+        self._cancel_job("_anim_job")
+        self._cancel_job("_anim_prefetch_job")
+
+    def resume_animation(self):
+        """Resume playback without resetting the animation."""
+        if self._image is None:
+            return
+
+        if getattr(self._image, "n_frames", 1) <= 1:
+            return
+
+        self._anim_is_paused = False
+
+        if self._anim_job is not None:
+            return
+
+        # Do not include the time spent paused in the animation timeline.
+        self._anim_next_deadline = time.perf_counter()
+
+        self._schedule_animation_prefetch()
+        self._animate()
+
+    def _start_animation(self):
+        """Start or restart playback from the first frame."""
+        if self._image is None:
+            return
+
+        n_frames = getattr(self._image, "n_frames", 1)
+        if n_frames <= 1:
+            return
+
+        if self._anim_is_running:
+            self._stop_animation()
+
+        if self._anim_is_paused:
+            return
+
+        self._anim_is_running = True
+
+        self._schedule_animation_prefetch()
+        self._anim_job = self.after(33, self._animate)
+
+    def _stop_animation(self):
+        """Stop playback/prefetching and reset animation state."""
+        if self._image is None:
+            return
+
+        if getattr(self._image, "n_frames", 1) <= 1:
+            return
+
+        if not self._anim_is_running:
+            return
+
+        self._anim_is_running = False
+
+        self._cancel_job("_anim_job")
+        self._cancel_job("_anim_prefetch_job")
+
+        self._anim_buffer.clear()
+        self._anim_buffer_indices.clear()
+        self._anim_index = 0
+        self._anim_decode_index = 0
+        self._anim_next_deadline = 0.0
+
+        if self._image is not None:
+            try:
+                self._image.seek(0)
+            except (EOFError, OSError):
+                pass
+
+    def _cancel_job(self, attr):
+        """Cancel a scheduled animation callback."""
+        job = getattr(self, attr)
+        if job is None:
+            return
+
+        setattr(self, attr, None)
+
+        try:
+            self.after_cancel(job)
+        except Exception:
+            # Callback cancellation is best-effort during widget teardown.
+            pass
+
+    def _decode_animation_frame(self, index):
+        """Decode one frame and convert it to the final Tk image."""
+        if self._image is None:
+            return None
+
+        n_frames = getattr(self._image, "n_frames", 1)
+        if n_frames <= 0:
+            return None
+
+        index %= n_frames
+
+        try:
+            self._image.seek(index)
+        except (EOFError, OSError):
+            return None
+
+        duration = self._image.info.get("duration", 100) or 100
+        duration = max(1, duration)
+
+        photo = self.create_image(self._image.convert("RGBA"), self._width, self._height, self.opacity, self.brightness)
+
+        return index, photo, duration
+
+    def _display_animation_frame(self, decoded):
+        """Display a decoded frame and advance the playback index."""
+        index, photo, duration = decoded
+
+        self.image = photo
+        self.set_image(photo)
+
+        n_frames = self._image.n_frames
+        self._anim_index = (index + 1) % n_frames
+
+        return duration
+
+    def _schedule_animation_prefetch(self):
+        """Schedule one idle callback to prepare the next frame."""
+        if self._anim_prefetch_job is not None or self._image is None:
+            return
+
+        n_frames = getattr(self._image, "n_frames", 1)
+        if n_frames <= 1:
+            return
+
+        if len(self._anim_buffer) >= min(self._anim_buffer_size, n_frames):
+            return
+
+        self._anim_prefetch_job = self.after_idle(self._prefetch_animation_frame)
+
+    def _prefetch_animation_frame(self):
+        """Prepare one future frame while Tk is idle."""
+        self._anim_prefetch_job = None
+
+        if self._image is None:
+            return
+
+        n_frames = getattr(self._image, "n_frames", 1)
+        if n_frames <= 1:
+            return
+
+        capacity = min(self._anim_buffer_size, n_frames)
+        if len(self._anim_buffer) >= capacity:
+            return
+
+        index = self._anim_decode_index % n_frames
+
+        # Usually unnecessary, but prevents duplicate frames if the
+        # decode cursor catches up with an already buffered frame.
+        if index not in self._anim_buffer_indices:
+            decoded = self._decode_animation_frame(index)
+
+            if decoded is not None:
+                self._anim_buffer.append(decoded)
+                self._anim_buffer_indices.add(index)
+                self._anim_decode_index = (index + 1) % n_frames
+
+        if len(self._anim_buffer) < capacity:
+            self._schedule_animation_prefetch()
+
+    def _animate(self):
+        """Display the next frame and schedule subsequent playback."""
+        self._anim_job = None
+
+        if self._image is None:
+            return
+
+        try:
+            if not self.canvas.winfo_exists():
+                self._stop_animation()
+                return
+        except Exception:
+            self._stop_animation()
+            return
+
+        n_frames = getattr(self._image, "n_frames", 1)
+        if n_frames <= 1:
+            return
+
+        if self._anim_buffer:
+            decoded = self._anim_buffer.popleft()
+            self._anim_buffer_indices.discard(decoded[0])
+        else:
+            # Buffer underrun: decode the exact frame we expect next.
+            decoded = self._decode_animation_frame(self._anim_index)
+            if decoded is None:
+                self._anim_job = self.after(10, self._animate)
+                return
+
+            self._anim_decode_index = (decoded[0] + 1) % n_frames
+
+        duration = self._display_animation_frame(decoded)
+
+        # self._debug_fps()
+        self._schedule_animation_prefetch()
+
+        self._anim_next_deadline += duration / 1000.0
+
+        now = time.perf_counter()
+        if self._anim_next_deadline < now:
+            self._anim_next_deadline = now
+
+        delay = max(1, round((self._anim_next_deadline - now) * 1000))
+
+        self._anim_job = self.after(delay, self._animate)
+
+    def _debug_fps(self):
+        self._fps_frame_count += 1
+        now = time.perf_counter()
+        elapsed = now - self._fps_last_time
+
+        if elapsed >= 1.0:
+            print(f"[Animation FPS]: {self._fps_frame_count / elapsed:.1f}")
+            self._fps_frame_count = 0
+            self._fps_last_time = now
 
     # def _buffer_frame(self):
     #     if not self._video_rendering_active:
@@ -552,8 +806,10 @@ class UIImage(UICanvasWidget, CTkBaseClass):
 
     def _show(self):
         self.canvas.itemconfigure(self.image_tag, state='normal')
+        self.resume_animation()
 
     def _hide(self):
+        self.pause_animation()
         self.canvas.itemconfigure(self.image_tag, state='hidden')
 
     def bind(self, *args, **kwargs):
@@ -563,11 +819,18 @@ class UIImage(UICanvasWidget, CTkBaseClass):
         self.canvas.tag_unbind(self.image_tag, *args, **kwargs)
 
     def destroy(self):
-        try:
-            self.canvas.delete(self.image_tag)
-        except:
-            pass
+        self._stop_animation()
+
+        if self.image_tag is not None:
+            try:
+                self.canvas.delete(self.image_tag)
+            except Exception:
+                pass
+            self.image_tag = None
+
         self.image = None
+        self._image = None
+
         super().destroy()
 
 

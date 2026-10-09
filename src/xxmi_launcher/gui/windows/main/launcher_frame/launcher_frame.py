@@ -85,10 +85,35 @@ class LauncherFrame(UIFrame):
             Events.Application.LoadImporter,
             lambda event: self.update_background(event.importer_id))
 
+        self.subscribe(Events.Application.OpenSettings, self.pause_background_animation)
+        self.subscribe(Events.Application.CloseSettings, self.resume_background_animation)
+
+        master.bind("<FocusIn>", self.resume_background_animation)
+        master.bind("<FocusOut>", self.pause_background_animation)
+
     def update_background(self, importer_id):
-        self.set_background_image(f'background-image-{importer_id.lower()}.webp',
-                                  width=self.master.cfg.width,
-                                  height=self.master.cfg.height)
+        background_image_path = f'background-image-{importer_id.lower()}.webp'
+
+        if self.background_image and self.background_image.image_path == background_image_path:
+            return
+
+        should_restart_animation = self.background_image is not None
+
+        self.set_background_image(
+            background_image_path,
+            width=self.master.cfg.width,
+            height=self.master.cfg.height,
+            anim_start_delay=-1,
+        )
+
+        if should_restart_animation:
+            self.background_image._start_animation()
+
+    def pause_background_animation(self, event):
+        self.background_image.pause_animation()
+
+    def resume_background_animation(self, event):
+        self.background_image.resume_animation()
 
     def handle_open_donation_center(self, event: Events.Application.OpenDonationCenter):
         from gui.windows.main.donate_frame.donate_frame import DonateFrame
