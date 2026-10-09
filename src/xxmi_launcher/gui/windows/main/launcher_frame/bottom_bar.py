@@ -14,7 +14,10 @@ class BottomBarFrame(UIFrame):
     def __init__(self, master, canvas, width, height, **kwargs):
         super().__init__(master=master, canvas=canvas, **kwargs)
 
-        self.set_background_image(image_path='background-image.png', width=width, height=240, y=500)
+        self.set_background_image(image_path='background-image.png', width=width, height=240, y=500, opacity=0.75)
+
+        self.status_background = UIFrame(master=self, canvas=canvas, **kwargs)
+        self.status_background.set_background_image(image_path='MainWindow/LauncherFrame/BottomBarFrame/background-image.png', width=width, height=240, y=500, opacity=0.25)
 
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
@@ -29,10 +32,10 @@ class BottomBarFrame(UIFrame):
     def handle_stage_update(self, event):
         if event.stage == Stage.Busy or event.stage == Stage.Download:
             self.grid()
-            self.background_image.configure(opacity=1)
+            self.status_background._show()
         else:
             self.grid_remove()
-            self.background_image.configure(opacity=0.75)
+            self.status_background._hide()
 
 
 class DownloadProgressBar(UIProgressBar):
