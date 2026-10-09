@@ -1726,24 +1726,6 @@ loc = """
 비활성화: 수동으로 업데이트를 다운로드하고 설치하려면 [시작] 버튼 옆에 있는 [▲] 버튼을 사용하세요.
 """
 
-[launcher_settings_theme_option_menu_tooltip]
-src = """
-Select launcher GUI theme.
-Warning! `Default` theme will be overwritten by launcher updates!
-To make a custom theme:
-1. Create a duplicate of `Default` folder in `Themes` folder.
-2. Rename the duplicate in a way you want it to be shown in Settings.
-3. Edit or replace any images (valid extensions: webp, jpeg, png, jpg).
-"""
-loc = """
-런처 GUI 테마를 선택합니다.
-경고! `기본(Default)` 테마는 런처 업데이트 시 덮어쓰여집니다!
-사용자 정의 테마를 만들려면:
-1. `Themes` 폴더 안에 `Default` 폴더의 복사본을 만듭니다.
-2. 설정에 표시할 이름으로 복사본의 이름을 바꿉니다.
-3. 이미지를 편집하거나 교체합니다(유효한 확장자: webp, jpeg, png, jpg).
-"""
-
 [launcher_settings_dev_mode_checkbox]
 src = "Dev Mode"
 loc = "개발자 모드"
@@ -1787,18 +1769,6 @@ loc = "**GitHub 개인 액세스 토큰** 생성 웹페이지를 엽니다."
 [launcher_settings_verify_ssl_checkbox]
 src = "Verify SSL"
 loc = "SSL 확인"
-
-[launcher_settings_verify_ssl_checkbox_tooltip]
-src = """
-<font color=\"red\">⚠ Disable only if you trust your proxy or whatever else that breaks SSL. ⚠</font>
-**Enabled**: Validate SLL certificates for GitHub downloads to keep you secure.
-**Disabled**: Allow insecure connection vulnerable to man-in-middle attacks.
-"""
-loc = """
-<font color=\"red\">⚠ 프록시나 SSL을 방해하는 기타 요소를 신뢰하는 경우에만 비활성화하세요. ⚠</font>
-**활성화**: 보안 유지를 위해 GitHub 다운로드용 SSL 인증서를 유효성 검사합니다.
-**비활성화**: 중간자 공격에 취약한 안전하지 않은 연결을 허용합니다.
-"""
 
 [launcher_settings_proxy_enable_checkbox_tooltip]
 src = """

@@ -1,0 +1,51 @@
+[launcher_settings_theme_option_menu_tooltip]
+src = """
+Select a launcher GUI theme.
+
+> The `Default` theme will be **overwritten by launcher updates**! Create a copy if you want to customize it.
+
+To create a custom theme:
+
+1. Duplicate the `Default` folder inside the `Themes` folder.
+2. Rename the duplicate to the name you want displayed here.
+3. Edit or replace the images using any of the supported file extensions:
+
+- Static images: {static_extensions:list}.
+- Animated images: {animated_extensions:list}.
+    * For best animation performance and storage efficiency, use `.avif` format.
+    * Animated images are supported only in `LauncherFrame` and its subfolders for now.
+    * To avoid GUI lag caused by image scaling, make sure animated backgrounds have the same resolution as the launcher window.
+"""
+loc = """
+Wybierz motyw interfejsu graficznego launchera.
+
+> Motyw `Default` zostanie **nadpisany podczas aktualizacji launchera**! Jeśli chcesz go dostosować, utwórz jego kopię.
+
+Aby utworzyć własny motyw:
+
+1. Zduplikuj folder `Default` znajdujący się w folderze `Themes`.
+2. Zmień nazwę kopii na nazwę, która ma być wyświetlana w tym miejscu.
+3. Edytuj lub zastąp obrazy, używając jednego z obsługiwanych rozszerzeń plików:
+
+- Obrazy statyczne: {static_extensions:list}.
+- Obrazy animowane: {animated_extensions:list}.
+    * Aby uzyskać najlepszą wydajność animacji i efektywnie wykorzystać miejsce na dysku, używaj formatu `.avif`.
+    * Obrazy animowane są obecnie obsługiwane tylko w `LauncherFrame` i jego podfolderach.
+    * Aby uniknąć opóźnień interfejsu graficznego spowodowanych skalowaniem obrazów, upewnij się, że animowane tła mają taką samą rozdzielczość jak okno launchera.
+"""
+
+[launcher_settings_verify_ssl_checkbox_tooltip]
+src = """
+Controls SLL certificate validation for update downloads from GitHub.
+> Disable only if you trust your proxy or whatever else that breaks SSL.
+
+* **Enabled**: Enforce SLL validation to keep you secure.
+* **Disabled**: Allow insecure connection that exposes traffic to man-in-middle.
+"""
+loc = """
+Steruje weryfikacją certyfikatów SSL podczas pobierania aktualizacji z GitHuba.
+> Wyłącz tę opcję tylko wtedy, gdy ufasz swojemu serwerowi proxy lub innemu elementowi powodującemu problemy z SSL.
+
+* **Włączone**: Wymusza weryfikację SSL, aby zapewnić Ci bezpieczeństwo.
+* **Wyłączone**: Zezwala na niezabezpieczone połączenia, narażając przesyłane dane na przechwycenie przez atak typu man-in-the-middle.
+"""

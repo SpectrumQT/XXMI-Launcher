@@ -1,0 +1,51 @@
+[launcher_settings_theme_option_menu_tooltip]
+src = """
+Select a launcher GUI theme.
+
+> The `Default` theme will be **overwritten by launcher updates**! Create a copy if you want to customize it.
+
+To create a custom theme:
+
+1. Duplicate the `Default` folder inside the `Themes` folder.
+2. Rename the duplicate to the name you want displayed here.
+3. Edit or replace the images using any of the supported file extensions:
+
+- Static images: {static_extensions:list}.
+- Animated images: {animated_extensions:list}.
+    * For best animation performance and storage efficiency, use `.avif` format.
+    * Animated images are supported only in `LauncherFrame` and its subfolders for now.
+    * To avoid GUI lag caused by image scaling, make sure animated backgrounds have the same resolution as the launcher window.
+"""
+loc = """
+ランチャーのGUIテーマを選択します。
+
+> `Default` テーマは**ランチャーのアップデート時に上書きされます**！カスタマイズしたい場合は、コピーを作成してください。
+
+カスタムテーマを作成する方法：
+
+1. `Themes` フォルダー内にある `Default` フォルダーを複製します。
+2. 複製したフォルダーの名前を、ここに表示したい名前に変更します。
+3. 以下の対応するファイル拡張子を使用して、画像を編集または置き換えます。
+
+- 静止画像：{static_extensions:list}。
+- アニメーション画像：{animated_extensions:list}。
+    * アニメーションのパフォーマンスを最大限に高め、ストレージ容量を効率的に使用するには、`.avif` 形式を使用してください。
+    * 現在、アニメーション画像は `LauncherFrame` とそのサブフォルダーでのみサポートされています。
+    * 画像の拡大縮小によるGUIの遅延を防ぐため、アニメーション背景の解像度をランチャーウィンドウの解像度と一致させてください。
+"""
+
+[launcher_settings_verify_ssl_checkbox_tooltip]
+src = """
+Controls SLL certificate validation for update downloads from GitHub.
+> Disable only if you trust your proxy or whatever else that breaks SSL.
+
+* **Enabled**: Enforce SLL validation to keep you secure.
+* **Disabled**: Allow insecure connection that exposes traffic to man-in-middle.
+"""
+loc = """
+GitHubからアップデートをダウンロードする際のSSL証明書の検証を制御します。
+> プロキシやその他のSSL接続の問題を引き起こしている要因を信頼できる場合に限り、この機能を無効にしてください。
+
+* **有効**：SSL証明書の検証を強制し、接続の安全性を確保します。
+* **無効**：安全でない接続を許可するため、中間者攻撃によって通信内容が傍受される危険性があります。
+"""

@@ -1,0 +1,51 @@
+[launcher_settings_theme_option_menu_tooltip]
+src = """
+Select a launcher GUI theme.
+
+> The `Default` theme will be **overwritten by launcher updates**! Create a copy if you want to customize it.
+
+To create a custom theme:
+
+1. Duplicate the `Default` folder inside the `Themes` folder.
+2. Rename the duplicate to the name you want displayed here.
+3. Edit or replace the images using any of the supported file extensions:
+
+- Static images: {static_extensions:list}.
+- Animated images: {animated_extensions:list}.
+    * For best animation performance and storage efficiency, use `.avif` format.
+    * Animated images are supported only in `LauncherFrame` and its subfolders for now.
+    * To avoid GUI lag caused by image scaling, make sure animated backgrounds have the same resolution as the launcher window.
+"""
+loc = """
+Selecciona un tema para la interfaz gráfica del launcher.
+
+> ¡El tema `Default` será **sobrescrito con las actualizaciones del launcher**! Crea una copia si quieres personalizarlo.
+
+Para crear un tema personalizado:
+
+1. Duplica la carpeta `Default` dentro de la carpeta `Themes`.
+2. Cambia el nombre de la copia por el nombre que quieras que aparezca aquí.
+3. Edita o reemplaza las imágenes utilizando cualquiera de las extensiones de archivo compatibles:
+
+- Imágenes estáticas: {static_extensions:list}.
+- Imágenes animadas: {animated_extensions:list}.
+    * Para obtener el mejor rendimiento de las animaciones y aprovechar mejor el espacio de almacenamiento, utiliza el formato `.avif`.
+    * Por ahora, las imágenes animadas solo son compatibles con `LauncherFrame` y sus subcarpetas.
+    * Para evitar retrasos en la interfaz gráfica causados por el escalado de imágenes, asegúrate de que los fondos animados tengan la misma resolución que la ventana del launcher.
+"""
+
+[launcher_settings_verify_ssl_checkbox_tooltip]
+src = """
+Controls SLL certificate validation for update downloads from GitHub.
+> Disable only if you trust your proxy or whatever else that breaks SSL.
+
+* **Enabled**: Enforce SLL validation to keep you secure.
+* **Disabled**: Allow insecure connection that exposes traffic to man-in-middle.
+"""
+loc = """
+Controla la validación de certificados SSL al descargar actualizaciones desde GitHub.
+> Desactívala solo si confías en tu proxy o en cualquier otro elemento que esté causando problemas con SSL.
+
+* **Activada**: Obliga a validar los certificados SSL para mantener tu conexión segura.
+* **Desactivada**: Permite conexiones no seguras que exponen el tráfico a ataques de intermediario (man-in-the-middle).
+"""

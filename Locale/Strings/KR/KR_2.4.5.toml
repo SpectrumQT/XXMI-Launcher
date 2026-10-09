@@ -1,0 +1,51 @@
+[launcher_settings_theme_option_menu_tooltip]
+src = """
+Select a launcher GUI theme.
+
+> The `Default` theme will be **overwritten by launcher updates**! Create a copy if you want to customize it.
+
+To create a custom theme:
+
+1. Duplicate the `Default` folder inside the `Themes` folder.
+2. Rename the duplicate to the name you want displayed here.
+3. Edit or replace the images using any of the supported file extensions:
+
+- Static images: {static_extensions:list}.
+- Animated images: {animated_extensions:list}.
+    * For best animation performance and storage efficiency, use `.avif` format.
+    * Animated images are supported only in `LauncherFrame` and its subfolders for now.
+    * To avoid GUI lag caused by image scaling, make sure animated backgrounds have the same resolution as the launcher window.
+"""
+loc = """
+런처 GUI 테마를 선택합니다.
+
+> `Default` 테마는 **런처 업데이트 시 덮어쓰여집니다**! 테마를 사용자 지정하려면 먼저 복사본을 만드세요.
+
+사용자 지정 테마를 만드는 방법:
+
+1. `Themes` 폴더 안에 있는 `Default` 폴더를 복제합니다.
+2. 복제한 폴더의 이름을 이곳에 표시할 이름으로 변경합니다.
+3. 지원되는 파일 확장자를 사용하여 이미지를 편집하거나 교체합니다.
+
+- 정적 이미지: {static_extensions:list}.
+- 애니메이션 이미지: {animated_extensions:list}.
+    * 최상의 애니메이션 성능과 효율적인 저장 공간 활용을 위해 `.avif` 형식을 사용하세요.
+    * 현재 애니메이션 이미지는 `LauncherFrame` 및 해당 하위 폴더에서만 지원됩니다.
+    * 이미지 크기 조정으로 인한 GUI 지연을 방지하려면 애니메이션 배경의 해상도를 런처 창의 해상도와 동일하게 설정하세요.
+"""
+
+[launcher_settings_verify_ssl_checkbox_tooltip]
+src = """
+Controls SLL certificate validation for update downloads from GitHub.
+> Disable only if you trust your proxy or whatever else that breaks SSL.
+
+* **Enabled**: Enforce SLL validation to keep you secure.
+* **Disabled**: Allow insecure connection that exposes traffic to man-in-middle.
+"""
+loc = """
+GitHub에서 업데이트를 다운로드할 때 SSL 인증서 검증을 제어합니다.
+> 프록시 또는 SSL 문제를 일으키는 다른 요소를 신뢰하는 경우에만 이 기능을 비활성화하세요.
+
+* **활성화됨**: SSL 인증서 검증을 강제하여 연결을 안전하게 유지합니다.
+* **비활성화됨**: 안전하지 않은 연결을 허용하므로 중간자 공격(man-in-the-middle)으로 인해 전송 중인 데이터가 노출될 수 있습니다.
+"""

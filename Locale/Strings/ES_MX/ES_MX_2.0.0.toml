@@ -1738,24 +1738,6 @@ Habilitado: las actualizaciones del lanzador y del {importer} se descargarán e 
 Deshabilitado: utilice el botón especial [▲] situado junto al botón [Iniciar] para descargar e instalar las actualizaciones manualmente.
 """
 
-[launcher_settings_theme_option_menu_tooltip]
-src = """
-Select launcher GUI theme.
-Warning! `Default` theme will be overwritten by launcher updates!
-To make a custom theme:
-1. Create a duplicate of `Default` folder in `Themes` folder.
-2. Rename the duplicate in a way you want it to be shown in Settings.
-3. Edit or replace any images (valid extensions: webp, jpeg, png, jpg).
-"""
-loc = """
-Selecciona el tema de la interfaz gráfica de usuario del lanzador.
-¡Advertencia! ¡El tema `Predeterminado` se sobrescribirá con las actualizaciones del lanzador!
-Para crear un tema personalizado:
-1. Crea una copia de la carpeta `Predeterminado` en la carpeta `Temas`.
-2. Cambie el nombre del duplicado de la forma en que desee que aparezca en Configuración.
-3. Edite o sustituya cualquier imagen (extensiones válidas: webp, jpeg, png, jpg).
-"""
-
 [launcher_settings_dev_mode_checkbox]
 src = "Dev Mode"
 loc = "Modo de desarrollo"
@@ -1799,18 +1781,6 @@ loc = "Abrir la página web de creación de **tokens de acceso personal de GitHu
 [launcher_settings_verify_ssl_checkbox]
 src = "Verify SSL"
 loc = "Verificar SSL"
-
-[launcher_settings_verify_ssl_checkbox_tooltip]
-src = """
-<font color=\"red\">⚠ Disable only if you trust your proxy or whatever else that breaks SSL. ⚠</font>
-**Enabled**: Validate SLL certificates for GitHub downloads to keep you secure.
-**Disabled**: Allow insecure connection vulnerable to man-in-middle attacks.
-"""
-loc = """
-<font color=\"red\">⚠ Desactiva solo si confías en tu proxy o cualquier otro elemento que rompa SSL. ⚠</font>
-**Habilitado**: valida los certificados SSL para las descargas de GitHub con el fin de garantizar tu seguridad.
-**Desactivado**: permite conexiones inseguras vulnerables a ataques de intermediarios.
-"""
 
 [launcher_settings_proxy_enable_checkbox_tooltip]
 src = """

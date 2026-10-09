@@ -1726,24 +1726,6 @@ Włączone: Launcher i aktualizacje {importer} będą pobierane i instalowane au
 Wyłączone: Użyj specjalnego przycisku [▲] obok przycisku [Graj], aby pobrać i zainstalować aktualizacje ręcznie.
 """
 
-[launcher_settings_theme_option_menu_tooltip]
-src = """
-Select launcher GUI theme.
-Warning! `Default` theme will be overwritten by launcher updates!
-To make a custom theme:
-1. Create a duplicate of `Default` folder in `Themes` folder.
-2. Rename the duplicate in a way you want it to be shown in Settings.
-3. Edit or replace any images (valid extensions: webp, jpeg, png, jpg).
-"""
-loc = """
-Wybierz motyw GUI launchera.
-Uwaga! Motyw `Default` zostanie nadpisany przez aktualizacje launchera!
-Aby stworzyć własny motyw:
-1. Utwórz kopię folderu `Default` w katalogu `Themes`.
-2. Zmień nazwę kopii, tak aby była widoczna w ustawieniach.
-3. Edytuj lub zamień dowolne obrazy (obsługiwane rozszerzenia: webp, jpeg, png, jpg).
-"""
-
 [launcher_settings_dev_mode_checkbox]
 src = "Dev Mode"
 loc = "Tryb deweloperski"
@@ -1787,18 +1769,6 @@ loc = "Otwórz stronę tworzenia **GitHub Personal Access Token**."
 [launcher_settings_verify_ssl_checkbox]
 src = "Verify SSL"
 loc = "Weryfikuj SSL"
-
-[launcher_settings_verify_ssl_checkbox_tooltip]
-src = """
-<font color=\"red\">⚠ Disable only if you trust your proxy or whatever else that breaks SSL. ⚠</font>
-**Enabled**: Validate SLL certificates for GitHub downloads to keep you secure.
-**Disabled**: Allow insecure connection vulnerable to man-in-middle attacks.
-"""
-loc = """
-<font color=\"red\">⚠ Wyłączaj tylko, jeśli ufasz swojemu proxy lub czemukolwiek, co psuje SSL. ⚠</font>
-**Włączone**: Weryfikuje certyfikaty SSL przy pobieraniu z GitHub, aby zapewnić bezpieczeństwo.
-**Wyłączone**: Pozwala na niezabezpieczone połączenie podatne na ataki typu man-in-the-middle.
-"""
 
 [launcher_settings_proxy_enable_checkbox_tooltip]
 src = """

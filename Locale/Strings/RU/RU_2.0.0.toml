@@ -1830,24 +1830,6 @@ loc = """
 Отключено: используйте специальную кнопку [▲] рядом с [Пуск] для ручного обновления.
 """
 
-[launcher_settings_theme_option_menu_tooltip]
-src = """
-Select launcher GUI theme.
-Warning! `Default` theme will be overwritten by launcher updates!
-To make a custom theme:
-1. Create a duplicate of `Default` folder in `Themes` folder.
-2. Rename the duplicate in a way you want it to be shown in Settings.
-3. Edit or replace any images (valid extensions: webp, jpeg, png, jpg).
-"""
-loc = """
-Выберите тему интерфейса лаунчера.
-Внимание! Тема `Default` будет перезаписана при обновлении лаунчера!
-Чтобы создать свою тему:
-1. Создайте копию папки `Default` в папке `Themes`.
-2. Переименуйте её как хотите.
-3. Измените или замените любые изображения (поддерживаются: webp, jpeg, png, jpg).
-"""
-
 [launcher_settings_dev_mode_checkbox]
 src = "Dev Mode"
 loc = "Режим разработчика"
@@ -1891,18 +1873,6 @@ loc = "Открыть страницу создания **персонально
 [launcher_settings_verify_ssl_checkbox]
 src = "Verify SSL"
 loc = "Проверка SSL"
-
-[launcher_settings_verify_ssl_checkbox_tooltip]
-src = """
-<font color=\"red\">⚠ Disable only if you trust your proxy or whatever else that breaks SSL. ⚠</font>
-**Enabled**: Validate SLL certificates for GitHub downloads to keep you secure.
-**Disabled**: Allow insecure connection vulnerable to man-in-middle attacks.
-"""
-loc = """
-<font color=\"red\">⚠ Отключайте только если вы доверяете вашему прокси. ⚠</font>
-**Включено**: проверять SSL-сертификаты при загрузке обновлений с GitHub.
-**Отключено**: разрешить небезопасное соединение (уязвимо к MITM-атакам).
-"""
 
 [launcher_settings_proxy_enable_checkbox_tooltip]
 src = """

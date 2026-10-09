@@ -1334,24 +1334,6 @@ loc = """
 禁用：使用[启动]按钮旁边的特殊[▲]按钮手动下载和安装更新。
 """
 
-[launcher_settings_theme_option_menu_tooltip]
-src = """
-Select launcher GUI theme.
-Warning! `Default` theme will be overwritten by launcher updates!
-To make a custom theme:
-1. Create a duplicate of `Default` folder in `Themes` folder.
-2. Rename the duplicate in a way you want it to be shown in Settings.
-3. Edit or replace any images (valid extensions: webp, jpeg, png, jpg).
-"""
-loc = """
-选择启动器GUI主题。
-警告！`默认`主题将被启动器更新覆盖！
-制作自定义主题：
-1. 在`主题`文件夹中创建`默认`文件夹的副本。
-2. 重命名副本为你希望在设置中显示的名称。
-3. 编辑或替换任何图像（有效扩展名：webp、jpeg、png、jpg）。
-"""
-
 [launcher_settings_dev_mode_checkbox]
 src = "Dev Mode"
 loc = "开发模式"
@@ -1395,18 +1377,6 @@ loc = "打开**GitHub个人访问令牌**创建网页。"
 [launcher_settings_verify_ssl_checkbox]
 src = "Verify SSL"
 loc = "验证SSL"
-
-[launcher_settings_verify_ssl_checkbox_tooltip]
-src = """
-<font color=\"red\">⚠ Disable only if you trust your proxy or whatever else that breaks SSL. ⚠</font>
-**Enabled**: Validate SLL certificates for GitHub downloads to keep you secure.
-**Disabled**: Allow insecure connection vulnerable to man-in-middle attacks.
-"""
-loc = """
-<font color=\"red\">⚠ 仅在你信任代理或其他破坏SSL的工具时才禁用。⚠</font>
-**启用**：验证GitHub下载的SSL证书以保持安全。
-**禁用**：允许易受中间人攻击的不安全连接。
-"""
 
 [launcher_settings_proxy_enable_checkbox_tooltip]
 src = """
