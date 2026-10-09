@@ -280,6 +280,7 @@ class MainWindow(UIMainWindow):
 
         if self.launcher_frame is None:
             # Initialize minimal GUI (launcher crashed before LauncherFrame initialization)
+            self.minimal_gui = True
             self.load_theme('Default')
             self.apply_config()
             self.center_window()
