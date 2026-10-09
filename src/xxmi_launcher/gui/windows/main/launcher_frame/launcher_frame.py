@@ -110,10 +110,12 @@ class LauncherFrame(UIFrame):
             self.background_image._start_animation()
 
     def pause_background_animation(self, event):
-        self.background_image.pause_animation()
+        reason = "settings" if isinstance(event, Events.Application.OpenSettings) else None
+        self.background_image.pause_animation(reason)
 
     def resume_background_animation(self, event):
-        self.background_image.resume_animation()
+        reason = "settings" if isinstance(event, Events.Application.CloseSettings) else None
+        self.background_image.resume_animation(reason)
 
     def handle_open_donation_center(self, event: Events.Application.OpenDonationCenter):
         from gui.windows.main.donate_frame.donate_frame import DonateFrame

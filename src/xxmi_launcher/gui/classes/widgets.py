@@ -236,6 +236,7 @@ class UIImage(UICanvasWidget, CTkBaseClass):
         self._anim_job = None
         self._anim_is_running = False
         self._anim_is_paused = False
+        self._anim_pause_reasons = set()
         self._fps_frame_count = 0
         self._fps_last_time = time.perf_counter()
 
@@ -352,7 +353,7 @@ class UIImage(UICanvasWidget, CTkBaseClass):
         if self._update_attrs(['anchor'], kwargs):
             self.canvas.itemconfigure(self.image_tag, anchor=self._anchor)
 
-    def pause_animation(self):
+    def pause_animation(self, reason: str | None = None):
         """Pause playback while preserving the current position and buffer."""
         if self._image is None:
             return
@@ -361,13 +362,18 @@ class UIImage(UICanvasWidget, CTkBaseClass):
             return
 
         self._anim_is_paused = True
+        self._anim_pause_reasons.add(reason or "default")
 
         self._cancel_job("_anim_job")
         self._cancel_job("_anim_prefetch_job")
 
-    def resume_animation(self):
+    def resume_animation(self, reason: str | None = None):
         """Resume playback without resetting the animation."""
         if self._image is None:
+            return
+
+        self._anim_pause_reasons.discard(reason or "default")
+        if self._anim_pause_reasons:
             return
 
         if getattr(self._image, "n_frames", 1) <= 1:
