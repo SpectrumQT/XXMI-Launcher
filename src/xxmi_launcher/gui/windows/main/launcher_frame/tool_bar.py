@@ -140,6 +140,13 @@ class RepairXXMIButton(ToolsBarButton):
             master=master)
         self.subscribe(Events.Application.LoadImporter,
                        lambda event: self.set_text(L('tool_bar_repair_button', 'Repair {importer}').format(importer=event.importer_id)))
+        self.subscribe(Events.PackageManager.VersionNotification, self.handle_version_notification)
+
+    def handle_version_notification(self, event):
+        package_state = event.package_states.get(Config.Launcher.active_importer, None)
+        if package_state is None:
+            return
+        self.set_disabled(not package_state.installed_version)
 
 
 class CheckForUpdatesButton(ToolsBarButton):
@@ -170,6 +177,13 @@ class OptimizeModsButton(ToolsBarButton):
             text=L('tool_bar_optimize_mods_button', 'Optimize Mods'),
             command=lambda: Events.Fire(Events.ModelImporter.OptimizeMods(silent=False, reset_cache=True)),
             master=master)
+        self.subscribe(Events.PackageManager.VersionNotification, self.handle_version_notification)
+
+    def handle_version_notification(self, event):
+        package_state = event.package_states.get(Config.Launcher.active_importer, None)
+        if package_state is None:
+            return
+        self.set_disabled(not package_state.installed_version)
 
 
 class OpenModsFolderButton(ToolsBarButton):
