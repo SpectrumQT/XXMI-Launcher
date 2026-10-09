@@ -107,7 +107,7 @@ class LauncherFrame(UIFrame):
         )
 
         if should_restart_animation:
-            self.background_image._start_animation()
+            self.background_image.start_animation()
 
     def pause_background_animation(self, event):
         reason = "settings" if isinstance(event, Events.Application.OpenSettings) else None

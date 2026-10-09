@@ -3,8 +3,7 @@ import logging
 import time
 import tkinter
 import re
-# import cv2
-# import math
+import threading
 
 from typing import Union, Tuple, List, Dict, Optional, Callable
 from pathlib import Path
@@ -23,6 +22,9 @@ from gui.classes.element import UIElementBase
 from gui.classes.windows import UIWindow
 
 logging.getLogger('PIL').setLevel(logging.INFO)
+
+
+log = logging.getLogger(__name__)
 
 
 class UIWidget(UIElementBase):
@@ -179,7 +181,375 @@ class UIText(UICanvasWidget, CTkBaseClass):
         return text + ellipsis if text else ellipsis
 
 
-class UIImage(UICanvasWidget, CTkBaseClass):
+class AnimationMixin:
+    """Background-decoded animation playback for Tk widgets.
+
+    Public methods and rendering run on the Tk thread. The worker only
+    decodes and prepares Pillow frames. Generation tokens invalidate stale
+    work when playback is stopped or restarted.
+    """
+
+    _ANIMATION_RETRY_MS = 2
+    _ANIMATION_MIN_DELAY_MS = 1
+    _ANIMATION_DEFAULT_FRAME_MS = 100
+
+    def _init_animation(self) -> None:
+        self._anim_condition = threading.Condition()
+        self._anim_buffer = deque(maxlen=1)
+
+        self._anim_worker = None
+        self._anim_worker_stop = threading.Event()
+        self._anim_generation = 0
+        self._anim_job = None
+
+        self._anim_is_running = False
+        self._anim_is_paused = False
+        self._anim_pause_reasons: set[str] = set()
+
+        self._anim_started_at = 0.0
+        self._anim_paused_at = 0.0
+        self._anim_frame_durations = None
+        self._anim_frame_starts = None
+        self._anim_total_duration = 0
+
+        self._anim_displayed_index = None
+        self._anim_index = 0
+
+        self._anim_track_fps = False
+        self._fps_frame_count = 0
+        self._fps_last_time = time.perf_counter()
+
+    # Host-widget hooks
+
+    def _get_animation_source(self) -> Image.Image | None:
+        raise NotImplementedError
+
+    def _prepare_animation_frame(self, frame: Image.Image) -> Image.Image:
+        """Prepare a Pillow frame without creating Tk objects."""
+        raise NotImplementedError
+
+    def _display_animation_frame(self, frame_data: tuple) -> None:
+        """Display a prepared frame on the Tk thread."""
+        raise NotImplementedError
+
+    def _has_animation(self) -> bool:
+        source = self._get_animation_source()
+        return source is not None and getattr(source, "n_frames", 1) > 1
+
+    def _worker_is_obsolete(
+        self,
+        generation: int,
+        stop_event: threading.Event,
+    ) -> bool:
+        return stop_event.is_set() or generation != self._anim_generation
+
+    # Lifecycle
+
+    def start_animation(self) -> None:
+        if not self._has_animation():
+            return
+
+        if self._anim_pause_reasons:
+            self._anim_is_paused = True
+            return
+
+        if self._anim_is_running:
+            return
+
+        self._anim_is_running = True
+        self._anim_is_paused = False
+        self._anim_started_at = 0.0
+        self._anim_paused_at = 0.0
+        self._anim_displayed_index = None
+        self._anim_index = 0
+
+        with self._anim_condition:
+            self._anim_buffer.clear()
+            self._anim_condition.notify_all()
+
+        self._ensure_animation_worker()
+        self._schedule_animation_callback(self._ANIMATION_MIN_DELAY_MS)
+
+    def stop_animation(self) -> None:
+        self._anim_is_running = False
+        self._anim_generation += 1
+        self._cancel_animation_callback()
+
+        with self._anim_condition:
+            self._anim_worker_stop.set()
+            self._anim_buffer.clear()
+            self._anim_started_at = self._anim_paused_at = 0.0
+            self._anim_displayed_index = None
+            self._anim_index = 0
+            self._anim_frame_durations = None
+            self._anim_frame_starts = None
+            self._anim_total_duration = 0
+            self._anim_condition.notify_all()
+
+    def pause_animation(self, reason: str = "default") -> None:
+        if not self._has_animation():
+            return
+
+        self._anim_pause_reasons.add(reason)
+        if self._anim_is_paused:
+            return
+
+        self._anim_is_paused = True
+        self._anim_paused_at = time.perf_counter()
+        self._cancel_animation_callback()
+
+        with self._anim_condition:
+            self._anim_condition.notify_all()
+
+    def resume_animation(self, reason: str = "default") -> None:
+        self._anim_pause_reasons.discard(reason)
+        if self._anim_pause_reasons or not self._anim_is_paused:
+            return
+
+        now = time.perf_counter()
+        if self._anim_started_at and self._anim_paused_at:
+            self._anim_started_at += now - self._anim_paused_at
+
+        self._anim_paused_at = 0.0
+        self._anim_is_paused = False
+
+        if not self._anim_is_running:
+            self.start_animation()
+            return
+
+        with self._anim_condition:
+            self._anim_condition.notify_all()
+
+        self._ensure_animation_worker()
+        self._schedule_animation_callback(self._ANIMATION_MIN_DELAY_MS)
+
+    # Tk callback scheduling
+
+    def _schedule_animation_callback(self, delay_ms: int) -> None:
+        if self._anim_is_running and not self._anim_is_paused and self._anim_job is None:
+            self._anim_job = self.after(
+                max(self._ANIMATION_MIN_DELAY_MS, int(delay_ms)),
+                self._animation_tick,
+            )
+
+    def _cancel_animation_callback(self) -> None:
+        job, self._anim_job = self._anim_job, None
+        if job is None:
+            return
+
+        try:
+            self.after_cancel(job)
+        except Exception:
+            log.debug("Animation callback was unavailable", exc_info=True)
+
+    def _animation_tick(self) -> None:
+        self._anim_job = None
+        if not self._anim_is_running or self._anim_is_paused:
+            return
+
+        if self._get_animation_source() is None:
+            self.stop_animation()
+            return
+
+        try:
+            if hasattr(self, "canvas") and not self.canvas.winfo_exists():
+                self.stop_animation()
+                return
+        except Exception:
+            self.stop_animation()
+            return
+
+        with self._anim_condition:
+            frame_data = self._anim_buffer.pop() if self._anim_buffer else None
+            self._anim_condition.notify_all()
+
+        if frame_data is not None:
+            try:
+                if self._anim_track_fps:
+                    self._debug_fps()
+                self._display_animation_frame(frame_data)
+            except Exception:
+                log.exception("Failed to render animation frame")
+                self.stop_animation()
+                return
+
+        index, remaining_ms = self._animation_timing_at()
+        if index is None:
+            delay = self._ANIMATION_RETRY_MS
+        elif index == self._anim_displayed_index:
+            delay = max(self._ANIMATION_MIN_DELAY_MS, int(remaining_ms + 0.999))
+        else:
+            delay = self._ANIMATION_MIN_DELAY_MS
+
+        self._schedule_animation_callback(delay)
+
+    # Timeline
+
+    def _animation_timing_at(
+        self,
+        now: float | None = None,
+    ) -> tuple[int | None, float | None]:
+        with self._anim_condition:
+            durations = self._anim_frame_durations
+            starts = self._anim_frame_starts
+            total = self._anim_total_duration
+            started_at = self._anim_started_at
+
+        if not durations or not starts or total <= 0 or started_at <= 0:
+            return None, None
+
+        now = time.perf_counter() if now is None else now
+        elapsed_ms = max(0.0, (now - started_at) * 1000)
+        position_ms = elapsed_ms % total
+
+        for index, start in enumerate(starts):
+            remaining = start + durations[index] - position_ms
+            if remaining > 0:
+                return index, remaining
+
+        return 0, float(durations[0])
+
+    def _debug_fps(self) -> None:
+        self._fps_frame_count += 1
+        now = time.perf_counter()
+        elapsed = now - self._fps_last_time
+
+        if elapsed >= 1:
+            print(f"[Animation FPS]: {self._fps_frame_count / elapsed:.1f}")
+            self._fps_frame_count = 0
+            self._fps_last_time = now
+
+    # Background decoder
+
+    def _ensure_animation_worker(self) -> None:
+        if not self._anim_is_running or self._anim_is_paused:
+            return
+
+        with self._anim_condition:
+            if self._anim_worker is not None and self._anim_worker.is_alive():
+                self._anim_condition.notify_all()
+                return
+
+            self._anim_worker_stop = threading.Event()
+            stop_event = self._anim_worker_stop
+            generation = self._anim_generation
+            worker = threading.Thread(
+                target=self._animation_worker,
+                args=(generation, stop_event),
+                name=f"Animation-{id(self)}",
+                daemon=True,
+            )
+            self._anim_worker = worker
+            worker.start()
+
+    def _animation_worker(
+        self,
+        generation: int,
+        stop_event: threading.Event,
+    ) -> None:
+        try:
+            source = self._get_animation_source()
+            if source is None:
+                return
+
+            frame_count = getattr(source, "n_frames", 1)
+            if frame_count <= 1:
+                return
+
+            durations = []
+            for index in range(frame_count):
+                if self._worker_is_obsolete(generation, stop_event):
+                    return
+
+                source.seek(index)
+                duration = source.info.get(
+                    "duration", self._ANIMATION_DEFAULT_FRAME_MS
+                ) or self._ANIMATION_DEFAULT_FRAME_MS
+                durations.append(max(1, int(duration)))
+
+            starts, total = [], 0
+            for duration in durations:
+                starts.append(total)
+                total += duration
+
+            with self._anim_condition:
+                if self._worker_is_obsolete(generation, stop_event):
+                    return
+                self._anim_frame_durations = durations
+                self._anim_frame_starts = starts
+                self._anim_total_duration = total
+                self._anim_condition.notify_all()
+
+            while not self._worker_is_obsolete(generation, stop_event):
+                with self._anim_condition:
+                    while (
+                        not self._worker_is_obsolete(generation, stop_event)
+                        and (
+                            not self._anim_is_running
+                            or self._anim_is_paused
+                            or self._anim_buffer
+                        )
+                    ):
+                        self._anim_condition.wait()
+
+                    if self._worker_is_obsolete(generation, stop_event):
+                        return
+
+                    if not self._anim_started_at:
+                        self._anim_started_at = time.perf_counter()
+
+                    index, remaining = self._animation_timing_at()
+                    if index is None or index == self._anim_displayed_index:
+                        timeout = (
+                            self._ANIMATION_RETRY_MS / 1000
+                            if index is None
+                            else max(0.001, remaining / 1000)
+                        )
+                        self._anim_condition.wait(timeout)
+                        continue
+
+                try:
+                    source.seek(index)
+                    frame = source.convert("RGBA")
+                    prepared = self._prepare_animation_frame(frame)
+                except (EOFError, OSError):
+                    log.warning("Unable to decode animation frame %d", index, exc_info=True)
+                    stop_event.wait(self._ANIMATION_RETRY_MS / 1000)
+                    continue
+
+                with self._anim_condition:
+                    if self._worker_is_obsolete(generation, stop_event):
+                        return
+                    if not self._anim_is_running or self._anim_is_paused:
+                        continue
+
+                    self._anim_buffer.append((index, prepared, durations[index]))
+                    self._anim_condition.notify_all()
+
+        except Exception:
+            log.exception("Unexpected animation worker failure")
+
+            with self._anim_condition:
+                if generation == self._anim_generation:
+                    self._anim_is_running = False
+
+                self._anim_condition.notify_all()
+
+        finally:
+            with self._anim_condition:
+                if self._anim_worker is threading.current_thread():
+                    self._anim_worker = None
+
+                # A newer playback session may have started while this worker
+                # was still exiting; launch its decoder after this one exits.
+                restart = self._anim_is_running and not self._anim_is_paused and generation != self._anim_generation
+                self._anim_condition.notify_all()
+
+            if restart:
+                self._ensure_animation_worker()
+
+
+class UIImage(AnimationMixin, UICanvasWidget, CTkBaseClass):
     def __init__(
         self,
         master: Union[UIWindow, 'UIFrame'],
@@ -221,25 +591,12 @@ class UIImage(UICanvasWidget, CTkBaseClass):
         self.image_tag = None
 
         # self._supported_extensions = ['.mp4', '.mkv', '.avi', '.gif', '.webp', '.jpeg', '.png', '.jpg']
-        self._supported_extensions = ['.webp', '.jpeg', '.png', '.jpg', '.gif']
+        self._supported_extensions = ['.webp', '.jpeg', '.png', '.jpg', '.gif', '.avif', '.apng']
 
-        # Number of already-created frames kept ahead of playback.
-        # 16 = roughly 0.5 sec at 30 FPS.
-        self._anim_buffer_size = 16
+        self._init_animation()
         self._anim_start_delay = anim_start_delay
-        self._anim_buffer = deque()
-        self._anim_buffer_indices = set()
-        self._anim_decode_index = 0
-        self._anim_prefetch_job = None
-        self._anim_index = 0
-        self._anim_next_deadline = 0.0
-        self._anim_job = None
-        self._anim_is_running = False
-        self._anim_is_paused = False
-        self._anim_pause_reasons = set()
-        self._fps_frame_count = 0
-        self._fps_last_time = time.perf_counter()
-
+        self._anim_track_fps = False
+        
         # self._video = None
         # self._video_fps = None
         # self._video_frame_time = None
@@ -297,6 +654,8 @@ class UIImage(UICanvasWidget, CTkBaseClass):
                 kwargs['height'] = height
 
         if self._update_attrs(['image_path'], kwargs):
+            self.stop_animation()
+
             if isinstance(self.image_path, Image.Image):
                 self._image = self.image_path
                 self.image_path = None
@@ -335,7 +694,7 @@ class UIImage(UICanvasWidget, CTkBaseClass):
 
         if self._update_attrs(['width', 'height', 'opacity', 'brightness'], kwargs):
 
-            self.image = self.create_image(self._image, self._width, self._height, self.opacity, self.brightness)
+            self.image = ImageTk.PhotoImage(self._prepare_image(self._image))
 
             if self.image_tag is None:
                 self._update_attrs(['x', 'y', 'anchor'], kwargs)
@@ -345,7 +704,7 @@ class UIImage(UICanvasWidget, CTkBaseClass):
 
             is_animated = getattr(self._image, "is_animated", False) and getattr(self._image, "n_frames", 1) > 1
             if is_animated and self._anim_start_delay >= 0:
-                self.after(self._anim_start_delay, self._start_animation)
+                self.after(self._anim_start_delay, self.start_animation)
 
         if self._update_attrs(['x', 'y'], kwargs):
             self.move(self._x, self._y)
@@ -353,239 +712,6 @@ class UIImage(UICanvasWidget, CTkBaseClass):
         if self._update_attrs(['anchor'], kwargs):
             self.canvas.itemconfigure(self.image_tag, anchor=self._anchor)
 
-    def pause_animation(self, reason: str | None = None):
-        """Pause playback while preserving the current position and buffer."""
-        if self._image is None:
-            return
-
-        if getattr(self._image, "n_frames", 1) <= 1:
-            return
-
-        self._anim_is_paused = True
-        self._anim_pause_reasons.add(reason or "default")
-
-        self._cancel_job("_anim_job")
-        self._cancel_job("_anim_prefetch_job")
-
-    def resume_animation(self, reason: str | None = None):
-        """Resume playback without resetting the animation."""
-        if self._image is None:
-            return
-
-        self._anim_pause_reasons.discard(reason or "default")
-        if self._anim_pause_reasons:
-            return
-
-        if getattr(self._image, "n_frames", 1) <= 1:
-            return
-
-        self._anim_is_paused = False
-
-        if self._anim_job is not None:
-            return
-
-        # Do not include the time spent paused in the animation timeline.
-        self._anim_next_deadline = time.perf_counter()
-
-        self._schedule_animation_prefetch()
-        self._animate()
-
-    def _start_animation(self):
-        """Start or restart playback from the first frame."""
-        if self._image is None:
-            return
-
-        n_frames = getattr(self._image, "n_frames", 1)
-        if n_frames <= 1:
-            return
-
-        if self._anim_is_running:
-            self._stop_animation()
-
-        if self._anim_is_paused:
-            return
-
-        self._anim_is_running = True
-
-        self._schedule_animation_prefetch()
-        self._anim_job = self.after(33, self._animate)
-
-    def _stop_animation(self):
-        """Stop playback/prefetching and reset animation state."""
-        if self._image is None:
-            return
-
-        if getattr(self._image, "n_frames", 1) <= 1:
-            return
-
-        if not self._anim_is_running:
-            return
-
-        self._anim_is_running = False
-
-        self._cancel_job("_anim_job")
-        self._cancel_job("_anim_prefetch_job")
-
-        self._anim_buffer.clear()
-        self._anim_buffer_indices.clear()
-        self._anim_index = 0
-        self._anim_decode_index = 0
-        self._anim_next_deadline = 0.0
-
-        if self._image is not None:
-            try:
-                self._image.seek(0)
-            except (EOFError, OSError):
-                pass
-
-    def _cancel_job(self, attr):
-        """Cancel a scheduled animation callback."""
-        job = getattr(self, attr)
-        if job is None:
-            return
-
-        setattr(self, attr, None)
-
-        try:
-            self.after_cancel(job)
-        except Exception:
-            # Callback cancellation is best-effort during widget teardown.
-            pass
-
-    def _decode_animation_frame(self, index):
-        """Decode one frame and convert it to the final Tk image."""
-        if self._image is None:
-            return None
-
-        n_frames = getattr(self._image, "n_frames", 1)
-        if n_frames <= 0:
-            return None
-
-        index %= n_frames
-
-        try:
-            self._image.seek(index)
-        except (EOFError, OSError):
-            return None
-
-        duration = self._image.info.get("duration", 100) or 100
-        duration = max(1, duration)
-
-        photo = self.create_image(self._image.convert("RGBA"), self._width, self._height, self.opacity, self.brightness)
-
-        return index, photo, duration
-
-    def _display_animation_frame(self, decoded):
-        """Display a decoded frame and advance the playback index."""
-        index, photo, duration = decoded
-
-        self.image = photo
-        self.set_image(photo)
-
-        n_frames = self._image.n_frames
-        self._anim_index = (index + 1) % n_frames
-
-        return duration
-
-    def _schedule_animation_prefetch(self):
-        """Schedule one idle callback to prepare the next frame."""
-        if self._anim_prefetch_job is not None or self._image is None:
-            return
-
-        n_frames = getattr(self._image, "n_frames", 1)
-        if n_frames <= 1:
-            return
-
-        if len(self._anim_buffer) >= min(self._anim_buffer_size, n_frames):
-            return
-
-        self._anim_prefetch_job = self.after_idle(self._prefetch_animation_frame)
-
-    def _prefetch_animation_frame(self):
-        """Prepare one future frame while Tk is idle."""
-        self._anim_prefetch_job = None
-
-        if self._image is None:
-            return
-
-        n_frames = getattr(self._image, "n_frames", 1)
-        if n_frames <= 1:
-            return
-
-        capacity = min(self._anim_buffer_size, n_frames)
-        if len(self._anim_buffer) >= capacity:
-            return
-
-        index = self._anim_decode_index % n_frames
-
-        # Usually unnecessary, but prevents duplicate frames if the
-        # decode cursor catches up with an already buffered frame.
-        if index not in self._anim_buffer_indices:
-            decoded = self._decode_animation_frame(index)
-
-            if decoded is not None:
-                self._anim_buffer.append(decoded)
-                self._anim_buffer_indices.add(index)
-                self._anim_decode_index = (index + 1) % n_frames
-
-        if len(self._anim_buffer) < capacity:
-            self._schedule_animation_prefetch()
-
-    def _animate(self):
-        """Display the next frame and schedule subsequent playback."""
-        self._anim_job = None
-
-        if self._image is None:
-            return
-
-        try:
-            if not self.canvas.winfo_exists():
-                self._stop_animation()
-                return
-        except Exception:
-            self._stop_animation()
-            return
-
-        n_frames = getattr(self._image, "n_frames", 1)
-        if n_frames <= 1:
-            return
-
-        if self._anim_buffer:
-            decoded = self._anim_buffer.popleft()
-            self._anim_buffer_indices.discard(decoded[0])
-        else:
-            # Buffer underrun: decode the exact frame we expect next.
-            decoded = self._decode_animation_frame(self._anim_index)
-            if decoded is None:
-                self._anim_job = self.after(10, self._animate)
-                return
-
-            self._anim_decode_index = (decoded[0] + 1) % n_frames
-
-        duration = self._display_animation_frame(decoded)
-
-        # self._debug_fps()
-        self._schedule_animation_prefetch()
-
-        self._anim_next_deadline += duration / 1000.0
-
-        now = time.perf_counter()
-        if self._anim_next_deadline < now:
-            self._anim_next_deadline = now
-
-        delay = max(1, round((self._anim_next_deadline - now) * 1000))
-
-        self._anim_job = self.after(delay, self._animate)
-
-    def _debug_fps(self):
-        self._fps_frame_count += 1
-        now = time.perf_counter()
-        elapsed = now - self._fps_last_time
-
-        if elapsed >= 1.0:
-            print(f"[Animation FPS]: {self._fps_frame_count / elapsed:.1f}")
-            self._fps_frame_count = 0
-            self._fps_last_time = now
 
     # def _buffer_frame(self):
     #     if not self._video_rendering_active:
@@ -783,27 +909,58 @@ class UIImage(UICanvasWidget, CTkBaseClass):
         bg.alpha_composite(fg, (x, y))
         return bg
 
-    def create_image(self, image: Image.Image, width, height, opacity: float, brightness: float):
-        # Modify opacity and/or brightness
-        if opacity != 1 or brightness != 1:
-            channels = image.split()
-            output = []
-            for channel_id, channel in enumerate(channels):
-                # RGB
-                if channel_id <= 2 and brightness != 1:
-                    channel = channel.point(lambda p: p * brightness)
-                # Alpha
-                elif channel_id == 3 and opacity != 1:
-                    channel = channel.point(lambda p: p * opacity)
-                output.append(channel)
-            image = Image.merge(image.mode, output)
-        # Modify size and/or brightness
-        width = int(self._apply_widget_scaling(width))
-        height = int(self._apply_widget_scaling(height))
-        if image.width != width or image.height != height:
-            image = image.resize((width, height))
+    def _prepare_image(self, image: Image.Image) -> Image.Image:
+        """Modify image size, opacity and/or brightness."""
+        image = image.convert("RGBA")
 
-        return ImageTk.PhotoImage(image)
+        if self.opacity != 1 or self.brightness != 1:
+            red, green, blue, alpha = image.split()
+
+            if self.brightness != 1:
+                def adjust_brightness(value):
+                    return max(0, min(255, int(value * self.brightness)))
+
+                red = red.point(adjust_brightness)
+                green = green.point(adjust_brightness)
+                blue = blue.point(adjust_brightness)
+
+            if self.opacity != 1:
+                def adjust_opacity(value):
+                    return max(0, min(255, int(value * self.opacity)))
+
+                alpha = alpha.point(adjust_opacity)
+
+            image = Image.merge("RGBA", (red, green, blue, alpha))
+
+        width = max(1, int(self._apply_widget_scaling(self._width)))
+        height = max(1, int(self._apply_widget_scaling(self._height)))
+
+        if image.size != (width, height):
+            image = image.resize((width, height), Image.Resampling.LANCZOS)
+
+        return image
+
+    def _get_animation_source(self) -> Image.Image | None:
+        """Expose the Pillow source used by the animation engine."""
+        return self._image
+
+    def _prepare_animation_frame(self, frame: Image.Image) -> Image.Image:
+        """Apply this widget's visual settings to a decoded animation frame."""
+        return self._prepare_image(frame)
+
+    def _display_animation_frame(self, frame_data: tuple) -> None:
+        """Render a prepared animation frame on the Tk thread."""
+        index, prepared, _duration = frame_data
+
+        photo = ImageTk.PhotoImage(prepared)
+        self.image = photo
+        self.set_image(photo)
+
+        self._anim_index = (index + 1) % self._image.n_frames
+
+        with self._anim_condition:
+            self._anim_displayed_index = index
+            self._anim_condition.notify_all()
 
     def move(self, x, y):
         self._x = int(self._apply_widget_scaling(x))
@@ -825,7 +982,7 @@ class UIImage(UICanvasWidget, CTkBaseClass):
         self.canvas.tag_unbind(self.image_tag, *args, **kwargs)
 
     def destroy(self):
-        self._stop_animation()
+        self.stop_animation()
 
         if self.image_tag is not None:
             try:

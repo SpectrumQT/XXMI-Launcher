@@ -172,7 +172,7 @@ class Application:
         Events.Fire(Events.Application.ConfigUpdate())
         Events.Fire(Events.PackageManager.NotifyPackageVersions(detect_installed=True))
         self.gui.update()
-        self.gui.launcher_frame.background_image._start_animation()
+        self.gui.launcher_frame.background_image.start_animation()
 
         Events.Subscribe(Events.Application.Update, self.handle_update)
         Events.Subscribe(Events.Application.CheckForUpdates,
