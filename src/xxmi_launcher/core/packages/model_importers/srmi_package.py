@@ -14,10 +14,11 @@ import core.config_manager as Config
 from core.locale_manager import L
 from core.package_manager import PackageMetadata
 
-from core.config.enums import InjectMode
+from core.config.enums import InjectMode, GameLaunch
 from core.packages.model_importers.model_importer import ModelImporterPackage, ModelImporterConfig, Version
 from core.packages.migoto_package import MigotoManagerConfig
 from core.platforms.game import Game
+from core.utils.process_manager import LaunchContext
 
 log = logging.getLogger(__name__)
 
@@ -109,6 +110,22 @@ class SRMIPackage(ModelImporterPackage):
             return str(Version(Config.Importers.SRMI.Importer.importer_path / 'Core' / 'SRMI' / 'main.ini'))
         except Exception as e:
             return ''
+
+    def override_launch_context(
+            self,
+            launch_context: LaunchContext,
+            game_path: Path | None,
+            game_exe_path: Path | None,
+    ) -> None:
+        if Config.Importers.WWMI.Importer.game_launch != GameLaunch.DIRECT:
+            return
+
+        # EGS HSR refuses to got past the login screen if work_dir is the same as StarRail.exe location.
+        try:
+            if self.is_epic_hoyoplay_installation(game_exe_path):
+                launch_context.work_dir = game_exe_path.parent.parent.parent
+        except Exception as e:
+            logging.exception(f"Failed to check `{game_exe_path}` for being EGS installation: {e}")
 
     def configure_game_settings(self, game_path: Path | None, game_exe_path: Path | None):
         if Config.Importers.SRMI.Importer.unlock_fps:
