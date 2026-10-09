@@ -445,14 +445,20 @@ class InfoFrame(UIFrame):
 
         style: str = dedent(f"""
             <style>
-                body {{ font-size: 14px; background-color: {self._fg_color}; color: #E5E5E5; }}
+                body {{ font-size: 14px; background-color: {self._fg_color}; color: #E5E5E5; margin-left: 2px; }}
                 p  {{ font-family: Segoe UI; margin: 5px;}}
-                ul {{ margin: 10px { 0 if ui_scale != 1.0 else -8 }px;}}
-                li {{ margin: 10px { 0 if ui_scale != 1.0 else -8 }px;}}
+                ul, li {{ margin-top: 10px; margin-bottom: 10px; margin-left: { 0 if ui_scale != 1.0 else -8 }px; margin-right: 0px;}}
+                ol {{ margin-top: 10px; margin-bottom: 10px; margin-left: { 0 if ui_scale != 1.0 else -4 }px; margin-right: 0px;}}
                 h1 {{ font-size: 18px; margin: 10px 5px;}}
                 h2 {{ font-size: 16px; margin: 10px 5px;}}
+                blockquote {{
+                    margin: 12px 5px;
+                    padding: 4px 8px;
+                    border-left: 4px solid #e0a020;
+                    background: rgba(224, 160, 32, 0.1);
+                }}
                 pre {{ margin: 10px 5px; white-space: normal; width: 100%; }}
-                code {{ padding: 4px 4px; line-height: 1.8; background: #2C2E33; border: 1px solid #565B5E; border-radius: 4px;}}
+                code {{ padding: 4px 4px; line-height: 1.8; background: #2C2E33; border: 1px solid #565B5E; border-radius: 4px; margin-right: 2px;}}
                 pre code {{ display: block; margin: 0; padding: 6px 6px; line-height: 1.2; }}
                 a {{ color: #84adf3; text-decoration: none; }}
                 a:hover {{ text-decoration: underline; }}
