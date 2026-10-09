@@ -35,7 +35,7 @@ def fmt_bold(value):
     return f'**{value}**'
 
 
-def list_formatter(value, conjunction):
+def list_formatter(value, conjunction=None):
     if not value:
         return ''
     if not isinstance(value, list):
@@ -43,10 +43,28 @@ def list_formatter(value, conjunction):
 
     separator = L('locale_list_separator', ', ')
     spacing = L('locale_list_conjunction_spacing', '\\s').replace('\\s', ' ')
+
     if len(value) == 1:
         return str(value[0])
 
-    return f'{separator}'.join(map(str, value[:-1])) + spacing + conjunction + spacing + str(value[-1])
+    last_separator = spacing + conjunction + spacing if conjunction else separator
+
+    return separator.join(map(str, value[:-1])) + last_separator + str(value[-1])
+
+
+@formatter('list')
+def fmt_list(value):
+    return list_formatter(value)
+
+
+@formatter('or_list')
+def fmt_or_list(value):
+    return list_formatter(value, L('locale_list_conjunction_or', 'or'))
+
+
+@formatter('list')
+def fmt_or_list(value):
+    return list_formatter(value)
 
 
 @formatter('or_list')
