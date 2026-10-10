@@ -87,6 +87,8 @@ class LauncherFrame(UIFrame):
 
         self.subscribe(Events.Application.OpenSettings, self.pause_background_animation)
         self.subscribe(Events.Application.CloseSettings, self.resume_background_animation)
+        self.subscribe(Events.GUIEvents.PauseAnimations, self.pause_background_animation)
+        self.subscribe(Events.GUIEvents.ResumeAnimations, self.resume_background_animation)
 
         master.bind("<FocusIn>", self.resume_background_animation)
         master.bind("<FocusOut>", self.pause_background_animation)
@@ -110,11 +112,21 @@ class LauncherFrame(UIFrame):
             self.background_image.start_animation()
 
     def pause_background_animation(self, event):
-        reason = "settings" if isinstance(event, Events.Application.OpenSettings) else None
+        if isinstance(event, Events.GUIEvents.PauseAnimations):
+            reason = "event"
+        elif isinstance(event, Events.Application.OpenSettings):
+            reason = "settings"
+        else:
+            reason = None
         self.background_image.pause_animation(reason)
 
     def resume_background_animation(self, event):
-        reason = "settings" if isinstance(event, Events.Application.CloseSettings) else None
+        if isinstance(event, Events.GUIEvents.ResumeAnimations):
+            reason = "event"
+        elif isinstance(event, Events.Application.CloseSettings):
+            reason = "settings"
+        else:
+            reason = None
         self.background_image.resume_animation(reason)
 
     def handle_open_donation_center(self, event: Events.Application.OpenDonationCenter):
