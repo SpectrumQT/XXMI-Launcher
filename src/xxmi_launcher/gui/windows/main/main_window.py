@@ -293,6 +293,8 @@ class MainWindow(UIMainWindow):
                 show_settings = True
                 settings_frame.hide()
 
+        self.after(1, lambda: Events.Fire(Events.GUIEvents.PauseAnimations()))
+
         messagebox = MessageFrame(self.launcher_frame, self.launcher_frame.canvas, **kwargs)
 
         self.message_frame = self.put(messagebox)
@@ -310,6 +312,8 @@ class MainWindow(UIMainWindow):
 
         if self.message_frame is not None:
             self.message_frame = None
+
+        self.after(1, lambda: Events.Fire(Events.GUIEvents.ResumeAnimations()))
 
         if show_settings and settings_frame.is_hidden:
             settings_frame.show()

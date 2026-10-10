@@ -36,3 +36,11 @@ class GUIEvents:
     @dataclass
     class ReloadGUI:
         reload_theme: bool = False
+
+    @dataclass
+    class PauseAnimations:
+        pass
+
+    @dataclass
+    class ResumeAnimations:
+        pass

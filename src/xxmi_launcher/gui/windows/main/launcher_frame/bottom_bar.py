@@ -68,22 +68,47 @@ class DownloadProgressBar(UIProgressBar):
 class InstallationProgressBar(UIProgressBar):
     def __init__(self, master):
         super().__init__(
+            master=master,
             mode='indeterminate',
             orientation='horizontal',
             height=18,
             corner_radius=0,
-            master=master)
+        )
+
+        self._running = False
+        self._paused = False
+
         self.subscribe_show(Events.GUI.LauncherFrame.StageUpdate, lambda event: event.stage == Stage.Busy)
 
-        self.subscribe(
-            Events.Application.Ready,
-            lambda event: self.stop())
-        self.subscribe(
-            Events.Application.Launch,
-            lambda event: self.start())
-        self.subscribe(
-            Events.Application.Busy,
-            lambda event: self.start())
+        self.subscribe(Events.Application.Ready, self.handle_stop)
+        self.subscribe(Events.Application.Launch, self.handle_start)
+        self.subscribe(Events.Application.Busy, self.handle_start)
+        self.subscribe(Events.GUIEvents.PauseAnimations, self.handle_pause_animations)
+        self.subscribe(Events.GUIEvents.ResumeAnimations, self.handle_resume_animations)
+
+    def handle_start(self, event):
+        self._running = True
+        self._sync_animation()
+
+    def handle_stop(self, event):
+        self._running = False
+        self._sync_animation()
+
+    def handle_pause_animations(self, event):
+        self._paused = True
+        self._sync_animation()
+        self._hide()
+
+    def handle_resume_animations(self, event):
+        self._paused = False
+        self._sync_animation()
+        self._show()
+
+    def _sync_animation(self):
+        if self._running and not self._paused:
+            self.after_idle(self.start)
+        else:
+            self.after_idle(self.stop)
 
 
 class LeftStatusText(UIText):
