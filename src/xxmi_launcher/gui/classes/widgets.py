@@ -373,13 +373,19 @@ class AnimationMixin:
                 self.stop_animation()
                 return
 
-        index, remaining_ms = self._animation_timing_at()
-        if index is None:
+        target_index, remaining_ms = self._animation_timing_at()
+
+        if target_index is None:
             delay = self._ANIMATION_RETRY_MS
-        elif index == self._anim_displayed_index:
+
+        elif target_index == self._anim_displayed_index:
+            # The current frame is still valid.
+            # Wake up near the next frame boundary instead of polling continuously.
             delay = max(self._ANIMATION_MIN_DELAY_MS, int(remaining_ms + 0.999))
         else:
-            delay = self._ANIMATION_MIN_DELAY_MS
+            # The next frame is due, but it may still be decoding.
+            # Avoid repeatedly flooding Tk's event loop.
+            delay = 8
 
         self._schedule_animation_callback(delay)
 
