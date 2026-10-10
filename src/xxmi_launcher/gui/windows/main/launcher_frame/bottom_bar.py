@@ -101,14 +101,17 @@ class InstallationProgressBar(UIProgressBar):
 
     def handle_resume_animations(self, event):
         self._paused = False
-        self._sync_animation()
         self._show()
+        self._sync_animation()
 
     def _sync_animation(self):
+        self.after(1, self._apply_animation_state)
+
+    def _apply_animation_state(self):
         if self._running and not self._paused:
-            self.after_idle(self.start)
+            self.start()
         else:
-            self.after_idle(self.stop)
+            self.stop()
 
 
 class LeftStatusText(UIText):
