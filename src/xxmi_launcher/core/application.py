@@ -161,6 +161,8 @@ class Application:
         self.exit()
 
     def initialize_gui(self, open_settings: bool = False):
+        logging.debug(f'Initializing GUI...')
+
         self.gui.initialize()
 
         if self.args.update:
@@ -344,6 +346,7 @@ class Application:
             Events.Fire(Events.Application.Launch())
 
     def load_importer(self, importer_id, update=True, reload=False):
+        logging.debug(f'Loading importer {importer_id}...')
         # Unload package of other MI if there's one loaded
         if hasattr(Config, 'Active'):
             if importer_id == Config.Launcher.active_importer and not reload:

@@ -430,11 +430,9 @@ class Package:
 
     def load(self):
         self.active = True
-        log.debug(f'Loaded package: {self.metadata.package_name}')
 
     def unload(self):
         self.active = False
-        log.debug(f'Unloaded package: {self.metadata.package_name}')
 
     def uninstall(self):
         pass
@@ -496,12 +494,14 @@ class PackageManager:
         package.load()
         # Detect installed version to do a basic integrity check
         package.detect_installed_version()
+        log.debug(f'Loaded package: {package.metadata.package_name}')
 
     def unload_package(self, package: Package | str):
         package = self.get_package(package)
         package.unload()
         for required_package in package.metadata.requirements:
             self.unload_package(required_package)
+        log.debug(f'Unloaded package: {package.metadata.package_name}')
 
     def get_package(self, package: Package | str) -> Package:
         if isinstance(package, str):

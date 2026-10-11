@@ -44,6 +44,7 @@ class GameLauncher:
         Events.Subscribe(Events.PackageManager.VersionNotification, self._handle_version_notification)
 
     def initialize(self, xxmi_injector: MigotoPackage):
+        log.debug("Initializing GameLauncher...")
         self.xxmi_injector: MigotoPackage = xxmi_injector
 
         if self.platform_registry is not None:

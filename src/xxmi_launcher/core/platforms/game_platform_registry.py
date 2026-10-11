@@ -1,9 +1,12 @@
-from enum import Enum
+import logging
+
 from typing import Iterable
 
 from core.platforms.game import Game
 from core.platforms.game_platform import GamePlatform
 from core.platforms.game_platform_protocol import GamePlatformProtocol
+
+log = logging.getLogger(__name__)
 
 
 class PlatformRegistry:
@@ -20,6 +23,8 @@ class PlatformRegistry:
                 continue
 
             self._managers[manager.platform] = manager
+
+            log.debug(f'Registered {manager_type.__name__}')
 
     def get_game_platforms(
         self,
