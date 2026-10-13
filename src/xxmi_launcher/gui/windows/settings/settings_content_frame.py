@@ -506,6 +506,23 @@ class SettingsOptionFrame(UIFrame):
             case OptionWidget.CHECKBOX:
                 widget.grid(row=0, column=0, padx=(pad_left, 0), pady=(5, 5), sticky='w')
 
+            case OptionWidget.INPUT_INT | OptionWidget.INPUT_FLOAT:
+                if not option.toggle_variable:
+                    label.grid(row=0, column=0, padx=(pad_left, 0), pady=(5, 5), sticky='w')
+                widget.grid(row=0, column=1, padx=(0, pad_right), pady=(5, 5), sticky='e')
+
+                # Optional button to the right of input option name.
+                if option.button_command:
+                    label_button = OptionWidgetLabelButton(
+                        master=self,
+                        text=option.button_text,
+                        command=option.button_command,
+                    )
+                    self.put(label_button).grid(row=0, column=2, padx=(pad_left, pad_right - 3), pady=(5, 5), sticky='e')
+                    # Set optional tooltip.
+                    if option.button_tooltip:
+                        label_button.set_tooltip(option.button_tooltip)
+
             case OptionWidget.INPUT_STR | OptionWidget.INPUT_TEXT:
                 # self.grid_columnconfigure(3, weight=100)
 
