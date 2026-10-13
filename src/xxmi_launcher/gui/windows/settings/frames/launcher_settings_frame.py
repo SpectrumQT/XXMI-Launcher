@@ -319,8 +319,8 @@ class LauncherSettingsFrame(SettingsContentFrame):
             Events.Fire(Events.Application.CloseSettings(save=True))
             Events.Fire(Events.Application.Busy())
             self.after_idle(lambda: Events.Fire(Events.GUI.ReloadGUI(reload_theme=True)))
-            self.after_idle(lambda: Events.Fire(Events.Application.OpenSettings(tab_name="LAUNCHER_TAB")))
             self.after_idle(lambda: Events.Fire(Events.Application.Ready()))
+            self.after_idle(lambda: Events.Fire(Events.Application.OpenSettings(tab_name="LAUNCHER_TAB")))
         else:
             Vars.Launcher.gui_theme.set("Default")
 
