@@ -955,12 +955,16 @@ class UIImage(AnimationMixin, UICanvasWidget, CTkBaseClass):
         return self._prepare_image(frame)
 
     def _display_animation_frame(self, frame_data: tuple) -> None:
-        """Render a prepared animation frame on the Tk thread."""
+        """Display a prepared frame using two reusable Tk images."""
         index, prepared, _duration = frame_data
 
-        photo = ImageTk.PhotoImage(prepared)
-        self.image = photo
-        self.set_image(photo)
+        if self.image is None or self.image.width() != prepared.width or self.image.height() != prepared.height:
+            # Allocate the two buffers only once (or if frame dimensions change).
+            self.image = ImageTk.PhotoImage(prepared)
+            self.set_image(self.image)
+        else:
+            # Update the image that is NOT currently displayed.
+            self.image.paste(prepared)
 
         self._anim_index = (index + 1) % self._image.n_frames
 
