@@ -19,7 +19,7 @@ from core.package_manager import Package, PackageMetadata
 
 from core.config.enums import UpdateChannel
 from core.utils.proxy import ProxyConfig
-from core.config.enums import StartMethod
+from core.config.enums import StartMethod, WindowScale
 from core.utils.process_manager import ProcessManager, LaunchContext, CommandLaunch
 
 log = logging.getLogger(__name__)
@@ -44,6 +44,8 @@ class LauncherManagerConfig:
     proxy: ProxyConfig = field(default_factory=lambda: ProxyConfig())
     credits_shown: bool = False
     locale: str = ''
+    window_scale: WindowScale = WindowScale.AUTO
+    custom_window_scale: int = 100
 
 
 class LauncherPackage(Package):

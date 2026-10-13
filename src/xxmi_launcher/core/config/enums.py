@@ -1,6 +1,8 @@
 from typing import Any, Self
 from enum import Enum
 
+from customtkinter import ScalingTracker
+
 from core.locale_manager import L
 
 
@@ -89,3 +91,16 @@ class WuWaResourceTier(ConfigEnum):
     UHD = L("general_settings_wuwa_resource_tier_uhd", "UHD")
     HD = L("general_settings_wuwa_resource_tier_hd", "HD")
     SD = L("general_settings_wuwa_resource_tier_sd", "SD")
+
+
+class WindowScale(ConfigEnum):
+    AUTO = L("launcher_settings_window_scale_auto", "Auto")
+    SCALE_50 = L("launcher_settings_window_scale_50", "50% (640x360)")
+    SCALE_75 = L("launcher_settings_window_scale_75", "75% (960x540)")
+    SCALE_100 = L("launcher_settings_window_scale_100", "100% (1280x720)")
+    SCALE_125 = L("launcher_settings_window_scale_125", "125% (1600x900)")
+    SCALE_150 = L("launcher_settings_window_scale_150", "150% (1920x1080)")
+    SCALE_200 = L("launcher_settings_window_scale_200", "200% (2560x1440)")
+    SCALE_250 = L("launcher_settings_window_scale_250", "250% (3200x1800)")
+    SCALE_300 = L("launcher_settings_window_scale_300", "300% (3840x2160)")
+    CUSTOM = L("launcher_settings_window_scale_custom", "Custom")

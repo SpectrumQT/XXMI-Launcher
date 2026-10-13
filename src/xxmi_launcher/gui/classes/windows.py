@@ -37,35 +37,51 @@ class UIWindowConfig:
     no_titlebar: bool = False
 
 
-def limit_scaling(fit_width, fit_height):
-    DPI100pc = 96  # DPI 96 is 100% scaling
+def get_monitor_dpi() -> tuple[int, int]:
     DPI_type = 0  # MDT_EFFECTIVE_DPI = 0, MDT_ANGULAR_DPI = 1, MDT_RAW_DPI = 2
     monitor_handle = windll.user32.MonitorFromPoint(wintypes.POINT(0, 0), 0)
     x_dpi, y_dpi = wintypes.UINT(), wintypes.UINT()
     windll.shcore.GetDpiForMonitor(monitor_handle, DPI_type, pointer(x_dpi), pointer(y_dpi))
-    scaling_factor = (x_dpi.value + y_dpi.value) / (2 * DPI100pc)
+    return x_dpi.value, y_dpi.value
 
-    scaling_factor *= ScalingTracker.window_scaling
+
+def get_monitor_size() -> tuple[int, int]:
+    return ctypes.windll.user32.GetSystemMetrics(0), ctypes.windll.user32.GetSystemMetrics(1)
+
+
+def calculate_scaling_limit(
+    fit_width: int,
+    fit_height: int,
+    window_scaling: float,
+    max_width_usage: float = 1.0,
+    max_height_usage: float = 1.0,
+):
+    DPI100pc = 96  # DPI 96 is 100% scaling
+    x_dpi, y_dpi = get_monitor_dpi()
+
+    scaling_factor = (x_dpi + y_dpi) / (2 * DPI100pc)
+
+    scaling_factor *= window_scaling
 
     scaled_width = fit_width * scaling_factor
     scaled_height = fit_height * scaling_factor
 
-    max_width = ctypes.windll.user32.GetSystemMetrics(0)
-    max_height = ctypes.windll.user32.GetSystemMetrics(1) * 0.8
+    max_width, max_height = get_monitor_size()
+
+    max_width *= max_width_usage
+    max_height *= max_height_usage
 
     width_factor = 1
     if scaled_width > max_width:
-        width_factor = round(max_width / scaled_width, 1)
+        width_factor = max_width / scaled_width
 
     height_factor = 1
     if scaled_height > max_height:
-        height_factor = round(max_height / scaled_height, 1)
+        height_factor = max_height / scaled_height
 
     limit_factor = width_factor if width_factor < height_factor else height_factor
 
-    if limit_factor != 1:
-        set_widget_scaling(scaling_factor * limit_factor)
-        set_window_scaling(scaling_factor * limit_factor)
+    return scaling_factor * limit_factor
 
 
 class UIWindow(UIElement):

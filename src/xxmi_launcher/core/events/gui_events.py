@@ -44,3 +44,7 @@ class GUIEvents:
     @dataclass
     class ResumeAnimations:
         pass
+
+    @dataclass
+    class ScaleWindow:
+        pass

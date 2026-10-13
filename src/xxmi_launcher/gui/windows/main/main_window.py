@@ -8,25 +8,26 @@ import core.config_manager as Config
 
 from core.locale_manager import L
 
-from customtkinter import set_appearance_mode, set_default_color_theme
+from customtkinter import set_appearance_mode, set_default_color_theme, ScalingTracker, set_widget_scaling, set_window_scaling
 
-from gui.classes.windows import UIMainWindow, limit_scaling
+from core.config.enums import WindowScale
+from gui.classes.windows import UIMainWindow, calculate_scaling_limit
 from gui.windows.main.message_frame.message_frame import MessageFrame
 from gui.windows.main.launcher_frame.launcher_frame import LauncherFrame
 
 log = logging.getLogger(__name__)
 
-# from customtkinter import set_widget_scaling, set_window_scaling, deactivate_automatic_dpi_awareness
+# from customtkinter import deactivate_automatic_dpi_awareness
 # set_widget_scaling(2)
 # set_window_scaling(2)
 # deactivate_automatic_dpi_awareness()
 
-# Limit automatic scaling in a way to fit arbitrary width and height on screen
-limit_scaling(1280, 720)
-
 
 class MainWindow(UIMainWindow):
     def __init__(self):
+        self._window_scale = 0
+        self.handle_scale_window(None)
+
         super().__init__()
 
         self.hide()
@@ -224,9 +225,32 @@ class MainWindow(UIMainWindow):
 
         self.show()
 
-        Events.Subscribe(Events.Application.Minimize,
-                         lambda event: self.minimize())
+        Events.Subscribe(Events.Application.Minimize, lambda event: self.minimize())
         Events.Subscribe(Events.Application.Close, self.handle_close)
+        Events.Subscribe(Events.GUIEvents.ScaleWindow, self.handle_scale_window)
+
+    def handle_scale_window(self, event: Events.Application.ConfigUpdate | None):
+        if Config.Config.Launcher.window_scale == WindowScale.AUTO:
+            window_scale = ScalingTracker.get_window_dpi_scaling(self) if event else ScalingTracker.window_scaling
+            window_scale = calculate_scaling_limit(1280, 720, window_scale, 1.0, 0.8)
+        elif Config.Config.Launcher.window_scale == WindowScale.CUSTOM:
+            window_scale = Config.Config.Launcher.custom_window_scale / 100
+            window_scale = calculate_scaling_limit(1280, 720, window_scale, 1.0, 1.0)
+        else:
+            window_scale = int(Config.Config.Launcher.window_scale.name.removeprefix("SCALE_")) / 100
+            window_scale = calculate_scaling_limit(1280, 720, window_scale, 1.0, 1.0)
+
+        # Apply sensible lower and upper scale bounds.
+        window_scale = min(max(0.5, window_scale), 6.0)
+
+        if self._window_scale == window_scale:
+            return
+
+        if self._window_scale == 0:
+            self._window_scale = window_scale
+
+        set_widget_scaling(window_scale)
+        set_window_scaling(window_scale)
 
     def reload_gui(self, event: Events.GUI.ReloadGUI):
         Events.Fire(Events.Application.StatusUpdate(status=L('status_reloading_gui', 'Reloading GUI...')))
@@ -339,6 +363,7 @@ class MainWindow(UIMainWindow):
 
     def _set_scaling(self, new_widget_scaling, new_window_scaling):
         super()._set_scaling(new_widget_scaling, new_window_scaling)
-
-        # Let CTk finish its geometry/scaling transition first.
-        self.after(1, lambda: Events.Fire(Events.GUI.ReloadGUI()))
+        if new_window_scaling != self._window_scale:
+            self._window_scale = new_window_scaling
+            # Let CTk finish its geometry/scaling transition first.
+            self.after(1, lambda: Events.Fire(Events.GUI.ReloadGUI()))
