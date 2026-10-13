@@ -198,6 +198,7 @@ class OptionWidgetLabelButton(UIButton):
             master=master,
             height=36,
             auto_width=True,
+            padx=10,
             **kwargs
         )
 
@@ -207,7 +208,7 @@ class OptionWidgetValueInputButton(UIButton):
         super().__init__(
             master=master,
             auto_width=True,
-            padx=6,
+            padx=0,
             height=28,
             **kwargs
         )
@@ -539,7 +540,7 @@ class SettingsOptionFrame(UIFrame):
                         command=option.input_button_command,
                     )
                     self.put(input_button).grid(row=1, column=0, padx=(pad_left, pad_right + 5), pady=(5, 5), sticky='e', columnspan=4)
-                    widget.set_right_offset(input_button.get_auto_width())
+                    widget.set_right_offset(input_button.get_auto_width() + 10)
                     # Set optional tooltip.
                     if option.input_button_tooltip:
                         input_button.set_tooltip(option.input_button_tooltip)

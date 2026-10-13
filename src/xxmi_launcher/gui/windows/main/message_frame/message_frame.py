@@ -471,6 +471,12 @@ class ContentFrame(UIScrollableFrame):
                 li {{ margin: 10px 0px;}}
                 h1 {{ font-size: 18px; margin: 10px 0px;}}
                 h2 {{ font-size: 16px; margin: 10px 0px;}}
+                blockquote {{
+                    margin: 12px 5px;
+                    padding: 4px 12px;
+                    border-left: 4px solid #e0a020;
+                    background: rgba(224, 160, 32, 0.1);
+                }}
                 pre {{ margin: 10px 5px; white-space: normal; width: 100%; }}
                 code {{ margin: 0px 3px; padding: 4px 4px; line-height: 1.8; background: #2C2E33; border: 1px solid #565B5E; border-radius: 4px;}}
                 pre code {{ display: block; margin: 0; padding: 6px 6px; line-height: 1.2; }}

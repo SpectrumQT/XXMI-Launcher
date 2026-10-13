@@ -1,4 +1,3 @@
-
 import core.event_manager as Events
 import core.path_manager as Paths
 import core.config_manager as Config
