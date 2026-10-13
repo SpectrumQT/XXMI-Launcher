@@ -4,17 +4,19 @@ import time
 import tkinter
 import re
 import threading
+import av
 
-from typing import Union, Tuple, List, Dict, Optional, Callable
+from typing import Union, Tuple, List, Dict, Optional, Callable, Deque, Iterator
 from pathlib import Path
 from collections import deque
+from dataclasses import dataclass
 
 from tkinter import Menu, INSERT, font
 from customtkinter import CTkBaseClass, CTkButton, CTkImage, CTkLabel, CTkProgressBar, CTkEntry, CTkCheckBox, CTkTextbox, CTkOptionMenu, CTkRadioButton, StringVar
 from customtkinter import END, CURRENT
 from customtkinter.windows.widgets.scaling.scaling_base_class import CTkScalingBaseClass
 from customtkinter import ThemeManager, CTkFont
-from PIL import Image, ImageTk, ImageDraw, ImageSequence
+from PIL import Image, ImageTk, ImageDraw
 
 import core.config_manager as Config
 
@@ -181,60 +183,95 @@ class UIText(UICanvasWidget, CTkBaseClass):
         return text + ellipsis if text else ellipsis
 
 
-class AnimationMixin:
-    """Background-decoded animation playback for Tk widgets.
+AnimationFrame = tuple[int, Image.Image, int]
+class _PyAVVideoSource:
+    """Description of a media file decoded by PyAV.
 
-    Public methods and rendering run on the Tk thread. The worker only
-    decodes and prepares Pillow frames. Generation tokens invalidate stale
-    work when playback is stopped or restarted.
+    `output_size` is the requested `(width, height)` of decoded frames and
+    should be set by the host widget before playback starts.
     """
 
-    _ANIMATION_RETRY_MS = 2
-    _ANIMATION_MIN_DELAY_MS = 1
-    _ANIMATION_DEFAULT_FRAME_MS = 100
+    def __init__(
+        self,
+        path: str | Path,
+        output_size: tuple[int, int] = (0, 0),
+    ) -> None:
+        self.path = str(path)
+        self.output_size = output_size
+        self.n_frames = 2  # Updated from stream metadata when available.
+        self.fps = 30.0
+        self.frame_duration_ms = 33
+
+
+class AnimationMixin:
+    """Background-decoded, looping animation playback for Tk widgets.
+
+    Implement `_get_animation_source` and `_display_animation_frame` in the host widget.
+    The source hook must return a `_PyAVVideoSource` or `None`.
+    Frames are scaled and converted to RGBA by the PyAV filter graph;
+    Pillow is used only to hand those frames to the existing rendering hook.
+    """
+
+    _ANIMATION_RETRY_MS = 4
+    _ANIMATION_MIN_DELAY_MS = 2
+
+    # Reserve time for Tk to process tooltips, redraws, and input events.
+    _ANIMATION_MIN_IDLE_MS = 8
+    _ANIMATION_RENDER_UTILIZATION = 0.5
 
     def _init_animation(self) -> None:
         self._anim_condition = threading.Condition()
-        self._anim_buffer = deque(maxlen=1)
+        self._anim_buffer: Deque[AnimationFrame] = deque(maxlen=1)
 
-        self._anim_worker = None
+        self._anim_enable_alpha = False
+        self._anim_fps_limit = 60.0  # Maximum presentation FPS (not source FPS).
+
+        self._anim_worker: threading.Thread | None = None
         self._anim_worker_stop = threading.Event()
         self._anim_generation = 0
         self._anim_job = None
+        self._anim_render_ms = 0.0
 
         self._anim_is_running = False
         self._anim_is_paused = False
         self._anim_pause_reasons: set[str] = set()
-
-        self._anim_started_at = 0.0
         self._anim_paused_at = 0.0
-        self._anim_frame_durations = None
-        self._anim_frame_starts = None
-        self._anim_total_duration = 0
+        self._anim_total_paused_seconds = 0.0
+        self._anim_displayed_index: int | None = None
 
-        self._anim_displayed_index = None
-        self._anim_index = 0
+        self._anim_displayed_count = 0
+        self._anim_dropped_count = 0
+        self._anim_last_displayed_index = None
 
-        self._anim_track_fps = False
-        self._fps_frame_count = 0
-        self._fps_last_time = time.perf_counter()
+        self._anim_throughput_started = time.perf_counter()
+        self._anim_throughput_displayed = 0
+        self._anim_effective_fps = 0.0
+    def _scale_delay(self, delay: int) -> int:
+        # Rendering cost is largely driven by the number of pixels submitted to the canvas.
+        # When both dimensions scale by factor s, pixel count grows approximately as s²:
+        #
+        #   Scaling 1.0  1280x720   (1.0x pixels)
+        #   Scaling 1.5	 1920x1080  (2.25x pixels)
+        #   Scaling 2.0	 2560x1440  (4.0x pixels)
+        #
+        # Baseline delays are empirically tuned for ~60 FPS at 720p.
+        # Here we increase delays proportionally to pixel count to throttle rendering
+        # as resolution grows to help preserve nearly the same GUI responsiveness.
+        scaling_factor = self._apply_widget_scaling(1.0)
+        return int(delay * (scaling_factor ** 2))
 
-    # Host-widget hooks
+    
+    # region Host-widget Hooks
 
-    def _get_animation_source(self) -> Image.Image | None:
+    def _get_animation_source(self) -> _PyAVVideoSource | None:
         raise NotImplementedError
 
-    def _prepare_animation_frame(self, frame: Image.Image) -> Image.Image:
-        """Prepare a Pillow frame without creating Tk objects."""
-        raise NotImplementedError
-
-    def _display_animation_frame(self, frame_data: tuple) -> None:
+    def _display_animation_frame(self, frame_data: AnimationFrame) -> None:
         """Display a prepared frame on the Tk thread."""
         raise NotImplementedError
 
     def _has_animation(self) -> bool:
-        source = self._get_animation_source()
-        return source is not None and getattr(source, "n_frames", 1) > 1
+        return self._get_animation_source() is not None
 
     def _worker_is_obsolete(
         self,
@@ -243,47 +280,55 @@ class AnimationMixin:
     ) -> bool:
         return stop_event.is_set() or generation != self._anim_generation
 
-    # Lifecycle
+    # endregion
+
+    # region Animation Lifecycle
 
     def start_animation(self) -> None:
-        if not self._has_animation():
+        source = self._get_animation_source()
+        if source is None:
+            return
+
+        if not isinstance(source, _PyAVVideoSource):
             return
 
         if self._anim_pause_reasons:
             self._anim_is_paused = True
             return
-
         if self._anim_is_running:
             return
 
-        self._anim_is_running = True
-        self._anim_is_paused = False
-        self._anim_started_at = 0.0
-        self._anim_paused_at = 0.0
-        self._anim_displayed_index = None
-        self._anim_index = 0
-
         with self._anim_condition:
+            self._anim_is_running = True
+            self._anim_is_paused = False
+            self._anim_paused_at = 0.0
+            self._anim_total_paused_seconds = 0.0
+            self._anim_displayed_index = None
             self._anim_buffer.clear()
+
+            # Start fresh moving averages for each playback session.
+            self._anim_render_fps = 0.0
+            self._anim_filter_fps = 0.0
+            self._anim_source_fps = 0.0
+            self._anim_throughput_started = time.perf_counter()
+            self._anim_throughput_displayed = 0
+            self._anim_effective_fps = 0.0
             self._anim_condition.notify_all()
 
+        self._animation_tick()
         self._ensure_animation_worker()
-        self._schedule_animation_callback(self._ANIMATION_MIN_DELAY_MS)
+        self._schedule_animation_callback(self._scale_delay(self._ANIMATION_MIN_DELAY_MS))
 
     def stop_animation(self) -> None:
-        self._anim_is_running = False
         self._anim_generation += 1
         self._cancel_animation_callback()
 
         with self._anim_condition:
+            self._anim_is_running = False
             self._anim_worker_stop.set()
             self._anim_buffer.clear()
-            self._anim_started_at = self._anim_paused_at = 0.0
+            self._anim_paused_at = 0.0
             self._anim_displayed_index = None
-            self._anim_index = 0
-            self._anim_frame_durations = None
-            self._anim_frame_starts = None
-            self._anim_total_duration = 0
             self._anim_condition.notify_all()
 
     def pause_animation(self, reason: str = "default") -> None:
@@ -294,52 +339,56 @@ class AnimationMixin:
         if self._anim_is_paused:
             return
 
-        self._anim_is_paused = True
-        self._anim_paused_at = time.perf_counter()
-        self._cancel_animation_callback()
-
         with self._anim_condition:
+            self._anim_is_paused = True
+            self._anim_paused_at = time.perf_counter()
             self._anim_condition.notify_all()
+        self._cancel_animation_callback()
 
     def resume_animation(self, reason: str = "default") -> None:
         self._anim_pause_reasons.discard(reason)
         if self._anim_pause_reasons or not self._anim_is_paused:
             return
 
-        now = time.perf_counter()
-        if self._anim_started_at and self._anim_paused_at:
-            self._anim_started_at += now - self._anim_paused_at
-
-        self._anim_paused_at = 0.0
-        self._anim_is_paused = False
+        with self._anim_condition:
+            if self._anim_paused_at:
+                self._anim_total_paused_seconds += max(0.0, time.perf_counter() - self._anim_paused_at)
+            self._anim_paused_at = 0.0
+            self._anim_is_paused = False
+            self._anim_condition.notify_all()
 
         if not self._anim_is_running:
             self.start_animation()
             return
 
-        with self._anim_condition:
-            self._anim_condition.notify_all()
-
         self._ensure_animation_worker()
-        self._schedule_animation_callback(self._ANIMATION_MIN_DELAY_MS)
+        self._schedule_animation_callback(self._scale_delay(self._ANIMATION_MIN_DELAY_MS))
 
-    # Tk callback scheduling
+    # endregion
+
+    # region Tk Callback Scheduling
 
     def _schedule_animation_callback(self, delay_ms: int) -> None:
-        if self._anim_is_running and not self._anim_is_paused and self._anim_job is None:
-            self._anim_job = self.after(
-                max(self._ANIMATION_MIN_DELAY_MS, int(delay_ms)),
-                self._animation_tick,
-            )
-
-    def _cancel_animation_callback(self) -> None:
-        job, self._anim_job = self._anim_job, None
-        if job is None:
+        if not self._anim_is_running or self._anim_is_paused or self._anim_job is not None:
             return
 
+        idle_ms = self._get_animation_idle_delay_ms()
+
+        try:
+            self._anim_job = self.after(idle_ms + int(delay_ms), self._animation_tick)
+        except Exception:
+            log.debug("Unable to schedule animation callback", exc_info=True)
+            self.stop_animation()
+
+    def _cancel_animation_callback(self) -> None:
+        job = self._anim_job
+        self._anim_job = None
+        if job is None:
+            return
         try:
             self.after_cancel(job)
         except Exception:
+            # after_cancel can fail if the widget or Tcl interpreter is gone.
             log.debug("Animation callback was unavailable", exc_info=True)
 
     def _animation_tick(self) -> None:
@@ -347,12 +396,16 @@ class AnimationMixin:
         if not self._anim_is_running or self._anim_is_paused:
             return
 
-        if self._get_animation_source() is None:
+        source = self._get_animation_source()
+        if source is None or not isinstance(source, _PyAVVideoSource):
+            if source is not None:
+                log.error("Animation source changed to an unsupported type during playback")
             self.stop_animation()
             return
 
         try:
-            if hasattr(self, "canvas") and not self.canvas.winfo_exists():
+            canvas = getattr(self, "canvas", None)
+            if canvas is not None and not canvas.winfo_exists():
                 self.stop_animation()
                 return
         except Exception:
@@ -365,67 +418,68 @@ class AnimationMixin:
 
         if frame_data is not None:
             try:
-                if self._anim_track_fps:
-                    self._debug_fps()
+                render_started = time.perf_counter()
                 self._display_animation_frame(frame_data)
+                render_ms = (time.perf_counter() - render_started) * 1000.0
+
+                self._anim_throughput_displayed += 1
+
+                now = time.perf_counter()
+                elapsed = now - self._anim_throughput_started
+
+                if elapsed >= 1.0:
+                    self._anim_effective_fps = self._anim_throughput_displayed / elapsed
+                    self._anim_throughput_displayed = 0
+                    self._anim_throughput_started = now
+
+                if self._anim_render_ms <= 0.0:
+                    self._anim_render_ms = render_ms
+                else:
+                    # Exponential smoothing avoids overreacting to one slow frame.
+                    self._anim_render_ms = self._anim_render_ms * 0.7 + render_ms * 0.3
+                self._anim_displayed_index = frame_data[0]
             except Exception:
                 log.exception("Failed to render animation frame")
                 self.stop_animation()
                 return
 
-        target_index, remaining_ms = self._animation_timing_at()
-
-        if target_index is None:
-            delay = self._ANIMATION_RETRY_MS
-
-        elif target_index == self._anim_displayed_index:
-            # The current frame is still valid.
-            # Wake up near the next frame boundary instead of polling continuously.
-            delay = max(self._ANIMATION_MIN_DELAY_MS, int(remaining_ms + 0.999))
-        else:
-            # The next frame is due, but it may still be decoding.
-            # Avoid repeatedly flooding Tk's event loop.
-            delay = 8
-
+        # The worker paces frames. Poll quickly just after a render, otherwise
+        # wake near the next expected frame to avoid excessive Tk event traffic.
+        delay = (
+            self._scale_delay(self._ANIMATION_MIN_DELAY_MS)
+            if frame_data is not None
+            else max(self._scale_delay(self._ANIMATION_RETRY_MS), source.frame_duration_ms)
+        )
         self._schedule_animation_callback(delay)
 
-    # Timeline
+    def _get_animation_idle_delay_ms(self) -> int:
+        """Return the idle interval while preserving the scaling strategy."""
+        render_ms = max(0.0, self._anim_render_ms)
 
-    def _animation_timing_at(
-        self,
-        now: float | None = None,
-    ) -> tuple[int | None, float | None]:
-        with self._anim_condition:
-            durations = self._anim_frame_durations
-            starts = self._anim_frame_starts
-            total = self._anim_total_duration
-            started_at = self._anim_started_at
+        render_idle_ms = (
+            round(render_ms * (1.0 / self._ANIMATION_RENDER_UTILIZATION - 1.0))
+            if render_ms > 0.0
+            else 0
+        )
 
-        if not durations or not starts or total <= 0 or started_at <= 0:
-            return None, None
+        return max(self._scale_delay(self._ANIMATION_MIN_IDLE_MS), render_idle_ms)
 
-        now = time.perf_counter() if now is None else now
-        elapsed_ms = max(0.0, (now - started_at) * 1000)
-        position_ms = elapsed_ms % total
+    def _get_animation_effective_fps_limit(self) -> float:
+        """Estimate the sustainable animation FPS at the current render cost.
 
-        for index, start in enumerate(starts):
-            remaining = start + durations[index] - position_ms
-            if remaining > 0:
-                return index, remaining
+        The estimate includes rendering time, the configured Tk idle interval,
+        and the minimum delay before scheduling the next render callback.
+        """
+        render_ms = max(0.0, self._anim_render_ms)
+        idle_ms = self._get_animation_idle_delay_ms()
 
-        return 0, float(durations[0])
+        callback_period_ms = render_ms + idle_ms + self._scale_delay(self._ANIMATION_MIN_DELAY_MS)
 
-    def _debug_fps(self) -> None:
-        self._fps_frame_count += 1
-        now = time.perf_counter()
-        elapsed = now - self._fps_last_time
+        return 1000.0 / max(1.0, callback_period_ms)
 
-        if elapsed >= 1:
-            print(f"[Animation FPS]: {self._fps_frame_count / elapsed:.1f}")
-            self._fps_frame_count = 0
-            self._fps_last_time = now
+    # endregion
 
-    # Background decoder
+    # region Background Worker Lifecycle
 
     def _ensure_animation_worker(self) -> None:
         if not self._anim_is_running or self._anim_is_paused:
@@ -442,7 +496,7 @@ class AnimationMixin:
             worker = threading.Thread(
                 target=self._animation_worker,
                 args=(generation, stop_event),
-                name=f"Animation-{id(self)}",
+                name=f"PyAVAnimation-{id(self):x}",
                 daemon=True,
             )
             self._anim_worker = worker
@@ -454,105 +508,313 @@ class AnimationMixin:
         stop_event: threading.Event,
     ) -> None:
         try:
+            if self._worker_is_obsolete(generation, stop_event):
+                return
+
             source = self._get_animation_source()
             if source is None:
-                return
-
-            frame_count = getattr(source, "n_frames", 1)
-            if frame_count <= 1:
-                return
-
-            durations = []
-            for index in range(frame_count):
-                if self._worker_is_obsolete(generation, stop_event):
-                    return
-
-                source.seek(index)
-                duration = source.info.get(
-                    "duration", self._ANIMATION_DEFAULT_FRAME_MS
-                ) or self._ANIMATION_DEFAULT_FRAME_MS
-                durations.append(max(1, int(duration)))
-
-            starts, total = [], 0
-            for duration in durations:
-                starts.append(total)
-                total += duration
-
-            with self._anim_condition:
-                if self._worker_is_obsolete(generation, stop_event):
-                    return
-                self._anim_frame_durations = durations
-                self._anim_frame_starts = starts
-                self._anim_total_duration = total
-                self._anim_condition.notify_all()
-
-            while not self._worker_is_obsolete(generation, stop_event):
-                with self._anim_condition:
-                    while (
-                        not self._worker_is_obsolete(generation, stop_event)
-                        and (
-                            not self._anim_is_running
-                            or self._anim_is_paused
-                            or self._anim_buffer
-                        )
-                    ):
-                        self._anim_condition.wait()
-
-                    if self._worker_is_obsolete(generation, stop_event):
-                        return
-
-                    if not self._anim_started_at:
-                        self._anim_started_at = time.perf_counter()
-
-                    index, remaining = self._animation_timing_at()
-                    if index is None or index == self._anim_displayed_index:
-                        timeout = (
-                            self._ANIMATION_RETRY_MS / 1000
-                            if index is None
-                            else max(0.001, remaining / 1000)
-                        )
-                        self._anim_condition.wait(timeout)
-                        continue
-
-                try:
-                    source.seek(index)
-                    frame = source.convert("RGBA")
-                    prepared = self._prepare_animation_frame(frame)
-                except (EOFError, OSError):
-                    log.warning("Unable to decode animation frame %d", index, exc_info=True)
-                    stop_event.wait(self._ANIMATION_RETRY_MS / 1000)
-                    continue
-
-                with self._anim_condition:
-                    if self._worker_is_obsolete(generation, stop_event):
-                        return
-                    if not self._anim_is_running or self._anim_is_paused:
-                        continue
-
-                    self._anim_buffer.append((index, prepared, durations[index]))
-                    self._anim_condition.notify_all()
-
+                raise RuntimeError("Animation source disappeared during playback")
+            if not isinstance(source, _PyAVVideoSource):
+                raise TypeError(
+                    "Animation source must be a _PyAVVideoSource; "
+                    "Pillow-decoded animations are no longer supported."
+                )
+            self._video_worker(generation, stop_event, source)
         except Exception:
-            log.exception("Unexpected animation worker failure")
-
+            log.exception("Animation decoder failed")
             with self._anim_condition:
                 if generation == self._anim_generation:
                     self._anim_is_running = False
-
+                    self._anim_worker_stop.set()
+                    self._anim_buffer.clear()
                 self._anim_condition.notify_all()
-
         finally:
             with self._anim_condition:
                 if self._anim_worker is threading.current_thread():
                     self._anim_worker = None
 
-                # A newer playback session may have started while this worker
-                # was still exiting; launch its decoder after this one exits.
-                restart = self._anim_is_running and not self._anim_is_paused and generation != self._anim_generation
+                # If a new session started before this worker exited, its decoder
+                # is launched here once the previous worker has fully terminated.
+                restart = (
+                    self._anim_is_running
+                    and not self._anim_is_paused
+                    and generation != self._anim_generation
+                )
                 self._anim_condition.notify_all()
 
             if restart:
                 self._ensure_animation_worker()
+
+    # endregion
+
+    # region PyAV Video Decoding
+
+    @staticmethod
+    def _get_video_stream(container: av.container.InputContainer, source: _PyAVVideoSource):
+        streams = container.streams.video
+        if not streams:
+            return None
+
+        # Some AVIF files expose a thumbnail before the primary image stream.
+        stream_index = 1 if source.path.lower().endswith(".avif") and len(streams) > 1 else 0
+        return streams[stream_index]
+
+    def _get_video_fps(self, video_stream: av.video.stream.VideoStream) -> float:
+        rate = video_stream.average_rate or video_stream.guessed_rate or video_stream.base_rate or 30.0
+        return max(1.0, float(rate))
+
+    @staticmethod
+    def _validate_output_size(output_size: tuple[int, int]) -> tuple[int, int]:
+        if len(output_size) != 2:
+            raise ValueError("output_size must contain (width, height)")
+        width, height = output_size
+        if not isinstance(width, int) or not isinstance(height, int) or width <= 0 or height <= 0:
+            raise ValueError(f"Invalid animation output size: {output_size!r}")
+        return width, height
+
+    def _create_video_filter_graph(
+        self,
+        video_stream: av.video.stream.VideoStream,
+        output_size: tuple[int, int],
+        *,
+        fps: float | None = None,
+    ) -> av.filter.Graph:
+        """Build a PyAV graph that scales frames and converts them to RGBA."""
+        width, height = self._validate_output_size(output_size)
+        graph = av.filter.Graph()
+        previous = graph.add_buffer(template=video_stream)
+
+        if fps is not None:
+            fps_filter = graph.add("fps", args=f"fps={fps:.6g}")
+            previous.link_to(fps_filter)
+            previous = fps_filter
+
+        scale_filter = graph.add("scale", args=f"{width}:{height}:flags=lanczos")
+        previous.link_to(scale_filter)
+
+        format_filter = graph.add("format", args=f"pix_fmts={'rgba' if self._anim_enable_alpha else 'rgb24'}")
+        scale_filter.link_to(format_filter)
+
+        sink = graph.add("buffersink")
+        format_filter.link_to(sink)
+        graph.configure()
+        return graph
+
+    def _decode_first_video_frame(self, source: _PyAVVideoSource) -> Image.Image:
+        """Decode the first frame synchronously for initial widget presentation."""
+        with av.open(source.path) as container:
+            video_stream = self._get_video_stream(container, source)
+            if video_stream is None:
+                raise ValueError(f"No video stream found: {source.path}")
+
+            graph = self._create_video_filter_graph(video_stream, source.output_size)
+            for decoded_frame in container.decode(video_stream):
+                graph.push(decoded_frame)
+                try:
+                    return graph.pull().to_image().convert("RGBA" if self._anim_enable_alpha else "RGB")
+                except av.error.BlockingIOError:
+                    continue
+
+            # Flush filters in case the first frame was buffered by the graph.
+            graph.push(None)
+            try:
+                return graph.pull().to_image().convert("RGBA" if self._anim_enable_alpha else "RGB")
+            except (av.error.BlockingIOError, av.error.EOFError):
+                raise ValueError(f"No decodable video frames: {source.path}") from None
+
+
+            from itertools import chain
+
+    @staticmethod
+    def _iter_filtered_frames(
+        container: av.container.InputContainer,
+        video_stream: av.video.stream.VideoStream,
+        graph: av.filter.Graph,
+    ) -> Iterator[av.VideoFrame]:
+        """Yield all available graph output, including delayed frames at EOF."""
+        for decoded_frame in container.decode(video_stream):
+            graph.push(decoded_frame)
+            while True:
+                try:
+                    yield graph.pull()
+                except av.error.BlockingIOError:
+                    break
+
+        graph.push(None)
+        while True:
+            try:
+                yield graph.pull()
+            except (av.error.BlockingIOError, av.error.EOFError):
+                break
+
+    def _wait_and_buffer_video_frame(
+        self,
+        generation: int,
+        stop_event: threading.Event,
+        source: _PyAVVideoSource,
+        frame_index: int,
+        fps: float,
+        playback_started: float,
+        paused_total_seen: float,
+        prepared_frame: Image.Image,
+    ) -> tuple[float, float] | None:
+        """Pace a prepared frame, respecting pause/resume, then queue it.
+
+        When the source FPS is within Tkinter's estimated rendering capacity,
+        wait for a buffer slot rather than dropping a pending frame.
+
+        When the source FPS exceeds that capacity, keep only the newest pending
+        frame to avoid building up playback latency.
+
+        Returns the adjusted playback origin, or None when this playback
+        generation has been stopped or superseded.
+        """
+        frame_data: AnimationFrame = (
+            frame_index,
+            prepared_frame,
+            source.frame_duration_ms,
+        )
+        media_time = frame_index / fps
+
+        with self._anim_condition:
+            while True:
+                if self._worker_is_obsolete(generation, stop_event):
+                    return None
+
+                # Account for pauses even if decoding completes after a very
+                # short pause has already been resumed.
+                total_paused = self._anim_total_paused_seconds
+                if total_paused > paused_total_seen:
+                    playback_started += total_paused - paused_total_seen
+                    paused_total_seen = total_paused
+
+                if not self._anim_is_running or self._anim_is_paused:
+                    self._anim_condition.wait()
+                    continue
+
+                deadline = playback_started + media_time
+                remaining = deadline - time.perf_counter()
+
+                if remaining > 0:
+                    self._anim_condition.wait(timeout=remaining)
+                    continue
+
+                # Estimate Tkinter's current sustainable presentation rate.
+                effective_fps_limit = (
+                    self._get_animation_effective_fps_limit()
+                )
+
+                if fps <= effective_fps_limit:
+                    # Tkinter should be able to keep up. Never overwrite a
+                    # pending frame; wait until the UI consumes it.
+                    if self._anim_buffer:
+                        self._anim_condition.wait()
+                        continue
+                else:
+                    # Rendering cannot reliably keep up with the video.
+                    # Drop stale pending frames to minimize playback latency.
+                    if self._anim_buffer:
+                        skipped_index = self._anim_buffer[-1][0]
+                        self._anim_dropped_count += 1
+
+                        # print(
+                        #     f"[Animation] Dropped pending frame {skipped_index}; "
+                        #     f"source={fps:.1f} FPS, "
+                        #     f"measured Tk throughput={self._anim_effective_fps:.1f} FPS, "
+                        #     f"total dropped={self._anim_dropped_count}"
+                        # )
+
+                    self._anim_buffer.clear()
+
+                self._anim_buffer.append(frame_data)
+                self._anim_condition.notify_all()
+                return playback_started, paused_total_seen
+
+    def _video_worker(
+        self,
+        generation: int,
+        stop_event: threading.Event,
+        source: _PyAVVideoSource,
+    ) -> None:
+        self._validate_output_size(source.output_size)
+
+        while not self._worker_is_obsolete(generation, stop_event):
+            emitted_frames = 0
+            with av.open(source.path) as container:
+                video_stream = self._get_video_stream(container, source)
+                if video_stream is None:
+                    raise ValueError(f"No video stream found: {source.path}")
+
+                # print(
+                #     f"[Animation] Stream FPS: "
+                #     f"average={video_stream.average_rate}, "
+                #     f"guessed={video_stream.guessed_rate}, "
+                #     f"base={video_stream.base_rate}, "
+                #     f"selected={self._get_video_fps(video_stream):.2f}"
+                # )
+
+                source_fps = self._get_video_fps(video_stream)
+                fps = min(source_fps, self._anim_fps_limit)
+
+                source.fps = fps
+                source.frame_duration_ms = max(1, round(1000.0 / fps))
+
+                with self._anim_condition:
+                    self._anim_source_fps = self._update_fps_average(self._anim_source_fps, source_fps)
+
+                duration_seconds = 0.0
+                if video_stream.duration is not None and video_stream.time_base is not None:
+                    duration_seconds = float(video_stream.duration * video_stream.time_base)
+                elif container.duration is not None:
+                    duration_seconds = float(container.duration / av.time_base)
+                if duration_seconds > 0:
+                    source.n_frames = max(2, round(duration_seconds * fps))
+
+                graph = self._create_video_filter_graph(video_stream, source.output_size, fps=fps)
+
+                # Establish the playback clock only while playback is active;
+                # pauses during container setup must not shift the timeline.
+                with self._anim_condition:
+                    while (
+                        not self._worker_is_obsolete(generation, stop_event)
+                        and (not self._anim_is_running or self._anim_is_paused)
+                    ):
+                        self._anim_condition.wait()
+                    if self._worker_is_obsolete(generation, stop_event):
+                        return
+                    playback_started = time.perf_counter()
+                    paused_total_seen = self._anim_total_paused_seconds
+
+                filtered_count = 0
+                filtered_started = time.perf_counter()
+
+                for frame_index, av_frame in enumerate(self._iter_filtered_frames(container, video_stream, graph)):
+                    filtered_count += 1
+
+                    if self._worker_is_obsolete(generation, stop_event):
+                        return
+
+                    # PyAV already scaled the frame and converted it to RGB(A).
+                    prepared = av_frame.to_image().convert("RGBA" if self._anim_enable_alpha else "RGB")
+                    pacing_state = self._wait_and_buffer_video_frame(
+                        generation,
+                        stop_event,
+                        source,
+                        frame_index,
+                        fps,
+                        playback_started,
+                        paused_total_seen,
+                        prepared,
+                    )
+                    if pacing_state is None:
+                        return
+                    playback_started, paused_total_seen = pacing_state
+                    emitted_frames += 1
+
+            if emitted_frames == 0:
+                raise ValueError(f"No decodable video frames: {source.path}")
+
+    # endregion
 
 
 class UIImage(AnimationMixin, UICanvasWidget, CTkBaseClass):
@@ -597,20 +859,10 @@ class UIImage(AnimationMixin, UICanvasWidget, CTkBaseClass):
         self.image_tag = None
 
         # self._supported_extensions = ['.mp4', '.mkv', '.avi', '.gif', '.webp', '.jpeg', '.png', '.jpg']
-        self._supported_extensions = ['.webp', '.jpeg', '.png', '.jpg', '.gif', '.avif', '.apng']
+        self._supported_extensions = ['.webp', '.jpeg', '.png', '.jpg', '.gif', '.avif', '.mp4', '.webm']
 
         self._init_animation()
         self._anim_start_delay = anim_start_delay
-        self._anim_track_fps = False
-        
-        # self._video = None
-        # self._video_fps = None
-        # self._video_frame_time = None
-        # self._video_last_frame_time = 0
-        # self._video_buffer = []
-        # self._video_buffering_time = 0
-        # self._video_rendering_active = False
-        # self._video_frame_counter = []
 
         self.fg_color = None
         self.border_radius = None
@@ -673,43 +925,47 @@ class UIImage(AnimationMixin, UICanvasWidget, CTkBaseClass):
                 if not path.is_absolute():
                     path = Config.get_resource_path(self, path, self._supported_extensions)
 
-                # if path.suffix in ['.mp4', '.gif', '.mkv', '.avi']:
-                #     self._update_attrs(list(kwargs.keys()), kwargs)
-                #
-                #     self._video = cv2.VideoCapture(str(path))
-                #
-                #     self._video_fps = int(self._video.get(cv2.CAP_PROP_FPS))
-                #     self._video_frame_time = 1000 / self._video_fps / 1000
-                #
-                #     if self.image_tag is None:
-                #         self.image_tag = self.canvas.create_image(self._x, self._y, anchor=self.anchor, **kwargs)
-                #
-                #     # Start async video renderer
-                #     if not self._video_rendering_active:
-                #         self._video_rendering_active = True
-                #         self._buffer_frame()
-                #         self._render_frame()
-                #         # self.print_fps()
-                #
-                # else:
-                # Signal async video renderer to stop if it's active
-                #     if self._video_rendering_active:
-                #         self._video_rendering_active = False
+                is_animated = path.suffix.lower() in { ".webm", ".mp4" }
 
-                self._image = Image.open(str(path))
+                image = None
+                if not is_animated:
+                    image = Image.open(str(path))
+                    is_animated = getattr(image, "is_animated", False) and getattr(image, "n_frames", 1) > 1
+
+                if is_animated:
+                    self._image = _PyAVVideoSource(path)
+                else:
+                    self._image = image
 
         if self._update_attrs(['width', 'height', 'opacity', 'brightness'], kwargs):
+            # In configure()
+            is_video = isinstance(self._image, _PyAVVideoSource)
 
-            self.image = ImageTk.PhotoImage(self._prepare_image(self._image))
+            if is_video:
+                self._image.output_size = (
+                    max(1, int(self._apply_widget_scaling(self._width))),
+                    max(1, int(self._apply_widget_scaling(self._height))),
+                )
+                # Resolve and display the first frame immediately.
+                try:
+                    first_frame = self._decode_first_video_frame(self._image)
+                    self.image = ImageTk.PhotoImage(self._prepare_image(first_frame))
+                except Exception:
+                    log.exception("Unable to decode the initial video frame")
+                    self.image = None
+            else:
+                self.image = ImageTk.PhotoImage(self._prepare_image(self._image))
 
             if self.image_tag is None:
                 self._update_attrs(['x', 'y', 'anchor'], kwargs)
-                self.image_tag = self.canvas.create_image(self._x, self._y, anchor=self._anchor, **kwargs)
+                self.image_tag = self.canvas.create_image(
+                    self._x, self._y, anchor=self._anchor, **kwargs
+                )
 
-            self.set_image(self.image)
+            if self.image is not None:
+                self.set_image(self.image)
 
-            is_animated = getattr(self._image, "is_animated", False) and getattr(self._image, "n_frames", 1) > 1
-            if is_animated and self._anim_start_delay >= 0:
+            if is_video and self._anim_start_delay >= 0:
                 self.after(self._anim_start_delay, self.start_animation)
 
         if self._update_attrs(['x', 'y'], kwargs):
@@ -717,89 +973,6 @@ class UIImage(AnimationMixin, UICanvasWidget, CTkBaseClass):
 
         if self._update_attrs(['anchor'], kwargs):
             self.canvas.itemconfigure(self.image_tag, anchor=self._anchor)
-
-
-    # def _buffer_frame(self):
-    #     if not self._video_rendering_active:
-    #         if self._video is not None:
-    #             self._video.release()
-    #             self._video = None
-    #         return
-    #
-    #     if len(self._video_buffer) > 2:
-    #         return
-    #
-    #     t = time.time()
-    #
-    #     ret, frame = self._video.read()
-    #
-    #     if not ret:
-    #         self._video.set(cv2.CAP_PROP_POS_FRAMES, 0)
-    #         self._buffer_frame()
-    #         return
-    #
-    #     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    #
-    #     frame_height, frame_width, channels = frame.shape
-    #     width = int(self._apply_widget_scaling(self.width))
-    #     height = int(self._apply_widget_scaling(self.height))
-    #     if frame_width != width or frame_height != height:
-    #         frame = cv2.resize(frame, (width, height))
-    #
-    #     # self._video_buffer.append(self.create_image(image, self.width, self.height, self.opacity, self.brightness))
-    #     self._video_buffer.append(ImageTk.PhotoImage(Image.fromarray(frame)))
-    #
-    #     self._video_buffering_time = time.time()-t
-    #
-    #     self.after(5, self._buffer_frame)
-    #
-    # def _render_frame(self):
-    #     if not self._video_rendering_active:
-    #         return
-    #
-    #     render_time = time.time() - self._video_last_frame_time
-    #
-    #     # t = time.time()
-    #
-    #     # self.count_fps()
-    #
-    #     # Buffer few frames ahead in async way so rendering wouldn't have to wait for frame image extraction
-    #     self.after(5, self._buffer_frame)
-    #
-    #     delay = self._video_frame_time
-    #
-    #     if len(self._video_buffer) != 0:
-    #
-    #         self.image = self._video_buffer.pop(0)
-    #         self.set_image(self.image)
-    #
-    #         # print(t - self._last_frame_time)
-    #         # self._last_frame_time = t
-    #
-    #         # render_time = time.time() - t
-    #
-    #         if render_time + self._video_buffering_time > self._video_frame_time:
-    #             delay *= math.ceil((render_time + self._video_buffering_time) / self._video_frame_time)
-    #
-    #         delay -= render_time
-    #
-    #         # print(render_time, self._video_buffering_time, delay)
-    #         self._video_last_frame_time = time.time()
-    #
-    #     self.after(int(delay*1000), self._render_frame)
-    #
-    # def count_fps(self):
-    #     t = time.time()
-    #     for x in range(len(self._video_frame_counter)):
-    #         if t - self._video_frame_counter[0] > 1:
-    #             del self._video_frame_counter[0]
-    #         else:
-    #             break
-    #     self._video_frame_counter.append(t)
-    #
-    # def print_fps(self, interval=250):
-    #     print(len(self._video_frame_counter), len(self._video_buffer))
-    #     self.after(interval, self.print_fps)
 
     def _update_attrs(self, attrs, kwargs):
         attrs_updated = False
