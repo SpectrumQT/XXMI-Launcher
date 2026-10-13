@@ -694,7 +694,7 @@ class AnimationInfoText(UIText):
 
         self.subscribe(Events.Application.ConfigUpdate, self.handle_config_update)
 
-        self.set_tooltip(lambda: L("importer_settings_log_level_option_menu_tooltip", """
+        self.set_tooltip(lambda: L("launcher_frame_animation_info_tooltip", """
             Displays animated background FPS information.
 
             * `Render`: FPS of GUI drawing engine.
