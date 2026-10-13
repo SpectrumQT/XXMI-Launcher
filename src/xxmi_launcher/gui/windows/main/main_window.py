@@ -11,13 +11,13 @@ from core.locale_manager import L
 from customtkinter import set_appearance_mode, set_default_color_theme, ScalingTracker, set_widget_scaling, set_window_scaling
 
 from core.config.enums import WindowScale
-from gui.classes.windows import UIMainWindow, calculate_scaling_limit
+from gui.classes.windows import UIMainWindow, calculate_scaling_limit, get_monitor_dpi, install_scaling_tracker_guard, enable_high_quality_dpi_awareness
 from gui.windows.main.message_frame.message_frame import MessageFrame
 from gui.windows.main.launcher_frame.launcher_frame import LauncherFrame
 
 log = logging.getLogger(__name__)
 
-# from customtkinter import deactivate_automatic_dpi_awareness
+from customtkinter import deactivate_automatic_dpi_awareness
 # set_widget_scaling(2)
 # set_window_scaling(2)
 # deactivate_automatic_dpi_awareness()
@@ -26,6 +26,10 @@ log = logging.getLogger(__name__)
 class MainWindow(UIMainWindow):
     def __init__(self):
         self._window_scale = 0
+
+        # Enable crisp Windows rendering before CTk initialization.
+        enable_high_quality_dpi_awareness()
+        install_scaling_tracker_guard()
         self.handle_scale_window(None)
 
         super().__init__()
@@ -230,27 +234,72 @@ class MainWindow(UIMainWindow):
         Events.Subscribe(Events.GUIEvents.ScaleWindow, self.handle_scale_window)
 
     def handle_scale_window(self, event: Events.Application.ConfigUpdate | None):
-        if Config.Config.Launcher.window_scale == WindowScale.AUTO:
-            window_scale = ScalingTracker.get_window_dpi_scaling(self) if event else ScalingTracker.window_scaling
-            window_scale = calculate_scaling_limit(1280, 720, window_scale, 1.0, 0.8)
-        elif Config.Config.Launcher.window_scale == WindowScale.CUSTOM:
-            window_scale = Config.Config.Launcher.custom_window_scale / 100
-            window_scale = calculate_scaling_limit(1280, 720, window_scale, 1.0, 1.0)
+        tracker = ScalingTracker
+        is_auto = Config.Config.Launcher.window_scale == WindowScale.AUTO
+        has_tk = self.__dict__.get("tk") is not None
+
+        if is_auto:
+            # Enable CustomTkinter's automatic DPI multiplier.
+            tracker.deactivate_automatic_dpi_awareness = False
+
+            if has_tk:
+                # Refresh the cached DPI for each existing window.
+                for window in tuple(tracker.window_dpi_scaling_dict):
+                    try:
+                        if window.winfo_exists():
+                            tracker.window_dpi_scaling_dict[window] = tracker.get_window_dpi_scaling(window)
+                    except Exception:
+                        pass
+
+                dpi_scaling = tracker.window_dpi_scaling_dict.get(self)
+                if dpi_scaling is None:
+                    dpi_scaling = tracker.get_window_dpi_scaling(self)
+            else:
+                # Called before CTk.__init__().
+                x_dpi, y_dpi = get_monitor_dpi()
+                dpi_scaling = (x_dpi + y_dpi) / (2 * 96)
+
+            # Calculate the desired effective scale, including monitor DPI.
+            target_scale = calculate_scaling_limit(1280, 720, 1.0, 1.0, 0.8, dpi_scaling=dpi_scaling)
+
+            # Convert the effective scale to CustomTkinter's base scale.
+            # Its callback multiplies this by the cached DPI factor.
+            target_scale = max(target_scale, dpi_scaling * 0.4)
+            target_scale = min(max(0.5, target_scale), 6.0)
+            applied_scale = target_scale / dpi_scaling
+
         else:
-            window_scale = int(Config.Config.Launcher.window_scale.name.removeprefix("SCALE_")) / 100
-            window_scale = calculate_scaling_limit(1280, 720, window_scale, 1.0, 1.0)
+            ScalingTracker.deactivate_automatic_dpi_awareness = True
 
-        # Apply sensible lower and upper scale bounds.
-        window_scale = min(max(0.5, window_scale), 6.0)
+            # TODO: Add native (low quality) Windows scaling support
+            # deactivate_automatic_dpi_awareness()
 
-        if self._window_scale == window_scale:
-            return
+            # In fixed mode, keep the DPI multiplier at 1.0.
+            for window in tuple(tracker.window_dpi_scaling_dict):
+                tracker.window_dpi_scaling_dict[window] = 1.0
+
+            if Config.Config.Launcher.window_scale == WindowScale.CUSTOM:
+                requested_scale = Config.Config.Launcher.custom_window_scale / 100
+            else:
+                requested_scale = int(Config.Config.Launcher.window_scale.name.removeprefix("SCALE_")) / 100
+
+            # Do not multiply the requested fixed scale by Windows DPI.
+            target_scale = calculate_scaling_limit(1280, 720, requested_scale, 1.0, 1.0, dpi_scaling=1.0)
+
+            target_scale = min(max(0.5, target_scale), 6.0)
+            applied_scale = target_scale
+
+        # Keep widget and window scaling synchronized.
+        applied_scale = max(0.4, applied_scale)
 
         if self._window_scale == 0:
-            self._window_scale = window_scale
+            self._window_scale = target_scale
 
-        set_widget_scaling(window_scale)
-        set_window_scaling(window_scale)
+        # Apply both values atomically.
+        # The public setters each trigger update_scaling_callbacks_all(), which would otherwise run twice.
+        tracker.widget_scaling = applied_scale
+        tracker.window_scaling = applied_scale
+        tracker.update_scaling_callbacks_all()
 
     def reload_gui(self, event: Events.GUI.ReloadGUI):
         Events.Fire(Events.Application.StatusUpdate(status=L('status_reloading_gui', 'Reloading GUI...')))

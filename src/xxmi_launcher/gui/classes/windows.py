@@ -1,5 +1,6 @@
 import logging
 import ctypes
+import sys
 
 from typing import Union, Tuple, List, Dict, Optional
 from enum import Enum
@@ -55,33 +56,59 @@ def calculate_scaling_limit(
     window_scaling: float,
     max_width_usage: float = 1.0,
     max_height_usage: float = 1.0,
+    dpi_scaling: float | None = None,
 ):
     DPI100pc = 96  # DPI 96 is 100% scaling
-    x_dpi, y_dpi = get_monitor_dpi()
 
-    scaling_factor = (x_dpi + y_dpi) / (2 * DPI100pc)
+    if dpi_scaling is None:
+        x_dpi, y_dpi = get_monitor_dpi()
+        dpi_scaling = (x_dpi + y_dpi) / (2 * DPI100pc)
 
-    scaling_factor *= window_scaling
+    scaling_factor = dpi_scaling * window_scaling
 
     scaled_width = fit_width * scaling_factor
     scaled_height = fit_height * scaling_factor
 
     max_width, max_height = get_monitor_size()
-
     max_width *= max_width_usage
     max_height *= max_height_usage
 
-    width_factor = 1
-    if scaled_width > max_width:
-        width_factor = max_width / scaled_width
+    width_factor = min(1.0, max_width / scaled_width)
+    height_factor = min(1.0, max_height / scaled_height)
 
-    height_factor = 1
-    if scaled_height > max_height:
-        height_factor = max_height / scaled_height
-
-    limit_factor = width_factor if width_factor < height_factor else height_factor
+    limit_factor = min(width_factor, height_factor)
 
     return scaling_factor * limit_factor
+
+
+def install_scaling_tracker_guard():
+    tracker = ScalingTracker
+
+    if tracker.__dict__.get("_xxmi_tracking_guard_installed", False):
+        return
+
+    original_check = tracker.check_dpi_scaling
+
+    def check_dpi_scaling(cls):
+        # Fixed scaling mode: stop the recurring DPI tracking loop.
+        if cls.deactivate_automatic_dpi_awareness:
+            cls.update_loop_running = False
+            return
+
+        # AUTO mode: retain CustomTkinter's original behavior.
+        original_check()
+
+    tracker.check_dpi_scaling = classmethod(check_dpi_scaling)
+    tracker._xxmi_tracking_guard_installed = True
+
+
+def enable_high_quality_dpi_awareness():
+    if sys.platform != "win32":
+        return
+
+    # Must run before any Tk window is created.
+    # PROCESS_PER_MONITOR_DPI_AWARE = 2
+    ctypes.windll.shcore.SetProcessDpiAwareness(2)
 
 
 class UIWindow(UIElement):
@@ -231,15 +258,18 @@ class UIMainWindow(UIWindow, CTk):
     def _update_dimensions_event(self, event=None):
         tracker = ScalingTracker
 
-        tracked_dpi = tracker.window_dpi_scaling_dict.get(self)
+        # Only suppress events while automatic DPI awareness is enabled.
+        # In fixed scaling modes, get_window_dpi_scaling() returns 1.0 by design, regardless of the cached monitor DPI.
+        if not tracker.deactivate_automatic_dpi_awareness:
+            tracked_dpi = tracker.window_dpi_scaling_dict.get(self)
 
-        if tracked_dpi is not None:
-            actual_dpi = tracker.get_window_dpi_scaling(self)
+            if tracked_dpi is not None:
+                actual_dpi = tracker.get_window_dpi_scaling(self)
 
-            # Windows has already changed the DPI, but ScalingTracker hasn't processed it yet.
-            # Don't interpret the resulting physical resize as a logical window resize.
-            if actual_dpi != tracked_dpi:
-                return
+                # Windows changed DPI, but ScalingTracker hasn't processed
+                # the change yet. Don't treat it as a logical resize.
+                if actual_dpi != tracked_dpi:
+                    return
 
         super()._update_dimensions_event(event)
 
