@@ -118,14 +118,11 @@ if __name__ == '__main__':
         import core.path_manager as Paths
         Paths.initialize(root_path)
 
-        import gui.windows.main.main_window as main_window
-        gui = main_window.MainWindow()
-
         if msvc_error is not None:
             raise msvc_error
 
         from core.application import Application
-        Application(gui)
+        Application()
 
     except BaseException as init_error:
         # Handle init time error
@@ -142,6 +139,9 @@ if __name__ == '__main__':
             L = lambda key, string: dedent(string.strip())
 
         try:
+            import gui.windows.main.main_window as main_window
+            gui = main_window.MainWindow()
+
             # Try to show error in less scary message window of minimal gui
             page_link = 'https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#latest-supported-redistributable-version'
             direct_link = 'https://aka.ms/vs/17/release/vc_redist.x64.exe'

@@ -31,12 +31,11 @@ from core.packages.model_importers.himi_package import HIMIPackage
 from core.packages.model_importers.efmi_package import EFMIPackage
 
 from core.game_launcher import Launcher
+import gui.windows.main.main_window as main_window
 
 
 class Application:
-    def __init__(self, gui):
-        # At this point GUI is minimally initialized (just enough to show messages)
-        self.gui = gui
+    def __init__(self):
         # Lock state flag, game launch attempts will be ignored while it's True
         self.is_locked = False
         # Thread pool for threaded tasks
@@ -48,6 +47,22 @@ class Application:
         self.shutting_down = False
         # App shutdown event for watchdog thread
         self.shutdown_event = Event()
+
+        # Load config json
+        config_error = None
+        try:
+            self.load_config()
+        except Exception as e:
+            logging.exception(e)
+            config_error = e
+
+        self.gui = main_window.MainWindow()
+
+        if config_error is not None:
+            self.gui.show_messagebox(Events.Application.ShowError(
+                modal=True,
+                message=L('message_text_config_was_reset', 'Failed to load configuration! Falling back to defaults.'),
+            ))
 
         # Parse console args
         parser = argparse.ArgumentParser(add_help=False)
@@ -75,16 +90,6 @@ class Application:
                 return
         except BaseException:
             raise ValueError(L('application_failed_parse_args', 'Failed to parse args: {args}').format(args=sys.argv))
-
-        # Load config json
-        try:
-            self.load_config()
-        except Exception as error:
-            logging.exception(error)
-            self.gui.show_messagebox(Events.Application.ShowError(
-                modal=True,
-                message=L('message_text_config_was_reset', 'Failed to load configuration! Falling back to defaults.'),
-            ))
 
         # Configure locale
         Events.Subscribe(Events.Application.LoadLocale, self.handle_load_locale)
