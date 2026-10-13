@@ -1469,23 +1469,45 @@ class UIButton(UIWidget, CTkButton):
         scaling = self._apply_widget_scaling(1)
         offset = self._padx * 2
         if scaling != 1.0:
-            offset += self._apply_widget_scaling(2)
+            offset += 2 * scaling
         return self.get_text_width() + round(offset)
 
     def _set_auto_width(self):
         self.configure(width=self.get_text_width())
 
-    def _get_current_text_color(self):
+    def _get_visual_state_colors(self):
+        """Return (border_color, text_color, inner_color) for the current state."""
+
         if self._state == tkinter.DISABLED:
-            return self._text_color_disabled
+            border_color = self._border_color_disabled if self._border_color_disabled is not None else self._border_color
+            inner_color = self._fg_color_disabled if self._fg_color_disabled is not None else self._fg_color
+            text_color = self._text_color_disabled
 
-        if self.is_selected:
-            return self._text_color_selected
+        elif self.is_hovered:
+            border_color = self._border_color
+            text_color = self._text_color_hovered
+            inner_color = self._fg_color if self._hover_color is None else self._hover_color
 
-        if self.is_hovered:
-            return self._text_color_hovered
+        elif self.is_selected and not getattr(self, "_click_animation_running", False):
+            border_color = self._border_color
+            text_color = self._text_color_selected
+            inner_color = self._select_color
 
-        return self._text_color
+        else:
+            border_color = self._border_color
+            text_color = self._text_color
+            inner_color = self._fg_color
+
+        # A transparent button should display its background color rather
+        # than treating "transparent" as an actual canvas fill color.
+        if inner_color == "transparent":
+            inner_color = self._bg_color
+
+        return border_color, text_color, inner_color
+
+    def _get_current_text_color(self):
+        """Return the text color for the current visual state."""
+        return self._get_visual_state_colors()[1]
 
     def _update_image_color(self):
         if self.image is None:
@@ -1507,152 +1529,121 @@ class UIButton(UIWidget, CTkButton):
         CTkBaseClass._draw(self, no_color_updates)
 
         if self._background_corner_colors is not None:
-            self._draw_engine.draw_background_corners(self._apply_widget_scaling(self._current_width),
-                                                      self._apply_widget_scaling(self._current_height))
-            self._canvas.itemconfig("background_corner_top_left",
-                                    fill=self._apply_appearance_mode(self._background_corner_colors[0]))
-            self._canvas.itemconfig("background_corner_top_right",
-                                    fill=self._apply_appearance_mode(self._background_corner_colors[1]))
-            self._canvas.itemconfig("background_corner_bottom_right",
-                                    fill=self._apply_appearance_mode(self._background_corner_colors[2]))
-            self._canvas.itemconfig("background_corner_bottom_left",
-                                    fill=self._apply_appearance_mode(self._background_corner_colors[3]))
+            self._draw_engine.draw_background_corners(
+                self._apply_widget_scaling(self._current_width),
+                self._apply_widget_scaling(self._current_height),
+            )
+
+            corner_tags = (
+                "background_corner_top_left",
+                "background_corner_top_right",
+                "background_corner_bottom_right",
+                "background_corner_bottom_left",
+            )
+
+            for tag, color in zip(corner_tags, self._background_corner_colors):
+                self._canvas.itemconfig(tag, fill=self._apply_appearance_mode(color))
         else:
             self._canvas.delete("background_parts")
 
-        fg_color = self._fg_color
-        if self._state == tkinter.DISABLED and self._fg_color_disabled:
-            fg_color = self._fg_color_disabled
-
-        border_color = self._border_color
-        if self._state == tkinter.DISABLED and self._border_color_disabled:
-            border_color = self._border_color_disabled
+        # Resolve all state-dependent colors from the same source.
+        border_color, text_color, inner_color = self._get_visual_state_colors()
 
         requires_recoloring = self._draw_engine.draw_rounded_rect_with_border(
             self._apply_widget_scaling(self._current_width),
             self._apply_widget_scaling(self._current_height),
             self._apply_widget_scaling(self._corner_radius),
-            self._apply_widget_scaling(self._border_width))
+            self._apply_widget_scaling(self._border_width),
+        )
 
-        if no_color_updates is False or requires_recoloring:
-
+        if not no_color_updates or requires_recoloring:
             self._update_image_color()
-
             self._configure_button_cursors()
 
             self._canvas.configure(bg=self._apply_appearance_mode(self._bg_color))
 
-            # set color for the button border parts (outline)
-            self._canvas.itemconfig("border_parts",
-                                    outline=self._apply_appearance_mode(border_color),
-                                    fill=self._apply_appearance_mode(border_color))
+            resolved_border_color = self._apply_appearance_mode(border_color)
+            resolved_inner_color = self._apply_appearance_mode(inner_color)
 
-            # set color for inner button parts
-            if fg_color == "transparent":
-                self._canvas.itemconfig("inner_parts",
-                                        outline=self._apply_appearance_mode(self._bg_color),
-                                        fill=self._apply_appearance_mode(self._bg_color))
-            else:
-                self._canvas.itemconfig("inner_parts",
-                                        outline=self._apply_appearance_mode(fg_color),
-                                        fill=self._apply_appearance_mode(fg_color))
+            # Border
+            self._canvas.itemconfig("border_parts", outline=resolved_border_color, fill=resolved_border_color)
 
-        # create text label if text given
+            # Background, including selected and hovered states.
+            self._canvas.itemconfig("inner_parts", outline=resolved_inner_color, fill=resolved_inner_color)
+
+        # Text label
         if self._text is not None and self._text != "":
-
             if self._text_label is None:
-                self._text_label = tkinter.Label(master=self,
-                                                 font=self._apply_font_scaling(self._font),
-                                                 text=self._text,
-                                                 padx=0,
-                                                 pady=0,
-                                                 borderwidth=1,
-                                                 textvariable=self._textvariable)
+                self._text_label = tkinter.Label(
+                    master=self,
+                    font=self._apply_font_scaling(self._font),
+                    text=self._text,
+                    padx=0,
+                    pady=0,
+                    borderwidth=1,
+                    textvariable=self._textvariable,
+                )
                 self._create_grid()
 
                 self._text_label.bind("<Enter>", self._on_enter)
                 self._text_label.bind("<Leave>", self._on_leave)
                 self._text_label.bind("<Button-1>", self._clicked)
-                self._text_label.bind("<Button-1>", self._clicked)
 
-            if no_color_updates is False:
-                # set text_label fg color (text color)
-                self._text_label.configure(fg=self._apply_appearance_mode(self._get_current_text_color()))
+            if not no_color_updates:
+                self._text_label.configure(
+                    fg=self._apply_appearance_mode(text_color),
+                    bg=self._apply_appearance_mode(inner_color),
+                )
 
-                if self._apply_appearance_mode(fg_color) == "transparent":
-                    self._text_label.configure(bg=self._apply_appearance_mode(self._bg_color))
-                else:
-                    self._text_label.configure(bg=self._apply_appearance_mode(fg_color))
+        elif self._text_label is not None:
+            self._text_label.destroy()
+            self._text_label = None
+            self._create_grid()
 
-        else:
-            # delete text_label if no text given
-            if self._text_label is not None:
-                self._text_label.destroy()
-                self._text_label = None
-                self._create_grid()
-
-        # create image label if image given
+        # Image label
         if self._image is not None:
-
             if self._image_label is None:
                 self._image_label = tkinter.Label(master=self)
-                self._update_image()  # set image
+                self._update_image()
                 self._create_grid()
 
                 self._image_label.bind("<Enter>", self._on_enter)
                 self._image_label.bind("<Leave>", self._on_leave)
                 self._image_label.bind("<Button-1>", self._clicked)
-                self._image_label.bind("<Button-1>", self._clicked)
 
-            if no_color_updates is False:
-                # set image_label bg color (background color of label)
-                if self._apply_appearance_mode(fg_color) == "transparent":
-                    self._image_label.configure(bg=self._apply_appearance_mode(self._bg_color))
-                else:
-                    self._image_label.configure(bg=self._apply_appearance_mode(fg_color))
+            if not no_color_updates:
+                self._image_label.configure(
+                    bg=self._apply_appearance_mode(inner_color)
+                )
 
-        else:
-            # delete text_label if no text given
-            if self._image_label is not None:
-                self._image_label.destroy()
-                self._image_label = None
-                self._create_grid()
+        elif self._image_label is not None:
+            self._image_label.destroy()
+            self._image_label = None
+            self._create_grid()
 
     def _update_visual_state(self):
-        if self._state == tkinter.DISABLED:
-            return
+        """Apply the current visual state without redrawing the widget."""
 
-        if self.is_hovered:
-            text_color = self._text_color_hovered
-            inner_parts_color = self._fg_color if self._hover_color is None else self._hover_color
+        _, text_color, inner_color = self._get_visual_state_colors()
 
-        elif self.is_selected and not self._click_animation_running:
-            text_color = self._text_color_selected
-            inner_parts_color = self._select_color
+        text_color = self._apply_appearance_mode(text_color) if text_color is not None else None
+        inner_color = self._apply_appearance_mode(inner_color)
 
-        else:
-            text_color = self._text_color
-            if self._fg_color == "transparent":
-                inner_parts_color = self._bg_color
-            else:
-                inner_parts_color = self._fg_color
+        # Button background
+        self._canvas.itemconfig("inner_parts", outline=inner_color, fill=inner_color)
 
-        text_color = self._apply_appearance_mode(text_color)
-        inner_parts_color = self._apply_appearance_mode(inner_parts_color)
-
-        self._canvas.itemconfig("inner_parts", outline=inner_parts_color, fill=inner_parts_color)
-
+        # Text
         if self._text_label is not None:
-            self._text_label.configure(
-                fg=text_color,
-                bg=inner_parts_color
-            )
+            self._text_label.configure(fg=text_color, bg=inner_color)
 
+        # Image background
         if self._image_label is not None:
-            self._image_label.configure(bg=inner_parts_color)
+            self._image_label.configure(bg=inner_color)
 
-        if self.image is not None:
+        # Keep image tint synchronized with the text color.
+        if self.image is not None and text_color is not None:
             self.image.set_color(self.tk_color_to_rgb(text_color))
+            self._image = self.image
 
     def _on_enter(self, event=None):
         self.is_hovered = True
