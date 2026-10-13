@@ -277,6 +277,8 @@ class MainWindow(UIMainWindow):
         Events.Fire(Events.Application.ConfigUpdate())
         Events.Fire(Events.PackageManager.NotifyPackageVersions(detect_installed=True))
 
+        self.launcher_frame.background_image.start_animation()
+
         # Mouse events can't be processed while GUI is reloading.
         # Catch the window up to the cursor's current position.
         self.update_window_drag_position()
