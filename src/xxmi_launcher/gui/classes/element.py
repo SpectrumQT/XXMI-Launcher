@@ -1,10 +1,20 @@
+import logging
+import json
+
 from typing import Dict, Union, Tuple, Callable
 from customtkinter import CTkBaseClass, CTk, CTkToplevel, ThemeManager
 
 import core.event_manager as Events
 import gui.vars as Vars
 
+from core.locale_manager import L
+
 from gui.classes.tooltip import UIToolTip
+
+log = logging.getLogger(__name__)
+
+
+_theme_apply_error_cache = set()
 
 
 class UIElement:
@@ -134,14 +144,40 @@ class UIElement:
         return ThemeManager.theme[str(self.__class__.__qualname__)].get(key, default)
 
     def _apply_theme(self, recursive=False):
-        theme_colors = ThemeManager.theme.get(str(self.__class__.__qualname__), {})
-        for key, color in theme_colors.items():
-            try:
-                self.configure(**{key: color})
-            except:
-                pass
+        theme_data = {
+            key: tuple(value) if isinstance(value, list) else value
+            for key, value in ThemeManager.theme.get(str(self.__class__.__qualname__), {}).items()
+        }
+
+        try:
+            self.configure(**theme_data)
+        except Exception as e:
+            error_key = f"{self.__class__.__qualname__}: {e}"
+
+            if error_key not in _theme_apply_error_cache:
+                _theme_apply_error_cache.add(error_key)
+
+                log.exception(e)
+                Events.Fire(Events.Application.ShowError(
+                    title=L('message_title_element_apply_theme_error', 'Theme Loading Error'),
+                    message=L('message_text_element_apply_theme_error', """
+                        Cannot to apply `custom-tkinter-theme.json` › `{class_name}`:
+                        > {error_text}
+                        ```
+                        {theme_data}
+                        ```
+                    """).format(
+                        class_name=self.__class__.__qualname__,
+                        error_text=str(e),
+                        theme_data=json.dumps(theme_data, indent=4, ensure_ascii=False),
+                    ),
+                    modal=True,
+                ))
+
         if recursive:
-            for element in self.elements.values():
+            for element in list(self.elements.values()):
+                if not element.winfo_exists():
+                    continue
                 element._apply_theme(recursive=True)
 
 
