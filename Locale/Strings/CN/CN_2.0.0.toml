@@ -1310,16 +1310,6 @@ loc = """
 src = "Close Launcher After Game Start"
 loc = "游戏启动后关闭启动器"
 
-[launcher_settings_auto_close_checkbox_tooltip]
-src = """
-Enabled: Launcher will close itself once the game has started and 3dmigoto injection has been confirmed.
-Disabled: Launcher will keep itself running.
-"""
-loc = """
-启用：游戏启动且3dmigoto注入确认后，启动器将自动关闭。
-禁用：启动器将保持运行。
-"""
-
 [launcher_settings_auto_update_checkbox]
 src = "Auto Update"
 loc = "自动更新"
@@ -1332,20 +1322,6 @@ Disabled: Use special [▲] button next to [Start] button to Download and Instal
 loc = """
 启用：启动器和{importer}更新将自动下载和安装。
 禁用：使用[启动]按钮旁边的特殊[▲]按钮手动下载和安装更新。
-"""
-
-[launcher_settings_dev_mode_checkbox]
-src = "Dev Mode"
-loc = "开发模式"
-
-[launcher_settings_dev_mode_checkbox_tooltip]
-src = """
-Enabled: Launcher will track changes in `custom-tkinter-theme.json` and apply them on the fly.
-Disabled: Theme changes will not be tracked.
-"""
-loc = """
-启用：启动器将跟踪`custom-tkinter-theme.json`中的更改并实时应用。
-禁用：不会跟踪主题更改。
 """
 
 [launcher_settings_github_token_entry_tooltip]

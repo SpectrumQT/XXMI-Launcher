@@ -1,0 +1,191 @@
+[launcher_settings_window_scale_auto]
+src = "Auto"
+loc = "Автоматически"
+
+[launcher_settings_window_scale_50]
+src = "50% (640x360)"
+loc = "50% (640x360)"
+
+[launcher_settings_window_scale_75]
+src = "75% (960x540)"
+loc = "75% (960x540)"
+
+[launcher_settings_window_scale_100]
+src = "100% (1280x720)"
+loc = "100% (1280x720)"
+
+[launcher_settings_window_scale_125]
+src = "125% (1600x900)"
+loc = "125% (1600x900)"
+
+[launcher_settings_window_scale_150]
+src = "150% (1920x1080)"
+loc = "150% (1920x1080)"
+
+[launcher_settings_window_scale_200]
+src = "200% (2560x1440)"
+loc = "200% (2560x1440)"
+
+[launcher_settings_window_scale_250]
+src = "250% (3200x1800)"
+loc = "250% (3200x1800)"
+
+[launcher_settings_window_scale_300]
+src = "300% (3840x2160)"
+loc = "300% (3840x2160)"
+
+[launcher_settings_window_scale_custom]
+src = "Custom"
+loc = "Вручную"
+
+[message_title_element_apply_theme_error]
+src = "Theme Loading Error"
+loc = "Ошибка загрузки темы"
+
+[message_text_element_apply_theme_error]
+src = """
+Cannot to apply `custom-tkinter-theme.json` › `{class_name}`:
+> {error_text}
+```
+{theme_data}
+```
+"""
+loc = """
+Не удалось применить `custom-tkinter-theme.json` › `{class_name}`:
+> {error_text}
+```
+{theme_data}
+```
+"""
+
+[launcher_frame_animation_info_tooltip]
+src = """
+Displays animated background FPS information.
+
+* `Render`: FPS of GUI drawing engine.
+    - Affected by the launcher window size.
+* `Decoder`: FPS of video decoding stream.
+    - Affected by the source video resolution and format.
+    - Capped at `60`, since GUI render can't go faster on modern CPUs.
+* `Source`: FPS of the video file itself.
+"""
+loc = """
+Отображает информацию о FPS анимированного фона.
+
+* `Render`: FPS отрисовки графического интерфейса.
+    - Зависит от размера окна лаунчера.
+* `Decoder`: FPS декодирования видеопотока.
+    - Зависит от разрешения и формата исходного видео.
+    - Ограничен значением `60`, поскольку на современных процессорах отрисовка GUI не может работать быстрее.
+* `Source`: FPS самого видеофайла.
+"""
+
+[launcher_settings_dev_mode_checkbox]
+src = "Theme Developer Mode"
+loc = "Режим разработчика тем"
+
+[launcher_settings_auto_close_checkbox_tooltip]
+src = """
+Choose what the launcher should do after the game starts and XXMI DLL injection is confirmed.
+
+* **Enabled:** Automatically close the launcher.
+* **Disabled:** Keep the launcher running.
+"""
+loc = """
+Выберите, что должен делать лаунчер после запуска игры и подтверждения внедрения XXMI DLL.
+
+* **Включено:** Автоматически закрывать лаунчер.
+* **Выключено:** Оставлять лаунчер запущенным.
+"""
+
+[launcher_settings_theme_option_menu_tooltip]
+src = """
+Select a launcher GUI theme.
+
+> The `Default` theme will be **overwritten by launcher updates**! Create a copy if you want to customize it.
+
+To create a custom theme:
+
+1. Duplicate the `Default` folder inside the `Themes` folder.
+2. Rename the duplicate to the name you want displayed here.
+3. Edit or replace the images using any of the supported file extensions:
+
+- Static images: {static_extensions:list}.
+- Animated images: {animated_extensions:list}.
+    * For best animation performance and storage efficiency, use `.avif` format.
+    * Animated images are supported only in `LauncherFrame` and its subfolders for now.
+"""
+loc = """
+Выберите тему графического интерфейса лаунчера.
+
+> Тема `Default` будет **перезаписана при обновлении лаунчера**! Создайте копию, если хотите настроить её под себя.
+
+Чтобы создать собственную тему:
+
+1. Скопируйте папку `Default` из папки `Themes`.
+2. Переименуйте копию в название, которое хотите видеть здесь.
+3. Измените или замените изображения, используя любое из поддерживаемых расширений файлов:
+
+- Статические изображения: {static_extensions:list}.
+- Анимированные изображения: {animated_extensions:list}.
+    * Для оптимизации производительности и занимаемого места, используйте `.avif` анимации.
+    * На данный момент анимированные изображения поддерживаются только в `LauncherFrame` и его подпапках.
+"""
+
+[launcher_settings_window_scale_label]
+src = "Window Scale"
+loc = "Масштаб окна"
+
+[launcher_settings_window_scale_tooltip]
+src = """
+Select the size of the launcher window.
+
+* **{launcher_settings_window_scale_auto}**: Select optimal DPI scaling automatically.
+* **{launcher_settings_window_scale_custom}**: Specify custom window scale percentage.
+"""
+loc = """
+Выберите размер окна лаунчера.
+
+* **{launcher_settings_window_scale_auto}**: Автоматически подбирать оптимальный масштаб DPI.
+* **{launcher_settings_window_scale_custom}**: Указать масштаб окна в процентах.
+"""
+
+[launcher_settings_custom_window_scale_label]
+src = "Custom Scale"
+loc = "Пользовательский масштаб"
+
+[launcher_settings_custom_window_scale_button_label]
+src = "➔ Apply"
+loc = "➔ Применить"
+
+[launcher_settings_custom_window_scale_button_tooltip]
+src = "Apply specified scale to the window."
+loc = "Применить указанный масштаб окна."
+
+[launcher_settings_custom_window_scale_tooltip]
+src = """
+Set the window scale percentage.
+
+* `100`% corresponds to the native launcher resolution of **1280x720**.
+* The window scale is limited to a minimum of `50`% and a maximum of your monitor's resolution.
+"""
+loc = """
+Укажите масштаб окна в процентах.
+
+* `100`% соответствует исходному разрешению лаунчера **1280x720**.
+* Масштаб окна может составлять от `50`% до значения, соответствующего разрешению вашего монитора.
+"""
+
+[launcher_settings_dev_mode_checkbox_tooltip]
+src = """
+Enables utilities for theme development.
+
+* **Hot reload:** Automatically detect changes to `custom-tkinter-theme.json` and apply them.
+* **FPS counter:** Display animated background FPS information at the bottom of the main window.
+"""
+loc = """
+Включает инструменты для разработки тем.
+
+* **Горячая перезагрузка:** Автоматически обнаруживать изменения в `custom-tkinter-theme.json` и применять их.
+* **Счётчик FPS:** Отображать информацию о FPS анимированного фона в нижней части главного окна.
+"""

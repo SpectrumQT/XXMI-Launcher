@@ -1,0 +1,191 @@
+[launcher_settings_window_scale_auto]
+src = "Auto"
+loc = "Automatycznie"
+
+[launcher_settings_window_scale_50]
+src = "50% (640x360)"
+loc = "50% (640x360)"
+
+[launcher_settings_window_scale_75]
+src = "75% (960x540)"
+loc = "75% (960x540)"
+
+[launcher_settings_window_scale_100]
+src = "100% (1280x720)"
+loc = "100% (1280x720)"
+
+[launcher_settings_window_scale_125]
+src = "125% (1600x900)"
+loc = "125% (1600x900)"
+
+[launcher_settings_window_scale_150]
+src = "150% (1920x1080)"
+loc = "150% (1920x1080)"
+
+[launcher_settings_window_scale_200]
+src = "200% (2560x1440)"
+loc = "200% (2560x1440)"
+
+[launcher_settings_window_scale_250]
+src = "250% (3200x1800)"
+loc = "250% (3200x1800)"
+
+[launcher_settings_window_scale_300]
+src = "300% (3840x2160)"
+loc = "300% (3840x2160)"
+
+[launcher_settings_window_scale_custom]
+src = "Custom"
+loc = "Niestandardowy"
+
+[message_title_element_apply_theme_error]
+src = "Theme Loading Error"
+loc = "Błąd ładowania motywu"
+
+[message_text_element_apply_theme_error]
+src = """
+Cannot to apply `custom-tkinter-theme.json` › `{class_name}`:
+> {error_text}
+```
+{theme_data}
+```
+"""
+loc = """
+Nie można zastosować `custom-tkinter-theme.json` › `{class_name}`:
+> {error_text}
+```
+{theme_data}
+```
+"""
+
+[launcher_frame_animation_info_tooltip]
+src = """
+Displays animated background FPS information.
+
+* `Render`: FPS of GUI drawing engine.
+    - Affected by the launcher window size.
+* `Decoder`: FPS of video decoding stream.
+    - Affected by the source video resolution and format.
+    - Capped at `60`, since GUI render can't go faster on modern CPUs.
+* `Source`: FPS of the video file itself.
+"""
+loc = """
+Wyświetla informacje o FPS animowanego tła.
+
+* `Render`: FPS silnika renderującego interfejs graficzny.
+    - Zależy od rozmiaru okna launchera.
+* `Decoder`: FPS dekodowania strumienia wideo.
+    - Zależy od rozdzielczości i formatu źródłowego pliku wideo.
+    - Ograniczone do `60`, ponieważ na nowoczesnych procesorach renderowanie interfejsu graficznego nie może działać szybciej.
+* `Source`: FPS samego pliku wideo.
+"""
+
+[launcher_settings_dev_mode_checkbox]
+src = "Theme Developer Mode"
+loc = "Tryb deweloperski motywów"
+
+[launcher_settings_auto_close_checkbox_tooltip]
+src = """
+Choose what the launcher should do after the game starts and XXMI DLL injection is confirmed.
+
+* **Enabled:** Automatically close the launcher.
+* **Disabled:** Keep the launcher running.
+"""
+loc = """
+Wybierz, co launcher ma zrobić po uruchomieniu gry i potwierdzeniu wstrzyknięcia biblioteki DLL XXMI.
+
+* **Włączone:** Automatycznie zamknij launcher.
+* **Wyłączone:** Pozostaw launcher uruchomiony.
+"""
+
+[launcher_settings_theme_option_menu_tooltip]
+src = """
+Select a launcher GUI theme.
+
+> The `Default` theme will be **overwritten by launcher updates**! Create a copy if you want to customize it.
+
+To create a custom theme:
+
+1. Duplicate the `Default` folder inside the `Themes` folder.
+2. Rename the duplicate to the name you want displayed here.
+3. Edit or replace the images using any of the supported file extensions:
+
+- Static images: {static_extensions:list}.
+- Animated images: {animated_extensions:list}.
+    * For best animation performance and storage efficiency, use `.avif` format.
+    * Animated images are supported only in `LauncherFrame` and its subfolders for now.
+"""
+loc = """
+Wybierz motyw interfejsu graficznego launchera.
+
+> Motyw `Default` zostanie **nadpisany podczas aktualizacji launchera**! Jeśli chcesz go dostosować, utwórz jego kopię.
+
+Aby utworzyć własny motyw:
+
+1. Zduplikuj folder `Default` znajdujący się w folderze `Themes`.
+2. Zmień nazwę kopii na nazwę, która ma być wyświetlana w tym miejscu.
+3. Edytuj lub zastąp obrazy, używając jednego z obsługiwanych rozszerzeń plików:
+
+- Obrazy statyczne: {static_extensions:list}.
+- Obrazy animowane: {animated_extensions:list}.
+    * Aby uzyskać najlepszą wydajność animacji i efektywnie wykorzystać miejsce na dysku, używaj formatu `.avif`.
+    * Obrazy animowane są obecnie obsługiwane tylko w `LauncherFrame` i jego podfolderach.
+"""
+
+[launcher_settings_window_scale_label]
+src = "Window Scale"
+loc = "Skala okna"
+
+[launcher_settings_window_scale_tooltip]
+src = """
+Select the size of the launcher window.
+
+* **{launcher_settings_window_scale_auto}**: Select optimal DPI scaling automatically.
+* **{launcher_settings_window_scale_custom}**: Specify custom window scale percentage.
+"""
+loc = """
+Wybierz rozmiar okna launchera.
+
+* **{launcher_settings_window_scale_auto}**: Automatycznie dobierz optymalną skalę DPI.
+* **{launcher_settings_window_scale_custom}**: Ustaw niestandardową skalę okna w procentach.
+"""
+
+[launcher_settings_custom_window_scale_label]
+src = "Custom Scale"
+loc = "Skala niestandardowa"
+
+[launcher_settings_custom_window_scale_button_label]
+src = "➔ Apply"
+loc = "➔ Zastosuj"
+
+[launcher_settings_custom_window_scale_button_tooltip]
+src = "Apply specified scale to the window."
+loc = "Zastosuj określoną skalę do okna."
+
+[launcher_settings_custom_window_scale_tooltip]
+src = """
+Set the window scale percentage.
+
+* `100`% corresponds to the native launcher resolution of **1280x720**.
+* The window scale is limited to a minimum of `50`% and a maximum of your monitor's resolution.
+"""
+loc = """
+Ustaw skalę okna w procentach.
+
+* `100`% odpowiada natywnej rozdzielczości launchera **1280x720**.
+* Skala okna może wynosić minimum `50`%, a jej maksimum zależy od rozdzielczości monitora.
+"""
+
+[launcher_settings_dev_mode_checkbox_tooltip]
+src = """
+Enables utilities for theme development.
+
+* **Hot reload:** Automatically detect changes to `custom-tkinter-theme.json` and apply them.
+* **FPS counter:** Display animated background FPS information at the bottom of the main window.
+"""
+loc = """
+Włącza narzędzia do tworzenia motywów.
+
+* **Automatyczne przeładowywanie:** Automatycznie wykrywaj zmiany w pliku `custom-tkinter-theme.json` i stosuj je.
+* **Licznik FPS:** Wyświetlaj informacje o FPS animowanego tła na dole głównego okna.
+"""

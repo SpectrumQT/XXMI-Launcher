@@ -1,0 +1,191 @@
+[launcher_settings_window_scale_auto]
+src = "Auto"
+loc = "자동"
+
+[launcher_settings_window_scale_50]
+src = "50% (640x360)"
+loc = "50% (640x360)"
+
+[launcher_settings_window_scale_75]
+src = "75% (960x540)"
+loc = "75% (960x540)"
+
+[launcher_settings_window_scale_100]
+src = "100% (1280x720)"
+loc = "100% (1280x720)"
+
+[launcher_settings_window_scale_125]
+src = "125% (1600x900)"
+loc = "125% (1600x900)"
+
+[launcher_settings_window_scale_150]
+src = "150% (1920x1080)"
+loc = "150% (1920x1080)"
+
+[launcher_settings_window_scale_200]
+src = "200% (2560x1440)"
+loc = "200% (2560x1440)"
+
+[launcher_settings_window_scale_250]
+src = "250% (3200x1800)"
+loc = "250% (3200x1800)"
+
+[launcher_settings_window_scale_300]
+src = "300% (3840x2160)"
+loc = "300% (3840x2160)"
+
+[launcher_settings_window_scale_custom]
+src = "Custom"
+loc = "사용자 지정"
+
+[message_title_element_apply_theme_error]
+src = "Theme Loading Error"
+loc = "테마 로드 오류"
+
+[message_text_element_apply_theme_error]
+src = """
+Cannot to apply `custom-tkinter-theme.json` › `{class_name}`:
+> {error_text}
+```
+{theme_data}
+```
+"""
+loc = """
+`custom-tkinter-theme.json` › `{class_name}`을(를) 적용할 수 없습니다:
+> {error_text}
+```
+{theme_data}
+```
+"""
+
+[launcher_frame_animation_info_tooltip]
+src = """
+Displays animated background FPS information.
+
+* `Render`: FPS of GUI drawing engine.
+    - Affected by the launcher window size.
+* `Decoder`: FPS of video decoding stream.
+    - Affected by the source video resolution and format.
+    - Capped at `60`, since GUI render can't go faster on modern CPUs.
+* `Source`: FPS of the video file itself.
+"""
+loc = """
+애니메이션 배경의 FPS 정보를 표시합니다.
+
+* `Render`: GUI 렌더링 엔진의 FPS입니다.
+    - 런처 창 크기의 영향을 받습니다.
+* `Decoder`: 비디오 스트림 디코딩 FPS입니다.
+    - 원본 비디오의 해상도와 형식에 영향을 받습니다.
+    - 최신 CPU에서도 GUI 렌더링 속도에는 한계가 있으므로 최대 `60`으로 제한됩니다.
+* `Source`: 비디오 파일 자체의 FPS입니다.
+"""
+
+[launcher_settings_dev_mode_checkbox]
+src = "Theme Developer Mode"
+loc = "테마 개발자 모드"
+
+[launcher_settings_auto_close_checkbox_tooltip]
+src = """
+Choose what the launcher should do after the game starts and XXMI DLL injection is confirmed.
+
+* **Enabled:** Automatically close the launcher.
+* **Disabled:** Keep the launcher running.
+"""
+loc = """
+게임이 시작되고 XXMI DLL 주입이 확인된 후 런처가 수행할 작업을 선택합니다.
+
+* **활성화:** 런처를 자동으로 종료합니다.
+* **비활성화:** 런처를 계속 실행 상태로 유지합니다.
+"""
+
+[launcher_settings_theme_option_menu_tooltip]
+src = """
+Select a launcher GUI theme.
+
+> The `Default` theme will be **overwritten by launcher updates**! Create a copy if you want to customize it.
+
+To create a custom theme:
+
+1. Duplicate the `Default` folder inside the `Themes` folder.
+2. Rename the duplicate to the name you want displayed here.
+3. Edit or replace the images using any of the supported file extensions:
+
+- Static images: {static_extensions:list}.
+- Animated images: {animated_extensions:list}.
+    * For best animation performance and storage efficiency, use `.avif` format.
+    * Animated images are supported only in `LauncherFrame` and its subfolders for now.
+"""
+loc = """
+런처 GUI 테마를 선택합니다.
+
+> `Default` 테마는 **런처 업데이트 시 덮어쓰여집니다**! 테마를 사용자 지정하려면 먼저 복사본을 만드세요.
+
+사용자 지정 테마를 만드는 방법:
+
+1. `Themes` 폴더 안에 있는 `Default` 폴더를 복제합니다.
+2. 복제한 폴더의 이름을 이곳에 표시할 이름으로 변경합니다.
+3. 지원되는 파일 확장자를 사용하여 이미지를 편집하거나 교체합니다.
+
+- 정적 이미지: {static_extensions:list}.
+- 애니메이션 이미지: {animated_extensions:list}.
+    * 최상의 애니메이션 성능과 효율적인 저장 공간 활용을 위해 `.avif` 형식을 사용하세요.
+    * 현재 애니메이션 이미지는 `LauncherFrame` 및 해당 하위 폴더에서만 지원됩니다.
+"""
+
+[launcher_settings_window_scale_label]
+src = "Window Scale"
+loc = "창 크기 배율"
+
+[launcher_settings_window_scale_tooltip]
+src = """
+Select the size of the launcher window.
+
+* **{launcher_settings_window_scale_auto}**: Select optimal DPI scaling automatically.
+* **{launcher_settings_window_scale_custom}**: Specify custom window scale percentage.
+"""
+loc = """
+런처 창의 크기를 선택합니다.
+
+* **{launcher_settings_window_scale_auto}**: 최적의 DPI 배율을 자동으로 설정합니다.
+* **{launcher_settings_window_scale_custom}**: 창 배율을 백분율로 직접 지정합니다.
+"""
+
+[launcher_settings_custom_window_scale_label]
+src = "Custom Scale"
+loc = "사용자 지정 배율"
+
+[launcher_settings_custom_window_scale_button_label]
+src = "➔ Apply"
+loc = "➔ 적용"
+
+[launcher_settings_custom_window_scale_button_tooltip]
+src = "Apply specified scale to the window."
+loc = "지정한 배율을 창에 적용합니다."
+
+[launcher_settings_custom_window_scale_tooltip]
+src = """
+Set the window scale percentage.
+
+* `100`% corresponds to the native launcher resolution of **1280x720**.
+* The window scale is limited to a minimum of `50`% and a maximum of your monitor's resolution.
+"""
+loc = """
+창 배율을 백분율로 설정합니다.
+
+* `100`%는 런처의 기본 해상도인 **1280x720**에 해당합니다.
+* 창 배율은 최소 `50`%부터 모니터 해상도에 따른 최대값까지 설정할 수 있습니다.
+"""
+
+[launcher_settings_dev_mode_checkbox_tooltip]
+src = """
+Enables utilities for theme development.
+
+* **Hot reload:** Automatically detect changes to `custom-tkinter-theme.json` and apply them.
+* **FPS counter:** Display animated background FPS information at the bottom of the main window.
+"""
+loc = """
+테마 개발용 도구를 활성화합니다.
+
+* **핫 리로드:** `custom-tkinter-theme.json`의 변경 사항을 자동으로 감지하고 적용합니다.
+* **FPS 카운터:** 메인 창 하단에 애니메이션 배경의 FPS 정보를 표시합니다.
+"""

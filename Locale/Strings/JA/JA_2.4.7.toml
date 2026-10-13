@@ -1,0 +1,191 @@
+[launcher_settings_window_scale_auto]
+src = "Auto"
+loc = "自動"
+
+[launcher_settings_window_scale_50]
+src = "50% (640x360)"
+loc = "50% (640x360)"
+
+[launcher_settings_window_scale_75]
+src = "75% (960x540)"
+loc = "75% (960x540)"
+
+[launcher_settings_window_scale_100]
+src = "100% (1280x720)"
+loc = "100% (1280x720)"
+
+[launcher_settings_window_scale_125]
+src = "125% (1600x900)"
+loc = "125% (1600x900)"
+
+[launcher_settings_window_scale_150]
+src = "150% (1920x1080)"
+loc = "150% (1920x1080)"
+
+[launcher_settings_window_scale_200]
+src = "200% (2560x1440)"
+loc = "200% (2560x1440)"
+
+[launcher_settings_window_scale_250]
+src = "250% (3200x1800)"
+loc = "250% (3200x1800)"
+
+[launcher_settings_window_scale_300]
+src = "300% (3840x2160)"
+loc = "300% (3840x2160)"
+
+[launcher_settings_window_scale_custom]
+src = "Custom"
+loc = "カスタム"
+
+[message_title_element_apply_theme_error]
+src = "Theme Loading Error"
+loc = "テーマの読み込みエラー"
+
+[message_text_element_apply_theme_error]
+src = """
+Cannot to apply `custom-tkinter-theme.json` › `{class_name}`:
+> {error_text}
+```
+{theme_data}
+```
+"""
+loc = """
+`custom-tkinter-theme.json` › `{class_name}` を適用できません：
+> {error_text}
+```
+{theme_data}
+```
+"""
+
+[launcher_frame_animation_info_tooltip]
+src = """
+Displays animated background FPS information.
+
+* `Render`: FPS of GUI drawing engine.
+    - Affected by the launcher window size.
+* `Decoder`: FPS of video decoding stream.
+    - Affected by the source video resolution and format.
+    - Capped at `60`, since GUI render can't go faster on modern CPUs.
+* `Source`: FPS of the video file itself.
+"""
+loc = """
+アニメーション背景のFPS情報を表示します。
+
+* `Render`：GUI描画エンジンのFPS。
+    - ランチャーウィンドウのサイズに影響されます。
+* `Decoder`：動画ストリームのデコードFPS。
+    - 元動画の解像度と形式に影響されます。
+    - 最新のCPUでもGUIの描画速度には限界があるため、上限は `60` です。
+* `Source`：動画ファイル自体のFPS。
+"""
+
+[launcher_settings_dev_mode_checkbox]
+src = "Theme Developer Mode"
+loc = "テーマ開発者モード"
+
+[launcher_settings_auto_close_checkbox_tooltip]
+src = """
+Choose what the launcher should do after the game starts and XXMI DLL injection is confirmed.
+
+* **Enabled:** Automatically close the launcher.
+* **Disabled:** Keep the launcher running.
+"""
+loc = """
+ゲームの起動後、XXMI DLLの注入が確認された際に、ランチャーが実行する動作を選択します。
+
+* **有効：** ランチャーを自動的に閉じます。
+* **無効：** ランチャーを起動したままにします。
+"""
+
+[launcher_settings_theme_option_menu_tooltip]
+src = """
+Select a launcher GUI theme.
+
+> The `Default` theme will be **overwritten by launcher updates**! Create a copy if you want to customize it.
+
+To create a custom theme:
+
+1. Duplicate the `Default` folder inside the `Themes` folder.
+2. Rename the duplicate to the name you want displayed here.
+3. Edit or replace the images using any of the supported file extensions:
+
+- Static images: {static_extensions:list}.
+- Animated images: {animated_extensions:list}.
+    * For best animation performance and storage efficiency, use `.avif` format.
+    * Animated images are supported only in `LauncherFrame` and its subfolders for now.
+"""
+loc = """
+ランチャーのGUIテーマを選択します。
+
+> `Default` テーマは**ランチャーのアップデート時に上書きされます**！カスタマイズしたい場合は、コピーを作成してください。
+
+カスタムテーマを作成する方法：
+
+1. `Themes` フォルダー内にある `Default` フォルダーを複製します。
+2. 複製したフォルダーの名前を、ここに表示したい名前に変更します。
+3. 以下の対応するファイル拡張子を使用して、画像を編集または置き換えます。
+
+- 静止画像：{static_extensions:list}。
+- アニメーション画像：{animated_extensions:list}。
+    * アニメーションのパフォーマンスを最大限に高め、ストレージ容量を効率的に使用するには、`.avif` 形式を使用してください。
+    * 現在、アニメーション画像は `LauncherFrame` とそのサブフォルダーでのみサポートされています。
+"""
+
+[launcher_settings_window_scale_label]
+src = "Window Scale"
+loc = "ウィンドウのスケール"
+
+[launcher_settings_window_scale_tooltip]
+src = """
+Select the size of the launcher window.
+
+* **{launcher_settings_window_scale_auto}**: Select optimal DPI scaling automatically.
+* **{launcher_settings_window_scale_custom}**: Specify custom window scale percentage.
+"""
+loc = """
+ランチャーウィンドウのサイズを選択します。
+
+* **{launcher_settings_window_scale_auto}**：最適なDPIスケーリングを自動的に設定します。
+* **{launcher_settings_window_scale_custom}**：ウィンドウのスケールをパーセンテージで指定します。
+"""
+
+[launcher_settings_custom_window_scale_label]
+src = "Custom Scale"
+loc = "カスタムスケール"
+
+[launcher_settings_custom_window_scale_button_label]
+src = "➔ Apply"
+loc = "➔ 適用"
+
+[launcher_settings_custom_window_scale_button_tooltip]
+src = "Apply specified scale to the window."
+loc = "指定したスケールをウィンドウに適用します。"
+
+[launcher_settings_custom_window_scale_tooltip]
+src = """
+Set the window scale percentage.
+
+* `100`% corresponds to the native launcher resolution of **1280x720**.
+* The window scale is limited to a minimum of `50`% and a maximum of your monitor's resolution.
+"""
+loc = """
+ウィンドウのスケールをパーセンテージで設定します。
+
+* `100`% は、ランチャーの標準解像度 **1280x720** に相当します。
+* ウィンドウのスケールは最小 `50`% から、モニターの解像度に応じた最大値まで設定できます。
+"""
+
+[launcher_settings_dev_mode_checkbox_tooltip]
+src = """
+Enables utilities for theme development.
+
+* **Hot reload:** Automatically detect changes to `custom-tkinter-theme.json` and apply them.
+* **FPS counter:** Display animated background FPS information at the bottom of the main window.
+"""
+loc = """
+テーマ開発用のツールを有効にします。
+
+* **ホットリロード：** `custom-tkinter-theme.json` の変更を自動的に検出して適用します。
+* **FPSカウンター：** メインウィンドウの下部にアニメーション背景のFPS情報を表示します。
+"""

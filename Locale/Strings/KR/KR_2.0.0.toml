@@ -1702,16 +1702,6 @@ loc = "경고 음소거"
 src = "Close Launcher After Game Start"
 loc = "게임 시작 후 런처 닫기"
 
-[launcher_settings_auto_close_checkbox_tooltip]
-src = """
-Enabled: Launcher will close itself once the game has started and 3dmigoto injection has been confirmed.
-Disabled: Launcher will keep itself running.
-"""
-loc = """
-활성화: 게임이 시작되고 3dmigoto 주입이 확인되면 런처가 스스로 닫힙니다.
-비활성화: 런처가 계속 실행됩니다.
-"""
-
 [launcher_settings_auto_update_checkbox]
 src = "Auto Update"
 loc = "자동 업데이트"
@@ -1724,20 +1714,6 @@ Disabled: Use special [▲] button next to [Start] button to Download and Instal
 loc = """
 활성화: 런처 및 {importer} 업데이트가 자동으로 다운로드 및 설치됩니다.
 비활성화: 수동으로 업데이트를 다운로드하고 설치하려면 [시작] 버튼 옆에 있는 [▲] 버튼을 사용하세요.
-"""
-
-[launcher_settings_dev_mode_checkbox]
-src = "Dev Mode"
-loc = "개발자 모드"
-
-[launcher_settings_dev_mode_checkbox_tooltip]
-src = """
-Enabled: Launcher will track changes in `custom-tkinter-theme.json` and apply them on the fly.
-Disabled: Theme changes will not be tracked.
-"""
-loc = """
-활성화: 런처가 `custom-tkinter-theme.json`의 변경 사항을 추적하고 즉석에서 적용합니다.
-비활성화: 테마 변경 사항을 추적하지 않습니다.
 """
 
 [launcher_settings_github_token_entry_tooltip]

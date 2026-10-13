@@ -1,0 +1,191 @@
+[launcher_settings_window_scale_auto]
+src = "Auto"
+loc = "Automático"
+
+[launcher_settings_window_scale_50]
+src = "50% (640x360)"
+loc = "50% (640x360)"
+
+[launcher_settings_window_scale_75]
+src = "75% (960x540)"
+loc = "75% (960x540)"
+
+[launcher_settings_window_scale_100]
+src = "100% (1280x720)"
+loc = "100% (1280x720)"
+
+[launcher_settings_window_scale_125]
+src = "125% (1600x900)"
+loc = "125% (1600x900)"
+
+[launcher_settings_window_scale_150]
+src = "150% (1920x1080)"
+loc = "150% (1920x1080)"
+
+[launcher_settings_window_scale_200]
+src = "200% (2560x1440)"
+loc = "200% (2560x1440)"
+
+[launcher_settings_window_scale_250]
+src = "250% (3200x1800)"
+loc = "250% (3200x1800)"
+
+[launcher_settings_window_scale_300]
+src = "300% (3840x2160)"
+loc = "300% (3840x2160)"
+
+[launcher_settings_window_scale_custom]
+src = "Custom"
+loc = "Personalizado"
+
+[message_title_element_apply_theme_error]
+src = "Theme Loading Error"
+loc = "Error al cargar el tema"
+
+[message_text_element_apply_theme_error]
+src = """
+Cannot to apply `custom-tkinter-theme.json` › `{class_name}`:
+> {error_text}
+```
+{theme_data}
+```
+"""
+loc = """
+No se pudo aplicar `custom-tkinter-theme.json` › `{class_name}`:
+> {error_text}
+```
+{theme_data}
+```
+"""
+
+[launcher_frame_animation_info_tooltip]
+src = """
+Displays animated background FPS information.
+
+* `Render`: FPS of GUI drawing engine.
+    - Affected by the launcher window size.
+* `Decoder`: FPS of video decoding stream.
+    - Affected by the source video resolution and format.
+    - Capped at `60`, since GUI render can't go faster on modern CPUs.
+* `Source`: FPS of the video file itself.
+"""
+loc = """
+Muestra información de FPS del fondo animado.
+
+* `Render`: FPS del motor de renderizado de la interfaz gráfica.
+    - Depende del tamaño de la ventana del launcher.
+* `Decoder`: FPS de decodificación del flujo de video.
+    - Depende de la resolución y el formato del video de origen.
+    - Está limitado a `60`, ya que el renderizado de la interfaz gráfica no puede ir más rápido en los procesadores modernos.
+* `Source`: FPS del archivo de video.
+"""
+
+[launcher_settings_dev_mode_checkbox]
+src = "Theme Developer Mode"
+loc = "Modo de desarrollador de temas"
+
+[launcher_settings_auto_close_checkbox_tooltip]
+src = """
+Choose what the launcher should do after the game starts and XXMI DLL injection is confirmed.
+
+* **Enabled:** Automatically close the launcher.
+* **Disabled:** Keep the launcher running.
+"""
+loc = """
+Elige qué debe hacer el launcher después de que se inicie el juego y se confirme la inyección de la DLL de XXMI.
+
+* **Activado:** Cerrar el launcher automáticamente.
+* **Desactivado:** Mantener el launcher en ejecución.
+"""
+
+[launcher_settings_theme_option_menu_tooltip]
+src = """
+Select a launcher GUI theme.
+
+> The `Default` theme will be **overwritten by launcher updates**! Create a copy if you want to customize it.
+
+To create a custom theme:
+
+1. Duplicate the `Default` folder inside the `Themes` folder.
+2. Rename the duplicate to the name you want displayed here.
+3. Edit or replace the images using any of the supported file extensions:
+
+- Static images: {static_extensions:list}.
+- Animated images: {animated_extensions:list}.
+    * For best animation performance and storage efficiency, use `.avif` format.
+    * Animated images are supported only in `LauncherFrame` and its subfolders for now.
+"""
+loc = """
+Selecciona un tema para la interfaz gráfica del launcher.
+
+> ¡El tema `Default` será **sobrescrito con las actualizaciones del launcher**! Crea una copia si quieres personalizarlo.
+
+Para crear un tema personalizado:
+
+1. Duplica la carpeta `Default` dentro de la carpeta `Themes`.
+2. Cambia el nombre de la copia por el nombre que quieras que aparezca aquí.
+3. Edita o reemplaza las imágenes utilizando cualquiera de las extensiones de archivo compatibles:
+
+- Imágenes estáticas: {static_extensions:list}.
+- Imágenes animadas: {animated_extensions:list}.
+    * Para obtener el mejor rendimiento de las animaciones y aprovechar mejor el espacio de almacenamiento, utiliza el formato `.avif`.
+    * Por ahora, las imágenes animadas solo son compatibles con `LauncherFrame` y sus subcarpetas.
+"""
+
+[launcher_settings_window_scale_label]
+src = "Window Scale"
+loc = "Escala de la ventana"
+
+[launcher_settings_window_scale_tooltip]
+src = """
+Select the size of the launcher window.
+
+* **{launcher_settings_window_scale_auto}**: Select optimal DPI scaling automatically.
+* **{launcher_settings_window_scale_custom}**: Specify custom window scale percentage.
+"""
+loc = """
+Selecciona el tamaño de la ventana del launcher.
+
+* **{launcher_settings_window_scale_auto}**: Seleccionar automáticamente la escala de DPI óptima.
+* **{launcher_settings_window_scale_custom}**: Especificar un porcentaje de escala personalizado para la ventana.
+"""
+
+[launcher_settings_custom_window_scale_label]
+src = "Custom Scale"
+loc = "Escala personalizada"
+
+[launcher_settings_custom_window_scale_button_label]
+src = "➔ Apply"
+loc = "➔ Aplicar"
+
+[launcher_settings_custom_window_scale_button_tooltip]
+src = "Apply specified scale to the window."
+loc = "Aplicar a la ventana la escala especificada."
+
+[launcher_settings_custom_window_scale_tooltip]
+src = """
+Set the window scale percentage.
+
+* `100`% corresponds to the native launcher resolution of **1280x720**.
+* The window scale is limited to a minimum of `50`% and a maximum of your monitor's resolution.
+"""
+loc = """
+Establece el porcentaje de escala de la ventana.
+
+* `100`% corresponde a la resolución nativa del launcher de **1280x720**.
+* La escala de la ventana tiene un mínimo de `50`% y un máximo determinado por la resolución de tu monitor.
+"""
+
+[launcher_settings_dev_mode_checkbox_tooltip]
+src = """
+Enables utilities for theme development.
+
+* **Hot reload:** Automatically detect changes to `custom-tkinter-theme.json` and apply them.
+* **FPS counter:** Display animated background FPS information at the bottom of the main window.
+"""
+loc = """
+Habilita herramientas para desarrollar temas.
+
+* **Recarga en caliente:** Detectar automáticamente los cambios en `custom-tkinter-theme.json` y aplicarlos.
+* **Contador de FPS:** Mostrar información de FPS del fondo animado en la parte inferior de la ventana principal.
+"""

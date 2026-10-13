@@ -1,0 +1,191 @@
+[launcher_settings_window_scale_auto]
+src = "Auto"
+loc = "自动"
+
+[launcher_settings_window_scale_50]
+src = "50% (640x360)"
+loc = "50% (640x360)"
+
+[launcher_settings_window_scale_75]
+src = "75% (960x540)"
+loc = "75% (960x540)"
+
+[launcher_settings_window_scale_100]
+src = "100% (1280x720)"
+loc = "100% (1280x720)"
+
+[launcher_settings_window_scale_125]
+src = "125% (1600x900)"
+loc = "125% (1600x900)"
+
+[launcher_settings_window_scale_150]
+src = "150% (1920x1080)"
+loc = "150% (1920x1080)"
+
+[launcher_settings_window_scale_200]
+src = "200% (2560x1440)"
+loc = "200% (2560x1440)"
+
+[launcher_settings_window_scale_250]
+src = "250% (3200x1800)"
+loc = "250% (3200x1800)"
+
+[launcher_settings_window_scale_300]
+src = "300% (3840x2160)"
+loc = "300% (3840x2160)"
+
+[launcher_settings_window_scale_custom]
+src = "Custom"
+loc = "自定义"
+
+[message_title_element_apply_theme_error]
+src = "Theme Loading Error"
+loc = "主题加载错误"
+
+[message_text_element_apply_theme_error]
+src = """
+Cannot to apply `custom-tkinter-theme.json` › `{class_name}`:
+> {error_text}
+```
+{theme_data}
+```
+"""
+loc = """
+无法应用 `custom-tkinter-theme.json` › `{class_name}`：
+> {error_text}
+```
+{theme_data}
+```
+"""
+
+[launcher_frame_animation_info_tooltip]
+src = """
+Displays animated background FPS information.
+
+* `Render`: FPS of GUI drawing engine.
+    - Affected by the launcher window size.
+* `Decoder`: FPS of video decoding stream.
+    - Affected by the source video resolution and format.
+    - Capped at `60`, since GUI render can't go faster on modern CPUs.
+* `Source`: FPS of the video file itself.
+"""
+loc = """
+显示动态背景的 FPS 信息。
+
+* `Render`：图形界面渲染引擎的 FPS。
+    - 受启动器窗口大小影响。
+* `Decoder`：视频解码流的 FPS。
+    - 受源视频的分辨率和格式影响。
+    - 上限为 `60`，因为在现代 CPU 上，GUI 渲染速度无法更快。
+* `Source`：视频文件本身的 FPS。
+"""
+
+[launcher_settings_dev_mode_checkbox]
+src = "Theme Developer Mode"
+loc = "主题开发者模式"
+
+[launcher_settings_auto_close_checkbox_tooltip]
+src = """
+Choose what the launcher should do after the game starts and XXMI DLL injection is confirmed.
+
+* **Enabled:** Automatically close the launcher.
+* **Disabled:** Keep the launcher running.
+"""
+loc = """
+选择游戏启动并确认 XXMI DLL 注入成功后，启动器应执行的操作。
+
+* **启用：** 自动关闭启动器。
+* **禁用：** 保持启动器运行。
+"""
+
+[launcher_settings_theme_option_menu_tooltip]
+src = """
+Select a launcher GUI theme.
+
+> The `Default` theme will be **overwritten by launcher updates**! Create a copy if you want to customize it.
+
+To create a custom theme:
+
+1. Duplicate the `Default` folder inside the `Themes` folder.
+2. Rename the duplicate to the name you want displayed here.
+3. Edit or replace the images using any of the supported file extensions:
+
+- Static images: {static_extensions:list}.
+- Animated images: {animated_extensions:list}.
+    * For best animation performance and storage efficiency, use `.avif` format.
+    * Animated images are supported only in `LauncherFrame` and its subfolders for now.
+"""
+loc = """
+选择启动器的图形界面主题。
+
+> `Default` 主题将在**启动器更新时被覆盖**！如果你想自定义该主题，请先创建一个副本。
+
+创建自定义主题的方法：
+
+1. 复制 `Themes` 文件夹中的 `Default` 文件夹。
+2. 将副本重命名为你希望在此处显示的名称。
+3. 使用任意受支持的文件扩展名来编辑或替换图片：
+
+- 静态图片：{static_extensions:list}。
+- 动态图片：{animated_extensions:list}。
+    * 为了获得最佳动画性能并提高存储空间利用率，请使用 `.avif` 格式。
+    * 目前，动态图片仅支持在 `LauncherFrame` 及其子文件夹中使用。
+"""
+
+[launcher_settings_window_scale_label]
+src = "Window Scale"
+loc = "窗口缩放"
+
+[launcher_settings_window_scale_tooltip]
+src = """
+Select the size of the launcher window.
+
+* **{launcher_settings_window_scale_auto}**: Select optimal DPI scaling automatically.
+* **{launcher_settings_window_scale_custom}**: Specify custom window scale percentage.
+"""
+loc = """
+选择启动器窗口的大小。
+
+* **{launcher_settings_window_scale_auto}**：自动选择最佳 DPI 缩放比例。
+* **{launcher_settings_window_scale_custom}**：自定义窗口缩放百分比。
+"""
+
+[launcher_settings_custom_window_scale_label]
+src = "Custom Scale"
+loc = "自定义缩放"
+
+[launcher_settings_custom_window_scale_button_label]
+src = "➔ Apply"
+loc = "➔ 应用"
+
+[launcher_settings_custom_window_scale_button_tooltip]
+src = "Apply specified scale to the window."
+loc = "将指定的缩放比例应用于窗口。"
+
+[launcher_settings_custom_window_scale_tooltip]
+src = """
+Set the window scale percentage.
+
+* `100`% corresponds to the native launcher resolution of **1280x720**.
+* The window scale is limited to a minimum of `50`% and a maximum of your monitor's resolution.
+"""
+loc = """
+设置窗口缩放百分比。
+
+* `100`% 对应启动器的原生分辨率 **1280x720**。
+* 窗口缩放比例最低为 `50`%，最高不超过显示器分辨率所允许的范围。
+"""
+
+[launcher_settings_dev_mode_checkbox_tooltip]
+src = """
+Enables utilities for theme development.
+
+* **Hot reload:** Automatically detect changes to `custom-tkinter-theme.json` and apply them.
+* **FPS counter:** Display animated background FPS information at the bottom of the main window.
+"""
+loc = """
+启用用于主题开发的工具。
+
+* **热重载：** 自动检测 `custom-tkinter-theme.json` 的更改并应用更改。
+* **FPS 计数器：** 在主窗口底部显示动态背景的 FPS 信息。
+"""

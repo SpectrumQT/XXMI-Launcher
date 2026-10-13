@@ -1714,16 +1714,6 @@ loc = "Silenciar advertencias"
 src = "Close Launcher After Game Start"
 loc = "Cerrar el lanzador después de iniciar el juego"
 
-[launcher_settings_auto_close_checkbox_tooltip]
-src = """
-Enabled: Launcher will close itself once the game has started and 3dmigoto injection has been confirmed.
-Disabled: Launcher will keep itself running.
-"""
-loc = """
-Habilitado: El lanzador se cerrará una vez que el juego haya comenzado y se haya confirmado la inyección de 3dmigoto.
-Deshabilitado: El lanzador seguirá ejecutándose.
-"""
-
 [launcher_settings_auto_update_checkbox]
 src = "Auto Update"
 loc = "Actualización automática"
@@ -1736,20 +1726,6 @@ Disabled: Use special [▲] button next to [Start] button to Download and Instal
 loc = """
 Habilitado: las actualizaciones del lanzador y del {importer} se descargarán e instalarán automáticamente.
 Deshabilitado: utilice el botón especial [▲] situado junto al botón [Iniciar] para descargar e instalar las actualizaciones manualmente.
-"""
-
-[launcher_settings_dev_mode_checkbox]
-src = "Dev Mode"
-loc = "Modo de desarrollo"
-
-[launcher_settings_dev_mode_checkbox_tooltip]
-src = """
-Enabled: Launcher will track changes in `custom-tkinter-theme.json` and apply them on the fly.
-Disabled: Theme changes will not be tracked.
-"""
-loc = """
-Habilitado: El lanzador rastreará los cambios en `custom-tkinter-theme.json` y los aplicará sobre la marcha.
-Deshabilitado: No se rastrearán los cambios en el tema.
 """
 
 [launcher_settings_github_token_entry_tooltip]
