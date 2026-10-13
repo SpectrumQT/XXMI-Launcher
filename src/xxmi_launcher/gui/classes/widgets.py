@@ -1473,7 +1473,7 @@ class UIButton(UIWidget, CTkButton):
         return self.get_text_width() + round(offset)
 
     def _set_auto_width(self):
-        self.configure(width=self.get_text_width())
+        self.configure(width=self.get_auto_width())
 
     def _get_visual_state_colors(self):
         """Return (border_color, text_color, inner_color) for the current state."""
