@@ -32,8 +32,10 @@ class LauncherSettingsFrame(SettingsContentFrame):
                             widget=OptionWidget.CHECKBOX,
                             value_variable="Vars.Launcher.auto_close",
                             tooltip=L("launcher_settings_auto_close_checkbox_tooltip", """
-                                Enabled: Launcher will close itself once the game has started and 3dmigoto injection has been confirmed.
-                                Disabled: Launcher will keep itself running.
+                                Choose what the launcher should do after the game starts and XXMI DLL injection is confirmed.
+                                
+                                * **Enabled:** Automatically close the launcher.
+                                * **Disabled:** Keep the launcher running.
                             """),
                         ),
 
