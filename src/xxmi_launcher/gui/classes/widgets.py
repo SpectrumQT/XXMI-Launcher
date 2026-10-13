@@ -184,6 +184,15 @@ class UIText(UICanvasWidget, CTkBaseClass):
 
 
 AnimationFrame = tuple[int, Image.Image, int]
+
+
+@dataclass
+class AnimationInfo:
+    render_fps: float
+    filter_fps: float
+    source_fps: float
+
+
 class _PyAVVideoSource:
     """Description of a media file decoded by PyAV.
 
@@ -214,6 +223,7 @@ class AnimationMixin:
 
     _ANIMATION_RETRY_MS = 4
     _ANIMATION_MIN_DELAY_MS = 2
+    _ANIMATION_FPS_SMOOTHING_ALPHA = 0.3
 
     # Reserve time for Tk to process tooltips, redraws, and input events.
     _ANIMATION_MIN_IDLE_MS = 8
@@ -246,6 +256,23 @@ class AnimationMixin:
         self._anim_throughput_started = time.perf_counter()
         self._anim_throughput_displayed = 0
         self._anim_effective_fps = 0.0
+
+        # Exponential moving averages; each metric needs only one stored value.
+        self._anim_render_fps = 0.0
+        self._anim_filter_fps = 0.0
+        self._anim_source_fps = 0.0
+
+    def get_animation_info(self) -> AnimationInfo | None:
+        if not self._anim_is_running:
+            return None
+
+        with self._anim_condition:
+            return AnimationInfo(
+                render_fps=self._anim_render_fps,
+                filter_fps=self._anim_filter_fps,
+                source_fps=self._anim_source_fps,
+            )
+        
     def _scale_delay(self, delay: int) -> int:
         # Rendering cost is largely driven by the number of pixels submitted to the canvas.
         # When both dimensions scale by factor s, pixel count grows approximately as s²:
@@ -260,6 +287,15 @@ class AnimationMixin:
         scaling_factor = self._apply_widget_scaling(1.0)
         return int(delay * (scaling_factor ** 2))
 
+    def _update_fps_average(self, current: float, sample: float) -> float:
+        """Update an exponential moving average without retaining sample history."""
+        if sample <= 0.0:
+            return current
+        if current <= 0.0:
+            return sample
+
+        alpha = self._ANIMATION_FPS_SMOOTHING_ALPHA
+        return current * (1.0 - alpha) + sample * alpha
     
     # region Host-widget Hooks
 
@@ -429,6 +465,10 @@ class AnimationMixin:
 
                 if elapsed >= 1.0:
                     self._anim_effective_fps = self._anim_throughput_displayed / elapsed
+                    with self._anim_condition:
+                        self._anim_render_fps = self._update_fps_average(
+                            self._anim_render_fps, self._anim_effective_fps
+                        )
                     self._anim_throughput_displayed = 0
                     self._anim_throughput_started = now
 
@@ -790,6 +830,14 @@ class AnimationMixin:
 
                 for frame_index, av_frame in enumerate(self._iter_filtered_frames(container, video_stream, graph)):
                     filtered_count += 1
+
+                    elapsed = time.perf_counter() - filtered_started
+                    if elapsed >= 1.0:
+                        filter_fps = filtered_count / elapsed
+                        with self._anim_condition:
+                            self._anim_filter_fps = self._update_fps_average(self._anim_filter_fps, filter_fps)
+                        filtered_count = 0
+                        filtered_started = time.perf_counter()
 
                     if self._worker_is_obsolete(generation, stop_event):
                         return

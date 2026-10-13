@@ -36,6 +36,7 @@ class LauncherSettingsFrame(SettingsContentFrame):
                                 Disabled: Launcher will keep itself running.
                             """),
                         ),
+
                         SettingsOption(
                             label_text=L("launcher_settings_theme_label", "UI Theme"),
                             widget=OptionWidget.DROPDOWN,
@@ -57,19 +58,21 @@ class LauncherSettingsFrame(SettingsContentFrame):
                                 - Animated images: {animated_extensions:list}.
                                     * For best animation performance and storage efficiency, use `.avif` format.
                                     * Animated images are supported only in `LauncherFrame` and its subfolders for now.
-                                    * To avoid GUI lag caused by image scaling, make sure animated backgrounds have the same resolution as the launcher window.
                             """).format(
-                                static_extensions = ["`.jpg`", "`.jpeg`", "`.png`", "`.webp`"],
-                                animated_extensions = ["`.apng`", "`.avif`", "`.gif`", "`.webp`"],
+                                static_extensions = ["`.avif`", "`.jpg`", "`.jpeg`", "`.png`", "`.webp`"],
+                                animated_extensions = ["`.avif`", "`.gif`", "`.mp4`", "`.webm`", "`.webp`"],
                             ),
                         ),
+
                         SettingsOption(
-                            label_text=L("launcher_settings_dev_mode_checkbox", "Dev Mode"),
+                            label_text=L("launcher_settings_dev_mode_checkbox", "Theme Developer Mode"),
                             widget=OptionWidget.CHECKBOX,
                             value_variable="Vars.Launcher.theme_dev_mode",
                             tooltip=L("launcher_settings_dev_mode_checkbox_tooltip", """
-                                Enabled: Launcher will track changes in `custom-tkinter-theme.json` and apply them on the fly.
-                                Disabled: Theme changes will not be tracked.
+                                Enables utilities for theme development.
+
+                                * **Hot reload:** Automatically detect changes to `custom-tkinter-theme.json` and apply them.
+                                * **FPS counter:** Display animated background FPS information at the bottom of the main window.
                             """),
                             on_value_update_command=self.toggle_theme_dev_mode,
                         ),

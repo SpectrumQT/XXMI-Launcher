@@ -57,6 +57,7 @@ class LauncherFrame(UIFrame):
         self.put(LauncherVersionText(self))
         self.put(XXMIVersionText(self))
         self.put(ImporterVersionText(self))
+        self.put(AnimationInfoText(self))
 
         # Settings Frame
         self.put(SettingsFrame(self, self.canvas))
@@ -672,3 +673,66 @@ class LogLevelText(UIText):
             self.show()
         except Exception:
             pass
+
+
+class AnimationInfoText(UIText):
+    UPDATE_INTERVAL_MS = 250
+
+    def __init__(self, master):
+        super().__init__(
+            master=master,
+            x=640,
+            y=680,
+            text='',
+            justify='center',
+            font=('Consolas', 16),
+            fill='#ffffff',
+            activefill='#f0f0f0',
+            anchor='n',
+        )
+        self._update_id = None
+
+        self.subscribe(Events.Application.ConfigUpdate, self.handle_config_update)
+
+        self.set_tooltip(lambda: L("importer_settings_log_level_option_menu_tooltip", """
+            Displays animated background FPS information.
+
+            * `Render`: FPS of GUI drawing engine.
+                - Affected by the launcher window size.
+            * `Decoder`: FPS of video decoding stream.
+                - Affected by the source video resolution and format.
+                - Capped at `60`, since GUI render can't go faster on modern CPUs.
+            * `Source`: FPS of the video file itself.
+        """)
+         + "\n\n"
+         + (
+             '<font color="#666666">'
+             f"{L('settings_title', 'Settings')} › "
+             f"{L('settings_tab_launcher', 'Launcher')} › "
+             f"{L('settings_tab_launcher', 'Launcher')} › "
+             f"{L("launcher_settings_dev_mode_checkbox", "Theme Developer Mode")}"
+             "</font>"
+         ))
+
+    def _update_text(self):
+        self._update_id = None
+
+        info = self.master.background_image.get_animation_info()
+
+        if info is None:
+            self.set('')
+        else:
+            self.set(f"Render: {info.render_fps:2.1f}  Decoder: {info.filter_fps:2.1f}  Source: {info.source_fps:2.1f}")
+
+        self._update_id = self.after(self.UPDATE_INTERVAL_MS, self._update_text)
+
+    def handle_config_update(self, event=None):
+        if Config.Launcher.theme_dev_mode:
+            if self._update_id is None:
+                self._update_text()
+                self._show()
+        else:
+            if self._update_id is not None:
+                self.after_cancel(self._update_id)
+                self._update_id = None
+                self._hide()
