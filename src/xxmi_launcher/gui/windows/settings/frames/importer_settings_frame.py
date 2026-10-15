@@ -82,9 +82,6 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
                                 texture_hash=0 if Config.Launcher.active_importer != "WWMI" else 1,
                                 track_texture_updates=0 if Config.Launcher.active_importer != "WWMI" else 1
                             ),
-                            load_if=Condition(
-                                predicate=self.is_xxmi_dll,
-                            ),
                             visible_if=Condition(
                                 variables=("Vars.Active.Migoto.manage_xxmi_dll_config",),
                                 predicate=self.manage_xxmi_dll_config,
@@ -95,7 +92,7 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
                             label_text=L("general_settings_xxmi_delay_label", "XXMI DLL Initialization Delay"),
                             widget=OptionWidget.INPUT_INT,
                             value_variable="Vars.Active.Importer.xxmi_dll_init_delay",
-                            tooltip=L("general_settings_xxmi_delay_entry_tooltip_base", """
+                            tooltip=self.get_option_availability_warning(MigotoFork.XXMI, None)+L("general_settings_xxmi_delay_entry_tooltip_base", """
                                 Delay in milliseconds for how long injected XXMI DLL (3dmigoto) must wait before initialization.
                                 {tooltip_footer}
                             """).format(
@@ -116,9 +113,6 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
                                     """),
                                 ) + '\n\n<font color="#666666">d3dx.ini › [System] › dll_initialization_delay</font>'),
                             ),
-                            load_if=Condition(
-                                predicate=self.is_xxmi_dll,
-                            ),
                             visible_if=Condition(
                                 variables=("Vars.Active.Migoto.manage_xxmi_dll_config",),
                                 predicate=self.manage_xxmi_dll_config,
@@ -136,15 +130,12 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
                             label_text=L("importer_settings_mute_warnings_checkbox", "Mute Warnings"),
                             widget=OptionWidget.CHECKBOX,
                             value_variable="Vars.Active.Migoto.mute_warnings",
-                            tooltip=L("importer_settings_mute_warnings_checkbox_tooltip", """
+                            tooltip=self.get_option_availability_warning(MigotoFork.XXMI, None)+L("importer_settings_mute_warnings_checkbox_tooltip", """
                                 Enable display of mod error warnings and beeping sound.
                     
                                 * **Enabled:** No error warnings or beeps whatsoever. Ignorance is bliss.
                                 * **Disabled:** Mod error warnings and beeps on **F10** will haunt poor souls.
                             """) + '\n\n<font color="#666666">d3dx.ini › [Logging] › show_warnings</font>',
-                            load_if=Condition(
-                                predicate=self.is_xxmi_dll,
-                            ),
                             visible_if=Condition(
                                 variables=("Vars.Active.Migoto.manage_xxmi_dll_config",),
                                 predicate=self.manage_xxmi_dll_config,
@@ -155,13 +146,13 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
                             label_text=L("importer_settings_clear_unknown_settings_checkbox", "Clear Unknown Mod Settings"),
                             widget=OptionWidget.CHECKBOX,
                             value_variable="Vars.Active.Migoto.clear_unknown_settings",
-                            tooltip=L("importer_settings_clear_unknown_settings_tooltip", """
+                            tooltip=self.get_option_availability_warning(MigotoFork.XXMI, "1.2.0")+L("importer_settings_clear_unknown_settings_tooltip", """
                                 Controls clean-up of mod settings when the mods that defined them are no longer present.
                     
                                 * **Enabled:** Clear unknown settings after **second** reload since mods removal.
                                 * **Disabled:** Do not clear unknown settings, keep them in **d3dx_user.ini** forever.
                             """) + '\n\n<font color="#666666">d3dx.ini › [System] › clear_unknown_settings</font>',
-                            load_if=Condition(
+                            enabled_if=Condition(
                                 predicate=self.is_xxmi_dll,
                             ),
                             visible_if=Condition(
@@ -181,13 +172,13 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
                             label_text=L("importer_settings_input_checkbox", "Enable By Default"),
                             widget=OptionWidget.CHECKBOX,
                             value_variable="Vars.Active.Migoto.input",
-                            tooltip=L("importer_settings_input_checkbox_tooltip", """
+                            tooltip=self.get_option_availability_warning(MigotoFork.XXMI, "1.2.0")+L("importer_settings_input_checkbox_tooltip", """
                                 Initial input state when game starts.
                     
                                 * **Enabled:** All input is enabled.
                                 * **Disabled:** Input is disabled according to **{importer_settings_input_disable_mode_label}**.
                             """) + '\n\n<font color="#666666">d3dx.ini › [Input] › input</font>',
-                            load_if=Condition(
+                            enabled_if=Condition(
                                 predicate=self.is_xxmi_dll,
                             ),
                             visible_if=Condition(
@@ -201,13 +192,13 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
                             widget=OptionWidget.DROPDOWN,
                             value_variable="Vars.Active.Migoto.input_disable_mode",
                             dropdown_values=InputDisableMode,
-                            tooltip=L("importer_settings_input_disable_mode_option_menu_tooltip", """
+                            tooltip=self.get_option_availability_warning(MigotoFork.XXMI, "1.2.0")+L("importer_settings_input_disable_mode_option_menu_tooltip", """
                                 Determines which input is disabled when **{launcher_settings_input_section_label}** is **Disabled**.
                     
                                 * **{importer_settings_input_disable_mode_mods}**: Disable input defined by mods.
                                 * **{importer_settings_input_disable_mode_all}**: Disable all input except the **Toggle Input** hotkey (**CTRL+ALT+SHIFT+END**).
                             """) + '\n\n<font color="#666666">d3dx.ini › [Input] › input_disable_mode</font>',
-                            load_if=Condition(
+                            enabled_if=Condition(
                                 predicate=self.is_xxmi_dll,
                             ),
                             visible_if=Condition(
@@ -284,8 +275,17 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
         )
 
     @staticmethod
-    def is_xxmi_dll() -> bool:
-        return Launcher.xxmi_dll_identity and Launcher.xxmi_dll_identity.fork == MigotoFork.XXMI
+    def is_xxmi_dll(fork: MigotoFork = MigotoFork.XXMI, min_version: str | None = None) -> bool:
+        if not Launcher.xxmi_dll_identity:
+            return False
+
+        if Launcher.xxmi_dll_identity.fork != fork:
+            return False
+
+        if min_version and min_version > Launcher.xxmi_dll_identity.version:
+            return False
+
+        return True
 
     @staticmethod
     def manage_xxmi_dll_config() -> bool:
@@ -297,3 +297,15 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
         if importer_folder == "":
             return
         Vars.Active.Importer.importer_folder.set(importer_folder)
+
+    @staticmethod
+    def get_option_availability_warning(fork: MigotoFork, min_version: str | None) -> str:
+        if ModelImporterSettingsFrame.is_xxmi_dll(fork, min_version):
+            return ""
+        else:
+            version_text = "" if not min_version else f" v{min_version}+"
+            return L("importer_settings_option_unavailable_warning", """
+                > This option is only available for {requirements_text}.            
+            """).format(
+                requirements_text=f"**{fork.value}{version_text}**"
+            ) + '\n\n'

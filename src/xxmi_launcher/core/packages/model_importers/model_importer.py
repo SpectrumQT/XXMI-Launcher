@@ -459,8 +459,20 @@ class ModelImporterPackage(Package):
         # 2. Add `"target": "GenshinImpact.exe",` line before `"loader": "XXMI Launcher.exe"`
         ini.set_option('Loader', 'target', game_exe_name)
 
+        self.set_default_ini_values(ini, 'core', SettingType.Constant)
+        if Config.Active.Migoto.enforce_rendering:
+            self.set_default_ini_values(ini, 'enforce_rendering', SettingType.Constant)
+
         self.set_default_ini_values(ini, 'enable_hunting', SettingType.Bool, Config.Active.Migoto.enable_hunting)
         self.set_default_ini_values(ini, 'dump_shaders', SettingType.Bool, Config.Active.Migoto.dump_shaders)
+
+        ini.set_option('System', 'dll_initialization_delay', Config.Active.Importer.xxmi_dll_init_delay)
+
+        screen_width, screen_height = ctypes.windll.user32.GetSystemMetrics(0), ctypes.windll.user32.GetSystemMetrics(1)
+        ini.set_option('System', 'screen_width', screen_width)
+        ini.set_option('System', 'screen_height', screen_height)
+
+        ini.set_option('Logging', 'show_warnings', 0 if Config.Active.Migoto.mute_warnings else 1)
 
         if xxmi_dll_version is None:
             ini.set_option('Logging', 'calls', (
@@ -471,15 +483,6 @@ class ModelImporterPackage(Package):
             ))
 
         elif xxmi_dll_version >= "1.2.0":
-            ini.set_option('System', 'dll_initialization_delay', Config.Active.Importer.xxmi_dll_init_delay)
-
-            screen_width, screen_height = ctypes.windll.user32.GetSystemMetrics(0), ctypes.windll.user32.GetSystemMetrics(1)
-            ini.set_option('System', 'screen_width', screen_width)
-            ini.set_option('System', 'screen_height', screen_height)
-
-            self.set_default_ini_values(ini, 'core', SettingType.Constant)
-            if Config.Active.Migoto.enforce_rendering:
-                self.set_default_ini_values(ini, 'enforce_rendering', SettingType.Constant)
 
             ini.set_option('System', 'clear_unknown_settings', 1 if Config.Active.Migoto.clear_unknown_settings else 0)
 
@@ -491,7 +494,6 @@ class ModelImporterPackage(Package):
             ini.set_option('Input', 'input_disable_mode', Config.Active.Migoto.input_disable_mode.name.lower())
 
             ini.set_option('Logging', 'log_level', Config.Active.Migoto.log_level.name.lower())
-            ini.set_option('Logging', 'show_warnings', 0 if Config.Active.Migoto.mute_warnings else 1)
 
         if ini.is_modified():
             log.debug(f'Writing d3dx.ini...')

@@ -22,10 +22,10 @@ log = logging.getLogger(__name__)
 
 
 class MigotoFork(Enum):
-    MAIN = 'MAIN'
-    XXMI = 'XXMI'
-    GIMI = 'GIMI'
-    UNKNOWN = 'UNKNOWN'
+    MAIN = '3DMigoto DLL'
+    XXMI = 'XXMI DLL'
+    GIMI = 'GIMIv7 DLL'
+    UNKNOWN = 'UNKNOWN DLL'
 
 
 @dataclass
