@@ -312,22 +312,6 @@ Archivo de registro: {log_path}
 Error: {error_text}
 """
 
-[error_migoto_game_detection_timeout]
-src = """
-Failed to detect window of game process {process_name}!
-
-If game window takes more than {start_timeout} seconds to appear, adjust **Timeout** in **General Settings**.
-
-If game crashed, try to follow the [Crash Isolation Checklist]({checklist_link}).
-"""
-loc = """
-No se pudo detectar la ventana del proceso del juego {process_name}.
-
-Si la ventana del juego tarda más de {start_timeout} segundos en aparecer, ajusta **Tiempo de espera** en **Configuración general**.
-
-Si el juego se bloqueó, intenta seguir la [Crash Isolation Checklist]({checklist_link}).
-"""
-
 [message_text_locale_errors]
 src = """
 Detected errors in active localization files:

@@ -1,0 +1,51 @@
+[error_migoto_game_detection_timeout]
+src = """
+Game process `{process_name}` did not start within **{start_timeout}**s.
+
+If game window takes longer to appear, adjust **{game_process_wait_timeout_label}** in **General Settings**.
+
+If game crashed, try to follow the [Crash Isolation Checklist]({checklist_link}).
+"""
+loc = """
+El proceso del juego `{process_name}` no se inició en **{start_timeout}** s.
+
+Si la ventana del juego tarda más en aparecer, ajusta **{game_process_wait_timeout_label}** en **Configuración general**.
+
+Si el juego se bloqueó, sigue la [lista de verificación para diagnosticar el fallo]({checklist_link}).
+"""
+
+[status_starting_game_platform]
+src = """
+Waiting for {platform} to launch the game process {process_name}...
+"""
+loc = """
+Esperando a que {platform} inicie el proceso del juego {process_name}...
+"""
+
+[status_starting_game_manual]
+src = """
+Waiting for user to manually launch the game process {process_name} with official launcher...
+"""
+loc = """
+Esperando a que el usuario inicie manualmente el proceso del juego {process_name} mediante el lanzador oficial...
+"""
+
+[error_game_start_timeout]
+src = """
+Game process `{process_name}` did not start within **{timeout}**s.
+
+If game takes longer to start, adjust **{game_process_wait_timeout_label}** in **General Settings**.
+"""
+loc = """
+El proceso del juego `{process_name}` no se inició en **{timeout}** s.
+
+Si el juego tarda más en iniciar, ajusta **{game_process_wait_timeout_label}** en **Configuración general**.
+"""
+
+[importer_settings_option_unavailable_warning]
+src = """
+> This option is only available for {requirements_text}.            
+"""
+loc = """
+> Esta opción solo está disponible para {requirements_text}.
+"""

@@ -216,22 +216,6 @@ loc = """
 src = "Optimize Mods"
 loc = "Оптимизировать моды"
 
-[error_migoto_game_detection_timeout]
-src = """
-Failed to detect window of game process {process_name}!
-
-If game window takes more than {start_timeout} seconds to appear, adjust **Timeout** in **General Settings**.
-
-If game crashed, try to follow the [Crash Isolation Checklist]({checklist_link}).
-"""
-loc = """
-Не удалось обнаружить окно процесса игры {process_name}!
-
-Если окно игры появляется более чем через {start_timeout} секунд, увеличьте **Таймаут** в **Общих настройках** лаунчера.
-
-Если игра вылетела, попробуйте выполнить шаги из [Crash Isolation Checklist]({checklist_link}).
-"""
-
 [message_text_locale_errors]
 src = """
 Detected errors in active localization files:

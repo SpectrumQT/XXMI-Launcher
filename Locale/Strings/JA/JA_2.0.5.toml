@@ -324,22 +324,6 @@ loc = "フルスクリーン"
 src = "Exclusive Fullscreen"
 loc = "排他フルスクリーン"
 
-[error_migoto_game_detection_timeout]
-src = """
-Failed to detect window of game process {process_name}!
-
-If game window takes more than {start_timeout} seconds to appear, adjust **Timeout** in **General Settings**.
-
-If game crashed, try to follow the [Crash Isolation Checklist]({checklist_link}).
-"""
-loc = """
-ゲームプロセス {process_name} のウィンドウを検出できませんでした!
-
-ウィンドウが表示されるまでに {start_timeout} 秒以上かかる場合は、**一般設定** の **タイムアウト** を調整してください。
-
-ゲームがクラッシュした場合は、[クラッシュ対策チェックリスト]({checklist_link})に従ってください。
-"""
-
 [message_text_locale_errors]
 src = """
 Detected errors in active localization files:

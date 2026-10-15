@@ -1,0 +1,51 @@
+[error_migoto_game_detection_timeout]
+src = """
+Game process `{process_name}` did not start within **{start_timeout}**s.
+
+If game window takes longer to appear, adjust **{game_process_wait_timeout_label}** in **General Settings**.
+
+If game crashed, try to follow the [Crash Isolation Checklist]({checklist_link}).
+"""
+loc = """
+게임 프로세스 `{process_name}`이(가) **{start_timeout}**초 이내에 시작되지 않았습니다.
+
+게임 창이 나타나는 데 시간이 더 오래 걸리면 **일반 설정**에서 **{game_process_wait_timeout_label}**을(를) 조정하세요.
+
+게임이 비정상 종료된 경우 [크래시 원인 분석 체크리스트]({checklist_link})에 따라 확인해 보세요.
+"""
+
+[status_starting_game_platform]
+src = """
+Waiting for {platform} to launch the game process {process_name}...
+"""
+loc = """
+{platform}에서 게임 프로세스 {process_name}을(를) 시작하기를 기다리는 중...
+"""
+
+[status_starting_game_manual]
+src = """
+Waiting for user to manually launch the game process {process_name} with official launcher...
+"""
+loc = """
+사용자가 공식 런처를 통해 게임 프로세스 {process_name}을(를) 수동으로 시작하기를 기다리는 중...
+"""
+
+[error_game_start_timeout]
+src = """
+Game process `{process_name}` did not start within **{timeout}**s.
+
+If game takes longer to start, adjust **{game_process_wait_timeout_label}** in **General Settings**.
+"""
+loc = """
+게임 프로세스 `{process_name}`이(가) **{timeout}**초 이내에 시작되지 않았습니다.
+
+게임 시작에 시간이 더 오래 걸리면 **일반 설정**에서 **{game_process_wait_timeout_label}**을(를) 조정하세요.
+"""
+
+[importer_settings_option_unavailable_warning]
+src = """
+> This option is only available for {requirements_text}.            
+"""
+loc = """
+> 이 옵션은 {requirements_text}에만 사용할 수 있습니다.
+"""
