@@ -1,8 +1,9 @@
 import re
 import logging
+import winreg
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Iterable
 from pathlib import Path
 
 import core.path_manager as Paths
@@ -12,12 +13,35 @@ import core.config_manager as Config
 from core.locale_manager import L
 from core.package_manager import PackageMetadata
 
-from core.config.enums import InjectMode
+from core.config.enums import GameLaunch, InjectMode, StartMethod
 from core.packages.model_importers.model_importer import ModelImporterPackage, ModelImporterConfig, Version
 from core.packages.migoto_package import MigotoManagerConfig
 from core.platforms.game import Game
+from core.utils.process_manager import ProcessManager, ProcessPriorityClass, LaunchContext, ExecutableLaunch
+from core.platforms.app_locator import RegistryValuePath, AppInfo, AppLocator
 
 log = logging.getLogger(__name__)
+
+
+APP_INFO = AppInfo(
+    exe_names={
+        "Launcher.exe",
+    },
+    display_names={
+        "GRYPHLINK",
+    },
+    known_paths={
+        Path("C:/Program Files/GRYPHLINK/Launcher.exe"),
+        Path("C:/Program Files (x86)/GRYPHLINK/Launcher.exe"),
+    },
+    known_registry_paths={
+        RegistryValuePath(root=winreg.HKEY_CURRENT_USER,
+                          key=r"Software\GRYPHLINK\Launcher\94005b4608518100ed8df1d8107356a8", value="install_path"),
+    },
+    expected_relative_paths={
+        "GRYPHLINK",
+    },
+)
 
 
 @dataclass
@@ -96,6 +120,89 @@ class EFMIPackage(ModelImporterPackage):
             r"C:\Program Files\GRYPHLINK\games\EndField Game",
             r"D:\GRYPHLINK\games\EndField Game"
         ]
+
+    @staticmethod
+    def get_latest_version_path(paths: Iterable[Path]) -> Path:
+        return max(paths, key=lambda path: tuple(map(int, path.parent.name.split("."))))
+
+    @staticmethod
+    def find_launcher_exe(launcher_path: Path) -> Path | None:
+        candidates = []
+        for path in launcher_path.iterdir():
+            if path.is_file():
+                continue
+            exe_path = path / "Games.exe"
+            if exe_path.is_file():
+                candidates.append(exe_path)
+        if not candidates:
+            return None
+        return EFMIPackage.get_latest_version_path(candidates)
+
+    def override_launch_context(
+        self,
+        launch_context: LaunchContext,
+        game_path: Path | None,
+        game_exe_path: Path | None,
+    ) -> None:
+        if Config.Importers.EFMI.Importer.game_launch != GameLaunch.DIRECT:
+            return
+
+        if Config.Importers.EFMI.Importer.start_method != StartMethod.NATIVE:
+            return
+
+        if game_exe_path is None:
+            return
+
+        if not isinstance(launch_context.target, ExecutableLaunch):
+            return
+
+        # Steam version doesn't have GRYPHLINK launcher requirement nonsense.
+        if "steamapps" in launch_context.target.exe_path.parts:
+            return
+
+        parent_exe = None
+
+        # Handle EGS installation.
+        launcher_candidate_path = game_exe_path.parent.parent.parent
+        if (launcher_candidate_path / "Launcher.exe").is_file():
+            parent_exe = self.find_launcher_exe(launcher_candidate_path)
+
+        # Hande GRYPHLINK installation.
+        if not parent_exe:
+            locator = AppLocator(APP_INFO)
+            launcher_exe_path = locator.find()
+
+            if launcher_exe_path:
+                parent_exe = self.find_launcher_exe(launcher_exe_path.parent)
+
+        if not parent_exe:
+            raise ValueError(f"Cannot find GRYPHLINK launcher file Games.exe")
+
+        CREATE_SUSPENDED = 0x00000004
+        CREATE_NO_WINDOW = 0x08000000
+
+        parent_launch_context = LaunchContext(
+            start_method=StartMethod.NATIVE,
+            process_name="Games.exe",
+            target=ExecutableLaunch(
+                exe_path=parent_exe,
+                cmd_args="",
+            ),
+            process_flags=CREATE_SUSPENDED | CREATE_NO_WINDOW
+        )
+
+        parent_process = ProcessManager(parent_launch_context)
+
+        if parent_process.is_running():
+            if not parent_process.stop(timeout=5):
+                raise ValueError(f"Failed to stop already running GRYPHLINK launcher process Games.exe")
+
+        parent_process.start()
+
+        if not parent_process.wait_until_running(timeout=15):
+            raise ValueError(f"Failed to start GRYPHLINK launcher process Games.exe")
+
+        launch_context.parent_process = parent_process
 
     def get_installed_version(self):
         try:
