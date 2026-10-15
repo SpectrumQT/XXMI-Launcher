@@ -382,6 +382,9 @@ class GameLauncher:
         # Wait a pi more for window to maximize.
         time.sleep(3.141592653589793)
 
+        if launch_context.parent_process:
+            launch_context.parent_process.stop()
+
     @staticmethod
     def notify_d3d11_mode_required():
         if Config.Active.Importer.d3d11_mode_cmd_args_warned:

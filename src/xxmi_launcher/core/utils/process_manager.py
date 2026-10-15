@@ -14,6 +14,7 @@ from mslex import split as split_windows_args
 from core.locale_manager import L
 
 from core.config.enums import StartMethod, ProcessPriority
+from core.utils.suspended_process import SuspendedProcess, create_suspended_with_parent
 
 
 log = logging.getLogger(__name__)
@@ -49,6 +50,7 @@ class LaunchContext:
     target: ExecutableLaunch | CommandLaunch
     work_dir: Path | None = None
     process_flags: int | None = None
+    parent_process: "ProcessManager | None" = None
 
 
 class ProcessManager:
@@ -84,6 +86,8 @@ class ProcessManager:
 
         # Set when this manager starts a process itself.
         self._process: psutil.Process | None = None
+        self._process_handle: int | None = None
+        self._suspended_process: SuspendedProcess | None = None
 
     # -------------------------------------------------------------------------
     # Public API
@@ -167,7 +171,7 @@ class ProcessManager:
             try:
                 # psutil can wait directly for a process that we know about.
                 process.wait(timeout=timeout)
-                self._process = None
+                self._forget_process()
                 return True
             except psutil.TimeoutExpired:
                 return False
@@ -230,7 +234,17 @@ class ProcessManager:
         # ShellExecuteW does not, so shell launches intentionally leave
         # _process unset and use process-name discovery instead.
         if process is not None:
-            self._process = psutil.Process(process.pid)
+            if isinstance(process, SuspendedProcess):
+                self._suspended_process = process
+                self._process_handle = process.process_handle
+            else:
+                self._process_handle = process._handle
+
+            try:
+                self._process = psutil.Process(process.pid)
+            except Exception:
+                self._forget_process()
+                raise
 
         if not wait:
             return True
@@ -257,14 +271,14 @@ class ProcessManager:
         process = self._find_process()
 
         if process is None:
-            self._process = None
+            self._forget_process()
             return True
 
         try:
             process.kill()
         except (psutil.NoSuchProcess, psutil.ZombieProcess):
             # The process exited between _find_process() and kill().
-            self._process = None
+            self._forget_process()
             return True
         except psutil.AccessDenied:
             # We found the process but do not have permission to terminate it.
@@ -275,9 +289,21 @@ class ProcessManager:
         stopped = self.wait_until_stopped(timeout)
 
         if stopped:
-            self._process = None
+            self._forget_process()
 
         return stopped
+
+    def resume_suspended(self) -> int:
+        """
+        Resume the primary thread of a process created through the parent-override path.
+
+        Returns the thread's previous suspend count.
+        A return value of 1 means the thread's suspend count is now zero.
+        """
+        if self._suspended_process is None:
+            raise RuntimeError("No native parent-override launch is available to resume")
+
+        return self._suspended_process.resume()
 
     def stop_with_args(
         self,
@@ -351,7 +377,7 @@ class ProcessManager:
     def _launch(
         self,
         context: LaunchContext,
-    ) -> subprocess.Popen | None:
+    ) -> subprocess.Popen | SuspendedProcess | None:
         """
         Execute the supplied LaunchContext.
 
@@ -359,16 +385,34 @@ class ProcessManager:
             subprocess.Popen for native launches.
             None for ShellExecuteW launches.
         """
+        if context.parent_process is not None and (
+            context.start_method != StartMethod.NATIVE
+            or not isinstance(context.target, ExecutableLaunch)
+        ):
+            raise ValueError( "parent_process requires StartMethod.NATIVE with ExecutableLaunch")
+
         flags = context.process_flags or 0
 
         match context.start_method, context.target:
             case StartMethod.NATIVE, ExecutableLaunch() as target:
-                return subprocess.Popen(
-                    [str(target.exe_path), *split_windows_args(target.cmd_args, like_cmd=False)],
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL,
-                    creationflags=flags,
-                    cwd=context.work_dir,
+                if context.parent_process is None:
+                    return subprocess.Popen(
+                        [str(target.exe_path), *split_windows_args(target.cmd_args, like_cmd=False)],
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL,
+                        creationflags=flags,
+                        cwd=context.work_dir,
+                    )
+
+                return create_suspended_with_parent(
+                    executable=target.exe_path,
+                    arguments=split_windows_args(
+                        target.cmd_args,
+                        like_cmd=False,
+                    ),
+                    parent_handle=int(context.parent_process._process_handle),
+                    work_dir=context.work_dir,
+                    process_flags=flags,
                 )
 
             case StartMethod.NATIVE, CommandLaunch() as target:
@@ -469,7 +513,7 @@ class ProcessManager:
             pass
 
         # The process has exited or can no longer be inspected.
-        self._process = None
+        self._forget_process()
 
         return None
 
@@ -533,3 +577,11 @@ class ProcessManager:
         win32gui.EnumWindows(callback, hwnds)
 
         return hwnds
+
+    def _forget_process(self) -> None:
+        """Release handles owned by the native launch path."""
+        self._process = None
+        self._process_handle = None
+        if self._suspended_process is not None:
+            self._suspended_process.close()
+            self._suspended_process = None
