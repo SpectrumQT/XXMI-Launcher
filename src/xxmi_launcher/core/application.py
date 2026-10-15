@@ -570,6 +570,7 @@ class Application:
             self.gui.after(100, Events.Fire, Events.Application.Ready())
             return
         except Exception as e:
+            logging.exception(e)
             log_path = f'<a href="file:///{Paths.App.Root / "XXMI Launcher Log.txt"}">XXMI Launcher Log.txt</a>'
             Events.Fire(Events.Application.ShowError(
                 title=L('message_title_model_importer_loading_failed', '{importer} Loading Failed').format(
