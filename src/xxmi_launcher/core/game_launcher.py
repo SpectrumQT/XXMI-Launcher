@@ -170,7 +170,7 @@ class GameLauncher:
             if (
                 get_value(cfg.Active.Importer.game) == Game.ZENLESS_ZONE_ZERO
                 and get_value(cfg.Active.Importer.skip_platform_game_launcher)
-            ):
+            ) or get_value(cfg.Active.Importer.game) == Game.ARKNIGHTS_ENDFIELD:
                 if not game_exe_path:
                     game_path, game_exe_path = self.get_game_paths()
                 if game_exe_path:
