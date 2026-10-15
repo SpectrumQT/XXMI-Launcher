@@ -441,22 +441,52 @@ class GameLauncher:
         launch_context: LaunchContext,
         platform_manager: GamePlatformProtocol | None = None
     ) -> None:
+        manager = ProcessManager(launch_context)
 
         match Config.Active.Importer.game_launch:
             case GameLaunch.STEAM:
+                Events.Fire(Events.Application.StatusUpdate(status=L("status_starting_game_platform", """
+                    Waiting for {platform} to launch the game process {process_name}...
+                """).format(
+                    process_name=launch_context.process_name,
+                    platform=GameLaunch.STEAM.value,
+                )))
                 platform_manager.launch(Config.Active.Importer.game, "")
 
             case GameLaunch.EPIC_GAMES:
+                Events.Fire(Events.Application.StatusUpdate(status=L("status_starting_game_platform", """
+                    Waiting for {platform} to launch the game process {process_name}...
+                """).format(
+                    process_name=launch_context.process_name,
+                    platform=GameLaunch.EPIC_GAMES.value,
+                )))
                 platform_manager.launch(Config.Active.Importer.game, launch_context.target.cmd_args)
 
             case GameLaunch.MANUAL:
-                log.debug(f'Waiting for user to start the game process {launch_context.process_name}...')
+                Events.Fire(Events.Application.StatusUpdate(status=L("status_starting_game_manual", """
+                    Waiting for user to manually launch the game process {process_name} with official launcher...
+                """).format(
+                    process_name=launch_context.process_name,
+                )))
 
             case _:
                 # Start game exe.
                 Events.Fire(Events.Application.StartGameExe(process_name=launch_context.process_name))
-                manager = ProcessManager(launch_context)
                 manager.start()
+
+                # Process was started as suspended for parent override.
+                if launch_context.parent_process:
+                    manager.resume_suspended()
+
+        if not manager.wait_until_running(timeout=Config.Active.Importer.process_timeout):
+            raise ValueError(L("error_game_start_timeout", """
+                Game process `{process_name}` did not start within **{timeout}**s.
+                
+                If game takes longer to start, adjust **{game_process_wait_timeout_label}** in **General Settings**.
+            """).format(
+                timeout=Config.Active.Importer.process_timeout,
+                process_name=launch_context.process_name,
+            ))
 
     @staticmethod
     def _ensure_game_close(process_name: str):
