@@ -424,9 +424,9 @@ class GameLauncher:
 
         if not window_found:
             raise ValueError(L('error_migoto_game_detection_timeout', """
-                Failed to detect window of game process {process_name}!
+                Game process `{process_name}` did not start within **{start_timeout}**s.
 
-                If game window takes more than {start_timeout} seconds to appear, adjust **Timeout** in **General Settings**.
+                If game window takes longer to appear, adjust **{game_process_wait_timeout_label}** in **General Settings**.
 
                 If game crashed, try to follow the [Crash Isolation Checklist]({checklist_link}).
             """).format(

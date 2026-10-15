@@ -116,6 +116,14 @@ class ProcessManager:
         """
         return self._find_process() is not None
 
+    def _is_ready(self, wait_for_window: bool) -> bool:
+        process = self._find_process()
+
+        if process is None:
+            return False
+
+        return not wait_for_window or self._has_visible_window(process)
+
     def wait_until_running(
         self,
         timeout: float = 30.0,
@@ -123,7 +131,7 @@ class ProcessManager:
         wait_for_window: bool = False,
     ) -> bool:
         """
-        Wait until the process is running.
+        Wait until the process is running and, optionally, its window is visible.
 
         Args:
             timeout: Maximum time to wait.
@@ -135,16 +143,15 @@ class ProcessManager:
         """
         deadline = time.monotonic() + timeout
 
-        while time.monotonic() < deadline:
-            process = self._find_process()
-            if process is not None:
-                if not wait_for_window or self._has_visible_window(process):
-                    return True
+        while True:
+            if self._is_ready(wait_for_window):
+                return True
 
-            time.sleep(interval)
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                return False
 
-        # Perform one final check in case the process started immediately after the last polling iteration.
-        return self.is_running()
+            time.sleep(min(interval, remaining))
 
     def wait_until_stopped(
         self,
