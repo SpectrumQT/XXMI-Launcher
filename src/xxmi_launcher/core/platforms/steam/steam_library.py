@@ -2,6 +2,8 @@ from pathlib import Path
 from typing import Any
 from dataclasses import dataclass
 
+from core.locale_manager import L
+
 from core.platforms.game import Game
 from core.platforms.steam.vdf_file import VdfFile
 
@@ -52,7 +54,7 @@ class SteamLibrary:
         Returns:
             The matching SteamApp, or None if the game is not installed.
         """
-        apps = self._find_installed_apps()
+        apps, errors = self._find_installed_apps()
 
         # AppID is the strongest and most reliable match.
         app_ids = STEAM_APP_IDS.get(game, frozenset())
@@ -65,6 +67,14 @@ class SteamLibrary:
         for app in apps:
             if self._matches_game(app, game):
                 return app
+
+        if errors:
+            error_text = L("error_text_steam_library_find_game_failed", """
+                Failed to find an installed Steam application for game {game_name}.
+            """).format(
+                game_name=game._value_,
+            )
+            self.raise_corrupted_manifests_error(error_text, errors)
 
         return None
 
@@ -84,7 +94,16 @@ class SteamLibrary:
             if not manifest.is_file():
                 continue
 
-            app = self._read_app_manifest(manifest)
+            try:
+                app = self._read_app_manifest(manifest)
+            except BaseException as e:
+                error_text = L("error_text_steam_library_find_app_failed", """
+                    Failed to find an installed Steam application for app id {app_id}.
+                """).format(
+                    app_id=app_id,
+                )
+                self.raise_corrupted_manifests_error(error_text, {manifest: e})
+                return None
 
             if app is not None:
                 return app
@@ -137,7 +156,9 @@ class SteamLibrary:
 
             return None
 
-        for app in self._find_installed_apps():
+        apps, errors = self._find_installed_apps()
+
+        for app in apps:
             try:
                 install_directory = app.install_directory.resolve()
             except OSError:
@@ -146,7 +167,27 @@ class SteamLibrary:
             if install_directory == game_directory:
                 return app.app_id
 
+        if errors:
+            error_text = L("error_text_steam_library_find_app_id_failed", """
+                Failed to find an installed Steam application for game directory:
+                {game_directory}
+            """).format(
+                game_directory=game_directory,
+            )
+            self.raise_corrupted_manifests_error(error_text, errors)
+
         return None
+
+    def raise_corrupted_manifests_error(self, error_text, errors: dict):
+        raise ValueError(L("error_text_steam_library_find_game", """
+            {error_text}
+
+            Some app manifests were skipped as supposedly corrupted:
+            {corrupted_manifests:md_list}
+        """).format(
+            error_text=error_text,
+            corrupted_manifests=list(errors.keys()),
+        ))
 
     def find_libraries(self) -> list[Path]:
         """
@@ -224,11 +265,13 @@ class SteamLibrary:
             if character.isalnum()
         )
 
-    def _find_installed_apps(self) -> list[SteamApp]:
+    def _find_installed_apps(self) -> tuple[list[SteamApp], dict]:
         """
         Find all installed Steam applications across all libraries.
         """
         apps: list[SteamApp] = []
+
+        errors = {}
 
         for library in self.find_libraries():
             steamapps = library / "steamapps"
@@ -237,12 +280,16 @@ class SteamLibrary:
                 continue
 
             for manifest in steamapps.glob("appmanifest_*.acf"):
-                app = self._read_app_manifest(manifest)
 
-                if app is not None:
-                    apps.append(app)
+                try:
+                    app = self._read_app_manifest(manifest)
 
-        return apps
+                    if app is not None:
+                        apps.append(app)
+                except BaseException as e:
+                    errors[manifest] = e
+
+        return apps, errors
 
     def _find_libraryfolders(self) -> Path | None:
         """
