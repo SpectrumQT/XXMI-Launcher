@@ -181,10 +181,11 @@ class OptionWidgetLabel(UILabel):
 
 
 class OptionWidgetErrorLabel(UILabel):
-    def __init__(self, master):
+    def __init__(self, master, wraplength: int):
         super().__init__(
             master=master,
             text='Unknown error!',
+            wraplength=wraplength,
         )
 
     def _show(self):
@@ -578,6 +579,7 @@ class SettingsOptionFrame(UIFrame):
         if option.value_validate_command and option.value_variable:
             error_label = OptionWidgetErrorLabel(
                 master=self,
+                wraplength=620,
             )
             self.put(error_label)
 
