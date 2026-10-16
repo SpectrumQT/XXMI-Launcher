@@ -28,3 +28,11 @@ class ModelImporterEvents:
     class OptimizeMods:
         silent: bool = True
         reset_cache: bool = False
+
+    @dataclass
+    class DetectLauncherFolder:
+        pass
+
+    @dataclass
+    class ValidateLauncherFolder:
+        launcher_folder: str

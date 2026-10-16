@@ -58,6 +58,7 @@ class GeneralSettingsFrame(SettingsContentFrame):
                                 * **{general_settings_launch_manual}:** Wait for you to launch the game manually.
                             """),
                         ),
+
                         SettingsOption(
                             label_text=L("general_settings_game_folder_label", "Game Folder"),
                             widget=OptionWidget.INPUT_STR,
@@ -71,7 +72,8 @@ class GeneralSettingsFrame(SettingsContentFrame):
                             input_button_text=L("settings_browse_path_button", "Browse..."),
                             input_button_command=self.change_game_folder,
                             tooltip=L("general_settings_game_folder_tooltip", """
-                                ## Path to the folder containing the game executable
+                                Path to the folder containing the game executable.
+                                
                                 * Usually named: {game_folder_names:bold:or_list}.
                                 * Contains files: {game_exe_names:bold:or_list}.
                                 * Contains folders: {game_folder_children:bold:and_list}.
@@ -83,6 +85,40 @@ class GeneralSettingsFrame(SettingsContentFrame):
                             visible_if=Condition(
                                 variables=("Vars.Active.Importer.game_launch",),
                                 predicate=lambda: Vars.Active.Importer.game_launch.get() == GameLaunch.DIRECT,
+                            ),
+                        ),
+
+                        SettingsOption(
+                            label_text=L("general_settings_launcher_folder_label", "Official Launcher Folder"),
+                            widget=OptionWidget.INPUT_STR,
+                            value_variable="Vars.Active.Importer.launcher_folder",
+                            value_validate_command=self.validate_launcher_folder,
+                            button_text=L("general_settings_detect_launcher_folder_button", "🔍 Detect Launcher"),
+                            button_command=self.detect_launcher_folder,
+                            button_tooltip=L("general_settings_detect_launcher_folder_button_tooltip",
+                                "Try to automatically detect existing launcher folders."
+                            ),
+                            input_button_text=L("settings_browse_path_button", "Browse..."),
+                            input_button_command=self.change_launcher_folder,
+                            tooltip=L("general_settings_launcher_folder_tooltip", """
+                                Path to the folder containing the official launcher.
+                                
+                                * Usually named: {folder_names:bold:or_list}.
+                                * Contains files: {folder_files:bold:or_list}.
+                            """).format(
+                                folder_names=Vars.Active.Importer.launcher_folder_names,
+                                folder_files=Vars.Active.Importer.launcher_folder_files,
+                            ),
+                            load_if=Condition(
+                                predicate=lambda: Vars.Launcher.active_importer.get() in {"EFMI"},
+                            ),
+                            visible_if=Condition(
+                                variables=("Vars.Active.Importer.game_launch","Vars.Active.Importer.game_folder"),
+                                predicate=lambda: (
+                                    Vars.Active.Importer.game_launch.get() == GameLaunch.DIRECT
+                                    and Vars.Active.Importer.game_folder.get()
+                                    and "steamapps" not in Vars.Active.Importer.game_folder.get().lower()
+                                ),
                             ),
                         ),
 
@@ -559,7 +595,6 @@ class GeneralSettingsFrame(SettingsContentFrame):
         except Exception as e:
             return str(e)
 
-
     @staticmethod
     def validate_game_folder() -> str | None:
         try:
@@ -572,3 +607,27 @@ class GeneralSettingsFrame(SettingsContentFrame):
     @staticmethod
     def reset_game_process_exe():
         Vars.Active.Importer.game_process_exe.set(Vars.Active.Importer.game_process_exe.get_default())
+
+    @staticmethod
+    def detect_launcher_folder():
+        try:
+            launcher_folder = Events.Call(Events.ModelImporter.DetectLauncherFolder())
+            Vars.Active.Importer.launcher_folder.set(str(launcher_folder))
+        except:
+            pass
+
+    @staticmethod
+    def validate_launcher_folder() -> str | None:
+        try:
+            launcher_folder = Vars.Active.Importer.launcher_folder.get()
+            launcher_exe_path = Events.Call(Events.ModelImporter.ValidateLauncherFolder(launcher_folder=launcher_folder.strip()))
+        except Exception as e:
+            log.debug(e)
+            return str(e)
+
+    @staticmethod
+    def change_launcher_folder():
+        launcher_folder = filedialog.askdirectory(initialdir=Vars.Active.Importer.launcher_folder.get())
+        if launcher_folder == "":
+            return
+        Vars.Active.Importer.launcher_folder.set(launcher_folder)
