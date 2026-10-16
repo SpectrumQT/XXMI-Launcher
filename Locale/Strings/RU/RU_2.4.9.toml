@@ -1,0 +1,183 @@
+[error_text_folder_not_specified]
+src = "Folder is not specified!"
+loc = "Папка не указана!"
+
+[error_text_folder_not_absolute]
+src = "Specified folder path is not absolute!"
+loc = "Указанный путь к папке не является абсолютным!"
+
+[error_text_folder_not_found]
+src = "Specified folder is not found!"
+loc = "Указанная папка не найдена!"
+
+[error_text_file_not_found_in_dir]
+src = """
+Failed to find `{file_name}` in specified folder!
+"""
+loc = """
+Не удалось найти `{file_name}` в указанной папке!
+"""
+
+[error_text_file_not_found_in_subdir]
+src = """
+Failed to find `{file_name}` in subfolders!
+"""
+loc = """
+Не удалось найти `{file_name}` во вложенных папках!
+"""
+
+[message_title_launcher_folder_not_configured]
+src = "Official Launcher Folder Not Configured"
+loc = "Папка официального лаунчера не настроена"
+
+[message_text_launcher_folder_not_configured]
+src = """
+Please set **{general_settings_launcher_folder_label}** option of **General Settings**.
+"""
+loc = """
+Укажите параметр **{general_settings_launcher_folder_label}** в разделе **Общие настройки**.
+"""
+
+[message_title_launcher_detection_failed]
+src = "Game Launcher Not Found"
+loc = "Лаунчер игры не найден"
+
+[message_text_launcher_detection_failed]
+src = """
+Could not find the official launcher on your device.
+
+Please set the **{general_settings_launcher_folder_label}** manually in **General Settings**.
+"""
+loc = """
+Не удалось найти официальный лаунчер на вашем устройстве.
+
+Укажите путь к параметру **{general_settings_launcher_folder_label}** вручную в разделе **Общие настройки**.
+"""
+
+[message_title_launcher_detected_single]
+src = "Official Launcher Found"
+loc = "Официальный лаунчер найден"
+
+[message_text_launcher_detected_single]
+src = """
+Please confirm that this is the correct **{general_settings_launcher_folder_label}**:
+```
+{launcher_folder}
+```
+Alternatively, set it manually in **General Settings**.
+"""
+loc = """
+Подтвердите, что это правильный путь для **{general_settings_launcher_folder_label}**:
+```
+{launcher_folder}
+```
+Также вы можете указать его вручную в разделе **Общие настройки**.
+"""
+
+[detected_launcher]
+src = "Detected launcher"
+loc = "Обнаруженный лаунчер"
+
+[message_title_launcher_detected_multiple]
+src = "Multiple Official Launchers Found"
+loc = "Найдено несколько официальных лаунчеров"
+
+[message_text_launcher_detected_multiple]
+src = """
+Please select the correct **{general_settings_launcher_folder_label}** below, or set it in **General Settings**.
+
+"""
+loc = """
+Выберите правильный путь для **{general_settings_launcher_folder_label}** ниже или укажите его в разделе **Общие настройки**.
+
+"""
+
+[status_detecting_game_launcher]
+src = """
+Detecting official launcher installation folder...
+"""
+loc = """
+Поиск папки установки официального лаунчера...
+"""
+
+[error_text_steam_library_find_game_failed]
+src = """
+Failed to find an installed Steam application for game {game_name}.
+"""
+loc = """
+Не удалось найти установленную игру Steam: {game_name}.
+"""
+
+[error_text_steam_library_find_app_failed]
+src = """
+Failed to find an installed Steam application for app id {app_id}.
+"""
+loc = """
+Не удалось найти установленное приложение Steam с ID {app_id}.
+"""
+
+[error_text_steam_library_find_app_id_failed]
+src = """
+Failed to find an installed Steam application for game directory:
+{game_directory}
+"""
+loc = """
+Не удалось найти установленное приложение Steam для папки игры:
+{game_directory}
+"""
+
+[error_text_steam_library_find_game]
+src = """
+{error_text}
+
+Some app manifests were skipped as supposedly corrupted:
+{corrupted_manifests:md_list}
+"""
+loc = """
+{error_text}
+
+Некоторые манифесты приложений были пропущены, так как предположительно повреждены:
+{corrupted_manifests:md_list}
+"""
+
+[general_settings_game_folder_tooltip]
+src = """
+Path to the folder containing the game executable.
+
+* Usually named: {game_folder_names:bold:or_list}.
+* Contains files: {game_exe_names:bold:or_list}.
+* Contains folders: {game_folder_children:bold:and_list}.
+"""
+loc = """
+Путь к папке, содержащей исполняемый файл игры.
+
+* Обычно называется: {game_folder_names:bold:or_list}.
+* Содержит файлы: {game_exe_names:bold:or_list}.
+* Содержит папки: {game_folder_children:bold:and_list}.
+"""
+
+[general_settings_launcher_folder_label]
+src = "Official Launcher Folder"
+loc = "Папка официального лаунчера"
+
+[general_settings_detect_launcher_folder_button]
+src = "🔍 Detect Launcher"
+loc = "🔍 Найти лаунчер"
+
+[general_settings_detect_launcher_folder_button_tooltip]
+src = "Try to automatically detect existing launcher folders."
+loc = "Попробовать автоматически найти существующие папки лаунчера."
+
+[general_settings_launcher_folder_tooltip]
+src = """
+Path to the folder containing the official launcher.
+
+* Usually named: {folder_names:bold:or_list}.
+* Contains files: {folder_files:bold:or_list}.
+"""
+loc = """
+Путь к папке, содержащей официальный лаунчер.
+
+* Обычно называется: {folder_names:bold:or_list}.
+* Содержит файлы: {folder_files:bold:or_list}.
+"""

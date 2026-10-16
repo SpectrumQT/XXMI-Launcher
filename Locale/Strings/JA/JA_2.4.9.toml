@@ -1,0 +1,183 @@
+[error_text_folder_not_specified]
+src = "Folder is not specified!"
+loc = "フォルダーが指定されていません！"
+
+[error_text_folder_not_absolute]
+src = "Specified folder path is not absolute!"
+loc = "指定されたフォルダーのパスは絶対パスではありません！"
+
+[error_text_folder_not_found]
+src = "Specified folder is not found!"
+loc = "指定されたフォルダーが見つかりません！"
+
+[error_text_file_not_found_in_dir]
+src = """
+Failed to find `{file_name}` in specified folder!
+"""
+loc = """
+指定されたフォルダーに `{file_name}` が見つかりませんでした！
+"""
+
+[error_text_file_not_found_in_subdir]
+src = """
+Failed to find `{file_name}` in subfolders!
+"""
+loc = """
+サブフォルダー内に `{file_name}` が見つかりませんでした！
+"""
+
+[message_title_launcher_folder_not_configured]
+src = "Official Launcher Folder Not Configured"
+loc = "公式ランチャーフォルダーが設定されていません"
+
+[message_text_launcher_folder_not_configured]
+src = """
+Please set **{general_settings_launcher_folder_label}** option of **General Settings**.
+"""
+loc = """
+**一般設定**で **{general_settings_launcher_folder_label}** オプションを設定してください。
+"""
+
+[message_title_launcher_detection_failed]
+src = "Game Launcher Not Found"
+loc = "ゲームランチャーが見つかりません"
+
+[message_text_launcher_detection_failed]
+src = """
+Could not find the official launcher on your device.
+
+Please set the **{general_settings_launcher_folder_label}** manually in **General Settings**.
+"""
+loc = """
+デバイス上に公式ランチャーが見つかりませんでした。
+
+**一般設定**で **{general_settings_launcher_folder_label}** を手動で設定してください。
+"""
+
+[message_title_launcher_detected_single]
+src = "Official Launcher Found"
+loc = "公式ランチャーが見つかりました"
+
+[message_text_launcher_detected_single]
+src = """
+Please confirm that this is the correct **{general_settings_launcher_folder_label}**:
+```
+{launcher_folder}
+```
+Alternatively, set it manually in **General Settings**.
+"""
+loc = """
+次のパスが正しい **{general_settings_launcher_folder_label}** であることを確認してください。
+```
+{launcher_folder}
+```
+**一般設定**で手動設定することもできます。
+"""
+
+[detected_launcher]
+src = "Detected launcher"
+loc = "検出されたランチャー"
+
+[message_title_launcher_detected_multiple]
+src = "Multiple Official Launchers Found"
+loc = "複数の公式ランチャーが見つかりました"
+
+[message_text_launcher_detected_multiple]
+src = """
+Please select the correct **{general_settings_launcher_folder_label}** below, or set it in **General Settings**.
+
+"""
+loc = """
+以下から正しい **{general_settings_launcher_folder_label}** を選択するか、**一般設定**で設定してください。
+
+"""
+
+[status_detecting_game_launcher]
+src = """
+Detecting official launcher installation folder...
+"""
+loc = """
+公式ランチャーのインストールフォルダーを検出しています...
+"""
+
+[error_text_steam_library_find_game_failed]
+src = """
+Failed to find an installed Steam application for game {game_name}.
+"""
+loc = """
+インストール済みのSteamゲーム `{game_name}` が見つかりませんでした。
+"""
+
+[error_text_steam_library_find_app_failed]
+src = """
+Failed to find an installed Steam application for app id {app_id}.
+"""
+loc = """
+アプリID {app_id} のインストール済みSteamアプリが見つかりませんでした。
+"""
+
+[error_text_steam_library_find_app_id_failed]
+src = """
+Failed to find an installed Steam application for game directory:
+{game_directory}
+"""
+loc = """
+次のゲームディレクトリにインストール済みのSteamアプリが見つかりませんでした。
+{game_directory}
+"""
+
+[error_text_steam_library_find_game]
+src = """
+{error_text}
+
+Some app manifests were skipped as supposedly corrupted:
+{corrupted_manifests:md_list}
+"""
+loc = """
+{error_text}
+
+破損している可能性があるため、一部のアプリマニフェストをスキップしました：
+{corrupted_manifests:md_list}
+"""
+
+[general_settings_game_folder_tooltip]
+src = """
+Path to the folder containing the game executable.
+
+* Usually named: {game_folder_names:bold:or_list}.
+* Contains files: {game_exe_names:bold:or_list}.
+* Contains folders: {game_folder_children:bold:and_list}.
+"""
+loc = """
+ゲームの実行ファイルが格納されているフォルダーのパス。
+
+* 通常のフォルダー名：{game_folder_names:bold:or_list}。
+* 含まれるファイル：{game_exe_names:bold:or_list}。
+* 含まれるフォルダー：{game_folder_children:bold:and_list}。
+"""
+
+[general_settings_launcher_folder_label]
+src = "Official Launcher Folder"
+loc = "公式ランチャーフォルダー"
+
+[general_settings_detect_launcher_folder_button]
+src = "🔍 Detect Launcher"
+loc = "🔍 ランチャーを検出"
+
+[general_settings_detect_launcher_folder_button_tooltip]
+src = "Try to automatically detect existing launcher folders."
+loc = "既存のランチャーフォルダーを自動検出します。"
+
+[general_settings_launcher_folder_tooltip]
+src = """
+Path to the folder containing the official launcher.
+
+* Usually named: {folder_names:bold:or_list}.
+* Contains files: {folder_files:bold:or_list}.
+"""
+loc = """
+公式ランチャーが格納されているフォルダーのパス。
+
+* 通常のフォルダー名：{folder_names:bold:or_list}。
+* 含まれるファイル：{folder_files:bold:or_list}。
+"""

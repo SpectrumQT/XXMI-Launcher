@@ -1,0 +1,183 @@
+[error_text_folder_not_specified]
+src = "Folder is not specified!"
+loc = "未指定文件夹！"
+
+[error_text_folder_not_absolute]
+src = "Specified folder path is not absolute!"
+loc = "指定的文件夹路径不是绝对路径！"
+
+[error_text_folder_not_found]
+src = "Specified folder is not found!"
+loc = "未找到指定的文件夹！"
+
+[error_text_file_not_found_in_dir]
+src = """
+Failed to find `{file_name}` in specified folder!
+"""
+loc = """
+在指定的文件夹中未找到 `{file_name}`！
+"""
+
+[error_text_file_not_found_in_subdir]
+src = """
+Failed to find `{file_name}` in subfolders!
+"""
+loc = """
+在子文件夹中未找到 `{file_name}`！
+"""
+
+[message_title_launcher_folder_not_configured]
+src = "Official Launcher Folder Not Configured"
+loc = "尚未配置官方启动器文件夹"
+
+[message_text_launcher_folder_not_configured]
+src = """
+Please set **{general_settings_launcher_folder_label}** option of **General Settings**.
+"""
+loc = """
+请在**常规设置**中设置 **{general_settings_launcher_folder_label}** 选项。
+"""
+
+[message_title_launcher_detection_failed]
+src = "Game Launcher Not Found"
+loc = "未找到游戏启动器"
+
+[message_text_launcher_detection_failed]
+src = """
+Could not find the official launcher on your device.
+
+Please set the **{general_settings_launcher_folder_label}** manually in **General Settings**.
+"""
+loc = """
+无法在您的设备上找到官方启动器。
+
+请在**常规设置**中手动设置 **{general_settings_launcher_folder_label}**。
+"""
+
+[message_title_launcher_detected_single]
+src = "Official Launcher Found"
+loc = "已找到官方启动器"
+
+[message_text_launcher_detected_single]
+src = """
+Please confirm that this is the correct **{general_settings_launcher_folder_label}**:
+```
+{launcher_folder}
+```
+Alternatively, set it manually in **General Settings**.
+"""
+loc = """
+请确认以下路径是否为正确的 **{general_settings_launcher_folder_label}**：
+```
+{launcher_folder}
+```
+您也可以在**常规设置**中手动设置该路径。
+"""
+
+[detected_launcher]
+src = "Detected launcher"
+loc = "检测到的启动器"
+
+[message_title_launcher_detected_multiple]
+src = "Multiple Official Launchers Found"
+loc = "找到多个官方启动器"
+
+[message_text_launcher_detected_multiple]
+src = """
+Please select the correct **{general_settings_launcher_folder_label}** below, or set it in **General Settings**.
+
+"""
+loc = """
+请在下方选择正确的 **{general_settings_launcher_folder_label}**，或在**常规设置**中设置该路径。
+
+"""
+
+[status_detecting_game_launcher]
+src = """
+Detecting official launcher installation folder...
+"""
+loc = """
+正在检测官方启动器的安装文件夹...
+"""
+
+[error_text_steam_library_find_game_failed]
+src = """
+Failed to find an installed Steam application for game {game_name}.
+"""
+loc = """
+未找到已安装的 Steam 游戏：{game_name}。
+"""
+
+[error_text_steam_library_find_app_failed]
+src = """
+Failed to find an installed Steam application for app id {app_id}.
+"""
+loc = """
+未找到已安装的 Steam 应用，应用 ID 为 {app_id}。
+"""
+
+[error_text_steam_library_find_app_id_failed]
+src = """
+Failed to find an installed Steam application for game directory:
+{game_directory}
+"""
+loc = """
+未能在以下游戏目录中找到已安装的 Steam 应用：
+{game_directory}
+"""
+
+[error_text_steam_library_find_game]
+src = """
+{error_text}
+
+Some app manifests were skipped as supposedly corrupted:
+{corrupted_manifests:md_list}
+"""
+loc = """
+{error_text}
+
+以下应用清单因疑似损坏而被跳过：
+{corrupted_manifests:md_list}
+"""
+
+[general_settings_game_folder_tooltip]
+src = """
+Path to the folder containing the game executable.
+
+* Usually named: {game_folder_names:bold:or_list}.
+* Contains files: {game_exe_names:bold:or_list}.
+* Contains folders: {game_folder_children:bold:and_list}.
+"""
+loc = """
+包含游戏可执行文件的文件夹路径。
+
+* 通常命名为：{game_folder_names:bold:or_list}。
+* 包含以下文件：{game_exe_names:bold:or_list}。
+* 包含以下文件夹：{game_folder_children:bold:and_list}。
+"""
+
+[general_settings_launcher_folder_label]
+src = "Official Launcher Folder"
+loc = "官方启动器文件夹"
+
+[general_settings_detect_launcher_folder_button]
+src = "🔍 Detect Launcher"
+loc = "🔍 检测启动器"
+
+[general_settings_detect_launcher_folder_button_tooltip]
+src = "Try to automatically detect existing launcher folders."
+loc = "尝试自动检测现有的启动器文件夹。"
+
+[general_settings_launcher_folder_tooltip]
+src = """
+Path to the folder containing the official launcher.
+
+* Usually named: {folder_names:bold:or_list}.
+* Contains files: {folder_files:bold:or_list}.
+"""
+loc = """
+包含官方启动器的文件夹路径。
+
+* 通常命名为：{folder_names:bold:or_list}。
+* 包含以下文件：{folder_files:bold:or_list}。
+"""

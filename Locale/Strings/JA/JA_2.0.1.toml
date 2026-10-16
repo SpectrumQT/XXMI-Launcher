@@ -13,17 +13,3 @@ loc = "と"
 [locale_list_separator]
 src = ", "
 loc = "、"
-
-[general_settings_game_folder_tooltip]
-src = """
-## Path to the folder containing the game executable
-* Usually named: {game_folder_names:bold:or_list}.
-* Contains files: {game_exe_names:bold:or_list}.
-* Contains folders: {game_folder_children:bold:and_list}.
-"""
-loc = """
-## ゲームの実行ファイルが含まれるフォルダのパス
-* 通常は: {game_folder_names:bold:or_list}
-* 含まれるファイル: {game_exe_names:bold:or_list}
-* 含まれるフォルダ: {game_folder_children:bold:and_list}
-"""
