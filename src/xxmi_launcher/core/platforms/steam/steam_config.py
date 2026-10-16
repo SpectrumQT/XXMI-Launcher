@@ -57,7 +57,7 @@ class SteamConfig:
 
         app = self._get_app(data, app_id)
 
-        value = app.get(self.LAUNCH_OPTIONS_KEY)
+        value = self._get_ci(app, self.LAUNCH_OPTIONS_KEY)
 
         if value is None:
             return None
@@ -96,7 +96,7 @@ class SteamConfig:
 
         app = self._get_app(data, app_id)
 
-        previous = app.get(self.LAUNCH_OPTIONS_KEY)
+        previous = self._get_ci(app, self.LAUNCH_OPTIONS_KEY)
 
         if previous is not None and not isinstance(previous, str):
             raise SteamConfigStructureError(
@@ -118,21 +118,18 @@ class SteamConfig:
         data: dict[str, Any],
         app_id: str,
     ) -> dict[str, Any]:
-        """
-        Return an existing application's configuration.
+        """Return an existing application's configuration."""
 
-        No VDF nodes are created.
-        """
         steam = self._get_steam(data)
 
-        apps = steam.get(self.APPS_KEY)
+        apps = self._get_ci(steam, self.APPS_KEY)
 
         if not isinstance(apps, dict):
             raise SteamConfigStructureError(
                 f"Missing or invalid '{self.APPS_KEY}' section."
             )
 
-        app = apps.get(str(app_id))
+        app = self._get_ci(apps, str(app_id))
 
         if app is None:
             raise SteamAppNotFoundError(
@@ -150,37 +147,62 @@ class SteamConfig:
         self,
         data: dict[str, Any],
     ) -> dict[str, Any]:
-        """
-        Return the existing Steam configuration node.
-
-        No VDF nodes are created.
-        """
-        root = data.get(self.ROOT_KEY)
+        """Return the existing Steam configuration node."""
+        root = self._get_ci(data, self.ROOT_KEY)
 
         if not isinstance(root, dict):
             raise SteamConfigStructureError(
                 f"Missing or invalid '{self.ROOT_KEY}' section."
             )
 
-        software = root.get(self.SOFTWARE_KEY)
+        software = self._get_ci(root, self.SOFTWARE_KEY)
 
         if not isinstance(software, dict):
             raise SteamConfigStructureError(
                 f"Missing or invalid '{self.SOFTWARE_KEY}' section."
             )
 
-        valve = software.get(self.VALVE_KEY)
+        valve = self._get_ci(software, self.VALVE_KEY)
 
         if not isinstance(valve, dict):
             raise SteamConfigStructureError(
                 f"Missing or invalid '{self.VALVE_KEY}' section."
             )
 
-        steam = valve.get(self.STEAM_KEY)
+        steam = self._get_ci(valve, self.STEAM_KEY)
 
         if not isinstance(steam, dict):
             raise SteamConfigStructureError(
-                f"Missing or invalid '{self.STEAM_KEY}' section."
+                f"Missing or invalid '{self.STEAM_KEY}' section. "
+                f"Available keys under Valve: {list(valve.keys())!r}"
             )
 
         return steam
+
+    @staticmethod
+    def _find_key(data: dict[str, Any], key: str) -> str | None:
+        """Find a dictionary key without regard to capitalization."""
+        target = key.casefold()
+
+        for existing_key in data:
+            if (
+                isinstance(existing_key, str)
+                and existing_key.casefold() == target
+            ):
+                return existing_key
+
+        return None
+
+    @classmethod
+    def _get_ci(
+        cls,
+        data: dict[str, Any],
+        key: str,
+    ) -> Any:
+        """Get a dictionary value using a case-insensitive key lookup."""
+        actual_key = cls._find_key(data, key)
+
+        if actual_key is None:
+            return None
+
+        return data[actual_key]
