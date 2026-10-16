@@ -432,10 +432,34 @@ class ContentFrame(UIScrollableFrame):
 
         self.update()
 
+        self._fix_click_handler()
+
         # self.message_widget.bind_all("<MouseWheel>", self._mouse_wheel_all, add="+")
 
         # self.message_widget.place(x=0, y=0, width=800, height=500)
         # self.message_widget.place(x=150, y=150)
+
+    def _fix_click_handler(self):
+        # Work around a TkinterWeb bug where triple-clicking text can
+        # cause a comparison between a string index and an integer.
+        selection_manager = self.message_widget._html.selection_manager
+        original_get_selection = selection_manager.get_selection
+        original_extend_selection = selection_manager.extend_selection
+
+        def safe_get_selection():
+            try:
+                return original_get_selection()
+            except BaseException as exc:
+                return None
+
+        def safe_extend_selection(node, offset):
+            try:
+                return original_extend_selection(node, offset)
+            except BaseException as exc:
+                return None
+
+        selection_manager.get_selection = safe_get_selection
+        selection_manager.extend_selection = safe_extend_selection
 
     @staticmethod
     def insert_space_in_long_words_multiline(text, max_len):
@@ -569,6 +593,8 @@ class RadioWidget:
 
     def select(self, idx: int):
         """Select a radio option and update the HTML + Tkinter variable."""
+        if idx is None:
+            return
 
         if not 0 <= idx < len(self.options):
             return
