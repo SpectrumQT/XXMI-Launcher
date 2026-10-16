@@ -29,17 +29,20 @@ APP_INFO = AppInfo(
     },
     display_names={
         "GRYPHLINK",
+        "hypergryph launcher",
+        "鹰角启动器",
     },
     known_paths={
         Path("C:/Program Files/GRYPHLINK/Launcher.exe"),
+        Path("C:/Program Files/Hypergryph Launcher/Launcher.exe"),
         Path("C:/Program Files (x86)/GRYPHLINK/Launcher.exe"),
+        Path("C:/Program Files (x86)/Hypergryph Launcher/Launcher.exe"),
     },
     known_registry_paths={
-        RegistryValuePath(root=winreg.HKEY_CURRENT_USER,
-                          key=r"Software\GRYPHLINK\Launcher\94005b4608518100ed8df1d8107356a8", value="install_path"),
-    },
-    expected_relative_paths={
-        "GRYPHLINK",
+        RegistryValuePath(
+            root=winreg.HKEY_CURRENT_USER,
+            key=r"Software\GRYPHLINK\Launcher\94005b4608518100ed8df1d8107356a8", value="install_path"
+        ),
     },
 )
 
