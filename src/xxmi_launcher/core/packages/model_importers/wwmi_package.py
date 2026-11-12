@@ -260,8 +260,8 @@ class WWMIPackage(ModelImporterPackage):
         if Config.Importers.WWMI.Importer.configure_game or Config.Importers.WWMI.Importer.unlock_fps:
             self.configure_settings(game_path)
 
-        # Prevent further configuration if WWMI isn't going to be used.
-        if not Config.Active.Importer.is_xxmi_dll_used():
+        # Prevent further configuration if WWMI isn't going to be used or auto-config is disabled.
+        if not Config.Active.Importer.is_xxmi_dll_used() or not Config.Importers.WWMI.Importer.configure_game:
             return
 
         # Configure Engine.ini.
