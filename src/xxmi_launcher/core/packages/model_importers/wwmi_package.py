@@ -355,6 +355,7 @@ class WWMIPackage(ModelImporterPackage):
             Paths.App.write_file(engine_ini_path, '')
 
         Events.Fire(Events.PathManager.VerifyFileAccess(path=engine_ini_path, write=True))
+
         with open(engine_ini_path, 'r', encoding='utf-8') as f:
             ini = IniHandler(IniHandlerSettings(option_value_spacing=False, inline_comments=True, add_section_spacing=True, right_split=True), f)
 
@@ -368,27 +369,6 @@ class WWMIPackage(ModelImporterPackage):
         #         ini.set_option(section_name, option_name, option_value)
         # console_variables = Config.Importers.WWMI.Importer.engine_ini.get('ConsoleVariables', None)
         # default_streaming_boost = console_variables.get('r.Streaming.Boost', None) if console_variables else None
-
-        ini.remove_option('r.Kuro.SkeletalMesh.DistanceLODBaseFOV', section_name='ConsoleVariables')
-
-        if ini.is_modified():
-            Paths.App.write_file(engine_ini_path, ini.to_string())
-
-
-    def update_user_engine_ini(self, game_path: Path):
-        engine_ini_path = game_path / 'Client' / 'Config' / 'UserEngine.ini'
-
-        Events.Fire(Events.Application.StatusUpdate(
-            status=L('status_updating_file', 'Updating {file_name}...').format(file_name=engine_ini_path.name))
-        )
-
-        if not engine_ini_path.exists():
-            Paths.verify_path(engine_ini_path.parent)
-            Paths.App.write_file(engine_ini_path, '')
-
-        Events.Fire(Events.PathManager.VerifyFileAccess(path=engine_ini_path, write=True))
-        with open(engine_ini_path, 'r', encoding='utf-8') as f:
-            ini = IniHandler(IniHandlerSettings(option_value_spacing=False, inline_comments=True, add_section_spacing=True, right_split=True), f)
 
         console_variables_options = {
             # Controls minimal camera FOV value when engine switches character LOD0 mesh to LOD1+.
@@ -405,6 +385,26 @@ class WWMIPackage(ModelImporterPackage):
                 ini.remove_option(option_name, section_name=section_name, option_value=option_value, not_equal=True)
             # Set option value
             ini.set_option(section_name, option_name, option_value)
+
+        if ini.is_modified():
+            Paths.App.write_file(engine_ini_path, ini.to_string())
+
+    def update_user_engine_ini(self, game_path: Path):
+        engine_ini_path = game_path / 'Client' / 'Config' / 'UserEngine.ini'
+
+        if not engine_ini_path.exists():
+            return
+
+        Events.Fire(Events.Application.StatusUpdate(
+            status=L('status_updating_file', 'Updating {file_name}...').format(file_name=engine_ini_path.name))
+        )
+
+        Events.Fire(Events.PathManager.VerifyFileAccess(path=engine_ini_path, write=True))
+
+        with open(engine_ini_path, 'r', encoding='utf-8') as f:
+            ini = IniHandler(IniHandlerSettings(option_value_spacing=False, inline_comments=True, add_section_spacing=True, right_split=True), f)
+
+        ini.remove_option('r.Kuro.SkeletalMesh.DistanceLODBaseFOV')
 
         if ini.is_modified():
             Paths.App.write_file(engine_ini_path, ini.to_string())

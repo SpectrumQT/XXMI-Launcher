@@ -415,7 +415,7 @@ class GeneralSettingsFrame(SettingsContentFrame):
                     
                                 * Default is **165**, which should be enough for the most part of in-game scenes.
                                 * The further away the camera is from active character, the bigger the FoV value is.
-                            """) + """\n\n<font color="#666666">UserEngine.ini › ConsoleVariables › r.Kuro.SkeletalMesh.DistanceLODBaseFOV</font>""",
+                            """) + """\n\n<font color="#666666">Engine.ini › ConsoleVariables › r.Kuro.SkeletalMesh.DistanceLODBaseFOV</font>""",
                         ),
 
                         SettingsOption(
