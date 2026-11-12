@@ -171,12 +171,15 @@ class WWMIPackage(ModelImporterPackage):
         game_path: Path | None,
         game_exe_path: Path | None,
     ) -> None:
-        if Config.Importers.WWMI.Importer.game_launch != GameLaunch.DIRECT:
+        if Config.Importers.WWMI.Importer.game_launch not in [GameLaunch.DIRECT, GameLaunch.EPIC_GAMES, GameLaunch.STEAM]:
             return
 
         if not Config.Importers.WWMI.Importer.use_launch_options or "krqlv" not in Config.Importers.WWMI.Importer.launch_options:
             self.notify_resource_tier()
             launch_context.target.cmd_args += f" -krqlv={Config.Importers.WWMI.Importer.resource_tier.name.lower()}"
+
+        if Config.Importers.WWMI.Importer.game_launch != GameLaunch.DIRECT:
+            return
 
         if not Config.Importers.WWMI.Importer.use_launch_options:
             # Start WW via wrapper exe (solves crashes for NVidia Optimus and some Steam version users).

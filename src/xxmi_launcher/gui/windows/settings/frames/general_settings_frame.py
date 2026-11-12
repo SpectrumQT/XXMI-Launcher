@@ -318,15 +318,14 @@ class GeneralSettingsFrame(SettingsContentFrame):
                             ),
                             visible_if=Condition(
                                 variables=("Vars.Active.Importer.game_launch",),
-                                predicate=lambda: Vars.Active.Importer.game_launch.get() == GameLaunch.DIRECT,
+                                predicate=lambda: Vars.Active.Importer.game_launch.get() in [GameLaunch.DIRECT, GameLaunch.EPIC_GAMES, GameLaunch.STEAM],
                             ),
                             tooltip=L("general_settings_wuwa_resource_tier_tooltip", """
                                 Controls **[assets quality tier]({page_link})** used by **{game}**.
                                 
-                                * For **Steam** and **Epic Games** installations select **{default_tier}**.
-                                * For **official launcher** installation select **any actually downloaded** tier.
+                                Make sure that selected tier is **actually installed**.
                                  
-                                Selection of wrong tier will cause the game to crash on loading.
+                                Selection of non-installed tier will cause the game to crash on loading.
                             """).format(
                                 game=Config.Importers.WWMI.Importer.game.value,
                                 page_link=r"https://wutheringwaves.kurogames.com/en/main/news/detail/5513",
