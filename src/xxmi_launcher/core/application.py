@@ -85,9 +85,21 @@ class Application:
             args = [arg for arg in sys.argv[1:] if arg != '&&']  # Filter out shell operator '&&'
             self.args, self.unknown_args = parser.parse_known_args(args)
             logging.debug(f'Arguments: {self.args}')
+
             if self.args.help:
                 parser.print_help()
                 return
+
+            # Resume interrupted nogui session.
+            context = Config.Launcher.nogui_context
+            if context:
+                if context.get("interrupted"):
+                    if not args:
+                        self.args = argparse.Namespace(**context["args"])
+                        self.unknown_args = list(context["unknown_args"])
+                Config.Launcher.nogui_context.clear()
+                Config.Manager.save()
+
         except BaseException:
             raise ValueError(L('application_failed_parse_args', 'Failed to parse args: {args}').format(args=sys.argv))
 
@@ -152,6 +164,12 @@ class Application:
             if self.update_scheduled():
                 # Force update_packages call below to install the latest updates
                 self.args.update = True
+                # Persist args to resume --nogui start after launcher update.
+                Config.Launcher.nogui_context = {
+                    "args": vars(self.args).copy(),
+                    "unknown_args": list(self.unknown_args),
+                    "interrupted": False,
+                }
             else:
                 # Async run update_packages in check-for-updates mode to save available updates versions to config
                 # It allows to go straight to game launch at the cost of update notification being delayed by 1 restart
@@ -348,6 +366,8 @@ class Application:
         self.args.update = False
         # Resume interrupted Quick Start
         if self.args.nogui:
+            if Config.Launcher.nogui_context:
+                Config.Launcher.nogui_context.clear()
             Events.Fire(Events.Application.Launch())
 
     def load_importer(self, importer_id, update=True, reload=False):

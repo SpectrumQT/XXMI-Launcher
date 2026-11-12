@@ -46,6 +46,7 @@ class LauncherManagerConfig:
     locale: str = ''
     window_scale: WindowScale = WindowScale.AUTO
     custom_window_scale: int = 100
+    nogui_context: dict = field(default_factory=dict)
 
 
 class LauncherPackage(Package):
@@ -87,6 +88,10 @@ class LauncherPackage(Package):
 
     def install_latest_version(self, clean):
         Events.Fire(Events.PackageManager.InitializeInstallation())
+
+        if Config.Launcher.nogui_context:
+            Config.Launcher.nogui_context["interrupted"] = True
+            Config.Manager.save()
 
         if self.get_update_channel() == UpdateChannel.MSI:
             # Run MSI and let Windows Installer do the heavy lifting
