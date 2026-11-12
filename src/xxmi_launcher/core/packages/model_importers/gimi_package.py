@@ -119,7 +119,7 @@ class GIMIPackage(ModelImporterPackage):
         game_path: Path | None,
         game_exe_path: Path | None,
     ) -> None:
-        if Config.Importers.WWMI.Importer.game_launch != GameLaunch.DIRECT:
+        if Config.Importers.GIMI.Importer.game_launch != GameLaunch.DIRECT:
             return
 
         if Config.Importers.GIMI.Importer.unlock_fps:
@@ -137,7 +137,7 @@ class GIMIPackage(ModelImporterPackage):
                     {error_text}
                 """).format(error_text=e)) from e
 
-        if Config.Importers.WWMI.Importer.game_launch == GameLaunch.DIRECT:
+        if Config.Importers.GIMI.Importer.game_launch == GameLaunch.DIRECT:
             if Config.Importers.GIMI.Importer.unlock_fps:
                 try:
                     self.configure_fps_unlocker()

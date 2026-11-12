@@ -116,7 +116,7 @@ class ZZMIPackage(ModelImporterPackage):
         game_path: Path | None,
         game_exe_path: Path | None,
     ) -> None:
-        if Config.Importers.WWMI.Importer.game_launch != GameLaunch.DIRECT:
+        if Config.Importers.ZZMI.Importer.game_launch != GameLaunch.DIRECT:
             return
 
         # EGS ZZZ 3.2 crashes on login screen if work_dir is the same as ZenlessZoneZero.exe location.
@@ -128,7 +128,7 @@ class ZZMIPackage(ModelImporterPackage):
 
     def configure_game_settings(self, game_path: Path | None, game_exe_path: Path | None):
         # Auto-config below requires reliably detectable installation location.
-        if Config.Importers.WWMI.Importer.game_launch not in [GameLaunch.DIRECT, GameLaunch.STEAM, GameLaunch.EPIC_GAMES]:
+        if Config.Importers.ZZMI.Importer.game_launch not in [GameLaunch.DIRECT, GameLaunch.STEAM, GameLaunch.EPIC_GAMES]:
             return
         if not game_exe_path:
             return

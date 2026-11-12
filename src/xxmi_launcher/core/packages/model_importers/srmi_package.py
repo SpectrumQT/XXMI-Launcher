@@ -117,7 +117,7 @@ class SRMIPackage(ModelImporterPackage):
             game_path: Path | None,
             game_exe_path: Path | None,
     ) -> None:
-        if Config.Importers.WWMI.Importer.game_launch != GameLaunch.DIRECT:
+        if Config.Importers.SRMI.Importer.game_launch != GameLaunch.DIRECT:
             return
 
         # EGS HSR refuses to got past the login screen if work_dir is the same as StarRail.exe location.
