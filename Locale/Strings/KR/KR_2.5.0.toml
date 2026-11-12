@@ -1,0 +1,67 @@
+[error_no_resource_tier_detected]
+src = """
+Cannot find any resource tier available for configured {game_name} installation:
+
+```
+{game_path}
+```
+
+Please repair {game_name} with official launcher.
+"""
+loc = """
+구성된 {game_name} 설치에서 사용 가능한 리소스 등급을 찾을 수 없습니다:
+
+```
+{game_path}
+```
+
+공식 런처를 사용하여 {game_name}을(를) 복구하세요.
+"""
+
+[message_text_resource_tier_selection]
+src = """
+**{game}** requires **[Resource Quality]({page_link})** to be selected.
+
+{radio_widget}
+
+Selected tier must be **actually installed**, otherwise the game will crash on loading.
+
+You can change it later with **{general_settings_wuwa_resource_tier_label}** in **General Settings**.
+"""
+loc = """
+**{game}**에서 **[리소스 품질]({page_link})**을(를) 선택해야 합니다.
+
+{radio_widget}
+
+선택한 등급은 **실제로 설치되어 있어야 합니다**. 그렇지 않으면 게임 로딩 중 충돌이 발생합니다.
+
+나중에 **일반 설정**의 **{general_settings_wuwa_resource_tier_label}**에서 변경할 수 있습니다.
+"""
+
+[general_settings_skip_platform_game_launcher_checkbox_tooltip]
+src = """
+Make **{platform}** to launch **{game}** process directly, avoiding **{launcher}** launcher.
+
+Requires **{general_settings_configure_platform_launch_options_checkbox}** to be enabled.
+"""
+loc = """
+**{platform}**에서 **{launcher}** 런처를 거치지 않고 **{game}** 프로세스를 직접 실행하도록 합니다.
+
+이 기능을 사용하려면 **{general_settings_configure_platform_launch_options_checkbox}**을(를) 활성화해야 합니다.
+"""
+
+[general_settings_wuwa_resource_tier_tooltip]
+src = """
+Controls **[assets quality tier]({page_link})** used by **{game}**.
+
+Make sure that selected tier is **actually installed**.
+
+Selection of non-installed tier will cause the game to crash on loading.
+"""
+loc = """
+**{game}**에서 사용하는 **[리소스 품질 등급]({page_link})**을(를) 설정합니다.
+
+선택한 등급이 **실제로 설치되어 있는지** 확인하세요.
+
+설치되지 않은 등급을 선택하면 게임 로딩 중 충돌이 발생합니다.
+"""

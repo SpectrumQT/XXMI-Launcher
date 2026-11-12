@@ -374,18 +374,6 @@ Klient {platform} zostanie **uruchomiony ponownie**, jeśli **Opcje uruchamiania
 src = "Skip {launcher} Launcher"
 loc = "Pomiń launcher {launcher}"
 
-[general_settings_skip_platform_game_launcher_checkbox_tooltip]
-src = """
-Make **{platform}** to launch **{game}** process directly, avoiding **{launcher}**.
-
-Requires **{general_settings_configure_platform_launch_options_checkbox}** to be enabled.
-"""
-loc = """
-Sprawia, że **{platform}** uruchamia proces **{game}** bezpośrednio, z pominięciem **{launcher}**.
-
-Wymaga włączenia opcji **{general_settings_configure_platform_launch_options_checkbox}**.
-"""
-
 [general_settings_game_process_exe_label]
 src = "Custom Game Process Executable Name"
 loc = "Własna nazwa pliku wykonywalnego procesu gry"

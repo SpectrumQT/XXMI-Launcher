@@ -1,0 +1,67 @@
+[error_no_resource_tier_detected]
+src = """
+Cannot find any resource tier available for configured {game_name} installation:
+
+```
+{game_path}
+```
+
+Please repair {game_name} with official launcher.
+"""
+loc = """
+設定された {game_name} のインストール先に、利用可能なリソース品質が見つかりません：
+
+```
+{game_path}
+```
+
+公式ランチャーを使用して {game_name} を修復してください。
+"""
+
+[message_text_resource_tier_selection]
+src = """
+**{game}** requires **[Resource Quality]({page_link})** to be selected.
+
+{radio_widget}
+
+Selected tier must be **actually installed**, otherwise the game will crash on loading.
+
+You can change it later with **{general_settings_wuwa_resource_tier_label}** in **General Settings**.
+"""
+loc = """
+**{game}** では **[リソース品質]({page_link})** を選択する必要があります。
+
+{radio_widget}
+
+選択した品質は**実際にインストールされている必要があります**。インストールされていない場合、ゲームの読み込み時にクラッシュします。
+
+この設定は後から**「一般設定」**の **{general_settings_wuwa_resource_tier_label}** で変更できます。
+"""
+
+[general_settings_skip_platform_game_launcher_checkbox_tooltip]
+src = """
+Make **{platform}** to launch **{game}** process directly, avoiding **{launcher}** launcher.
+
+Requires **{general_settings_configure_platform_launch_options_checkbox}** to be enabled.
+"""
+loc = """
+**{platform}** から **{game}** のプロセスを直接起動し、**{launcher}** ランチャーを経由しないようにします。
+
+この機能を使用するには、**{general_settings_configure_platform_launch_options_checkbox}** を有効にする必要があります。
+"""
+
+[general_settings_wuwa_resource_tier_tooltip]
+src = """
+Controls **[assets quality tier]({page_link})** used by **{game}**.
+
+Make sure that selected tier is **actually installed**.
+
+Selection of non-installed tier will cause the game to crash on loading.
+"""
+loc = """
+**{game}** で使用する **[リソース品質]({page_link})** を設定します。
+
+選択した品質が**実際にインストールされていること**を確認してください。
+
+インストールされていない品質を選択すると、ゲームの読み込み時にクラッシュします。
+"""

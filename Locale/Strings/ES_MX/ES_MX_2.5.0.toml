@@ -1,0 +1,67 @@
+[error_no_resource_tier_detected]
+src = """
+Cannot find any resource tier available for configured {game_name} installation:
+
+```
+{game_path}
+```
+
+Please repair {game_name} with official launcher.
+"""
+loc = """
+No se encontró ningún nivel de recursos disponible para la instalación configurada de {game_name}:
+
+```
+{game_path}
+```
+
+Repara {game_name} con el launcher oficial.
+"""
+
+[message_text_resource_tier_selection]
+src = """
+**{game}** requires **[Resource Quality]({page_link})** to be selected.
+
+{radio_widget}
+
+Selected tier must be **actually installed**, otherwise the game will crash on loading.
+
+You can change it later with **{general_settings_wuwa_resource_tier_label}** in **General Settings**.
+"""
+loc = """
+**{game}** requiere que selecciones **[Calidad de recursos]({page_link})**.
+
+{radio_widget}
+
+El nivel seleccionado debe estar **realmente instalado**; de lo contrario, el juego se bloqueará al cargar.
+
+Puedes cambiarlo más adelante desde **{general_settings_wuwa_resource_tier_label}**, en **Configuración general**.
+"""
+
+[general_settings_skip_platform_game_launcher_checkbox_tooltip]
+src = """
+Make **{platform}** to launch **{game}** process directly, avoiding **{launcher}** launcher.
+
+Requires **{general_settings_configure_platform_launch_options_checkbox}** to be enabled.
+"""
+loc = """
+Configura **{platform}** para que inicie directamente el proceso de **{game}**, sin pasar por el launcher de **{launcher}**.
+
+Es necesario activar **{general_settings_configure_platform_launch_options_checkbox}**.
+"""
+
+[general_settings_wuwa_resource_tier_tooltip]
+src = """
+Controls **[assets quality tier]({page_link})** used by **{game}**.
+
+Make sure that selected tier is **actually installed**.
+
+Selection of non-installed tier will cause the game to crash on loading.
+"""
+loc = """
+Controla el **[nivel de calidad de los recursos]({page_link})** que utiliza **{game}**.
+
+Asegúrate de que el nivel seleccionado esté **realmente instalado**.
+
+Seleccionar un nivel que no esté instalado provocará que el juego se bloquee al cargar.
+"""

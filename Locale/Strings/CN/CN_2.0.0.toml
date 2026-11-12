@@ -432,30 +432,6 @@ loc = "无法标准化路径 {path}：未找到 Wuthering Waves.exe！"
 src = "Game folder must contain `Wuthering Waves.exe` and `Client` & `Engine` folders!"
 loc = "游戏文件夹必须包含 `Wuthering Waves.exe` 以及 `Client` 和 `Engine` 文件夹！"
 
-[message_text_wwmi_invalid_steam_installation]
-src = """
-Invalid Wuthering Waves installation detected for Steam:
-{game_path}
-
-{folder_name} folder with {exe_name} must be directly placed in:
-{common_folder}
-
-Please run game file repair via Steam or fix it manually.
-"""
-loc = """
-检测到Steam的鸣潮安装无效：
-{game_path}
-
-包含 {folder_name} 的 {exe_name} 文件夹必须直接放置在：
-{common_folder}
-
-请通过Steam运行游戏文件修复或手动修复。
-"""
-
-[error_steam_game_repair_required]
-src = "Game installation must be repaired via Steam!"
-loc = "游戏安装必须通过Steam修复！"
-
 [error_game_folder_missing_folder]
 src = "Game folder must contain {dir_name} folder!"
 loc = "游戏文件夹必须包含 {dir_name} 文件夹！"

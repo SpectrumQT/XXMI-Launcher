@@ -524,30 +524,6 @@ loc = "경로 {path}을(를) 정규화하지 못했습니다: Wuthering Waves.ex
 src = "Game folder must contain `Wuthering Waves.exe` and `Client` & `Engine` folders!"
 loc = "게임 폴더에는 `Wuthering Waves.exe` 및 `Client`와 `Engine` 폴더가 포함되어야 합니다!"
 
-[message_text_wwmi_invalid_steam_installation]
-src = """
-Invalid Wuthering Waves installation detected for Steam:
-{game_path}
-
-{folder_name} folder with {exe_name} must be directly placed in:
-{common_folder}
-
-Please run game file repair via Steam or fix it manually.
-"""
-loc = """
-Steam용으로 잘못된 명조 설치가 감지되었습니다:
-{game_path}
-
-{exe_name}이(가) 있는 {folder_name} 폴더는 다음에 직접 배치해야 합니다:
-{common_folder}
-
-Steam을 통해 게임 파일 무결성 검사를 실행하거나 수동으로 수정하세요.
-"""
-
-[error_steam_game_repair_required]
-src = "Game installation must be repaired via Steam!"
-loc = "Steam을 통해 게임 설치를 복구해야 합니다!"
-
 [error_game_folder_missing_folder]
 src = "Game folder must contain {dir_name} folder!"
 loc = "게임 폴더에 {dir_name} 폴더가 포함되어야 합니다!"

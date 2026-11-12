@@ -376,18 +376,6 @@ El cliente de {platform} se **reiniciará** si las **Opciones de inicio** son di
 src = "Skip {launcher} Launcher"
 loc = "Omitir el lanzador de {launcher}"
 
-[general_settings_skip_platform_game_launcher_checkbox_tooltip]
-src = """
-Make **{platform}** to launch **{game}** process directly, avoiding **{launcher}**.
-
-Requires **{general_settings_configure_platform_launch_options_checkbox}** to be enabled.
-"""
-loc = """
-Haz que **{platform}** inicie directamente el proceso de **{game}**, evitando **{launcher}**.
-
-Requiere que **{general_settings_configure_platform_launch_options_checkbox}** esté habilitado.
-"""
-
 [general_settings_game_process_exe_label]
 src = "Custom Game Process Executable Name"
 loc = "Nombre personalizado del ejecutable del proceso del juego"

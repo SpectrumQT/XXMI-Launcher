@@ -524,30 +524,6 @@ loc = "パス {path} の正規化に失敗しました: Wuthering Waves.exe が�
 src = "Game folder must contain `Wuthering Waves.exe` and `Client` & `Engine` folders!"
 loc = "ゲームフォルダには `Wuthering Waves.exe` と `Client` および `Engine` フォルダが含まれている必要があります!"
 
-[message_text_wwmi_invalid_steam_installation]
-src = """
-Invalid Wuthering Waves installation detected for Steam:
-{game_path}
-
-{folder_name} folder with {exe_name} must be directly placed in:
-{common_folder}
-
-Please run game file repair via Steam or fix it manually.
-"""
-loc = """
-Steam版の無効な鳴潮のインストールが検出されました:
-{game_path}
-
-{exe_name} を含む {folder_name} フォルダは、直接以下に配置する必要があります:
-{common_folder}
-
-Steamからゲームファイルの修復を実行するか、手動で修正してください。
-"""
-
-[error_steam_game_repair_required]
-src = "Game installation must be repaired via Steam!"
-loc = "ゲームのインストールをSteam経由で修復する必要があります!"
-
 [error_game_folder_missing_folder]
 src = "Game folder must contain {dir_name} folder!"
 loc = "ゲームフォルダには {dir_name} フォルダが含まれている必要があります!"

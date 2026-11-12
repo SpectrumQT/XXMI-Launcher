@@ -524,30 +524,6 @@ loc = "Nie udało się znormalizować ścieżki {path}: nie znaleziono Wuthering
 src = "Game folder must contain `Wuthering Waves.exe` and `Client` & `Engine` folders!"
 loc = "Folder gry musi zawierać `Wuthering Waves.exe` oraz foldery `Client` i `Engine`!"
 
-[message_text_wwmi_invalid_steam_installation]
-src = """
-Invalid Wuthering Waves installation detected for Steam:
-{game_path}
-
-{folder_name} folder with {exe_name} must be directly placed in:
-{common_folder}
-
-Please run game file repair via Steam or fix it manually.
-"""
-loc = """
-Wykryto nieprawidłową instalację Wuthering Waves dla Steam:
-{game_path}
-
-Folder {folder_name} z plikiem {exe_name} musi być bezpośrednio umieszczony w:
-{common_folder}
-
-Uruchom naprawę plików gry przez Steam lub napraw ręcznie.
-"""
-
-[error_steam_game_repair_required]
-src = "Game installation must be repaired via Steam!"
-loc = "Instalacja gry musi zostać naprawiona przez Steam!"
-
 [error_game_folder_missing_folder]
 src = "Game folder must contain {dir_name} folder!"
 loc = "Folder gry musi zawierać folder {dir_name}!"
