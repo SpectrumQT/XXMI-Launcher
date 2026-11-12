@@ -160,28 +160,6 @@ class WWMIPackage(ModelImporterPackage):
         exe_path = game_path / 'Wuthering Waves.exe'
         if not exe_path.is_file():
             raise ValueError(L('error_wwmi_game_folder_missing_files', 'Game folder must contain `Wuthering Waves.exe` and `Client` & `Engine` folders!'))
-        else:
-            common_folder = self.get_parent_directory(game_path, 'common')
-            if common_folder is not None and common_folder.parent.name == 'steamapps':
-                # Steam installation detected
-                if game_path.parent.name != 'common':
-                    # Invalid file structure, most likely caused by manual folder relocation
-                    Events.Fire(Events.Application.ShowError(
-                        modal=True,
-                        confirm_text=L('message_button_ok', 'OK'),
-                        message=L('message_text_wwmi_invalid_steam_installation', """
-                            Invalid Wuthering Waves installation detected for Steam:
-                            {game_path}
-                            
-                            {folder_name} folder with {exe_name} must be directly placed in:
-                            {common_folder}
-                            
-                            Please run game file repair via Steam or fix it manually.
-                        """).format(
-                            game_path=game_path, folder_name=game_path.name, exe_name=exe_path.name, common_folder=common_folder
-                        )
-                    ))
-                    raise ValueError(L('error_steam_game_repair_required', 'Game installation must be repaired via Steam!'))
         for dir_name in ['Client', 'Engine']:
             if dir_name not in [x.name for x in game_path.iterdir() if x.is_dir()]:
                 raise ValueError(L('error_game_folder_missing_folder', 'Game folder must contain {dir_name} folder!').format(dir_name=dir_name))
