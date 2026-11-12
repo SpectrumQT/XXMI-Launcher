@@ -247,12 +247,18 @@ class GeneralSettingsFrame(SettingsContentFrame):
                             label_text=L("general_settings_skip_platform_game_launcher_checkbox",
                                 "Skip {launcher} Launcher"
                             ).format(
-                                launcher="HoYoPlay"
+                                launcher=({
+                                    "WWMI": "Kuro Games",
+                                    "ZZMI": "HoYoPlay"
+                                }.get(
+                                    Config.Launcher.active_importer,
+                                    L("error_no_data_available_short", "N/A")
+                                )),
                             ),
                             widget=OptionWidget.CHECKBOX,
                             value_variable="Vars.Active.Importer.skip_platform_game_launcher",
                             load_if=Condition(
-                                predicate=lambda: Vars.Launcher.active_importer.get() in {"ZZMI"},
+                                predicate=lambda: Vars.Launcher.active_importer.get() in {"ZZMI", "WWMI"},
                             ),
                             enabled_if=Condition(
                                 variables=("Vars.Active.Importer.configure_platform_launch_options",),
@@ -263,13 +269,19 @@ class GeneralSettingsFrame(SettingsContentFrame):
                                 predicate=lambda: Vars.Active.Importer.game_launch.get() == GameLaunch.STEAM,
                             ),
                             tooltip=L("general_settings_skip_platform_game_launcher_checkbox_tooltip", """
-                                Make **{platform}** to launch **{game}** process directly, avoiding **{launcher}**.
+                                Make **{platform}** to launch **{game}** process directly, avoiding **{launcher}** launcher.
                                 
                                 Requires **{general_settings_configure_platform_launch_options_checkbox}** to be enabled.
                             """).format(
                                 game=Vars.Active.Importer.game.get().value,
                                 platform=Vars.Active.Importer.game_launch.get().value,
-                                launcher="HoYoPlay",
+                                launcher=({
+                                    "WWMI": "Kuro Games",
+                                    "ZZMI": "HoYoPlay"
+                                }.get(
+                                    Config.Launcher.active_importer,
+                                    L("error_no_data_available_short", "N/A")
+                                )),
                             ),
                         ),
 

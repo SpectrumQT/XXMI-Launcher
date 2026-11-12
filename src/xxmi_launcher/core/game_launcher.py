@@ -168,7 +168,7 @@ class GameLauncher:
 
         if get_value(cfg.Active.Importer.game_launch) == GameLaunch.STEAM:
             if (
-                get_value(cfg.Active.Importer.game) == Game.ZENLESS_ZONE_ZERO
+                get_value(cfg.Active.Importer.game) in [Game.ZENLESS_ZONE_ZERO, Game.WUTHERING_WAVES]
                 and get_value(cfg.Active.Importer.skip_platform_game_launcher)
             ) or get_value(cfg.Active.Importer.game) == Game.ARKNIGHTS_ENDFIELD:
                 if not game_exe_path:
