@@ -175,7 +175,7 @@ class WWMIPackage(ModelImporterPackage):
             return
 
         if not Config.Importers.WWMI.Importer.use_launch_options or "krqlv" not in Config.Importers.WWMI.Importer.launch_options:
-            self.notify_resource_tier()
+            self.ensure_resource_tier(game_path)
             launch_context.target.cmd_args += f" -krqlv={Config.Importers.WWMI.Importer.resource_tier.name.lower()}"
 
         if Config.Importers.WWMI.Importer.game_launch != GameLaunch.DIRECT:
@@ -190,28 +190,68 @@ class WWMIPackage(ModelImporterPackage):
             pass
 
     @staticmethod
-    def notify_resource_tier():
-        if Config.Importers.WWMI.Importer.resource_tier_warned:
+    def detect_resource_tiers(game_path: Path) -> list[WuWaResourceTier]:
+        content_path = game_path / "Client" / "Content"
+
+        resource_tiers = []
+
+        for tier in WuWaResourceTier:
+            if (content_path / tier.name).is_dir():
+                resource_tiers.append(tier)
+
+        return resource_tiers
+
+    @staticmethod
+    def ensure_resource_tier(game_path: Path | None) -> None:
+        if game_path is None:
+            # Game installation location is unknown. Ask user once to select a resource tier.
+            if not Config.Importers.WWMI.Importer.resource_tier_warned:
+                WWMIPackage.notify_resource_tier_selection()
             return
 
-        resource_tiers = {item: item.value for item in WuWaResourceTier}
+        detected_resource_tiers = WWMIPackage.detect_resource_tiers(game_path)
+
+        # Automatically select resource tier if only one is installed.
+        if len(detected_resource_tiers) == 1:
+            Config.Importers.WWMI.Importer.resource_tier = detected_resource_tiers[0]
+            return
+
+        # Show error if no installed resource tier detected.
+        if len(detected_resource_tiers) == 0:
+            raise ValueError(L('error_no_resource_tier_detected', """
+                Cannot find any resource tier available for configured {game_name} installation:
+                
+                ```
+                {game_path}
+                ```
+                
+                Please repair {game_name} with official launcher.
+            """).format(
+                game_name=Game.WUTHERING_WAVES.value,
+                game_path=game_path,
+            ))
+
+        # Ask user to select a resource tier from detection results.
+        WWMIPackage.notify_resource_tier_selection(detected_resource_tiers)
+
+    @staticmethod
+    def notify_resource_tier_selection(detected_resource_tiers: list[WuWaResourceTier] | None = None) -> None:
+        resource_tiers = {item: item.value for item in detected_resource_tiers or WuWaResourceTier}
 
         (user_confirmed_resource_tier, resource_tier_id) = Events.Call(Events.Application.ShowWarning(
             title=L('message_title_resource_tier_selection', "Select Resource Quality"),
             message=L('message_text_resource_tier_selection', """
-                **{game}** requires **[Resource Quality]({page_link})** to be selected to avoid game crash on loading.
-                
-                For **Steam** and **Epic Games** installations select **{default_tier}**.
-                
-                For **official launcher** installation select **any actually downloaded** tier (default is usually **{default_tier}**):
+                **{game}** requires **[Resource Quality]({page_link})** to be selected.
             
                 {radio_widget}
                 
-                You can also change it later with **{general_settings_wuwa_resource_tier_label}** in **General Settings**.
+                Selected tier must be **actually installed**, otherwise the game will crash on loading.
+                
+                You can change it later with **{general_settings_wuwa_resource_tier_label}** in **General Settings**.
             """).format(
                 game=Config.Importers.WWMI.Importer.game.value,
                 page_link=r"https://wutheringwaves.kurogames.com/en/main/news/detail/5513",
-                default_tier=WuWaResourceTier.HD.value,
+                default_tier=1 if not detected_resource_tiers else 0,
             ),
             confirm_text=L('message_button_confirm', 'Confirm'),
             cancel_text=L('message_button_open_settings', 'Open Settings'),
