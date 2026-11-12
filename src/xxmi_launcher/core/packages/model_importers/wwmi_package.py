@@ -232,11 +232,22 @@ class WWMIPackage(ModelImporterPackage):
             ))
 
         # Ask user to select a resource tier from detection results.
-        WWMIPackage.notify_resource_tier_selection(detected_resource_tiers)
+        if (
+            Config.Importers.WWMI.Importer.resource_tier not in detected_resource_tiers
+            or not Config.Importers.WWMI.Importer.resource_tier_warned
+        ):
+            WWMIPackage.notify_resource_tier_selection(detected_resource_tiers)
 
     @staticmethod
     def notify_resource_tier_selection(detected_resource_tiers: list[WuWaResourceTier] | None = None) -> None:
         resource_tiers = {item: item.value for item in detected_resource_tiers or WuWaResourceTier}
+
+        if Config.Importers.WWMI.Importer.resource_tier in resource_tiers:
+            # Set default tier selection to currently configured tier.
+            selected_tier = list(resource_tiers.keys()).index(Config.Importers.WWMI.Importer.resource_tier)
+        else:
+            # Select best available quality tier.
+            selected_tier = 0
 
         (user_confirmed_resource_tier, resource_tier_id) = Events.Call(Events.Application.ShowWarning(
             title=L('message_title_resource_tier_selection', "Select Resource Quality"),
@@ -251,20 +262,18 @@ class WWMIPackage(ModelImporterPackage):
             """).format(
                 game=Config.Importers.WWMI.Importer.game.value,
                 page_link=r"https://wutheringwaves.kurogames.com/en/main/news/detail/5513",
-                default_tier=1 if not detected_resource_tiers else 0,
             ),
             confirm_text=L('message_button_confirm', 'Confirm'),
             cancel_text=L('message_button_open_settings', 'Open Settings'),
             radio_options=list(resource_tiers.values()),
-            selected_id=1,
+            selected_id=selected_tier,
             modal=True,
         ))
 
         if user_confirmed_resource_tier is not None:
             Config.Importers.WWMI.Importer.resource_tier_warned = True
 
-            if user_confirmed_resource_tier is True:
-                Config.Importers.WWMI.Importer.resource_tier = list(resource_tiers.keys())[resource_tier_id]
+        Config.Importers.WWMI.Importer.resource_tier = list(resource_tiers.keys())[resource_tier_id]
 
     def configure_game_settings(self, game_path: Path | None, game_exe_path: Path | None):
         # Auto-config below requires reliably detectable installation location.
