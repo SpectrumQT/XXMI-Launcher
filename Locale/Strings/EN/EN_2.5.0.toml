@@ -65,3 +65,25 @@ Make sure that selected tier is **actually installed**.
 
 Selection of non-installed tier will cause the game to crash on loading.
 """
+
+[importer_settings_mcp_checkbox]
+src = "Enable MCP"
+loc = "Enable MCP"
+
+[importer_settings_mcp_checkbox_tooltip]
+src = """
+Allows Codex and other local MCP clients to connect to the running XXMI DLL.
+
+* **Enabled:** Start the local-only MCP bridge when the game launches.
+* **Disabled:** Do not create the MCP pipe or start its background thread.
+
+Changes take effect after restarting the game.
+"""
+loc = """
+Allows Codex and other local MCP clients to connect to the running XXMI DLL.
+
+* **Enabled:** Start the local-only MCP bridge when the game launches.
+* **Disabled:** Do not create the MCP pipe or start its background thread.
+
+Changes take effect after restarting the game.
+"""
