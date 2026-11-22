@@ -18,6 +18,7 @@ import core.path_manager as Paths
 import core.event_manager as Events
 import core.config_manager as Config
 
+from core.mcp_config import apply_mcp_ini_setting
 from core.locale_manager import L
 from core.platforms.game import Game
 from core.config.enums import GameLaunch, StartMethod, ProcessStartMethodLegacy, ProcessPriority, WindowMode, InjectMode, InjectModeLegacy, LogLevel
@@ -505,6 +506,11 @@ class ModelImporterPackage(Package):
             ini.set_option('Input', 'input_disable_mode', Config.Active.Migoto.input_disable_mode.name.lower())
 
             ini.set_option('Logging', 'log_level', Config.Active.Migoto.log_level.name.lower())
+            apply_mcp_ini_setting(
+                ini,
+                xxmi_dll_version,
+                Config.Active.Migoto.enable_mcp,
+            )
 
         if ini.is_modified():
             log.debug(f'Writing d3dx.ini...')

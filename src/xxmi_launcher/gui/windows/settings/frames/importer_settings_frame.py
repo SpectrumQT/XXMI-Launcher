@@ -119,6 +119,27 @@ class ModelImporterSettingsFrame(SettingsContentFrame):
                             ),
                         ),
 
+                        SettingsOption(
+                            label_text=L("importer_settings_mcp_checkbox", "Enable MCP"),
+                            widget=OptionWidget.CHECKBOX,
+                            value_variable="Vars.Active.Migoto.enable_mcp",
+                            tooltip=self.get_option_availability_warning(MigotoFork.XXMI, "1.3.3")+L("importer_settings_mcp_checkbox_tooltip", """
+                                Allows Codex and other local MCP clients to connect to the running XXMI DLL.
+
+                                * **Enabled:** Start the local-only MCP bridge when the game launches.
+                                * **Disabled:** Do not create the MCP pipe or start its background thread.
+
+                                Changes take effect after restarting the game.
+                            """) + '\n\n<font color="#666666">d3dx.ini › [MCP] › enabled</font>',
+                            enabled_if=Condition(
+                                predicate=lambda: self.is_xxmi_dll(MigotoFork.XXMI, "1.3.3"),
+                            ),
+                            visible_if=Condition(
+                                variables=("Vars.Active.Migoto.manage_xxmi_dll_config",),
+                                predicate=self.manage_xxmi_dll_config,
+                            ),
+                        ),
+
                     ),
                 ),
 
